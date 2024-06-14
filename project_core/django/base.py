@@ -6,9 +6,6 @@ from project_core.settings.email_sending import *
 from project_core.settings.file_and_storage import *
 from project_core.env import BASE_DIR
 
-DEBUG=True
-ALLOWED_HOSTS = ["*"]
-
 
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -16,10 +13,9 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "rest_framework_simplejwt",
 ]
-LOCAL_APPS = [
-    "app",
-    "users",
-]
+LOCAL_APPS = ["app.users", "app.cms"]
+
+AUTH_USER_MODEL = "users.ArchimatchUser"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -106,5 +102,3 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
-
-

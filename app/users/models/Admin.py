@@ -2,7 +2,7 @@ from django.db import models
 from app.users.models.ArchimatchUser import ArchimatchUser
 from django.contrib.auth.models import Permission
 from app.users.models.utils.PermissionsCodeNames import permission_codenames
-from app.models import BaseModel
+from app.utils.models import BaseModel
 
 
 class Admin(BaseModel):

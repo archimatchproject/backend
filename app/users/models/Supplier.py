@@ -1,6 +1,6 @@
 from django.db import models
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.models import BaseModel
+from app.utils.models import BaseModel
 from app.users.models.utils.SocialMedia import SocialMedia
 
 

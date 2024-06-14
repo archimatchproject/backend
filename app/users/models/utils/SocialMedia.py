@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.models import BaseModel
+from app.utils.models import BaseModel
 
 
 class SocialMedia(BaseModel):

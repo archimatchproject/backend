@@ -9,7 +9,7 @@ from app.users.models.utils.ArchitectPreferences import (
     WorkSurfaceType,
 )
 from app.users.models.ArchitectType import ArchitectType
-from app.models import BaseModel
+from app.utils.models import BaseModel
 
 
 class Architect(BaseModel):

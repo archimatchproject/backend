@@ -1,5 +1,5 @@
-from app.CMS.models import *
-
+from app.cms.models import *
+from app.users.models import *
 from django.db import models
 from django.utils import timezone
 
