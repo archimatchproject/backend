@@ -1,5 +1,5 @@
 from django.db import models
-from app.CMS.models.Blog import Blog
+from app.cms.models.Blog import Blog
 
 
 class Block(models.Model):
