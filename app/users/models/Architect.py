@@ -37,6 +37,9 @@ class Architect(BaseModel):
 
     def __str__(self):
         return self.user.email
-
+    
+    def delete(self, *args, **kwargs):
+        self.user.delete() 
+        super().delete(*args, **kwargs)
     class Meta:
         verbose_name_plural = "Architects"

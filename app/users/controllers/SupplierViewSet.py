@@ -12,24 +12,28 @@ class SupplierViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], permission_classes=[], name='signup',serializer_class=UserAuthSerializer)
     def signup(self, request):
-        return SupplierService.supplier_signup(request)
+        return SupplierService.signup(request)
 
     @action(detail=False, methods=['post'], permission_classes=[], name='login',serializer_class=UserAuthSerializer)
     def login(self, request):
-        return SupplierService.supplier_login(request)
+        return SupplierService.login(request)
     
-    @action(detail=False, methods=['post'], permission_classes=[], name='first_connection')
-    def supplier_first_cnx(self, request):
-        return SupplierService.supplier_first_connection(request)
+    @action(detail=False, methods=['post'], permission_classes=[], name='first-connection')
+    def first_cnx(self, request):
+        return SupplierService.first_connection(request)
     
-    @action(detail=False, methods=['post'], permission_classes=[], name='update_profile')
-    def supplier_update_profile(self, request):
-        return SupplierService.supplier_update_profile(request)
+    @action(detail=False, methods=['put'], permission_classes=[], name='update-profile')
+    def update_profile(self, request):
+        return SupplierService.update_profile(request)
 
-    @action(detail=False, methods=['post'], permission_classes=[], name='update_general_settings')
-    def supplier_update_general_settings(self, request):
-        return SupplierService.supplier_update_general_settings(request)
+    @action(detail=False, methods=['put'], name='update-bio')
+    def update_bio(self, request):
+        return SupplierService.update_bio(request)
+    
+    @action(detail=False, methods=['put'], name='update-presentation-video')
+    def update_presentation_video(self, request):
+        return SupplierService.update_presentation_video(request)
 
-    @action(detail=False, methods=['post'], permission_classes=[], name='update_links')
-    def supplier_update_links(self, request):
-        return SupplierService.supplier_update_links(request)
+    @action(detail=False, methods=['put'], permission_classes=[], name='update-links')
+    def update_links(self, request):
+        return SupplierService.update_links(request)

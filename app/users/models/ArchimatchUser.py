@@ -5,7 +5,7 @@ from app.users.models.utils.UserType import USER_TYPE_CHOICES
 
 class ArchimatchUser(AbstractUser):
     image = models.ImageField(blank=True, null=True, upload_to="ProfileImages/")
-    phone_number = models.CharField(max_length=20, unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True)
     user_type = models.CharField(max_length=200, choices=USER_TYPE_CHOICES)
 
     groups = models.ManyToManyField(

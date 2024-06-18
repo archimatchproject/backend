@@ -25,3 +25,6 @@ class Admin(BaseModel):
         if self.super_user:
             return True
         return self.permissions.filter(codename=perm).exists()
+    def delete(self, *args, **kwargs):
+        self.user.delete() 
+        super().delete(*args, **kwargs)

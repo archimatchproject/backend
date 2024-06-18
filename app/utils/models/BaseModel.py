@@ -1,5 +1,3 @@
-from app.cms.models import *
-from app.users.models import *
 from django.db import models
 from django.utils import timezone
 
@@ -10,3 +8,4 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+

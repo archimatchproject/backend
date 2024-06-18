@@ -1,5 +1,5 @@
 from django.db import models
-from .LabeledIcon import LabeledIcon
+from app.utils.models import LabeledIcon
 
 class ProjectCategory(LabeledIcon):
     pass

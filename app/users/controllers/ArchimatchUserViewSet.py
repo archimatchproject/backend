@@ -36,3 +36,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='create-password',serializer_class=ArchimatchUserCreatePWSerializer)
     def create_password(self, request):
         return ArchimatchUserService.create_password(request)
+    
+    @action(detail=False, methods=['post'], url_path='reset-password')
+    def reset_password(self, request):
+        return ArchimatchUserService.reset_password(request)

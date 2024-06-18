@@ -7,7 +7,7 @@ class SocialMediaSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SocialMedia
-        fields = '__all__'
+        fields = ['facebook','instagram','website']
 
 
 

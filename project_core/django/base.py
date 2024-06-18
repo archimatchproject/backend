@@ -26,7 +26,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "rest_framework_simplejwt",
 ]
-LOCAL_APPS = ["app.users", "app.cms","app.announcement"]
+LOCAL_APPS = ["app.utils","app.users", "app.cms","app.announcement"]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
