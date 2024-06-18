@@ -1,6 +1,6 @@
 from project_core.django.base import *
 
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ["*"]
