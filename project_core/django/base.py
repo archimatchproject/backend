@@ -5,7 +5,20 @@ from project_core.settings.jwt import *
 from project_core.settings.email_sending import *
 from project_core.settings.file_and_storage import *
 from project_core.env import BASE_DIR
+from decouple import config
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
+    }
+}
+
+print(DATABASES["default"])
 
 THIRD_PARTY_APPS = [
     "rest_framework",
