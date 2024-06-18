@@ -1,4 +1,3 @@
-import os
 from project_core.django.base import *
 
 DEBUG = True
