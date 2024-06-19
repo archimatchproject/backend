@@ -1,10 +1,9 @@
-from django.contrib import admin
-from app.users.models import Architect, ArchitectType
-from django.forms import SelectMultiple
-from django.db import models
-
 from django import forms
-from app.users.models import Architect
+from django.contrib import admin
+from django.db import models
+from django.forms import SelectMultiple
+
+from app.users.models import Architect, ArchitectType
 
 
 class ArchitectForm(forms.ModelForm):

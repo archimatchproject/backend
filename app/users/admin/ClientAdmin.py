@@ -1,5 +1,6 @@
-from app.users.models import Client
 from django.contrib import admin
+
+from app.users.models import Client
 
 
 class ClientAdmin(admin.ModelAdmin):

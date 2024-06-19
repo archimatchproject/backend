@@ -1,8 +1,17 @@
 from django.db import models
 
+
 class LabeledIcon(models.Model):
-    label = models.CharField( max_length=255,default='')
-    icon = models.ImageField( upload_to='Icons/')
+    """
+    Model representing a labeled icon with a label and an associated image.
+
+    Attributes:
+        label (CharField): Label or name associated with the icon, maximum length of 255 characters.
+        icon (ImageField): Image file representing the icon, stored in 'Icons/' directory.
+    """
+
+    label = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="Icons/")
 
     def __str__(self):
         return self.label

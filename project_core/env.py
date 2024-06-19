@@ -1,6 +1,6 @@
 import pathlib
-from django.core.exceptions import ImproperlyConfigured
 
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 APPS_DIR = BASE_DIR / "app"

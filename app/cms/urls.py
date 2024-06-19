@@ -1,11 +1,12 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import include, path
 
-from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
+from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from app.cms.controllers import BlogViewSet
 
 router = routers.DefaultRouter()
-router.register('blog',BlogViewSet,basename='blog')
+router.register("blog", BlogViewSet, basename="blog")
 
 urlpatterns = [
     path("", include(router.urls)),

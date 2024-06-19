@@ -1,18 +1,40 @@
 from django.db import models
+
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.models.utils.ArchitectPreferences import (
-    WorkType,
-    HouseType,
-    BudgetType,
-    ServiceType,
-    LocationType,
-    WorkSurfaceType,
-)
 from app.users.models.ArchitectType import ArchitectType
+from app.users.models.utils.ArchitectPreferences import (
+    BudgetType,
+    HouseType,
+    LocationType,
+    ServiceType,
+    WorkSurfaceType,
+    WorkType,
+)
 from app.utils.models import BaseModel
 
 
 class Architect(BaseModel):
+    """
+    Define the Architect model with additional fields and relationships.
+
+    Fields:
+        user (OneToOneField): The associated user for this architect, linked one-to-one to an ArchimatchUser instance.
+        address (CharField): The address of the architect.
+        arch_identifier (CharField): Identifier code specific to the architect.
+        arch_type (ForeignKey): The type of architect, selected from a predefined list of ArchitectType choices.
+        bio (TextField): Biography or description of the architect.
+        company_name (CharField): The name of the company or firm associated with the architect.
+        company_logo (ImageField): Logo representing the architect's company or firm, if available.
+        first_cnx (BooleanField): Indicates whether the architect has completed their first connection or interaction.
+        presentation_video (FileField): Video presentation file uploaded by the architect, if any.
+        work_types (ManyToManyField): Types of work the architect specializes in.
+        house_types (ManyToManyField): Types of houses or buildings the architect works with.
+        services (ManyToManyField): Services offered by the architect.
+        locations (ManyToManyField): Locations where the architect operates or provides services.
+        work_surfaces (ManyToManyField): Types of work surfaces or materials the architect uses.
+        budgets (ManyToManyField): Budget ranges the architect typically works within.
+    """
+
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
     arch_identifier = models.CharField(max_length=10, default="")
@@ -39,4 +61,6 @@ class Architect(BaseModel):
         return self.user.email
 
     class Meta:
+        """Meta class for Architect model."""
+
         verbose_name_plural = "Architects"

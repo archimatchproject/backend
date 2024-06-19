@@ -1,13 +1,15 @@
 import os
 from pathlib import Path
+
+import environ
+
+from project_core.env import BASE_DIR
 from project_core.settings.cors import *
-from project_core.settings.jwt import *
 from project_core.settings.email_sending import *
 from project_core.settings.file_and_storage import *
-from project_core.env import BASE_DIR
-from decouple import config
+from project_core.settings.jwt import *
 
-
+env = environ.Env()
 
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -15,7 +17,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "rest_framework_simplejwt",
 ]
-LOCAL_APPS = ["app.users", "app.cms","app.announcement"]
+LOCAL_APPS = ["app.users", "app.cms", "app.announcement"]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
@@ -87,11 +89,11 @@ AUTH_PASSWORD_VALIDATORS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
