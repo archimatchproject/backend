@@ -1,24 +1,51 @@
+"""
+Module: ArchitectType Model
+
+This module defines the ArchitectType model, representing types of architects.
+
+Classes:
+    ArchitectType: Model representing types of architects.
+
+Attributes:
+    - display (CharField): Name or display title of the architect type, maximum length of 255 characters.
+    - icon (ImageField, optional): Optional icon representing the architect type, stored in 'ArchitectTypeIcons/' directory.
+    - short_def (TextField): Brief description or definition of the architect type, maximum length of 1000 characters.
+"""
+
 from django.db import models
 
 
-class Preference(models.Model):
-    name = models.CharField(max_length=255)
+class ArchitectType(models.Model):
+    """
+    Model representing types of architects.
 
-    class Meta:
-        abstract = True
+    Attributes:
+        display (CharField): Name or display title of the architect type, maximum length of 255 characters.
+        icon (ImageField): Optional icon representing the architect type, stored in 'ArchitectTypeIcons/' directory.
+        short_def (TextField): Brief description or definition of the architect type, maximum length of 1000 characters.
+    """
+
+    display = models.CharField(max_length=255)
+    icon = models.ImageField(blank=True, null=True, upload_to="ArchitectTypeIcons/")
+    short_def = models.TextField(max_length=1000)
 
     def __str__(self):
-        return self.name
+        """
+        Returns the display name of the architect type.
 
+        Returns:
+            str: Display name of the architect type.
+        """
+        return self.display
 
-CHOICE_MODEL_NAMES = [
-    "WorkType",
-    "HouseType",
-    "ServiceType",
-    "LocationType",
-    "WorkSurfaceType",
-    "BudgetType",
-]
+    class Meta:
+        """
+        Meta class for Architect Type model.
 
-for model_name in CHOICE_MODEL_NAMES:
-    globals()[model_name] = type(model_name, (Preference,), {"__module__": __name__})
+        Attributes:
+            verbose_name (str): Singular name for the model used in the Django admin interface.
+            verbose_name_plural (str): Plural name for the model used in the Django admin interface.
+        """
+
+        verbose_name = "Architect Type"
+        verbose_name_plural = "Architect Types"

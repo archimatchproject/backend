@@ -1,6 +1,22 @@
-from rest_framework import status
+"""
+Module: Supplier Service
 
-# from app.users.exceptions import UserDataException
+This module defines the SupplierService class that handles supplier-related operations such as signup, login, and profile updates.
+
+Classes:
+    SupplierService: Service class for supplier-related operations.
+
+Modules Required:
+    - jwt: JSON Web Token implementation for token-based authentication.
+    - rest_framework: Django REST framework for handling web APIs.
+    - app.users.models.ArchimatchUser: Model representing users in the Archimatch application.
+    - app.users.models.Supplier: Model representing suppliers in the Archimatch application.
+    - app.users.models.SupplierSocialMedia: Model representing social media links for suppliers.
+    - app.users.serializers.SupplierSerializer: Serializer for the Supplier model.
+"""
+
+import jwt
+from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
@@ -10,16 +26,67 @@ from app.users.serializers import SupplierSerializer
 
 
 class SupplierService:
+    """
+    Service class for handling supplier-related operations such as signup, login, and profile updates.
+
+    Attributes:
+        serializer_class (Serializer): Serializer class for the Supplier model.
+
+    Methods:
+        handle_user_data(request_keys, expected_keys):
+            Validates the presence of expected keys in request data.
+
+        supplier_signup(request):
+            Registers a new supplier in the system.
+
+        supplier_login(request):
+            Authenticates a supplier using email and checks if they have set a password.
+
+        supplier_first_connection(request):
+            Updates a supplier's initial profile information including company details and phone number.
+
+        supplier_update_profile(request):
+            Updates a supplier's profile information excluding general settings and social media links.
+
+        supplier_update_general_settings(request):
+            Updates a supplier's general settings such as bio or other preferences.
+
+        supplier_update_links(request):
+            Updates a supplier's social media links.
+
+    Raises:
+        APIException: If there are errors during supplier operations.
+    """
+
     serializer_class = SupplierSerializer
 
     @classmethod
-    def handle_user_data(self, request_keys, expected_keys):
+    def handle_user_data(cls, request_keys, expected_keys):
+        """
+        Validates the presence of expected keys in request data.
+
+        Args:
+            request_keys (set): Set of keys present in the request data.
+            expected_keys (set): Set of keys expected to be present in the request data.
+
+        Raises:
+            APIException: If any expected key is missing in the request data.
+        """
         if not expected_keys.issubset(request_keys):
             missing_keys = expected_keys - request_keys
-            raise APIException(f"Missing keys:".join(missing_keys))
+            raise APIException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
     def supplier_signup(cls, request):
+        """
+        Registers a new supplier in the system.
+
+        Args:
+            request (Request): Django request object containing supplier's email.
+
+        Returns:
+            Response: Response object indicating success or failure of supplier registration.
+        """
         try:
             data = request.data
             request_keys = set(data.keys())
@@ -54,6 +121,18 @@ class SupplierService:
 
     @classmethod
     def supplier_login(cls, request):
+        """
+        Authenticates a supplier using email and checks if they have set a password.
+
+        Args:
+            request (Request): Django request object containing supplier's email.
+
+        Returns:
+            Response: Response object with a message indicating if the supplier has set a password.
+
+        Raises:
+            APIException: If there are errors during supplier authentication.
+        """
         try:
             data = request.data
             request_keys = set(data.keys())
@@ -89,9 +168,20 @@ class SupplierService:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
     @classmethod
-    def supplier_first_connection(self, request):
-        try:
+    def supplier_first_connection(cls, request):
+        """
+        Updates a supplier's initial profile information including company details and phone number.
 
+        Args:
+            request (Request): Django request object containing supplier's profile data.
+
+        Returns:
+            Response: Response object indicating success or failure of the profile update.
+
+        Raises:
+            APIException: If there are errors during supplier profile update.
+        """
+        try:
             data = request.data
             request_keys = set(data.keys())
             expected_keys = {
@@ -102,7 +192,7 @@ class SupplierService:
                 "speciality",
                 "id",
             }
-            SupplierService.handle_user_data(request_keys, expected_keys)
+            cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
                 raise APIException("ce fournisseur n'existe pas")
@@ -129,9 +219,20 @@ class SupplierService:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
     @classmethod
-    def supplier_update_profile(self, request):
-        try:
+    def supplier_update_profile(cls, request):
+        """
+        Updates a supplier's profile information excluding general settings and social media links.
 
+        Args:
+            request (Request): Django request object containing supplier's profile data.
+
+        Returns:
+            Response: Response object indicating success or failure of the profile update.
+
+        Raises:
+            APIException: If there are errors during supplier profile update.
+        """
+        try:
             data = request.data
             request_keys = set(data.keys())
             expected_keys = {
@@ -141,7 +242,7 @@ class SupplierService:
                 "speciality",
                 "id",
             }
-            SupplierService.handle_user_data(request_keys, expected_keys)
+            cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
                 raise APIException("ce fournisseur n'existe pas")
@@ -168,13 +269,24 @@ class SupplierService:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
     @classmethod
-    def supplier_update_general_settings(self, request):
-        try:
+    def supplier_update_general_settings(cls, request):
+        """
+        Updates a supplier's general settings such as bio or other preferences.
 
+        Args:
+            request (Request): Django request object containing supplier's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during supplier settings update.
+        """
+        try:
             data = request.data
             request_keys = set(data.keys())
             expected_keys = {"bio", "id"}
-            SupplierService.handle_user_data(request_keys, expected_keys)
+            cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
                 raise APIException("ce fournisseur n'existe pas")
@@ -194,13 +306,24 @@ class SupplierService:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
     @classmethod
-    def supplier_update_links(self, request):
-        try:
+    def supplier_update_links(cls, request):
+        """
+        Updates a supplier's social media links.
 
+        Args:
+            request (Request): Django request object containing supplier's social media data.
+
+        Returns:
+            Response: Response object indicating success or failure of the social media links update.
+
+        Raises:
+            APIException: If there are errors during social media links update.
+        """
+        try:
             data = request.data
             request_keys = set(data.keys())
             expected_keys = {"facebook", "instagram", "website", "id"}
-            SupplierService.handle_user_data(request_keys, expected_keys)
+            cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
                 raise APIException("ce fournisseur n'existe pas")
@@ -208,17 +331,11 @@ class SupplierService:
             supplier = Supplier.objects.get(id=data.get("id"))
             data.pop("id")
             if not supplier.social_links:
-                supplier.social_links = (
-                    supplier.social_links
-                ) = SupplierSocialMedia.objects.create(**data)
+                supplier.social_links = SupplierSocialMedia.objects.create(**data)
                 supplier.save()
-
             else:
                 social_links = supplier.social_links
-                supplier.social_links = SupplierSocialMedia.objects.filter(
-                    id=social_links.id
-                ).update(**data)
-                supplier.save()
+                SupplierSocialMedia.objects.filter(id=social_links.id).update(**data)
 
             response_data = {
                 "message": "Supplier successfully updated",

@@ -1,3 +1,12 @@
+"""
+Module containing the Admin model.
+
+This module defines the Admin model, representing an administrative user with extended permissions.
+
+Classes:
+    Admin: Model representing an administrative user with extended permissions.
+"""
+
 from django.contrib.auth.models import Permission
 from django.db import models
 
@@ -26,9 +35,21 @@ class Admin(BaseModel):
     permissions = models.ManyToManyField(Permission, blank=True)
 
     def __str__(self):
+        """
+        Returns the email address of the associated user.
+
+        Returns:
+            str: The email address of the user.
+        """
         return self.user.email
 
     def set_permissions(self, rights):
+        """
+        Assigns permissions based on a list of rights.
+
+        Args:
+            rights (list): List of rights to assign permissions for.
+        """
         for right in rights:
             if right in PERMISSION_CODENAMES:
                 for codename in PERMISSION_CODENAMES[right]:
@@ -36,12 +57,27 @@ class Admin(BaseModel):
                     self.permissions.add(perm)
 
     def has_permission(self, perm):
+        """
+        Checks if the admin has a specific permission.
+
+        Args:
+            perm (str): The codename of the permission to check.
+
+        Returns:
+            bool: True if the admin has the permission, False otherwise.
+        """
         if self.super_user:
             return True
         return self.permissions.filter(codename=perm).exists()
 
     class Meta:
-        """Meta class for Admin model."""
+        """
+        Meta class for Admin model.
+
+        Meta Attributes:
+            verbose_name (str): The name of the model in singular form.
+            verbose_name_plural (str): The name of the model in plural form.
+        """
 
         verbose_name = "Admin"
         verbose_name_plural = "Admins"

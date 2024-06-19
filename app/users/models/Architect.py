@@ -1,3 +1,13 @@
+"""
+Module containing the Architect model.
+
+This module defines the Architect model, which includes additional fields and relationships
+specific to architects within the Archimatch application.
+
+Classes:
+    Architect: Define the Architect model with additional fields and relationships.
+"""
+
 from django.db import models
 
 from app.users.models.ArchimatchUser import ArchimatchUser
@@ -58,10 +68,22 @@ class Architect(BaseModel):
     budgets = models.ManyToManyField(BudgetType)
 
     def __str__(self):
+        """
+        Returns the email address of the associated user.
+
+        Returns:
+            str: The email address of the user.
+        """
         return self.user.email
 
     class Meta:
-        """Meta class for Architect model."""
+        """
+        Meta class for Architect model.
+
+        Meta Attributes:
+            verbose_name (str): The name of the model in singular form.
+            verbose_name_plural (str): The name of the model in plural form.
+        """
 
         verbose_name = "Architect"
         verbose_name_plural = "Architects"

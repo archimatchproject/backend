@@ -1,3 +1,12 @@
+"""
+Module containing the ArchimatchUser model.
+
+This module defines the custom user model for the Archimatch application, extending the AbstractUser model.
+
+Classes:
+    ArchimatchUser: Custom user model for the Archimatch application.
+"""
+
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
@@ -33,16 +42,42 @@ class ArchimatchUser(AbstractUser):
     )
 
     def __str__(self):
+        """
+        Returns the email address of the user as a string representation.
+
+        Returns:
+            str: The email address of the user.
+        """
         return self.email
 
     def get_user_type(self):
+        """
+        Returns the user type of the user.
+
+        Returns:
+            str: The user type.
+        """
         return self.user_type
 
     def save(self, *args, **kwargs):
+        """
+        Custom save method to set the username to email if not provided.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         if not self.username:
             self.username = self.email
         super().save(*args, **kwargs)
 
     class Meta:
+        """
+        Meta class for ArchimatchUser model.
+
+        Meta Attributes:
+            verbose_name (str): The name of the model in singular form.
+            verbose_name_plural (str): The name of the model in plural form.
+        """
+
         verbose_name = "Archimatch User"
-        verbose_name_plural = "Archimatch Users"

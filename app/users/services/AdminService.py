@@ -1,3 +1,14 @@
+"""
+Module containing AdminService class.
+
+This module provides service methods for handling admin users, including creation,
+updating, decoding tokens, retrieving admin by user ID, retrieving admin by token,
+handling user data validation, and admin login authentication.
+
+Classes:
+    AdminService: Service class for admin user operations.
+"""
+
 import environ
 import jwt
 from rest_framework import status
@@ -7,14 +18,53 @@ from rest_framework.response import Response
 from app.users.models import Admin
 from app.users.serializers import AdminSerializer
 
-# from app.users.exceptions import UserDataException
-
 env = environ.Env()
 
 
 class AdminService:
+    """
+    Service class for admin user operations.
+
+    This class provides methods to handle admin user-related operations such as
+    creating admin users, updating admin user data, decoding tokens, retrieving
+    admin users by various criteria, handling user data validation, and admin login.
+
+    Methods:
+        create_admin(data):
+            Creates a new admin user with the provided data.
+
+        update_admin(instance, data):
+            Updates an existing admin user instance with the provided data.
+
+        decode_token(token):
+            Decodes the provided JWT token using the SECRET_KEY environment variable.
+
+        get_admin_by_user_id(user_id):
+            Retrieves an admin user based on the provided user ID.
+
+        retrieve_by_token(request):
+            Retrieves an admin user based on the JWT token extracted from the request.
+
+        handle_user_data(request_keys, expected_keys):
+            Validates the presence of expected keys in the request data.
+
+        admin_login(request):
+            Authenticates an admin user based on the provided email address.
+
+    """
+
     @classmethod
     def create_admin(cls, data):
+        """
+        Creates a new admin user with the provided data.
+
+        Args:
+            data (dict): Dictionary containing data for creating the admin user.
+
+        Returns:
+            Response: HTTP response containing serialized admin data or errors.
+
+        """
         serializer = AdminSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -23,6 +73,17 @@ class AdminService:
 
     @classmethod
     def update_admin(cls, instance, data):
+        """
+        Updates an existing admin user instance with the provided data.
+
+        Args:
+            instance (Admin): Admin instance to update.
+            data (dict): Dictionary containing updated data for the admin user.
+
+        Returns:
+            Response: HTTP response containing serialized admin data or errors.
+
+        """
         serializer = AdminSerializer(instance, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -31,6 +92,16 @@ class AdminService:
 
     @classmethod
     def decode_token(cls, token):
+        """
+        Decodes the provided JWT token using the SECRET_KEY environment variable.
+
+        Args:
+            token (str): JWT token string to decode.
+
+        Returns:
+            dict: Decoded payload from the JWT token.
+
+        """
         try:
             payload = jwt.decode(token, env("SECRET_KEY"), algorithms=["HS256"])
             return payload
@@ -39,6 +110,16 @@ class AdminService:
 
     @classmethod
     def get_admin_by_user_id(cls, user_id):
+        """
+        Retrieves an admin user based on the provided user ID.
+
+        Args:
+            user_id (int): ID of the user associated with the admin user.
+
+        Returns:
+            Admin: Admin object associated with the provided user ID.
+
+        """
         try:
             admin = Admin.objects.get(user__id=user_id)
             return admin
@@ -47,6 +128,16 @@ class AdminService:
 
     @classmethod
     def retrieve_by_token(cls, request):
+        """
+        Retrieves an admin user based on the JWT token extracted from the request.
+
+        Args:
+            request (Request): HTTP request object containing the authorization token.
+
+        Returns:
+            Response: HTTP response containing serialized admin data or error message.
+
+        """
         auth_header = request.META.get("HTTP_AUTHORIZATION")
 
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -75,13 +166,34 @@ class AdminService:
         return Response({"message": "Token decoded successfully"})
 
     @classmethod
-    def handle_user_data(self, request_keys, expected_keys):
+    def handle_user_data(cls, request_keys, expected_keys):
+        """
+        Validates the presence of expected keys in the request data.
+
+        Args:
+            request_keys (set): Set of keys present in the request data.
+            expected_keys (set): Set of expected keys that should be present.
+
+        Raises:
+            APIException: If any expected keys are missing in the request data.
+
+        """
         if not expected_keys.issubset(request_keys):
             missing_keys = expected_keys - request_keys
-            raise APIException(f"Missing keys:".join(missing_keys))
+            raise APIException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
     def admin_login(cls, request):
+        """
+        Authenticates an admin user based on the provided email address.
+
+        Args:
+            request (Request): HTTP request object containing the email address.
+
+        Returns:
+            Response: HTTP response indicating the status of the admin login attempt.
+
+        """
         try:
             data = request.data
             request_keys = set(data.keys())

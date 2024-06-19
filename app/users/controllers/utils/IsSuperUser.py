@@ -1,3 +1,20 @@
+"""
+Module: app.permissions
+
+Class: IsSuperUser
+
+Methods:
+    - has_permission(self, request, view)
+        Check if the user is authenticated and a super user.
+
+        Parameters:
+            self: Instance of the IsSuperUser class.
+            request: HTTP request object.
+            view: Django view object being accessed.
+
+        Returns:
+            bool: True if the user is authenticated and a super user, False otherwise.
+"""
 from rest_framework.permissions import BasePermission
 
 
@@ -7,7 +24,17 @@ class IsSuperUser(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # Check if the user is authenticated and a super user
+        """
+        Check if the user is authenticated and a super user.
+
+        Args:
+            self: Instance of the IsSuperUser class.
+            request: HTTP request object.
+            view: Django view object being accessed.
+
+        Returns:
+            bool: True if the user is authenticated and a super user, False otherwise.
+        """
         return (
             request.user
             and request.user.is_authenticated

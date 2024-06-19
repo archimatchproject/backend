@@ -27,7 +27,8 @@ repos:
   #  rev: 6.1.1
   #  hooks:
   #    - id: pydocstyle
-  #      args: [--ignore=D107,D204]
+  #      args:
+  #        - --select=D100,D101,D102,D103,D105,D106
   #- repo: local
   #  hooks:
   #   - id: pylint

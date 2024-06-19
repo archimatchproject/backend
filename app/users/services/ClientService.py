@@ -1,3 +1,19 @@
+"""
+Module: Client Service
+
+This module defines the ClientService class that handles client-related operations such as login using email or phone number.
+
+Classes:
+    ClientService: Service class for client-related operations.
+
+Modules Required:
+    - jwt: JSON Web Token implementation for token-based authentication.
+    - rest_framework: Django REST framework for handling web APIs.
+    - app.users.models.ArchimatchUser: Model representing users in the Archimatch application.
+    - app.users.models.Client: Model representing clients in the Archimatch application.
+    - app.users.serializers.ClientSerializer: Serializer for the Client model.
+"""
+
 import jwt
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -7,16 +23,51 @@ from app.users.models import ArchimatchUser, Client
 from app.users.serializers import ClientSerializer
 
 
-# from archimatch_app.exceptions import UserDataException
 class ClientService:
+    """
+    Service class for handling client-related operations such as login using email or phone number.
+
+    Methods:
+        handle_user_data(request_keys, expected_keys):
+            Validates the presence of expected keys in request data.
+
+        client_login_email(request):
+            Authenticates a client using email and checks if they have set a password.
+
+        client_login_phone(request):
+            Authenticates a client using phone number and checks if they have set a password.
+    """
+
     @classmethod
-    def handle_user_data(self, request_keys, expected_keys):
+    def handle_user_data(cls, request_keys, expected_keys):
+        """
+        Validates the presence of expected keys in request data.
+
+        Args:
+            request_keys (set): Set of keys present in the request data.
+            expected_keys (set): Set of keys expected to be present in the request data.
+
+        Raises:
+            APIException: If any expected key is missing in the request data.
+        """
         if not expected_keys.issubset(request_keys):
             missing_keys = expected_keys - request_keys
-            raise APIException(f"Missing keys:".join(missing_keys))
+            raise APIException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
     def client_login_email(cls, request):
+        """
+        Authenticates a client using email and checks if they have set a password.
+
+        Args:
+            request (Request): Django request object containing client's email.
+
+        Returns:
+            Response: Response object with a message indicating if the client has set a password.
+
+        Raises:
+            APIException: If there are errors during client authentication.
+        """
         try:
             data = request.data
             request_keys = set(data.keys())
@@ -53,6 +104,18 @@ class ClientService:
 
     @classmethod
     def client_login_phone(cls, request):
+        """
+        Authenticates a client using phone number and checks if they have set a password.
+
+        Args:
+            request (Request): Django request object containing client's phone number.
+
+        Returns:
+            Response: Response object with a message indicating if the client has set a password and their email.
+
+        Raises:
+            APIException: If there are errors during client authentication.
+        """
         try:
             data = request.data
             request_keys = set(data.keys())
