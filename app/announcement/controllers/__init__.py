@@ -1,1 +1,1 @@
-from .AnnouncementViewSet import AnnouncementViewSet
+from app.announcement.controllers.AnnouncementViewSet import AnnouncementViewSet

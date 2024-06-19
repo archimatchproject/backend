@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
-from app.users.models.utils.UserType import USER_TYPE_CHOICES
+from app.users import USER_TYPE_CHOICES
 
 
 class ArchimatchUser(AbstractUser):

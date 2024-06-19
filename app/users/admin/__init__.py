@@ -1,7 +1,5 @@
-from app.users.admin.utils import *
-
-from .AdminAdmin import AdminAdmin
-from .ArchimatchUserAdmin import ArchimatchUserAdmin
-from .ArchitectAdmin import ArchitectAdmin
-from .ClientAdmin import ClientAdmin
-from .SupplierAdmin import SupplierAdmin
+from app.users.admin.AdminAdmin import AdminAdmin
+from app.users.admin.ArchimatchUserAdmin import ArchimatchUserAdmin
+from app.users.admin.ArchitectAdmin import ArchitectAdmin
+from app.users.admin.ClientAdmin import ClientAdmin
+from app.users.admin.SupplierAdmin import SupplierAdmin

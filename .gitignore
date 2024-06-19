@@ -123,3 +123,10 @@ GitHub.sublime-settings
 !.vscode/extensions.json
 .history
 db.sqlite3
+
+
+# Ignore all migration folders and their content
+**/migrations/*
+
+# Except for __init__.py files inside migration folders
+!**/migrations/__init__.py

@@ -5,7 +5,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.users.models import ArchimatchUser, Supplier
-from app.users.models.utils.SocialMedia import SocialMedia
+from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.serializers import SupplierSerializer
 
 
@@ -210,12 +210,12 @@ class SupplierService:
             if not supplier.social_links:
                 supplier.social_links = (
                     supplier.social_links
-                ) = SocialMedia.objects.create(**data)
+                ) = SupplierSocialMedia.objects.create(**data)
                 supplier.save()
 
             else:
                 social_links = supplier.social_links
-                supplier.social_links = SocialMedia.objects.filter(
+                supplier.social_links = SupplierSocialMedia.objects.filter(
                     id=social_links.id
                 ).update(**data)
                 supplier.save()

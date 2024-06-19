@@ -1,36 +1,30 @@
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
-from app.announcement.models.utils.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.utils.ArchitectSpeciality import ArchitectSpeciality
-from app.announcement.models.utils.Need import Need
-from app.announcement.models.utils.PieceRenovate import PieceRenovate
-from app.announcement.models.utils.ProjectCategory import ProjectCategory
-from app.announcement.models.utils.ProjectExtension import ProjectExtension
-from app.announcement.models.utils.ProjectImage import ProjectImage
-from app.announcement.models.utils.PropertyType import PropertyType
-from app.announcement.serializers.utils.AnnouncementWorkTypeSerializer import (
+from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
+from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.announcement.models.Need import Need
+from app.announcement.models.PieceRenovate import PieceRenovate
+from app.announcement.models.ProjectCategory import ProjectCategory
+from app.announcement.models.ProjectExtension import ProjectExtension
+from app.announcement.models.ProjectImage import ProjectImage
+from app.announcement.models.PropertyType import PropertyType
+from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
-from app.announcement.serializers.utils.ArchitectSpecialitySerializer import (
+from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
 )
-from app.announcement.serializers.utils.NeedSerializer import NeedSerializer
-from app.announcement.serializers.utils.PieceRenovateSerializer import (
-    PieceRenovateSerializer,
-)
-from app.announcement.serializers.utils.ProjectCategorySerializer import (
+from app.announcement.serializers.NeedSerializer import NeedSerializer
+from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
+from app.announcement.serializers.ProjectCategorySerializer import (
     ProjectCategorySerializer,
 )
-from app.announcement.serializers.utils.ProjectExtensionSerializer import (
+from app.announcement.serializers.ProjectExtensionSerializer import (
     ProjectExtensionSerializer,
 )
-from app.announcement.serializers.utils.ProjectImageSerializer import (
-    ProjectImageSerializer,
-)
-from app.announcement.serializers.utils.PropertyTypeSerializer import (
-    PropertyTypeSerializer,
-)
+from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.users.models import Client
 from app.users.serializers import ClientSerializer
 

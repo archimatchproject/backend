@@ -17,3 +17,9 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        """Meta class for Blog model."""
+
+        verbose_name = "Blog"
+        verbose_name_plural = "Blogs"

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import Permission
 from django.db import models
 
+from app.users import PERMISSION_CODENAMES
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.models.utils.PermissionsCodeNames import permission_codenames
 from app.utils.models import BaseModel
 
 
@@ -30,8 +30,8 @@ class Admin(BaseModel):
 
     def set_permissions(self, rights):
         for right in rights:
-            if right in permission_codenames:
-                for codename in permission_codenames[right]:
+            if right in PERMISSION_CODENAMES:
+                for codename in PERMISSION_CODENAMES[right]:
                     perm = Permission.objects.get(codename=codename)
                     self.permissions.add(perm)
 
@@ -39,3 +39,9 @@ class Admin(BaseModel):
         if self.super_user:
             return True
         return self.permissions.filter(codename=perm).exists()
+
+    class Meta:
+        """Meta class for Admin model."""
+
+        verbose_name = "Admin"
+        verbose_name_plural = "Admins"

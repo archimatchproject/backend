@@ -1,7 +1,7 @@
 from django.db import models
 
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.models.utils.SocialMedia import SocialMedia
+from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.utils.models import BaseModel
 
 
@@ -29,9 +29,15 @@ class Supplier(BaseModel):
     )
     type = models.TextField(max_length=1000, default="")
     social_links = models.OneToOneField(
-        SocialMedia, blank=True, null=True, on_delete=models.CASCADE
+        SupplierSocialMedia, blank=True, null=True, on_delete=models.CASCADE
     )
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.email
+
+    class Meta:
+        """Meta class for Supplier model."""
+
+        verbose_name = "Supplier"
+        verbose_name_plural = "Suppliers"

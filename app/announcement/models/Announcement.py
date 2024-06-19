@@ -1,18 +1,20 @@
 from django.db import models
 
-from app.announcement.models.utils.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.utils.ArchitectSpeciality import ArchitectSpeciality
-from app.announcement.models.utils.ArchitecturalStyles import ARCHITECTURAL_STYLES
-from app.announcement.models.utils.Budgets import BUDGETS
-from app.announcement.models.utils.Cities import CITIES
-from app.announcement.models.utils.Need import Need
-from app.announcement.models.utils.PieceRenovate import PieceRenovate
-from app.announcement.models.utils.ProjectCategory import ProjectCategory
-from app.announcement.models.utils.ProjectExtension import ProjectExtension
-from app.announcement.models.utils.ProjectImage import ProjectImage
-from app.announcement.models.utils.PropertyType import PropertyType
-from app.announcement.models.utils.TerrainSurfaces import TERRAIN_SURFACES
-from app.announcement.models.utils.WorkSurfaces import WORK_SURFACES
+from app.announcement import (
+    ARCHITECTURAL_STYLES,
+    BUDGETS,
+    CITIES,
+    TERRAIN_SURFACES,
+    WORK_SURFACES,
+)
+from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
+from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.announcement.models.Need import Need
+from app.announcement.models.PieceRenovate import PieceRenovate
+from app.announcement.models.ProjectCategory import ProjectCategory
+from app.announcement.models.ProjectExtension import ProjectExtension
+from app.announcement.models.ProjectImage import ProjectImage
+from app.announcement.models.PropertyType import PropertyType
 from app.users.models import Client
 from app.utils.models import BaseModel
 
@@ -70,3 +72,9 @@ class Announcement(BaseModel):
 
     def __str__(self):
         return f"Announcement {self.id} for {self.client}"
+
+    class Meta:
+        """Meta class for Announcement model."""
+
+        verbose_name = "Announcement"
+        verbose_name_plural = "Announcements"

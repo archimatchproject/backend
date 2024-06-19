@@ -1,17 +1,18 @@
-from app.users.serializers.utils.ArchimatchUserCreatePWSerializer import (
+from app.users.serializers.AdminSerializer import AdminSerializer
+from app.users.serializers.ArchimatchUserCreatePWSerializer import (
     ArchimatchUserCreatePWSerializer,
 )
-from app.users.serializers.utils.SocialMediaSerializer import SocialMediaSerializer
-from app.users.serializers.utils.UserAuthSerializer import (
-    UserAuthPhoneSerializer,
-    UserAuthSerializer,
-)
-
-from .AdminSerializer import AdminSerializer
-from .ArchimatchUserSerializer import (
+from app.users.serializers.ArchimatchUserSerializer import (
     ArchimatchUserSerializer,
     ArchimatchUserSimpleSerializer,
 )
-from .ArchitectSerializer import ArchitectSerializer
-from .ClientSerializer import ClientSerializer
-from .SupplierSerializer import SupplierSerializer
+from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+from app.users.serializers.ClientSerializer import ClientSerializer
+from app.users.serializers.SupplierSerializer import SupplierSerializer
+from app.users.serializers.SupplierSocialMediaSerializer import (
+    SupplierSocialMediaSerializer,
+)
+from app.users.serializers.UserAuthSerializer import (
+    UserAuthPhoneSerializer,
+    UserAuthSerializer,
+)

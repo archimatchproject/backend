@@ -16,3 +16,9 @@ class Client(BaseModel):
 
     def __str__(self):
         return self.user.email
+
+    class Meta:
+        """Meta class for Client model."""
+
+        verbose_name = "Client"
+        verbose_name_plural = "Clients"

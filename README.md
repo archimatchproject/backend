@@ -29,6 +29,13 @@ Activate the virtual environment:
 ```sh
 pipenv shell
 ```
+### Create Migrations
+
+Create the initial database migrations:
+
+```sh
+python manage.py makemigrations --settings=project_core.django.dev
+```
 
 ### Apply Migrations
 

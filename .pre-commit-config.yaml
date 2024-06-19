@@ -23,12 +23,16 @@ repos:
     hooks:
       - id: black
         language_version: python3.12
-
+  #- repo: https://github.com/pycqa/pydocstyle
+  #  rev: 6.1.1
+  #  hooks:
+  #    - id: pydocstyle
+  #      args: [--ignore=D107,D204]
   #- repo: local
-   # hooks:
-      #- id: pylint
-      #  name: pylint
-      #  entry: pylint
-      #  language: system
-      #  types: [python]
-      #  args: [--ignore-patterns=venv]
+  #  hooks:
+  #   - id: pylint
+  #     name: pylint
+  #     entry: pylint
+  #     language: system
+  #     types: [python]
+  #     args: [--ignore-patterns=venv]

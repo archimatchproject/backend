@@ -1,1 +1,1 @@
-from .BlogAdmin import BlogAdmin
+from app.cms.admin.BlogAdmin import BlogAdmin

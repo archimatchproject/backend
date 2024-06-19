@@ -8,7 +8,7 @@ from app.users.serializers import (
     ArchimatchUserCreatePWSerializer,
     ArchimatchUserSerializer,
 )
-from app.users.serializers.utils.ArchimatchUserObtainPairSerializer import (
+from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )
 from app.users.services import ArchimatchUserService

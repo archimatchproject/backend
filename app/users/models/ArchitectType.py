@@ -17,3 +17,9 @@ class ArchitectType(models.Model):
 
     def __str__(self):
         return self.display
+
+    class Meta:
+        """Meta class for Architect Type model."""
+
+        verbose_name = "Architect Type"
+        verbose_name_plural = "Architect Types"

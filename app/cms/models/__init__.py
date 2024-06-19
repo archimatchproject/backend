@@ -1,4 +1,3 @@
-from app.cms.models.utils.Block import Block
-from app.cms.models.utils.SliderImage import SliderImage
-
-from .Blog import Blog
+from app.cms.models.Block import Block
+from app.cms.models.Blog import Blog
+from app.cms.models.SliderImage import SliderImage

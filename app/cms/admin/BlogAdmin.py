@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.cms.admin.utils.BlockAdmin import BlockInline
+from app.cms.admin.BlockAdmin import BlockInline
 from app.cms.models import Blog
 
 

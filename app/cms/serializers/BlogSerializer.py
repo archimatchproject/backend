@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.cms.models import Block, Blog
-from app.cms.serializers.utils.BlockSerializer import BlockSerializer
+from app.cms.serializers.BlockSerializer import BlockSerializer
 
 
 class BlogInputSerializer(serializers.ModelSerializer):

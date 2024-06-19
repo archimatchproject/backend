@@ -1,8 +1,7 @@
 from django.db import models
 
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.models.ArchitectType import ArchitectType
-from app.users.models.utils.ArchitectPreferences import (
+from app.users.models.ArchitectPreferences import (
     BudgetType,
     HouseType,
     LocationType,
@@ -10,6 +9,7 @@ from app.users.models.utils.ArchitectPreferences import (
     WorkSurfaceType,
     WorkType,
 )
+from app.users.models.ArchitectType import ArchitectType
 from app.utils.models import BaseModel
 
 
@@ -63,4 +63,5 @@ class Architect(BaseModel):
     class Meta:
         """Meta class for Architect model."""
 
+        verbose_name = "Architect"
         verbose_name_plural = "Architects"
