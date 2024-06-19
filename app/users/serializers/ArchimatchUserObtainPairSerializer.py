@@ -20,9 +20,6 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
     This serializer extends TokenObtainPairSerializer to include user
     data in the token response.
 
-    Methods:
-        get_token(cls, user):
-            Returns the token with additional user data serialized.
     """
 
     @classmethod

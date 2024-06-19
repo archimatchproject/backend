@@ -6,10 +6,6 @@ This module defines the ArchitectType model, representing types of architects.
 Classes:
     ArchitectType: Model representing types of architects.
 
-Attributes:
-    - display (CharField): Name or display title of the architect type, maximum length of 255 characters.
-    - icon (ImageField, optional): Optional icon representing the architect type, stored in 'ArchitectTypeIcons/' directory.
-    - short_def (TextField): Brief description or definition of the architect type, maximum length of 1000 characters.
 """
 
 from django.db import models

@@ -7,23 +7,6 @@ Description:
     Admin configuration for the ArchimatchUser model. Registers the ArchimatchUser model with the Django admin interface
     and defines how the user data is displayed and managed.
 
-Attributes:
-    model: Specifies the ArchimatchUser model to be administered.
-
-    list_display: Specifies the fields to display in the list view of users in the admin interface.
-
-    fieldsets: Specifies the organization of fields in the detail view of user instances, divided into sections.
-
-    add_fieldsets: Specifies the layout of fields when adding a new user instance through the admin interface.
-
-Functions:
-    - __init__(self, model_admin_site)
-        Initializes the ArchimatchUserAdmin instance.
-
-        Parameters:
-            model_admin_site: The admin site instance for which this admin is being registered.
-
-    - No additional methods are defined in this class.
 """
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin

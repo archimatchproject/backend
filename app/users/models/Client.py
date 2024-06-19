@@ -6,8 +6,6 @@ This module defines the Client model, representing a client in the Archimatch ap
 Classes:
     Client: Model representing a client.
 
-Attributes:
-    - user (OneToOneField): Associated ArchimatchUser instance for this client.
 """
 
 from django.db import models

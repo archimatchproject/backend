@@ -12,11 +12,6 @@ Description:
 This module registers the Architect and ArchitectType models with the Django admin interface
 and defines custom forms and configurations for managing these models.
 
-Attributes:
-- No module-level attributes defined.
-
-Functions:
-- No module-level functions defined.
 """
 
 from django import forms
@@ -35,8 +30,7 @@ class ArchitectForm(forms.ModelForm):
         - fields: Specifies to include all fields of the Architect model.
         - widgets: Specifies custom widgets for multi-select fields.
 
-    Methods:
-    - No additional methods are defined in this class.
+
     """
 
     class Meta:
@@ -65,8 +59,6 @@ class ArchitectAdmin(admin.ModelAdmin):
     - model: Specifies the Architect model.
     - form: Specifies the custom form (ArchitectForm) to use for managing Architect instances.
 
-    Methods:
-    - No additional methods are defined in this class.
     """
 
     model = Architect
@@ -83,8 +75,6 @@ class ArchitectTypeAdmin(admin.ModelAdmin):
     Attributes:
     - model: Specifies the ArchitectType model.
 
-    Methods:
-    - No additional methods are defined in this class.
     """
 
     model = ArchitectType

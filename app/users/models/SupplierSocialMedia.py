@@ -6,10 +6,6 @@ This module defines the SupplierSocialMedia model, representing social media lin
 Classes:
     SupplierSocialMedia: Model representing social media links for suppliers.
 
-Attributes:
-    - facebook (CharField): Facebook profile link of the supplier, maximum length of 255 characters.
-    - instagram (CharField): Instagram profile link of the supplier, maximum length of 255 characters.
-    - website (CharField): Website link of the supplier, maximum length of 255 characters.
 """
 
 from django.db import models

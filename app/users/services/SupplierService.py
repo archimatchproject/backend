@@ -5,14 +5,6 @@ This module defines the SupplierService class that handles supplier-related oper
 
 Classes:
     SupplierService: Service class for supplier-related operations.
-
-Modules Required:
-    - jwt: JSON Web Token implementation for token-based authentication.
-    - rest_framework: Django REST framework for handling web APIs.
-    - app.users.models.ArchimatchUser: Model representing users in the Archimatch application.
-    - app.users.models.Supplier: Model representing suppliers in the Archimatch application.
-    - app.users.models.SupplierSocialMedia: Model representing social media links for suppliers.
-    - app.users.serializers.SupplierSerializer: Serializer for the Supplier model.
 """
 
 import jwt
@@ -32,30 +24,6 @@ class SupplierService:
     Attributes:
         serializer_class (Serializer): Serializer class for the Supplier model.
 
-    Methods:
-        handle_user_data(request_keys, expected_keys):
-            Validates the presence of expected keys in request data.
-
-        supplier_signup(request):
-            Registers a new supplier in the system.
-
-        supplier_login(request):
-            Authenticates a supplier using email and checks if they have set a password.
-
-        supplier_first_connection(request):
-            Updates a supplier's initial profile information including company details and phone number.
-
-        supplier_update_profile(request):
-            Updates a supplier's profile information excluding general settings and social media links.
-
-        supplier_update_general_settings(request):
-            Updates a supplier's general settings such as bio or other preferences.
-
-        supplier_update_links(request):
-            Updates a supplier's social media links.
-
-    Raises:
-        APIException: If there are errors during supplier operations.
     """
 
     serializer_class = SupplierSerializer

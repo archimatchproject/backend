@@ -29,27 +29,6 @@ class AdminService:
     creating admin users, updating admin user data, decoding tokens, retrieving
     admin users by various criteria, handling user data validation, and admin login.
 
-    Methods:
-        create_admin(data):
-            Creates a new admin user with the provided data.
-
-        update_admin(instance, data):
-            Updates an existing admin user instance with the provided data.
-
-        decode_token(token):
-            Decodes the provided JWT token using the SECRET_KEY environment variable.
-
-        get_admin_by_user_id(user_id):
-            Retrieves an admin user based on the provided user ID.
-
-        retrieve_by_token(request):
-            Retrieves an admin user based on the JWT token extracted from the request.
-
-        handle_user_data(request_keys, expected_keys):
-            Validates the presence of expected keys in the request data.
-
-        admin_login(request):
-            Authenticates an admin user based on the provided email address.
 
     """
 

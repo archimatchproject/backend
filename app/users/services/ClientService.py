@@ -6,12 +6,6 @@ This module defines the ClientService class that handles client-related operatio
 Classes:
     ClientService: Service class for client-related operations.
 
-Modules Required:
-    - jwt: JSON Web Token implementation for token-based authentication.
-    - rest_framework: Django REST framework for handling web APIs.
-    - app.users.models.ArchimatchUser: Model representing users in the Archimatch application.
-    - app.users.models.Client: Model representing clients in the Archimatch application.
-    - app.users.serializers.ClientSerializer: Serializer for the Client model.
 """
 
 import jwt
@@ -27,15 +21,6 @@ class ClientService:
     """
     Service class for handling client-related operations such as login using email or phone number.
 
-    Methods:
-        handle_user_data(request_keys, expected_keys):
-            Validates the presence of expected keys in request data.
-
-        client_login_email(request):
-            Authenticates a client using email and checks if they have set a password.
-
-        client_login_phone(request):
-            Authenticates a client using phone number and checks if they have set a password.
     """
 
     @classmethod

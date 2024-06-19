@@ -3,17 +3,6 @@ Module: app.permissions
 
 Class: IsSuperUser
 
-Methods:
-    - has_permission(self, request, view)
-        Check if the user is authenticated and a super user.
-
-        Parameters:
-            self: Instance of the IsSuperUser class.
-            request: HTTP request object.
-            view: Django view object being accessed.
-
-        Returns:
-            bool: True if the user is authenticated and a super user, False otherwise.
 """
 from rest_framework.permissions import BasePermission
 

@@ -6,12 +6,6 @@ This module defines the ArchimatchUserService class that provides methods for ha
 Classes:
     ArchimatchUserService: Service class for handling user data and password creation.
 
-Exceptions:
-    APIException: Raised for API-related errors.
-
-Modules Required:
-    - rest_framework: Django REST framework for handling web APIs.
-    - app.users.models.ArchimatchUser: Model representing users in the Archimatch application.
 """
 
 from rest_framework import status
@@ -25,12 +19,7 @@ class ArchimatchUserService:
     """
     Service class for handling user data and password creation in the Archimatch application.
 
-    Methods:
-        handle_user_data(request_keys, expected_keys):
-            Validates the presence of expected keys in request data.
 
-        create_password(request):
-            Creates or updates the password for a user based on provided data.
     """
 
     @classmethod

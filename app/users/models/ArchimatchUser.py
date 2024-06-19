@@ -24,10 +24,6 @@ class ArchimatchUser(AbstractUser):
         groups (ManyToManyField): Groups to which the user belongs.
         user_permissions (ManyToManyField): Permissions assigned to the user.
 
-    Methods:
-        __str__(): Returns the email address of the user as a string representation.
-        get_user_type(): Returns the user type of the user.
-        save(*args, **kwargs): Custom save method to set the username to email if not provided.
     """
 
     image = models.ImageField(blank=True, null=True, upload_to="ProfileImages/")

@@ -23,11 +23,6 @@ class Admin(BaseModel):
         super_user (BooleanField): Indicates if the user has superuser privileges.
         user (OneToOneField): Associated ArchimatchUser instance for this admin.
         permissions (ManyToManyField): Permissions granted to this admin.
-
-    Methods:
-        __str__(): Returns the email address of the associated user.
-        set_permissions(rights): Assigns permissions based on a list of rights.
-        has_permission(perm): Checks if the admin has a specific permission.
     """
 
     super_user = models.BooleanField(default=False)

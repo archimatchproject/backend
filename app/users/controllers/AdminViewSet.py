@@ -3,46 +3,6 @@ Module: app.views.admin
 
 Class: AdminViewSet
 
-Methods:
-    - create(self, request, *args, **kwargs)
-        Create a new admin based on the request data.
-
-        Parameters:
-            self: Instance of the AdminViewSet class.
-            request: HTTP request object containing admin data.
-
-        Returns:
-            Response: Response indicating success or failure of admin creation.
-
-    - update(self, request, *args, **kwargs)
-        Update an existing admin instance.
-
-        Parameters:
-            self: Instance of the AdminViewSet class.
-            request: HTTP request object containing updated admin data.
-
-        Returns:
-            Response: Response indicating success or failure of admin update.
-
-    - retrieve_by_token(self, request)
-        Retrieve admin details using a token provided in the request.
-
-        Parameters:
-            self: Instance of the AdminViewSet class.
-            request: HTTP request object containing token.
-
-        Returns:
-            Response: Response containing admin details retrieved using the token.
-
-    - login(self, request)
-        Log in an admin using credentials provided in the request.
-
-        Parameters:
-            self: Instance of the AdminViewSet class.
-            request: HTTP request object containing login credentials.
-
-        Returns:
-            Response: Response indicating success or failure of admin login.
 """
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -64,18 +24,6 @@ class AdminViewSet(viewsets.ModelViewSet):
         queryset: Queryset containing all Admin instances.
         permission_classes: List of permission classes for this ViewSet.
 
-    Methods:
-        create(self, request, *args, **kwargs)
-            Create a new admin based on the request data.
-
-        update(self, request, *args, **kwargs)
-            Update an existing admin instance.
-
-        retrieve_by_token(self, request)
-            Retrieve admin details using a token provided in the request.
-
-        login(self, request)
-            Log in an admin using credentials provided in the request.
     """
 
     serializer_class = AdminSerializer
