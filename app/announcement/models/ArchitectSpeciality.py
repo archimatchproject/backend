@@ -7,7 +7,7 @@ the specialty of an architect in the application.
 
 from django.db import models
 
-from app.announcement.models.LabeledIcon import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class ArchitectSpeciality(LabeledIcon):

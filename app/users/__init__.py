@@ -8,3 +8,8 @@ USER_TYPE_CHOICES = [
 PERMISSION_CODENAMES = {
     "manage_blog": ["add_blog", "change_blog", "delete_blog", "view_blog"],
 }
+
+APPEARANCES = [
+    ("Petite", "Petite"),
+    ("Grande", "Grande"),
+]

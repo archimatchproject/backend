@@ -22,8 +22,8 @@ from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
+from app.core.models import BaseModel
 from app.users.models import Client
-from app.utils.models import BaseModel
 
 
 class Announcement(BaseModel):

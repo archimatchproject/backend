@@ -10,6 +10,7 @@ Classes:
 
 from django.db import models
 
+from app.core.models import BaseModel
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.ArchitectPreferences import (
     BudgetType,
@@ -20,7 +21,6 @@ from app.users.models.ArchitectPreferences import (
     WorkType,
 )
 from app.users.models.ArchitectType import ArchitectType
-from app.utils.models import BaseModel
 
 
 class Architect(BaseModel):

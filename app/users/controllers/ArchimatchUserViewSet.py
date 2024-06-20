@@ -103,7 +103,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         url_path="create-password",
         serializer_class=ArchimatchUserCreatePWSerializer,
     )
-    def create_password(self, request):
+    def archimatch_user_create_password(self, request):
         """
         Action to create a password for an ArchimatchUser.
 
@@ -113,4 +113,17 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of password creation.
         """
-        return ArchimatchUserService.create_password(request)
+        return ArchimatchUserService.archimatch_user_create_password(request)
+
+    @action(detail=False, methods=["POST"], url_path="reset-password")
+    def archimatch_user_reset_password(self, request):
+        """
+        Action to reset a password for an ArchimatchUser.
+
+        Args:
+            request (Request): HTTP request object containing user data.
+
+        Returns:
+            Response: HTTP response object indicating success or failure of password reset.
+        """
+        return ArchimatchUserService.archimatch_user_reset_password(request)

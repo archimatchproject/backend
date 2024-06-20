@@ -8,8 +8,8 @@ representing different aspects of a project in the application.
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.announcement.models.LabeledIcon import LabeledIcon
 from app.announcement.models.ProjectCategory import ProjectCategory
+from app.core.models import LabeledIcon
 
 
 class ProjectExtension(LabeledIcon):

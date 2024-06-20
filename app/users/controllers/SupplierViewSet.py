@@ -30,10 +30,10 @@ class SupplierViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="signup",
+        url_path="signup",
         serializer_class=UserAuthSerializer,
     )
-    def signup(self, request):
+    def supplier_signup(self, request):
         """
         Allows a supplier to sign up using a custom action.
 
@@ -50,10 +50,10 @@ class SupplierViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="login",
+        url_path="login",
         serializer_class=UserAuthSerializer,
     )
-    def login(self, request):
+    def supplier_login(self, request):
         """
         Allows a supplier to login using a custom action.
 
@@ -70,7 +70,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="first_connection",
+        url_path="first-connection",
     )
     def supplier_first_cnx(self, request):
         """
@@ -86,10 +86,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         return SupplierService.supplier_first_connection(request)
 
     @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_profile",
+        detail=False, methods=["PUT"], permission_classes=[], url_path="update-profile"
     )
     def supplier_update_profile(self, request):
         """
@@ -104,30 +101,36 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_update_profile(request)
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_general_settings",
-    )
-    def supplier_update_general_settings(self, request):
+    @action(detail=False, methods=["PUT"], url_path="update-bio")
+    def supplier_update_bio(self, request):
         """
-        Allows a supplier to update their general settings using a custom action.
+        Allows a supplier to update their bio settings using a custom action.
 
         Args:
             self (SupplierViewSet): Instance of the SupplierViewSet class.
-            request (Request): HTTP request object containing general settings update data.
+            request (Request): HTTP request object containing bio settings update data.
 
         Returns:
-            Response: Response indicating success or failure of the general settings update attempt.
+            Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_general_settings(request)
+        return SupplierService.supplier_update_bio(request)
+
+    @action(detail=False, methods=["PUT"], url_path="update-presentation-video")
+    def supplier_update_presentation_video(self, request):
+        """
+        Allows a supplier to update their bio settings using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_presentation_video(request)
 
     @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_links",
+        detail=False, methods=["PUT"], permission_classes=[], url_path="update-links"
     )
     def supplier_update_links(self, request):
         """
