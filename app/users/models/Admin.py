@@ -10,9 +10,9 @@ Classes:
 from django.contrib.auth.models import Permission
 from django.db import models
 
+from app.core.models import BaseModel
 from app.users import PERMISSION_CODENAMES
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.utils.models import BaseModel
 
 
 class Admin(BaseModel):

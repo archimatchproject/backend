@@ -4,9 +4,6 @@ Module-level Doc for BaseModel
 from django.db import models
 from django.utils import timezone
 
-from app.cms.models import *
-from app.users.models import *
-
 
 class BaseModel(models.Model):
     """

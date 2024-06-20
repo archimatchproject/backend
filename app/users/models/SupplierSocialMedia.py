@@ -10,7 +10,7 @@ Classes:
 
 from django.db import models
 
-from app.utils.models import BaseModel
+from app.core.models import BaseModel
 
 
 class SupplierSocialMedia(BaseModel):

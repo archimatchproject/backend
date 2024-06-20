@@ -7,7 +7,7 @@ in the application, inheriting from the LabeledIcon base class.
 
 from django.db import models
 
-from app.announcement.models.LabeledIcon import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class ProjectCategory(LabeledIcon):

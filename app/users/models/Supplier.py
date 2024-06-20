@@ -9,9 +9,11 @@ Classes:
 
 from django.db import models
 
+from app.core.models import BaseModel
+from app.users import APPEARANCES
 from app.users.models import ArchimatchUser
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
-from app.utils.models import BaseModel
+from app.users.models.SupplierSpeciality import SupplierSpeciality
 
 
 class Supplier(BaseModel):
@@ -29,14 +31,17 @@ class Supplier(BaseModel):
         user (OneToOneField): Associated ArchimatchUser instance for this supplier.
     """
 
-    address = models.CharField(max_length=255, default="")
-    speciality = models.CharField(max_length=255, default="")
+    company_address = models.CharField(max_length=255, default="")
+    company_speciality = models.CharField(max_length=255, default="")
     bio = models.TextField(max_length=1000, default="")
     company_name = models.CharField(max_length=255, default="")
     presentation_video = models.FileField(
         upload_to="SupplierVideos/", blank=True, null=True
     )
-    type = models.TextField(max_length=1000, default="")
+    speciality_type = models.ManyToManyField(
+        SupplierSpeciality, related_name="speciality_type_suppliers"
+    )
+    appearance = models.CharField(max_length=10, choices=APPEARANCES, default="Petite")
     social_links = models.OneToOneField(
         SupplierSocialMedia, blank=True, null=True, on_delete=models.CASCADE
     )

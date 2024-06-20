@@ -14,6 +14,9 @@ from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSeriali
 from app.users.serializers.SupplierSocialMediaSerializer import (
     SupplierSocialMediaSerializer,
 )
+from app.users.serializers.SupplierSpecialitySerializer import (
+    SupplierSpecialitySerializer,
+)
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -25,10 +28,12 @@ class SupplierSerializer(serializers.ModelSerializer):
     Fields:
         user: Nested serializer for the ArchimatchUser associated with the supplier.
         social_links: Nested serializer for the SupplierSocialMedia associated with the supplier.
+        speciality_type: Nested serializer for the SupplierSpeciality associated with the supplier.
     """
 
     user = ArchimatchUserSerializer(required=True)
     social_links = SupplierSocialMediaSerializer()
+    speciality_type = SupplierSpecialitySerializer(many=True)
 
     class Meta:
         """

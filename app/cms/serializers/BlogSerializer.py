@@ -78,7 +78,7 @@ class BlogOutputSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blocks"]
+        fields = ["id", "title", "cover_photo", "blog_blocks"]
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -93,7 +93,7 @@ class BlogSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blocks"]
+        fields = ["id", "title", "cover_photo", "blog_blocks"]
 
     def to_representation(self, instance):
         """

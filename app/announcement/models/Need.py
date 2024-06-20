@@ -8,7 +8,7 @@ in the application, inheriting from the LabeledIcon base class.
 from django.db import models
 
 from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
-from app.announcement.models.LabeledIcon import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class Need(LabeledIcon):
