@@ -114,3 +114,16 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of password creation.
         """
         return ArchimatchUserService.create_password(request)
+
+    @action(detail=False, methods=["POST"], url_path="reset-password")
+    def reset_password(self, request):
+        """
+        Action to reset a password for an ArchimatchUser.
+
+        Args:
+            request (Request): HTTP request object containing user data.
+
+        Returns:
+            Response: HTTP response object indicating success or failure of password reset.
+        """
+        return ArchimatchUserService.reset_password(request)

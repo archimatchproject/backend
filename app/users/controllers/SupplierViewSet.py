@@ -44,7 +44,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the signup attempt.
         """
-        return SupplierService.supplier_signup(request)
+        return SupplierService.signup(request)
 
     @action(
         detail=False,
@@ -64,15 +64,15 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the login attempt.
         """
-        return SupplierService.supplier_login(request)
+        return SupplierService.login(request)
 
     @action(
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="first_connection",
+        url_path="first-connection",
     )
-    def supplier_first_cnx(self, request):
+    def first_cnx(self, request):
         """
         Handles the first connection setup for a supplier using a custom action.
 
@@ -83,15 +83,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the first connection attempt.
         """
-        return SupplierService.supplier_first_connection(request)
+        return SupplierService.first_connection(request)
 
     @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_profile",
+        detail=False, methods=["PUT"], permission_classes=[], url_path="update-profile"
     )
-    def supplier_update_profile(self, request):
+    def update_profile(self, request):
         """
         Allows a supplier to update their profile information using a custom action.
 
@@ -102,34 +99,40 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the profile update attempt.
         """
-        return SupplierService.supplier_update_profile(request)
+        return SupplierService.update_profile(request)
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_general_settings",
-    )
-    def supplier_update_general_settings(self, request):
+    @action(detail=False, methods=["PUT"], url_path="update-bio")
+    def update_bio(self, request):
         """
-        Allows a supplier to update their general settings using a custom action.
+        Allows a supplier to update their bio settings using a custom action.
 
         Args:
             self (SupplierViewSet): Instance of the SupplierViewSet class.
-            request (Request): HTTP request object containing general settings update data.
+            request (Request): HTTP request object containing bio settings update data.
 
         Returns:
-            Response: Response indicating success or failure of the general settings update attempt.
+            Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_general_settings(request)
+        return SupplierService.update_bio(request)
+
+    @action(detail=False, methods=["PUT"], url_path="update-presentation-video")
+    def update_presentation_video(self, request):
+        """
+        Allows a supplier to update their bio settings using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.update_presentation_video(request)
 
     @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="update_links",
+        detail=False, methods=["PUT"], permission_classes=[], url_path="update-links"
     )
-    def supplier_update_links(self, request):
+    def update_links(self, request):
         """
         Allows a supplier to update their social media links using a custom action.
 
@@ -140,4 +143,4 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the social media links update attempt.
         """
-        return SupplierService.supplier_update_links(request)
+        return SupplierService.update_links(request)
