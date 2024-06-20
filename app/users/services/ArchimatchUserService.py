@@ -12,8 +12,8 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from app.core.validation.exceptions import UserDataException
 from app.users.models import ArchimatchUser
-from app.users.services.validation.exceptions import UserDataException
 
 
 class ArchimatchUserService:
@@ -40,7 +40,7 @@ class ArchimatchUserService:
             raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
-    def create_password(cls, request):
+    def archimatch_user_create_password(cls, request):
         """
         Creates or updates the password for a user based on provided data.
 
@@ -98,7 +98,7 @@ class ArchimatchUserService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def reset_password(cls, request):
+    def archimatch_user_reset_password(cls, request):
         """
         Resest the password for a user based on provided data.
 

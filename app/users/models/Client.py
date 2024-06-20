@@ -10,8 +10,8 @@ Classes:
 
 from django.db import models
 
+from app.core.models import BaseModel
 from app.users.models import ArchimatchUser
-from app.utils.models import BaseModel
 
 
 class Client(BaseModel):

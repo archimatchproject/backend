@@ -12,10 +12,10 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from app.core.validation.exceptions import UserDataException
 from app.users.models import ArchimatchUser, Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.serializers import SupplierSerializer
-from app.users.services.validation.exceptions import UserDataException
 
 
 class SupplierService:
@@ -46,7 +46,7 @@ class SupplierService:
             raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
-    def signup(cls, request):
+    def supplier_signup(cls, request):
         """
         Registers a new supplier in the system.
 
@@ -96,7 +96,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def login(cls, request):
+    def supplier_login(cls, request):
         """
         Authenticates a supplier using email and checks if they have set a password.
 
@@ -146,7 +146,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def first_connection(cls, request):
+    def supplier_first_connection(cls, request):
         """
         Updates a supplier's initial profile information including company details and phone number.
 
@@ -212,7 +212,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def update_profile(cls, request):
+    def supplier_update_profile(cls, request):
         """
         Updates a supplier's profile information excluding general settings and social media links.
 
@@ -273,7 +273,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def update_bio(cls, request):
+    def supplier_update_bio(cls, request):
         """
         Updates a supplier's BIO such as bio or other preferences.
 
@@ -319,7 +319,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def update_presentation_video(cls, request):
+    def supplier_update_presentation_video(cls, request):
         """
         Updates a supplier's Presentaion VIdeo such as bio or other preferences.
 
@@ -369,7 +369,7 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def update_links(cls, request):
+    def supplier_update_links(cls, request):
         """
         Updates a supplier's social media links.
 
@@ -406,7 +406,9 @@ class SupplierService:
             }
 
             if not supplier.social_links:
-                social_links = SupplierSocialMedia.objects.create(**social_links_data)
+                social_links, created = SupplierSocialMedia.objects.update_or_create(
+                    **social_links_data
+                )
                 supplier.social_links = social_links
                 supplier.save()
             else:

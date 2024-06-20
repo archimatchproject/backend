@@ -9,11 +9,11 @@ Classes:
 
 from django.db import models
 
+from app.core.models import BaseModel
 from app.users import APPEARANCES
 from app.users.models import ArchimatchUser
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.models.SupplierSpeciality import SupplierSpeciality
-from app.utils.models import BaseModel
 
 
 class Supplier(BaseModel):

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from app.announcement.models.ProjectCategory import ProjectCategory
-from app.utils.models import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class ProjectExtension(LabeledIcon):

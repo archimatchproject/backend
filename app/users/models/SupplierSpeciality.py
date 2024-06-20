@@ -5,7 +5,7 @@ This module defines the SupplierSpeciality, representing a supplier in the Archi
 """
 from django.db import models
 
-from app.utils.models import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class SupplierSpeciality(LabeledIcon):

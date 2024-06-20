@@ -7,7 +7,7 @@ representing different aspects of a project in the application.
 from django.db import models
 
 from app.announcement.models.ProjectCategory import ProjectCategory
-from app.utils.models import LabeledIcon
+from app.core.models import LabeledIcon
 
 
 class PropertyType(LabeledIcon):
