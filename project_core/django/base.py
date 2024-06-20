@@ -9,7 +9,6 @@ import environ
 from project_core.env import BASE_DIR
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
-from project_core.settings.file_and_storage import *
 from project_core.settings.jwt import *
 
 env = environ.Env()
