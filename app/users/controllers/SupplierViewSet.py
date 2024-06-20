@@ -28,7 +28,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="signup",
         serializer_class=UserAuthSerializer,
@@ -48,7 +48,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="login",
         serializer_class=UserAuthSerializer,
@@ -68,7 +68,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="first_connection",
     )
@@ -87,7 +87,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="update_profile",
     )
@@ -106,7 +106,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="update_general_settings",
     )
@@ -125,7 +125,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="update_links",
     )

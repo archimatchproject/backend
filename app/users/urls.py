@@ -5,11 +5,6 @@ Description:
 This module defines URL patterns for the Archimatch application using Django's path() function.
 It includes routing configurations for various API endpoints using Django Rest Framework's DefaultRouter.
 
-Classes:
-- No classes defined in this module.
-
-Functions:
-- No functions defined in this module.
 """
 
 from django.urls import include, path

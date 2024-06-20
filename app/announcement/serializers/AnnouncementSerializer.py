@@ -1,3 +1,14 @@
+"""
+Module defining serializers for the Announcement model.
+
+This module contains the AnnouncementInputSerializer, AnnouncementOutputSerializer,
+and AnnouncementSerializer classes, which handle the serialization and deserialization
+of Announcement instances for API views.
+"""
+
+from django.core.exceptions import ValidationError
+from django.db import models
+
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
@@ -30,6 +41,14 @@ from app.users.serializers import ClientSerializer
 
 
 class AnnouncementInputSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating and updating Announcement instances.
+
+    This serializer handles the input validation and creation/updating
+    logic for Announcement instances.
+
+    """
+
     client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
@@ -55,6 +74,12 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """
+        Meta class for Announcement Serializer.
+
+        Defines display fields.
+        """
+
         model = Announcement
         fields = [
             "id",
@@ -77,6 +102,15 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """
+        Create a new Announcement instance.
+
+        Args:
+            validated_data (dict): Validated data for the announcement.
+
+        Returns:
+            Announcement: The created Announcement instance.
+        """
         needs_data = validated_data.pop("needs")
         pieces_renovate_data = validated_data.pop("pieces_renovate")
         project_extensions_data = validated_data.pop("project_extensions")
@@ -93,6 +127,16 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
         return announcement
 
     def update(self, instance, validated_data):
+        """
+        Update an existing Announcement instance.
+
+        Args:
+            instance (Announcement): The Announcement instance to update.
+            validated_data (dict): Validated data for updating the announcement.
+
+        Returns:
+            Announcement: The updated Announcement instance.
+        """
         needs_data = validated_data.pop("needs")
         pieces_renovate_data = validated_data.pop("pieces_renovate")
         project_extensions_data = validated_data.pop("project_extensions")
@@ -114,6 +158,13 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
 
 
 class AnnouncementOutputSerializer(serializers.ModelSerializer):
+    """
+    Serializer for retrieving Announcement instances.
+
+    This serializer handles the output representation of Announcement instances,
+    including related fields serialized with their respective serializers.
+    """
+
     client = ClientSerializer()
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
@@ -125,6 +176,12 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     project_images = ProjectImageSerializer(many=True, required=False)
 
     class Meta:
+        """
+        Meta class for Announcement Serializer.
+
+        Defines display fields.
+        """
+
         model = Announcement
         fields = [
             "id",
@@ -146,15 +203,32 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "project_images",
         ]
 
-    """def to_representation(self, instance):
-        data = super().to_representation(instance)
-        client_user = instance.client.user
-        data["client_user_has_password"] = (client_user.password == "")
-        return data"""
+    # def to_representation(self, instance):
+    #     """
+    #     Custom representation method to add additional fields.
+    #     """
+    #     data = super().to_representation(instance)
+    #     client_user = instance.client.user
+    #     data["client_user_has_password"] = (client_user.password == "")
+    #     return data
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):
+    """
+    Combined serializer for Announcement instances.
+
+    This serializer combines both input and output serializers for Announcement instances,
+    providing methods for converting between internal and external representations.
+
+    """
+
     class Meta:
+        """
+        Meta class for Announcement Serializer.
+
+        Defines display fields.
+        """
+
         model = Announcement
         fields = [
             "id",
@@ -177,18 +251,57 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         ]
 
     def to_representation(self, instance):
+        """
+        Convert the Announcement instance to an external representation.
+
+        Args:
+            instance (Announcement): The Announcement instance to represent.
+
+        Returns:
+            dict: The external representation of the announcement.
+        """
         serializer = AnnouncementOutputSerializer(instance)
         return serializer.data
 
     def to_internal_value(self, data):
+        """
+        Convert the external data to an internal representation.
+
+        Args:
+            data (dict): The external data to convert.
+
+        Returns:
+            dict: The internal representation of the data.
+        """
         serializer = AnnouncementInputSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 
     def create(self, validated_data):
+        """
+        Create a new Announcement instance.
+
+        Args:
+            validated_data (dict): The validated data for the announcement.
+
+        Returns:
+            Announcement: The created Announcement
+            Returns:
+            Announcement: The created Announcement instance.
+        """
         input_serializer = AnnouncementInputSerializer()
         return input_serializer.create(validated_data)
 
     def update(self, instance, validated_data):
+        """
+        Update an existing Announcement instance.
+
+        Args:
+            instance (Announcement): The Announcement instance to update.
+            validated_data (dict): The validated data for updating the announcement.
+
+        Returns:
+            Announcement: The updated Announcement instance.
+        """
         input_serializer = AnnouncementInputSerializer()
         return input_serializer.update(instance, validated_data)

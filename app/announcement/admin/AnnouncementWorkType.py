@@ -1,3 +1,10 @@
+"""
+Module for custom admin configurations for the AnnouncementWorkType model.
+
+This module contains the AnnouncementWorkTypeAdmin class for customizing
+the Django admin interface for the AnnouncementWorkType model.
+"""
+
 from django.contrib import admin
 
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
@@ -9,13 +16,6 @@ class AnnouncementWorkTypeAdmin(admin.ModelAdmin):
 
     This class provides customizations for the admin interface of
     the AnnouncementWorkType model in the Django admin site.
-
-    Attributes:
-        list_display (tuple): Specifies the fields to display in the list view of the admin interface.
-        search_fields (tuple): Specifies the fields that can be searched in the admin interface.
-
-    Methods:
-        None
     """
 
     list_display = ("id", "header", "description")

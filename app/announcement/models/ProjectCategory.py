@@ -1,3 +1,10 @@
+"""
+Module defining the ProjectCategory model.
+
+This module contains the ProjectCategory class, which represents a category of project
+in the application, inheriting from the LabeledIcon base class.
+"""
+
 from django.db import models
 
 from app.announcement.models.LabeledIcon import LabeledIcon
@@ -9,14 +16,16 @@ class ProjectCategory(LabeledIcon):
 
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
-
-    This class inherits all fields and behavior from LabeledIcon.
     """
 
     pass
 
     class Meta:
-        """Meta class for Project Category model."""
+        """
+        Meta class for Project Category model.
+
+        Provides verbose names for the model in the Django admin interface.
+        """
 
         verbose_name = "Project Category"
         verbose_name_plural = "Project Categories"

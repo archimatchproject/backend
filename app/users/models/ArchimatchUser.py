@@ -28,13 +28,15 @@ class ArchimatchUser(AbstractUser):
 
     image = models.ImageField(blank=True, null=True, upload_to="ProfileImages/")
     phone_number = models.CharField(max_length=20, unique=True)
-    user_type = models.CharField(max_length=200, choices=USER_TYPE_CHOICES)
+    user_type = models.CharField(
+        max_length=200, choices=USER_TYPE_CHOICES, default=USER_TYPE_CHOICES[0]
+    )
 
     groups = models.ManyToManyField(
-        Group, related_name="archimatchuser_set", blank=True
+        Group, related_name="groups_archimatchuser_set", blank=True
     )
     user_permissions = models.ManyToManyField(
-        Permission, related_name="archimatchuser_set", blank=True
+        Permission, related_name="user_permissions_archimatchuser_set", blank=True
     )
 
     def __str__(self):

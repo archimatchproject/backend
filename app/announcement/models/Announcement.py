@@ -1,3 +1,10 @@
+"""
+Module defining the Announcement model.
+
+This module contains the Announcement class, which represents an announcement
+for a construction or renovation project in the application.
+"""
+
 from django.db import models
 
 from app.announcement import (
@@ -40,41 +47,54 @@ class Announcement(BaseModel):
         architectural_style (CharField): Architectural style preferred for the project, selected from predefined choices.
         project_extensions (ManyToManyField): Extensions or additional features planned for the project.
         project_images (ManyToManyField): Images related to the project, optional.
-
-    Methods:
-        __str__(): Returns a string representation of the announcement.
     """
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality, on_delete=models.CASCADE
     )
-    needs = models.ManyToManyField(Need, related_name="announcements")
+    needs = models.ManyToManyField(Need, related_name="needs_announcements")
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
     work_type = models.ForeignKey(AnnouncementWorkType, on_delete=models.CASCADE)
     pieces_renovate = models.ManyToManyField(
-        PieceRenovate, related_name="announcements"
+        PieceRenovate, related_name="pieces_renovate_announcements"
     )
     address = models.CharField(max_length=255)
-    city = models.CharField(max_length=50, choices=CITIES)
-    terrain_surface = models.CharField(max_length=50, choices=TERRAIN_SURFACES)
-    work_surface = models.CharField(max_length=50, choices=WORK_SURFACES)
-    budget = models.CharField(max_length=50, choices=BUDGETS)
+    city = models.CharField(max_length=50, choices=CITIES, default=CITIES[0])
+    terrain_surface = models.CharField(
+        max_length=50, choices=TERRAIN_SURFACES, default=TERRAIN_SURFACES[0]
+    )
+    work_surface = models.CharField(
+        max_length=50, choices=WORK_SURFACES, default=WORK_SURFACES[0]
+    )
+    budget = models.CharField(max_length=50, choices=BUDGETS, default=BUDGETS[0])
     description = models.TextField()
-    architectural_style = models.CharField(max_length=50, choices=ARCHITECTURAL_STYLES)
+    architectural_style = models.CharField(
+        max_length=50, choices=ARCHITECTURAL_STYLES, default=ARCHITECTURAL_STYLES[0]
+    )
     project_extensions = models.ManyToManyField(
-        ProjectExtension, related_name="announcements"
+        ProjectExtension, related_name="project_extensions_announcements"
     )
     project_images = models.ManyToManyField(
-        ProjectImage, related_name="announcements", blank=True
+        ProjectImage, related_name="project_images_announcements", blank=True
     )
 
     def __str__(self):
+        """
+        Return a string representation of the announcement.
+
+        Returns:
+            str: String representation of the announcement, including its ID and associated client.
+        """
         return f"Announcement {self.id} for {self.client}"
 
     class Meta:
-        """Meta class for Announcement model."""
+        """
+        Meta class for Announcement model.
+
+        Defines display names in the Django admin and plural form of the model name.
+        """
 
         verbose_name = "Announcement"
         verbose_name_plural = "Announcements"

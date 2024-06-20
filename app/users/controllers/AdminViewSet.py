@@ -58,7 +58,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         return AdminService.update_admin(instance, request.data)
 
     @action(
-        detail=False, methods=["post"], permission_classes=[], name="retrieve_by_token"
+        detail=False, methods=["POST"], permission_classes=[], name="retrieve_by_token"
     )
     def retrieve_by_token(self, request):
         """
@@ -75,7 +75,7 @@ class AdminViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="login",
         serializer_class=UserAuthSerializer,

@@ -1,3 +1,6 @@
+"""
+Module-level Doc for BaseModel
+"""
 from django.db import models
 from django.utils import timezone
 

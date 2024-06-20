@@ -1,3 +1,10 @@
+"""
+Module for custom admin configurations for the ArchitectSpeciality model.
+
+This module contains the ArchitectSpecialityAdmin class for customizing
+the Django admin interface for the ArchitectSpeciality model.
+"""
+
 from django.contrib import admin
 
 from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
@@ -9,13 +16,6 @@ class ArchitectSpecialityAdmin(admin.ModelAdmin):
 
     This class provides customizations for the admin interface of
     the ArchitectSpeciality model in the Django admin site.
-
-    Attributes:
-        list_display (tuple): Specifies the fields to display in the list view of the admin interface.
-        search_fields (tuple): Specifies the fields that can be searched in the admin interface.
-
-    Methods:
-        None
     """
 
     list_display = ("id", "label", "icon")

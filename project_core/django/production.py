@@ -1,3 +1,6 @@
+"""
+Module-level constants for production configuration.
+"""
 from project_core.django.base import *
 
 DEBUG = True

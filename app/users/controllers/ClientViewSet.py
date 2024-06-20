@@ -31,7 +31,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="login",
         serializer_class=UserAuthSerializer,
@@ -51,7 +51,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         permission_classes=[],
         name="login",
         serializer_class=UserAuthPhoneSerializer,

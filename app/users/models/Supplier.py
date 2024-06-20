@@ -9,7 +9,8 @@ Classes:
 
 from django.db import models
 
-from app.users.models import ArchimatchUser, SupplierSocialMedia
+from app.users.models import ArchimatchUser
+from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.utils.models import BaseModel
 
 

@@ -1,3 +1,7 @@
+"""
+Module defining the Blog model for representing blog posts.
+"""
+
 from django.db import models
 
 
@@ -16,10 +20,17 @@ class Blog(models.Model):
     )
 
     def __str__(self):
+        """
+        String representation of the blog post.
+        """
         return self.title
 
     class Meta:
-        """Meta class for Blog model."""
+        """
+        Meta class for Blog model.
+
+        Defines display names for singular and plural forms of Blog in the Django admin.
+        """
 
         verbose_name = "Blog"
         verbose_name_plural = "Blogs"

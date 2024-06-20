@@ -1,3 +1,6 @@
+"""
+Module-level constants for base configuration.
+"""
 import os
 from pathlib import Path
 

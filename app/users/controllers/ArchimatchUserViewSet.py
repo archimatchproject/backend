@@ -99,7 +99,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["post"],
+        methods=["POST"],
         url_path="create-password",
         serializer_class=ArchimatchUserCreatePWSerializer,
     )

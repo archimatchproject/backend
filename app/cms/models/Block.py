@@ -1,3 +1,7 @@
+"""
+Module defining the Block model for representing blocks within a blog post.
+"""
+
 from django.db import models
 
 from app.cms.models.Blog import Blog
@@ -22,8 +26,10 @@ class Block(models.Model):
         ("slider", "Slider"),
     ]
 
-    blog = models.ForeignKey(Blog, related_name="blocks", on_delete=models.CASCADE)
-    block_type = models.CharField(max_length=10, choices=BLOG_BLOCK_TYPES)
+    blog = models.ForeignKey(Blog, related_name="blog_blocks", on_delete=models.CASCADE)
+    block_type = models.CharField(
+        max_length=10, choices=BLOG_BLOCK_TYPES, default=BLOG_BLOCK_TYPES[0]
+    )
     content = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="BlockImages/", blank=True, null=True)
 
@@ -34,7 +40,11 @@ class Block(models.Model):
         return f"{self.get_block_type_display()} for {self.blog.title}"
 
     class Meta:
-        """Meta class for Block model."""
+        """
+        Meta class for Block model.
+
+        Defines display names for singular and plural forms of Block in the Django admin.
+        """
 
         verbose_name = "Block"
         verbose_name_plural = "Blocks"

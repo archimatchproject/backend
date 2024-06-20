@@ -49,7 +49,7 @@ class Architect(BaseModel):
     address = models.CharField(max_length=255, default="")
     arch_identifier = models.CharField(max_length=10, default="")
     arch_type = models.ForeignKey(
-        ArchitectType, related_name="architects", on_delete=models.DO_NOTHING
+        ArchitectType, related_name="arch_type_architects", on_delete=models.DO_NOTHING
     )
     bio = models.TextField(max_length=1000, default="")
     company_name = models.CharField(max_length=255, default="")
