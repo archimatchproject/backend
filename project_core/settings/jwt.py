@@ -1,7 +1,13 @@
+"""
+Module-level constants for jwt configuration.
+"""
 from datetime import timedelta
-from decouple import config
 
-SECRET_KEY = config("SECRET_KEY")
+import environ
+
+env = environ.Env()
+
+SECRET_KEY = env("SECRET_KEY")
 
 
 SIMPLE_JWT = {

@@ -1,24 +1,17 @@
+"""
+Module-level constants for base configuration.
+"""
 import os
 from pathlib import Path
-from project_core.settings.cors import *
-from project_core.settings.jwt import *
-from project_core.settings.email_sending import *
-from project_core.settings.file_and_storage import *
+
+import environ
+
 from project_core.env import BASE_DIR
-from decouple import config
+from project_core.settings.cors import *
+from project_core.settings.email_sending import *
+from project_core.settings.jwt import *
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-    }
-}
-
-print(DATABASES["default"])
+env = environ.Env()
 
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -26,7 +19,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "rest_framework_simplejwt",
 ]
-LOCAL_APPS = ["app.users", "app.cms","app.announcement"]
+LOCAL_APPS = ["app.users", "app.cms", "app.announcement"]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
@@ -49,6 +42,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -92,6 +86,20 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
+    }
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -106,8 +114,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
-
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
