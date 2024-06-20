@@ -21,7 +21,7 @@ class BlogInputSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blocks"]
+        fields = ["id", "title", "cover_photo", "blog_blocks"]
 
     def create(self, validated_data):
         """
