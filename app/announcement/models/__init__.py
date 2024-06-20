@@ -1,1 +1,1 @@
-from .Announcement import Announcement
+from app.announcement.models.Announcement import Announcement

@@ -1,1 +1,1 @@
-from .BlogSerializer import BlogSerializer
+from app.cms.serializers.BlogSerializer import BlogSerializer
