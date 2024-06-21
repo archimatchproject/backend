@@ -10,6 +10,7 @@ from project_core.env import BASE_DIR
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
 from project_core.settings.jwt import *
+from project_core.settings.sms_sending import *
 
 env = environ.Env()
 

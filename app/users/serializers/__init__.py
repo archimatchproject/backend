@@ -15,4 +15,5 @@ from app.users.serializers.SupplierSocialMediaSerializer import (
 from app.users.serializers.UserAuthSerializer import (
     UserAuthPhoneSerializer,
     UserAuthSerializer,
+    VerifyCodeSerializer,
 )

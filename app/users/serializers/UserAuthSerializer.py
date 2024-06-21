@@ -35,3 +35,16 @@ class UserAuthPhoneSerializer(serializers.Serializer):
     """
 
     phone_number = serializers.CharField()
+
+
+class VerifyCodeSerializer(serializers.Serializer):
+    """
+    Serializer for verifying the verification code sent to the client's phone number.
+
+    Fields:
+        phone_number (str): The phone number of the client, including country code.
+        verification_code (str): The verification code sent to the client's phone number.
+    """
+
+    phone_number = serializers.CharField()
+    verification_code = serializers.CharField()
