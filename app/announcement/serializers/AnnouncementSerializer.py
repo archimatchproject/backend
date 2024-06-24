@@ -7,24 +7,32 @@ of Announcement instances for API views.
 """
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import transaction
 
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
+from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
 from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
+from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
+    AnnouncementPieceRenovateSerializer,
+)
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
 from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
+)
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
 )
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
@@ -37,6 +45,7 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.users.models import Client
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ClientSerializer
 
 
@@ -49,9 +58,12 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
 
     """
 
-    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    client = ClientSerializer(required=False)
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
+    )
+    architectural_style = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(
@@ -63,14 +75,16 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
     work_type = serializers.PrimaryKeyRelatedField(
         queryset=AnnouncementWorkType.objects.all()
     )
-    pieces_renovate = serializers.PrimaryKeyRelatedField(
-        queryset=PieceRenovate.objects.all(), many=True
+    pieces_renovate = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.IntegerField(required=True), allow_empty=False
+        )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
         queryset=ProjectExtension.objects.all(), many=True
     )
-    project_images = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectImage.objects.all(), many=True, required=False
+    project_images = serializers.ListField(
+        child=serializers.ImageField(required=False), required=False
     )
 
     class Meta:
@@ -112,17 +126,48 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
             Announcement: The created Announcement instance.
         """
         needs_data = validated_data.pop("needs")
-        pieces_renovate_data = validated_data.pop("pieces_renovate")
+        pieces_renovate_data = validated_data.pop("pieces_renovate", [])
         project_extensions_data = validated_data.pop("project_extensions")
         project_images_data = validated_data.pop("project_images", [])
 
-        announcement = Announcement.objects.create(**validated_data)
+        client_data = validated_data.pop(
+            "client", None
+        )  # Client data is optional during update
 
-        announcement.needs.set(needs_data)
-        announcement.pieces_renovate.set(pieces_renovate_data)
-        announcement.project_extensions.set(project_extensions_data)
-        if project_images_data:
-            announcement.project_images.set(project_images_data)
+        with transaction.atomic():
+            # Create ArchimatchUser instance
+            if client_data:
+                user_data = client_data.pop("user")
+                user_data["username"] = user_data["email"]
+                user_data["user_type"] = "Client"
+                user_instance = ArchimatchUser.objects.create_user(**user_data)
+
+                # Create Client instance
+                client_instance = Client.objects.create(
+                    user=user_instance, **client_data
+                )
+            else:
+                client_instance = None
+
+            # Create Announcement instance
+            announcement = Announcement.objects.create(
+                client=client_instance, **validated_data
+            )
+            announcement.needs.set(needs_data)
+
+            for piece_data in pieces_renovate_data:
+                piece_renovate_id = piece_data["piece_renovate"]
+                piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
+                AnnouncementPieceRenovate.objects.create(
+                    announcement=announcement,
+                    piece_renovate=piece_renovate,
+                    number=piece_data["number"],
+                )
+
+            announcement.project_extensions.set(project_extensions_data)
+
+            for image in project_images_data:
+                ProjectImage.objects.create(announcement=announcement, image=image)
 
         return announcement
 
@@ -138,17 +183,31 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
             Announcement: The updated Announcement instance.
         """
         needs_data = validated_data.pop("needs")
-        pieces_renovate_data = validated_data.pop("pieces_renovate")
+        pieces_renovate_data = validated_data.pop("pieces_renovate", [])
         project_extensions_data = validated_data.pop("project_extensions")
         project_images_data = validated_data.pop("project_images", [])
 
+        client_data = validated_data.pop(
+            "client", None
+        )  # Client data is optional during update
+
         instance.needs.set(needs_data)
-        instance.pieces_renovate.set(pieces_renovate_data)
+
+        AnnouncementPieceRenovate.objects.filter(announcement=instance).delete()
+        for piece_data in pieces_renovate_data:
+            piece_renovate_id = piece_data["piece_renovate"]
+            piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
+            AnnouncementPieceRenovate.objects.create(
+                announcement=instance,
+                piece_renovate=piece_renovate,
+                number=piece_data["number"],
+            )
+
         instance.project_extensions.set(project_extensions_data)
-        if project_images_data:
-            instance.project_images.set(project_images_data)
-        else:
-            instance.project_images.clear()
+
+        ProjectImage.objects.filter(announcement=instance).delete()
+        for image in project_images_data:
+            ProjectImage.objects.create(announcement=instance, image=image)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -167,11 +226,12 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
 
     client = ClientSerializer()
     architect_speciality = ArchitectSpecialitySerializer()
+    architectural_style = ArchitecturalStyleSerializer()
     needs = NeedSerializer(many=True)
     project_category = ProjectCategorySerializer()
     property_type = PropertyTypeSerializer()
     work_type = AnnouncementWorkTypeSerializer()
-    pieces_renovate = PieceRenovateSerializer(many=True)
+    pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
 
@@ -202,15 +262,6 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
         ]
-
-    # def to_representation(self, instance):
-    #     """
-    #     Custom representation method to add additional fields.
-    #     """
-    #     data = super().to_representation(instance)
-    #     client_user = instance.client.user
-    #     data["client_user_has_password"] = (client_user.password == "")
-    #     return data
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):

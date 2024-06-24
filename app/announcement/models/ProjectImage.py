@@ -7,6 +7,8 @@ representing different aspects of a project in the application.
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from app.announcement.models import Announcement
+
 
 class ProjectImage(models.Model):
     """
@@ -17,16 +19,12 @@ class ProjectImage(models.Model):
     """
 
     image = models.ImageField(upload_to="images/ProjectImage/")
-
-    def clean(self):
-        """
-        Custom validation to ensure a project's gallery does not exceed 5 images.
-
-        Raises:
-            ValidationError: If the project already has 5 images.
-        """
-        if self.project.images.count() >= 5:
-            raise ValidationError("A gallery can contain a maximum of 5 images.")
+    announcement = models.ForeignKey(
+        Announcement,
+        related_name="project_images",
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     def __str__(self):
         """
@@ -35,7 +33,7 @@ class ProjectImage(models.Model):
         Returns:
             str: String representation of the image.
         """
-        return f"Image {self.id} for {self.project.client}"
+        return f"Image {self.id} for {self.announcement.id}"
 
     class Meta:
         """
