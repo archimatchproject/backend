@@ -144,3 +144,22 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the social media links update attempt.
         """
         return SupplierService.supplier_update_links(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="dependencies",
+    )
+    def get_dependencies(self, request):
+        """
+        Retrieves the necessary dependent information for speciality_type and appearance.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing the dependant information.
+        """
+        return SupplierService.get_dependencies()
