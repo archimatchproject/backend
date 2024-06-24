@@ -31,4 +31,4 @@ class SupplierSpecialitySerializer(serializers.ModelSerializer):
         """
 
         model = SupplierSpeciality
-        fields = ["label", "icon"]
+        fields = ["id", "label", "icon"]

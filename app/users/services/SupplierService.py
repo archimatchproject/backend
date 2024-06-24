@@ -13,9 +13,14 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
+from app.users import APPEARANCES
 from app.users.models import ArchimatchUser, Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
+from app.users.models.SupplierSpeciality import SupplierSpeciality
 from app.users.serializers import SupplierSerializer
+from app.users.serializers.SupplierSpecialitySerializer import (
+    SupplierSpecialitySerializer,
+)
 
 
 class SupplierService:
@@ -431,3 +436,34 @@ class SupplierService:
 
         except APIException as e:
             return Response({"message": str(e)}, status=e.status_code)
+
+    @classmethod
+    def get_dependencies(cls):
+        """
+        Retrieves the necessary dependent information for speciality_type and appearance.
+
+        Returns:
+            Response: Response object containing the dependent information.
+        """
+        try:
+            # Fetch all speciality types
+            speciality_types = SupplierSpeciality.objects.all()
+            speciality_types_data = SupplierSpecialitySerializer(
+                speciality_types, many=True
+            ).data
+
+            # Fetch all appearances
+            appearances_data = APPEARANCES
+
+            response_data = {
+                "speciality_types": speciality_types_data,
+                "appearances": appearances_data,
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"message": f"Error retrieving dependencies: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
