@@ -10,6 +10,24 @@ from rest_framework.decorators import action
 
 from app.announcement.models import Announcement
 from app.announcement.serializers import AnnouncementSerializer
+from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
+    AnnouncementWorkTypeSerializer,
+)
+from app.announcement.serializers.ArchitectSpecialitySerializer import (
+    ArchitectSpecialitySerializer,
+)
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
+)
+from app.announcement.serializers.NeedSerializer import NeedSerializer
+from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
+from app.announcement.serializers.ProjectCategorySerializer import (
+    ProjectCategorySerializer,
+)
+from app.announcement.serializers.ProjectExtensionSerializer import (
+    ProjectExtensionSerializer,
+)
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.services import AnnouncementService
 
 
@@ -28,6 +46,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         permission_classes=[],
         url_path="architect-specialities",
+        serializer_class=ArchitectSpecialitySerializer,
     )
     def get_architect_specialities(self, request):
         """
@@ -46,6 +65,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         permission_classes=[],
         url_path="architect-speciality-needs/(?P<architect_speciality_id>[^/.]+)",
+        serializer_class=NeedSerializer,
     )
     def get_architect_speciality_needs(self, request, architect_speciality_id):
         """
@@ -68,6 +88,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="project-categories",
         url_name="project-categories",
+        serializer_class=ProjectCategorySerializer,
     )
     def get_project_categories(self, request):
         """
@@ -87,6 +108,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="property-types/(?P<project_category_id>[^/.]+)",
         url_name="property-types",
+        serializer_class=PropertyTypeSerializer,
     )
     def get_property_types(self, request, project_category_id):
         """
@@ -107,6 +129,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="work-types",
         url_name="work-types",
+        serializer_class=AnnouncementWorkTypeSerializer,
     )
     def get_announcement_work_types(self, request):
         """
@@ -126,6 +149,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="renovation-pieces",
         url_name="renovation-pieces",
+        serializer_class=PieceRenovateSerializer,
     )
     def get_renovation_pieces(self, request):
         """
@@ -221,6 +245,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="architectural-styles",
         url_name="architectural-styles",
+        serializer_class=ArchitecturalStyleSerializer,
     )
     def get_architectural_styles(self, request):
         """
@@ -240,6 +265,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="project-extensions",
         url_name="project-extensions",
+        serializer_class=ProjectExtensionSerializer,
     )
     def get_project_extensions(self, request):
         """
