@@ -14,6 +14,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.services import TwilioVerifyService
+from app.core.services.SMSVerificationService import SMSVerificationService
 from app.core.validation.exceptions import UserDataException
 from app.users.models import ArchimatchUser, Client
 from app.users.serializers import ClientSerializer
@@ -24,6 +25,9 @@ class ClientService:
     Service class for handling client-related operations such as login using email or phone number.
 
     """
+
+    twilio_service = TwilioVerifyService()
+    sms_verification_service = SMSVerificationService(twilio_service)
 
     @classmethod
     def handle_user_data(cls, request_keys, expected_keys):
@@ -118,7 +122,7 @@ class ClientService:
                     status=response_data.get("status_code"),
                 )
 
-            sid = TwilioVerifyService.send_verification_code(phone_number)
+            sid = cls.sms_verification_service.send_verification_code(phone_number)
             if sid:
                 response_data = {
                     "message": {"message": "Verification code sent successfully."},
@@ -165,7 +169,7 @@ class ClientService:
                 user = ArchimatchUser.objects.get(phone_number=phone_number)
 
                 # Verify the SMS code
-                if TwilioVerifyService.check_verification_code(
+                if cls.sms_verification_service.check_verification_code(
                     phone_number, verification_code
                 ):
                     if user.password == "":

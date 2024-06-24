@@ -14,22 +14,36 @@ from django.conf import settings
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
+from app.core.services.SMSService import SMSService
 
-class TwilioVerifyService:
+
+class TwilioVerifyService(SMSService):
     """
     A service class for handling Twilio Verify operations such as sending
     verification codes and checking verification codes.
 
     Attributes:
         client (Client): The Twilio Client initialized with account SID and auth token.
-        verify (Verify): The Twilio Verify service initialized with the service SID.
+        verify_service_sid (str): The SID for the Twilio Verify service.
     """
 
-    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    verify = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID)
+    def __init__(self, client=None, verify_service_sid=None):
+        """
+        Initializes the TwilioVerifyService with the given client and verify service SID.
 
-    @classmethod
-    def send_verification_code(cls, phone):
+        Args:
+            client (Client, optional): The Twilio Client. If not provided, it is initialized with settings.
+            verify_service_sid (str, optional): The SID for the Twilio Verify service. If not provided, it is taken from settings.
+        """
+        self.client = client or Client(
+            settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN
+        )
+        self.verify_service_sid = (
+            verify_service_sid or settings.TWILIO_VERIFY_SERVICE_SID
+        )
+        self.verify = self.client.verify.services(self.verify_service_sid)
+
+    def send_verification_code(self, phone):
         """
         Sends a verification code to the specified phone number via SMS.
 
@@ -40,14 +54,12 @@ class TwilioVerifyService:
             str: The verification SID if successful, otherwise an error message.
         """
         try:
-            verification = cls.verify.verifications.create(to=phone, channel="sms")
-            print(verification.sid)
+            verification = self.verify.verifications.create(to=phone, channel="sms")
             return verification.sid
         except TwilioRestException as e:
-            return str(e)
+            return f"Error sending verification code: {e.msg}"
 
-    @classmethod
-    def check_verification_code(cls, phone, code):
+    def check_verification_code(self, phone, code):
         """
         Checks the verification code for the specified phone number.
 
@@ -59,10 +71,7 @@ class TwilioVerifyService:
             bool: True if the verification code is approved, otherwise False.
         """
         try:
-            result = cls.verify.verification_checks.create(to=phone, code=code)
-            if result.status == "approved":
-                return True
-            else:
-                return False
+            result = self.verify.verification_checks.create(to=phone, code=code)
+            return result.status == "approved"
         except TwilioRestException as e:
-            return False
+            return f"Error receiving verification code: {e.msg}"
