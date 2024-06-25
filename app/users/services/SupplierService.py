@@ -126,12 +126,12 @@ class SupplierService:
                 user = ArchimatchUser.objects.get(username=email)
                 if user.password == "":
                     response_data = {
-                        "message": {"has_password": False, "id": user.id},
+                        "message": {"has_password": False, "email": user.email},
                         "status_code": status.HTTP_200_OK,
                     }
                 else:
                     response_data = {
-                        "message": {"has_password": True},
+                        "message": {"has_password": True, "email": user.email},
                         "status_code": status.HTTP_200_OK,
                     }
             else:
