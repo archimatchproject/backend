@@ -50,6 +50,7 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
     ProjectExtensionSerializer,
 )
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.users import USER_TYPE_CHOICES
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 
@@ -82,7 +83,7 @@ class AnnouncementService:
                 if client_data:
                     user_data = client_data.pop("user")
                     user_data["username"] = user_data["email"]
-                    user_data["user_type"] = "Client"
+                    user_data["user_type"] = USER_TYPE_CHOICES[1][0]
                     user_instance = ArchimatchUser.objects.create_user(**user_data)
                     client_instance = Client.objects.create(
                         user=user_instance, **client_data
