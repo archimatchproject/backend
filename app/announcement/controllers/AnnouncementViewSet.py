@@ -10,6 +10,10 @@ from rest_framework.decorators import action
 
 from app.announcement.models import Announcement
 from app.announcement.serializers import AnnouncementSerializer
+from app.announcement.serializers.AnnouncementSerializer import (
+    AnnouncementPOSTSerializer,
+    AnnouncementPUTSerializer,
+)
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
@@ -40,6 +44,31 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 
     queryset = Announcement.objects.all()
     serializer_class = AnnouncementSerializer
+
+    @action(
+        detail=False,
+        url_path="create-announcement",
+        methods=["POST"],
+        serializer_class=AnnouncementPOSTSerializer,
+    )
+    def create_announcement(self, request):
+        """
+        Creating new announcement
+        """
+        return AnnouncementService.create_announcement(request.data)
+
+    @action(
+        detail=True,
+        url_path="update-announcement",
+        methods=["PUT"],
+        serializer_class=AnnouncementPUTSerializer,
+    )
+    def update_announcement(self, request, pk=None):
+        """
+        Updating existing announcement
+        """
+        instance = self.get_object()
+        return AnnouncementService.update_announcement(instance, request.data)
 
     @action(
         detail=False,

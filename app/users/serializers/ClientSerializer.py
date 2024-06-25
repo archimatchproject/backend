@@ -52,6 +52,7 @@ class ClientSerializer(serializers.ModelSerializer):
         """
         user_data = validated_data.pop("user")
         user = ArchimatchUser.objects.create(**user_data)
+        user.user_type = "Client"
         client = Client.objects.create(user=user, **validated_data)
         return client
 
