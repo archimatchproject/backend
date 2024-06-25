@@ -11,9 +11,13 @@ Classes:
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.core.validation.exceptions import UserDataException
 from app.users.models import ArchimatchUser
+from app.users.serializers.ArchimatchUserObtainPairSerializer import (
+    ArchimatchUserObtainPairSerializer,
+)
 
 
 class ArchimatchUserService:
@@ -39,6 +43,19 @@ class ArchimatchUserService:
             missing_keys = expected_keys - request_keys
             raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
+    def generate_tokens_for_user(username, password):
+        """
+        Generates token for user
+        """
+        serializer = ArchimatchUserObtainPairSerializer(
+            data={
+                "username": username,
+                "password": password,
+            }
+        )
+        serializer.is_valid(raise_exception=True)
+        return serializer.validated_data
+
     @classmethod
     def archimatch_user_create_password(cls, request):
         """
@@ -56,40 +73,48 @@ class ArchimatchUserService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"id", "password", "confirm_password"}
+            expected_keys = {"email", "password", "confirm_password"}
 
             # Validate input keys
             cls.handle_user_data(request_keys, expected_keys)
-
+            req_email = data.get("email")
             # Check if user exists
-            if not ArchimatchUser.objects.filter(id=data.get("id")).exists():
+            if not ArchimatchUser.objects.filter(email=req_email).exists():
                 response_data = {
                     "message": "User does not exist",
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
-                return Response(response_data, status=response_data["status_code"])
+                return Response(
+                    response_data["message"], status=response_data["status_code"]
+                )
 
-            user = ArchimatchUser.objects.get(id=data.get("id"))
+            user = ArchimatchUser.objects.get(email=req_email)
             password = data.get("password")
             confirm_password = data.get("confirm_password")
 
             # Set password if conditions are met
             if password == confirm_password and user.password == "":
                 user.set_password(confirm_password)
+                user.username = req_email
                 user.save()
+
+                # Generate tokens for the user
+                tokens = cls.generate_tokens_for_user(req_email, password)
                 response_data = {
                     "message": "Password successfully updated",
                     "status_code": status.HTTP_200_OK,
+                    "tokens": tokens,
                 }
+                return Response(response_data, status=response_data["status_code"])
+
             else:
                 response_data = {
                     "message": "Password already set or passwords do not match",
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
-
-            return Response(
-                response_data["message"], status=response_data["status_code"]
-            )
+                return Response(
+                    response_data["message"], status=response_data["status_code"]
+                )
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
