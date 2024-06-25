@@ -8,9 +8,6 @@ Classes:
 
 """
 
-import re
-
-import jwt
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
@@ -22,8 +19,8 @@ from app.core.validation.exceptions import (
     SMSException,
     UserDataException,
 )
+from app.core.validation.validate_data import is_valid_phone_number
 from app.users.models import ArchimatchUser, Client
-from app.users.serializers import ClientSerializer
 
 
 class ClientService:
@@ -99,30 +96,6 @@ class ClientService:
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
-    def is_valid_phone_number(phone_number, region="TN"):
-        """
-        is_valid_phone_number
-
-        Args:
-            phone_number
-            region  Defaults to 'TN'.
-
-        Raises:
-            InvalidPhoneNumberException
-
-        Tunisian phone numbers are expected to be in the format +216XXXXXXXX
-        """
-        if region == "TN":
-
-            pattern = r"^\+216\d{8}$"
-            if re.match(pattern, phone_number) is None:
-                raise InvalidPhoneNumberException(
-                    "Invalid phone number format for region TN"
-                )
-        else:
-            raise InvalidPhoneNumberException("Unsupported region")
-        return True
-
     @classmethod
     def client_send_verification_code(cls, request):
         """
@@ -142,7 +115,7 @@ class ClientService:
 
             phone_number = data.get("phone_number")
 
-            cls.is_valid_phone_number(phone_number)
+            is_valid_phone_number(phone_number)
 
             if not Client.objects.filter(user__phone_number=phone_number).exists():
                 response_data = {
