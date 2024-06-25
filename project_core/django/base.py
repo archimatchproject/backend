@@ -10,6 +10,7 @@ from project_core.env import BASE_DIR
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
 from project_core.settings.jwt import *
+from project_core.settings.translation import *
 
 env = environ.Env()
 
@@ -18,7 +19,9 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_yasg",
     "rest_framework_simplejwt",
+    "modeltranslation",
 ]
+
 LOCAL_APPS = ["app.core", "app.users", "app.cms", "app.announcement"]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
@@ -44,6 +47,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -99,17 +103,6 @@ DATABASES = {
     }
 }
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
-USE_I18N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

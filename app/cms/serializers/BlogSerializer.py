@@ -2,6 +2,9 @@
 Module for serializing Blog instances with Blocks using Django REST Framework serializers.
 """
 
+from django.utils.translation import get_language
+
+from modeltranslation.utils import build_localized_fieldname
 from rest_framework import serializers
 
 from app.cms.models import Block, Blog
@@ -70,7 +73,7 @@ class BlogOutputSerializer(serializers.ModelSerializer):
     Serializer for retrieving Blog instances with read-only Blocks data.
     """
 
-    blocks = BlockSerializer(many=True, read_only=True)
+    blog_blocks = BlockSerializer(many=True, read_only=True)
 
     class Meta:
         """

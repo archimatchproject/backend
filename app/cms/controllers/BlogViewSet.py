@@ -5,6 +5,8 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to Blog instances via REST API endpoints.
 """
 
+from django.utils.translation import activate
+
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -44,6 +46,9 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data containing all Blog instances.
         """
+        language = request.headers.get("Accept-Language", "en")
+        activate(language)
+
         blogs = Blog.objects.all()
         serializer = BlogSerializer(blogs, many=True)
         return Response(serializer.data)
