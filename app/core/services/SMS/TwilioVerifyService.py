@@ -14,7 +14,8 @@ from django.conf import settings
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
-from app.core.services.SMSService import SMSService
+from app.core.services.SMS.SMSService import SMSService
+from app.core.validation.exceptions import SMSException
 
 
 class TwilioVerifyService(SMSService):
@@ -42,6 +43,7 @@ class TwilioVerifyService(SMSService):
             verify_service_sid or settings.TWILIO_VERIFY_SERVICE_SID
         )
         self.verify = self.client.verify.services(self.verify_service_sid)
+        self.channel = "sms"
 
     def send_verification_code(self, phone):
         """
@@ -54,10 +56,12 @@ class TwilioVerifyService(SMSService):
             str: The verification SID if successful, otherwise an error message.
         """
         try:
-            verification = self.verify.verifications.create(to=phone, channel="sms")
+            verification = self.verify.verifications.create(
+                to=phone, channel=self.channel
+            )
             return verification.sid
         except TwilioRestException as e:
-            return f"Error sending verification code: {e.msg}"
+            raise SMSException(f"Error sending verification code: {e.msg}")
 
     def check_verification_code(self, phone, code):
         """
@@ -74,4 +78,4 @@ class TwilioVerifyService(SMSService):
             result = self.verify.verification_checks.create(to=phone, code=code)
             return result.status == "approved"
         except TwilioRestException as e:
-            return f"Error receiving verification code: {e.msg}"
+            raise SMSException(f"Error receiving verification code: {e.msg}")

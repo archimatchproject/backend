@@ -1,1 +1,1 @@
-from app.core.services.TwilioVerifyService import TwilioVerifyService
+from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService

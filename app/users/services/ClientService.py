@@ -8,14 +8,20 @@ Classes:
 
 """
 
+import re
+
 import jwt
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.services import TwilioVerifyService
-from app.core.services.SMSVerificationService import SMSVerificationService
-from app.core.validation.exceptions import UserDataException
+from app.core.services.SMS.SMSVerificationService import SMSVerificationService
+from app.core.validation.exceptions import (
+    InvalidPhoneNumberException,
+    SMSException,
+    UserDataException,
+)
 from app.users.models import ArchimatchUser, Client
 from app.users.serializers import ClientSerializer
 
@@ -93,6 +99,30 @@ class ClientService:
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
+    def is_valid_phone_number(phone_number, region="TN"):
+        """
+        is_valid_phone_number
+
+        Args:
+            phone_number
+            region  Defaults to 'TN'.
+
+        Raises:
+            InvalidPhoneNumberException
+
+        Tunisian phone numbers are expected to be in the format +216XXXXXXXX
+        """
+        if region == "TN":
+
+            pattern = r"^\+216\d{8}$"
+            if re.match(pattern, phone_number) is None:
+                raise InvalidPhoneNumberException(
+                    "Invalid phone number format for region TN"
+                )
+        else:
+            raise InvalidPhoneNumberException("Unsupported region")
+        return True
+
     @classmethod
     def client_send_verification_code(cls, request):
         """
@@ -111,6 +141,8 @@ class ClientService:
             cls.handle_user_data(request_keys, expected_keys)
 
             phone_number = data.get("phone_number")
+
+            cls.is_valid_phone_number(phone_number)
 
             if not Client.objects.filter(user__phone_number=phone_number).exists():
                 response_data = {
@@ -137,6 +169,13 @@ class ClientService:
             return Response(
                 response_data.get("message"), status=response_data.get("status_code")
             )
+        except SMSException as e:
+            return Response(
+                {"message": "Error Sending SMS Code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except InvalidPhoneNumberException as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except APIException as e:
@@ -195,6 +234,11 @@ class ClientService:
 
             return Response(
                 response_data.get("message"), status=response_data.get("status_code")
+            )
+        except SMSException as e:
+            return Response(
+                {"message": "Error Verifying SMS Code"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)

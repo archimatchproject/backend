@@ -28,3 +28,19 @@ class UserDataException(APIException):
 
     default_detail = "A custom API exception occurred."
     default_status_code = status.HTTP_400_BAD_REQUEST
+
+
+class InvalidPhoneNumberException(Exception):
+    """
+    Custom exception class for phone number validation errors.
+    """
+
+    pass
+
+
+class SMSException(Exception):
+    """
+    Custom exception class for sms-related errors.
+    """
+
+    pass

@@ -9,7 +9,7 @@ Classes:
 
 """
 
-from app.core.services.SMSService import SMSService
+from app.core.services.SMS.SMSService import SMSService
 
 
 class SMSVerificationService:
