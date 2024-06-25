@@ -23,4 +23,4 @@ class PieceRenovateSerializer(serializers.ModelSerializer):
         """
 
         model = PieceRenovate
-        fields = ["id", "label", "icon", "number"]
+        fields = ["id", "label", "icon"]

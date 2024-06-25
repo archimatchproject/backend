@@ -18,7 +18,7 @@ class PieceRenovateAdmin(admin.ModelAdmin):
     the PieceRenovate model in the Django admin site.
     """
 
-    list_display = ("id", "label", "icon", "number")
+    list_display = ("id", "label", "icon")
     search_fields = ("label",)
 
 
