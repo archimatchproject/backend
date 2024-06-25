@@ -18,8 +18,6 @@ class ArchitectSpeciality(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    pass
-
     class Meta:
         """
         Meta class for Architect Speciality model.
