@@ -1,3 +1,3 @@
-from .ArchitectSpeciality import ArchitectSpeciality
-from .BaseModel import BaseModel
-from .LabeledIcon import LabeledIcon
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.BaseModel import BaseModel
+from app.core.models.LabeledIcon import LabeledIcon

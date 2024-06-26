@@ -18,7 +18,6 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
     ArchitectRequestSerializer,
 )
-from app.architect_request.serializers.MeetingSerializer import MeetingSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
 
@@ -52,26 +51,21 @@ class ArchitectRequestService:
                         pk=architect_speciality_id
                     )
 
-                    meeting_data = data.get("meeting")
-                    meeting_serializer = MeetingSerializer(data=meeting_data)
-                    if meeting_serializer.is_valid():
-                        meeting = meeting_serializer.save()
-                    else:
-                        return Response(
-                            meeting_serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST,
-                        )
-
-                    architect_request = ArchitectRequest.objects.create(
+                    architect_request = ArchitectRequest(
                         first_name=data["first_name"],
                         last_name=data["last_name"],
                         phone_number=data["phone_number"],
                         address=data["address"],
                         architect_identifier=data["architect_identifier"],
                         email=data["email"],
-                        meeting=meeting,
+                        date=data["date"],
+                        time_slot=data["time_slot"],
                         architect_speciality=architect_speciality,
                     )
+                    # Call the clean method to ensure validation
+                    architect_request.clean()
+                    architect_request.save()
+
                     return Response(
                         ArchitectRequestSerializer(architect_request).data,
                         status=status.HTTP_201_CREATED,
@@ -85,6 +79,7 @@ class ArchitectRequestService:
                 )
             except Exception as e:
                 return Response(
-                    {"error handling request"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error handling request": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

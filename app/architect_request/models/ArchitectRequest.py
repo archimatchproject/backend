@@ -8,9 +8,13 @@ Classes:
     ArchitectRequest: Defines the ArchitectRequest model with additional fields and relationships.
 """
 
-from django.db import models
+import datetime
 
-from app.architect_request.models.Meeting import Meeting
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
+
+from app.architect_request import TIME_SLOT_CHOICES
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
@@ -27,6 +31,8 @@ class ArchitectRequest(BaseModel):
         architect_identifier (CharField): Identifier code specific to the architect.
         email (EmailField): The email address of the architect.
         architect_speciality (ForeignKey): The specialty of the architect, linked to the ArchitectSpeciality model.
+        date (DateField): The date of the meeting.
+        time_slot (CharField): The time slot of the meeting, selected from predefined choices.
     """
 
     first_name = models.CharField(max_length=255, default="")
@@ -40,16 +46,37 @@ class ArchitectRequest(BaseModel):
         ArchitectSpeciality, on_delete=models.CASCADE
     )
 
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    date = models.DateField()
+    time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
+
+    def clean(self):
+        """
+        Custom validation to ensure the time slot is not already taken for the same date.
+        """
+        if ArchitectRequest.objects.filter(
+            date=self.date, time_slot=self.time_slot
+        ).exists():
+            raise ValidationError(
+                "This time slot on the selected date is already taken."
+            )
+
+        now = timezone.now()
+        meeting_naive_datetime = datetime.datetime.combine(self.date, self.time_slot)
+        meeting_aware_datetime = timezone.make_aware(
+            meeting_naive_datetime, timezone.get_current_timezone()
+        )
+
+        if meeting_aware_datetime <= now:
+            raise ValidationError("The selected date and time must be in the future.")
 
     def __str__(self):
         """
-        Returns the email address of the architect.
+        Returns a string representation of the architect request.
 
         Returns:
-            str: The email address of the architect.
+            str: The email address and meeting date/time of the architect request.
         """
-        return self.email
+        return f"{self.email} - Meeting on {self.date} at {self.time_slot.strftime('%H:%M')}"
 
     class Meta:
         """
@@ -58,7 +85,11 @@ class ArchitectRequest(BaseModel):
         Meta Attributes:
             verbose_name (str): The name of the model in singular form.
             verbose_name_plural (str): The name of the model in plural form.
+            unique_together (tuple): Ensures the date and time slot combination is unique.
+            ordering (list): Orders the records by date and time_slot.
         """
 
         verbose_name = "ArchitectRequest"
         verbose_name_plural = "ArchitectRequests"
+        unique_together = ("date", "time_slot")
+        ordering = ["date", "time_slot"]

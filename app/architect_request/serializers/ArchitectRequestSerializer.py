@@ -14,7 +14,6 @@ from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
 )
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
-from app.architect_request.serializers.MeetingSerializer import MeetingSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
 
@@ -29,14 +28,13 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
         fields (list): The fields to be included in the serialization.
     """
 
-    meeting = MeetingSerializer()
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
     )
 
     class Meta:
         """
-        Meta class for ArchitectRequestSerializer.
+        Meta class for ArchitectRequestInputSerializer.
 
         Meta Attributes:
             model (ArchitectRequest): The model to be serialized.
@@ -53,7 +51,8 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
             "architect_identifier",
             "email",
             "architect_speciality",
-            "meeting",
+            "date",
+            "time_slot",
         ]
 
 
@@ -68,7 +67,6 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
         fields (list): The fields to be included in the serialization.
     """
 
-    meeting = MeetingSerializer(read_only=True)
     architect_speciality = ArchitectSpecialitySerializer(read_only=True)
 
     class Meta:
@@ -90,5 +88,6 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
             "architect_identifier",
             "email",
             "architect_speciality",
-            "meeting",
+            "date",
+            "time_slot",
         ]
