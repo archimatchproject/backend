@@ -438,32 +438,41 @@ class SupplierService:
             return Response({"message": str(e)}, status=e.status_code)
 
     @classmethod
-    def get_dependencies(cls):
+    def get_speciality_types(cls):
         """
-        Retrieves the necessary dependent information for speciality_type and appearance.
+        Retrieves all speciality types.
 
         Returns:
-            Response: Response object containing the dependent information.
+            Response: Response object containing the speciality types.
         """
         try:
-            # Fetch all speciality types
             speciality_types = SupplierSpeciality.objects.all()
             speciality_types_data = SupplierSpecialitySerializer(
                 speciality_types, many=True
             ).data
 
-            # Fetch all appearances
-            appearances_data = APPEARANCES
-
-            response_data = {
-                "speciality_types": speciality_types_data,
-                "appearances": appearances_data,
-            }
-
-            return Response(response_data, status=status.HTTP_200_OK)
+            return Response(speciality_types_data, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response(
-                {"message": f"Error retrieving dependencies: {str(e)}"},
+                {"message": f"Error retrieving speciality types"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @classmethod
+    def get_appearances(cls):
+        """
+        Retrieves all appearances.
+
+        Returns:
+            Response: Response object containing the appearances.
+        """
+        try:
+            appearances_data = APPEARANCES
+            return Response(appearances_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"message": f"Error retrieving appearances"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

@@ -149,17 +149,36 @@ class SupplierViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="dependencies",
+        url_path="speciality-types",
     )
-    def get_dependencies(self, request):
+    def get_speciality_types(self, request):
         """
-        Retrieves the necessary dependent information for speciality_type and appearance.
+        Retrieves all speciality types.
 
         Args:
             self (SupplierViewSet): Instance of the SupplierViewSet class.
             request (Request): HTTP request object.
 
         Returns:
-            Response: Response containing the dependant information.
+            Response: Response containing the speciality types.
         """
-        return SupplierService.get_dependencies()
+        return SupplierService.get_speciality_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="appearances",
+    )
+    def get_appearances(self, request):
+        """
+        Retrieves all appearances.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing the appearances.
+        """
+        return SupplierService.get_appearances()
