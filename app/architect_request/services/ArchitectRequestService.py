@@ -79,7 +79,7 @@ class ArchitectRequestService:
                 )
             except Exception as e:
                 return Response(
-                    {"error handling request": str(e)},
+                    {"error handling request"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
