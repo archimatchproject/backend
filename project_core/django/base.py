@@ -18,6 +18,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_yasg",
     "rest_framework_simplejwt",
+    "djangorestframework_camel_case",
 ]
 LOCAL_APPS = ["app.core", "app.users", "app.cms", "app.announcement"]
 
@@ -37,7 +38,16 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "DEFAULT_RENDERER_CLASSES": (
+        "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
+        "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
+    ),
 }
 
 MIDDLEWARE = [
