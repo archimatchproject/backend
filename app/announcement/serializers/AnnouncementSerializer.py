@@ -14,7 +14,6 @@ from rest_framework import serializers
 from app.announcement.models import Announcement
 from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
 from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
@@ -44,6 +43,7 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
 )
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ClientSerializer

@@ -20,7 +20,13 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "djangorestframework_camel_case",
 ]
-LOCAL_APPS = ["app.core", "app.users", "app.cms", "app.announcement"]
+LOCAL_APPS = [
+    "app.core",
+    "app.users",
+    "app.cms",
+    "app.announcement",
+    "app.architect_request",
+]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
@@ -115,11 +121,10 @@ DATABASES = {
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Tunis"
+USE_TZ = True
 
 USE_I18N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

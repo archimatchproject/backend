@@ -11,6 +11,7 @@ Classes:
 from django.db import models
 
 from app.core.models import BaseModel
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.ArchitectPreferences import (
     BudgetType,
@@ -20,7 +21,6 @@ from app.users.models.ArchitectPreferences import (
     WorkSurfaceType,
     WorkType,
 )
-from app.users.models.ArchitectType import ArchitectType
 
 
 class Architect(BaseModel):
@@ -47,14 +47,13 @@ class Architect(BaseModel):
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
-    arch_identifier = models.CharField(max_length=10, default="")
-    arch_type = models.ForeignKey(
-        ArchitectType, related_name="arch_type_architects", on_delete=models.DO_NOTHING
+    architect_identifier = models.CharField(max_length=10, default="")
+    architect_speciality = models.ForeignKey(
+        ArchitectSpeciality, on_delete=models.CASCADE
     )
     bio = models.TextField(max_length=1000, default="")
     company_name = models.CharField(max_length=255, default="")
     company_logo = models.ImageField(blank=True, null=True, upload_to="CompanyLogos/")
-    first_cnx = models.BooleanField(default=False)
     presentation_video = models.FileField(
         upload_to="ArchitectVideos/", blank=True, null=True
     )
