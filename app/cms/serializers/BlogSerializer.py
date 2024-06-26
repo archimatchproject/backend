@@ -13,7 +13,7 @@ class BlogInputSerializer(serializers.ModelSerializer):
     Serializer for creating and updating Blog instances along with Blocks.
     """
 
-    blocks = BlockSerializer(many=True)
+    blog_blocks = BlockSerializer(many=True)
 
     class Meta:
         """
@@ -70,7 +70,7 @@ class BlogOutputSerializer(serializers.ModelSerializer):
     Serializer for retrieving Blog instances with read-only Blocks data.
     """
 
-    blocks = BlockSerializer(many=True, read_only=True)
+    blog_blocks = BlockSerializer(many=True, read_only=True)
 
     class Meta:
         """
