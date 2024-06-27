@@ -8,13 +8,19 @@ Classes:
 
 """
 
-import jwt
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from app.core.services import TwilioVerifyService
+from app.core.services.SMS.SMSVerificationService import SMSVerificationService
+from app.core.validation.exceptions import (
+    InvalidPhoneNumberException,
+    SMSException,
+    UserDataException,
+)
+from app.core.validation.validate_data import is_valid_phone_number
 from app.users.models import ArchimatchUser, Client
-from app.users.serializers import ClientSerializer
 
 
 class ClientService:
@@ -22,6 +28,9 @@ class ClientService:
     Service class for handling client-related operations such as login using email or phone number.
 
     """
+
+    twilio_service = TwilioVerifyService()
+    sms_verification_service = SMSVerificationService(twilio_service)
 
     @classmethod
     def handle_user_data(cls, request_keys, expected_keys):
@@ -37,7 +46,7 @@ class ClientService:
         """
         if not expected_keys.issubset(request_keys):
             missing_keys = expected_keys - request_keys
-            raise APIException(f"Missing keys: {', '.join(missing_keys)}")
+            raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
     def client_login_email(cls, request):
@@ -88,12 +97,70 @@ class ClientService:
             return Response({"message": str(e)}, status=status.HTTP_410_GONE)
 
     @classmethod
-    def client_login_phone(cls, request):
+    def client_send_verification_code(cls, request):
         """
-        Authenticates a client using phone number and checks if they have set a password.
+        Sends a verification code to the client's phone number.
 
         Args:
             request (Request): Django request object containing client's phone number.
+
+        Returns:
+            Response: Response object indicating whether the verification code was sent successfully.
+        """
+        try:
+            data = request.data
+            request_keys = set(data.keys())
+            expected_keys = {"phone_number"}
+            cls.handle_user_data(request_keys, expected_keys)
+
+            phone_number = data.get("phone_number")
+
+            is_valid_phone_number(phone_number)
+
+            if not Client.objects.filter(user__phone_number=phone_number).exists():
+                response_data = {
+                    "message": {"message": "Client Not Found"},
+                    "status_code": status.HTTP_404_NOT_FOUND,
+                }
+                return Response(
+                    response_data.get("message"),
+                    status=response_data.get("status_code"),
+                )
+
+            sid = cls.sms_verification_service.send_verification_code(phone_number)
+            if sid:
+                response_data = {
+                    "message": {"message": "Verification code sent successfully."},
+                    "status_code": status.HTTP_200_OK,
+                }
+            else:
+                response_data = {
+                    "message": {"message": "Failed to send verification code."},
+                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                }
+
+            return Response(
+                response_data.get("message"), status=response_data.get("status_code")
+            )
+        except SMSException as e:
+            return Response(
+                {"message": "Error Sending SMS Code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except InvalidPhoneNumberException as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except UserDataException as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except APIException as e:
+            return Response({"message": str(e)}, status=e.status_code)
+
+    @classmethod
+    def client_verify_verification_code(cls, request):
+        """
+        Authenticates a client using phone number and verifies the SMS code.
+
+        Args:
+            request (Request): Django request object containing client's phone number and verification code.
 
         Returns:
             Response: Response object with a message indicating if the client has set a password and their email.
@@ -104,34 +171,49 @@ class ClientService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"phone_number"}
+            expected_keys = {"phone_number", "verification_code"}
             cls.handle_user_data(request_keys, expected_keys)
 
             phone_number = data.get("phone_number")
+            verification_code = data.get("verification_code")
 
             if Client.objects.filter(user__phone_number=phone_number).exists():
                 user = ArchimatchUser.objects.get(phone_number=phone_number)
-                # TODO: SMS Code verification
-                if user.password == "":
-                    response_data = {
-                        "message": {"has_password": False, "email": user.username},
-                        "status_code": status.HTTP_200_OK,
-                    }
+
+                # Verify the SMS code
+                if cls.sms_verification_service.check_verification_code(
+                    phone_number, verification_code
+                ):
+                    if user.password == "":
+                        response_data = {
+                            "message": {"has_password": False, "email": user.username},
+                            "status_code": status.HTTP_200_OK,
+                        }
+                    else:
+                        response_data = {
+                            "message": {"has_password": True, "email": user.username},
+                            "status_code": status.HTTP_200_OK,
+                        }
                 else:
                     response_data = {
-                        "message": {"has_password": True, "email": user.username},
-                        "status_code": status.HTTP_200_OK,
+                        "message": {"message": "Invalid verification code."},
+                        "status_code": status.HTTP_400_BAD_REQUEST,
                     }
             else:
                 response_data = {
-                    "message": "Client Not Found",
+                    "message": {"message": "Client Not Found"},
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
             return Response(
                 response_data.get("message"), status=response_data.get("status_code")
             )
+        except SMSException as e:
+            return Response(
+                {"message": "Error Verifying SMS Code"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except UserDataException as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except APIException as e:
             return Response({"message": str(e)}, status=e.status_code)
-        except Exception as e:
-            return Response({"message": str(e)}, status=status.HTTP_410_GONE)
