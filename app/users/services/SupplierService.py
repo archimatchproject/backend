@@ -13,9 +13,14 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
+from app.users import APPEARANCES
 from app.users.models import ArchimatchUser, Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
+from app.users.models.SupplierSpeciality import SupplierSpeciality
 from app.users.serializers import SupplierSerializer
+from app.users.serializers.SupplierSpecialitySerializer import (
+    SupplierSpecialitySerializer,
+)
 
 
 class SupplierService:
@@ -121,12 +126,12 @@ class SupplierService:
                 user = ArchimatchUser.objects.get(username=email)
                 if user.password == "":
                     response_data = {
-                        "message": {"has_password": False, "id": user.id},
+                        "message": {"has_password": False, "email": user.email},
                         "status_code": status.HTTP_200_OK,
                     }
                 else:
                     response_data = {
-                        "message": {"has_password": True},
+                        "message": {"has_password": True, "email": user.email},
                         "status_code": status.HTTP_200_OK,
                     }
             else:
@@ -431,3 +436,43 @@ class SupplierService:
 
         except APIException as e:
             return Response({"message": str(e)}, status=e.status_code)
+
+    @classmethod
+    def get_speciality_types(cls):
+        """
+        Retrieves all speciality types.
+
+        Returns:
+            Response: Response object containing the speciality types.
+        """
+        try:
+            speciality_types = SupplierSpeciality.objects.all()
+            speciality_types_data = SupplierSpecialitySerializer(
+                speciality_types, many=True
+            ).data
+
+            return Response(speciality_types_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"message": f"Error retrieving speciality types"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @classmethod
+    def get_appearances(cls):
+        """
+        Retrieves all appearances.
+
+        Returns:
+            Response: Response object containing the appearances.
+        """
+        try:
+            appearances_data = APPEARANCES
+            return Response(appearances_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"message": f"Error retrieving appearances"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

@@ -16,12 +16,7 @@ class PieceRenovate(LabeledIcon):
 
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
-
-    Attributes:
-        number (PositiveSmallIntegerField): Number representing the piece to be renovated, default is 0.
     """
-
-    number = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         """

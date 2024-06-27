@@ -7,7 +7,7 @@ the specialty of an architect in the application.
 
 from django.db import models
 
-from app.core.models import LabeledIcon
+from app.core.models.LabeledIcon import LabeledIcon
 
 
 class ArchitectSpeciality(LabeledIcon):
@@ -17,8 +17,6 @@ class ArchitectSpeciality(LabeledIcon):
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
     """
-
-    pass
 
     class Meta:
         """

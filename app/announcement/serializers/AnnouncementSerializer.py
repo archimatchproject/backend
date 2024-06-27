@@ -7,24 +7,31 @@ of Announcement instances for API views.
 """
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import transaction
 
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
+from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
+from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
+    AnnouncementPieceRenovateSerializer,
+)
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
 from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
+)
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
 )
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
@@ -36,22 +43,27 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
 )
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users.models import Client
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ClientSerializer
 
 
-class AnnouncementInputSerializer(serializers.ModelSerializer):
+class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
     Serializer for creating and updating Announcement instances.
 
-    This serializer handles the input validation and creation/updating
+    This serializer handles the POST validation and creation/updating
     logic for Announcement instances.
 
     """
 
-    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    client = ClientSerializer()
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
+    )
+    architectural_style = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(
@@ -63,14 +75,16 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
     work_type = serializers.PrimaryKeyRelatedField(
         queryset=AnnouncementWorkType.objects.all()
     )
-    pieces_renovate = serializers.PrimaryKeyRelatedField(
-        queryset=PieceRenovate.objects.all(), many=True
+    pieces_renovate = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.IntegerField(required=True), allow_empty=False
+        )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
         queryset=ProjectExtension.objects.all(), many=True
     )
-    project_images = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectImage.objects.all(), many=True, required=False
+    project_images = serializers.ListField(
+        child=serializers.ImageField(required=False), required=False
     )
 
     class Meta:
@@ -82,7 +96,6 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
 
         model = Announcement
         fields = [
-            "id",
             "client",
             "architect_speciality",
             "needs",
@@ -101,60 +114,69 @@ class AnnouncementInputSerializer(serializers.ModelSerializer):
             "project_images",
         ]
 
-    def create(self, validated_data):
+
+class AnnouncementPUTSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating and updating Announcement instances.
+
+    This serializer handles the PUT validation and creation/updating
+    logic for Announcement instances.
+
+    """
+
+    architect_speciality = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitectSpeciality.objects.all()
+    )
+    architectural_style = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitecturalStyle.objects.all()
+    )
+    needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
+    project_category = serializers.PrimaryKeyRelatedField(
+        queryset=ProjectCategory.objects.all()
+    )
+    property_type = serializers.PrimaryKeyRelatedField(
+        queryset=PropertyType.objects.all()
+    )
+    work_type = serializers.PrimaryKeyRelatedField(
+        queryset=AnnouncementWorkType.objects.all()
+    )
+    pieces_renovate = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.IntegerField(required=True), allow_empty=False
+        )
+    )
+    project_extensions = serializers.PrimaryKeyRelatedField(
+        queryset=ProjectExtension.objects.all(), many=True
+    )
+    project_images = serializers.ListField(
+        child=serializers.ImageField(required=False), required=False
+    )
+
+    class Meta:
         """
-        Create a new Announcement instance.
+        Meta class for Announcement Serializer.
 
-        Args:
-            validated_data (dict): Validated data for the announcement.
-
-        Returns:
-            Announcement: The created Announcement instance.
+        Defines display fields.
         """
-        needs_data = validated_data.pop("needs")
-        pieces_renovate_data = validated_data.pop("pieces_renovate")
-        project_extensions_data = validated_data.pop("project_extensions")
-        project_images_data = validated_data.pop("project_images", [])
 
-        announcement = Announcement.objects.create(**validated_data)
-
-        announcement.needs.set(needs_data)
-        announcement.pieces_renovate.set(pieces_renovate_data)
-        announcement.project_extensions.set(project_extensions_data)
-        if project_images_data:
-            announcement.project_images.set(project_images_data)
-
-        return announcement
-
-    def update(self, instance, validated_data):
-        """
-        Update an existing Announcement instance.
-
-        Args:
-            instance (Announcement): The Announcement instance to update.
-            validated_data (dict): Validated data for updating the announcement.
-
-        Returns:
-            Announcement: The updated Announcement instance.
-        """
-        needs_data = validated_data.pop("needs")
-        pieces_renovate_data = validated_data.pop("pieces_renovate")
-        project_extensions_data = validated_data.pop("project_extensions")
-        project_images_data = validated_data.pop("project_images", [])
-
-        instance.needs.set(needs_data)
-        instance.pieces_renovate.set(pieces_renovate_data)
-        instance.project_extensions.set(project_extensions_data)
-        if project_images_data:
-            instance.project_images.set(project_images_data)
-        else:
-            instance.project_images.clear()
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        return instance
+        model = Announcement
+        fields = [
+            "architect_speciality",
+            "needs",
+            "project_category",
+            "property_type",
+            "work_type",
+            "pieces_renovate",
+            "address",
+            "city",
+            "terrain_surface",
+            "work_surface",
+            "budget",
+            "description",
+            "architectural_style",
+            "project_extensions",
+            "project_images",
+        ]
 
 
 class AnnouncementOutputSerializer(serializers.ModelSerializer):
@@ -167,11 +189,12 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
 
     client = ClientSerializer()
     architect_speciality = ArchitectSpecialitySerializer()
+    architectural_style = ArchitecturalStyleSerializer()
     needs = NeedSerializer(many=True)
     project_category = ProjectCategorySerializer()
     property_type = PropertyTypeSerializer()
     work_type = AnnouncementWorkTypeSerializer()
-    pieces_renovate = PieceRenovateSerializer(many=True)
+    pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
 
@@ -202,15 +225,6 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
         ]
-
-    # def to_representation(self, instance):
-    #     """
-    #     Custom representation method to add additional fields.
-    #     """
-    #     data = super().to_representation(instance)
-    #     client_user = instance.client.user
-    #     data["client_user_has_password"] = (client_user.password == "")
-    #     return data
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):
@@ -262,46 +276,3 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         """
         serializer = AnnouncementOutputSerializer(instance)
         return serializer.data
-
-    def to_internal_value(self, data):
-        """
-        Convert the external data to an internal representation.
-
-        Args:
-            data (dict): The external data to convert.
-
-        Returns:
-            dict: The internal representation of the data.
-        """
-        serializer = AnnouncementInputSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
-
-    def create(self, validated_data):
-        """
-        Create a new Announcement instance.
-
-        Args:
-            validated_data (dict): The validated data for the announcement.
-
-        Returns:
-            Announcement: The created Announcement
-            Returns:
-            Announcement: The created Announcement instance.
-        """
-        input_serializer = AnnouncementInputSerializer()
-        return input_serializer.create(validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update an existing Announcement instance.
-
-        Args:
-            instance (Announcement): The Announcement instance to update.
-            validated_data (dict): The validated data for updating the announcement.
-
-        Returns:
-            Announcement: The updated Announcement instance.
-        """
-        input_serializer = AnnouncementInputSerializer()
-        return input_serializer.update(instance, validated_data)

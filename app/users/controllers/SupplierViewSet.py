@@ -144,3 +144,41 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the social media links update attempt.
         """
         return SupplierService.supplier_update_links(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="speciality-types",
+    )
+    def get_speciality_types(self, request):
+        """
+        Retrieves all speciality types.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing the speciality types.
+        """
+        return SupplierService.get_speciality_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="appearances",
+    )
+    def get_appearances(self, request):
+        """
+        Retrieves all appearances.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing the appearances.
+        """
+        return SupplierService.get_appearances()

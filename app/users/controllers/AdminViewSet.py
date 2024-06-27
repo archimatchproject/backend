@@ -8,11 +8,10 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models import Admin
 from app.users.serializers import AdminSerializer, UserAuthSerializer
 from app.users.services import AdminService
-
-from .utils import IsSuperUser
 
 
 class AdminViewSet(viewsets.ModelViewSet):

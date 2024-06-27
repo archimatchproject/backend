@@ -7,22 +7,16 @@ for a construction or renovation project in the application.
 
 from django.db import models
 
-from app.announcement import (
-    ARCHITECTURAL_STYLES,
-    BUDGETS,
-    CITIES,
-    TERRAIN_SURFACES,
-    WORK_SURFACES,
-)
+from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
 from app.core.models import BaseModel
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users.models import Client
 
 
@@ -46,7 +40,7 @@ class Announcement(BaseModel):
         description (TextField): Description of the project.
         architectural_style (CharField): Architectural style preferred for the project, selected from predefined choices.
         project_extensions (ManyToManyField): Extensions or additional features planned for the project.
-        project_images (ManyToManyField): Images related to the project, optional.
+
     """
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -57,9 +51,6 @@ class Announcement(BaseModel):
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
     work_type = models.ForeignKey(AnnouncementWorkType, on_delete=models.CASCADE)
-    pieces_renovate = models.ManyToManyField(
-        PieceRenovate, related_name="pieces_renovate_announcements"
-    )
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=50, choices=CITIES, default=CITIES[0])
     terrain_surface = models.CharField(
@@ -70,14 +61,14 @@ class Announcement(BaseModel):
     )
     budget = models.CharField(max_length=50, choices=BUDGETS, default=BUDGETS[0])
     description = models.TextField()
-    architectural_style = models.CharField(
-        max_length=50, choices=ARCHITECTURAL_STYLES, default=ARCHITECTURAL_STYLES[0]
+    architectural_style = models.ForeignKey(
+        ArchitecturalStyle,
+        on_delete=models.SET_NULL,
+        related_name="architectural_style",
+        null=True,
     )
     project_extensions = models.ManyToManyField(
         ProjectExtension, related_name="project_extensions_announcements"
-    )
-    project_images = models.ManyToManyField(
-        ProjectImage, related_name="project_images_announcements", blank=True
     )
 
     def __str__(self):

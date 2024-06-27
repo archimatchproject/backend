@@ -18,8 +18,6 @@ class ProjectCategory(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    pass
-
     class Meta:
         """
         Meta class for Project Category model.

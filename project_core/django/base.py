@@ -19,8 +19,15 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_yasg",
     "rest_framework_simplejwt",
+    "djangorestframework_camel_case",
 ]
-LOCAL_APPS = ["app.core", "app.users", "app.cms", "app.announcement"]
+LOCAL_APPS = [
+    "app.core",
+    "app.users",
+    "app.cms",
+    "app.announcement",
+    "app.architect_request",
+]
 
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
@@ -38,7 +45,16 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "DEFAULT_RENDERER_CLASSES": (
+        "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
+        "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
+    ),
 }
 
 MIDDLEWARE = [
@@ -106,11 +122,10 @@ DATABASES = {
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Tunis"
+USE_TZ = True
 
 USE_I18N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
