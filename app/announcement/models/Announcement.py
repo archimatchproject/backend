@@ -9,7 +9,6 @@ from django.db import models
 
 from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
 from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
@@ -17,6 +16,7 @@ from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.PropertyType import PropertyType
 from app.core.models import BaseModel
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users.models import Client
 
 

@@ -7,7 +7,7 @@ the Django admin interface for the ArchitectSpeciality model.
 
 from django.contrib import admin
 
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
 
 class ArchitectSpecialityAdmin(admin.ModelAdmin):

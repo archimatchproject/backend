@@ -6,7 +6,7 @@ This module defines a serializer class for the ArchitectSpeciality model.
 
 from rest_framework import serializers
 
-from app.announcement.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
 
 class ArchitectSpecialitySerializer(serializers.ModelSerializer):
