@@ -14,6 +14,7 @@ from app.users.serializers import (
     ClientSerializer,
     UserAuthPhoneSerializer,
     UserAuthSerializer,
+    VerifyCodeSerializer,
 )
 from app.users.services import ClientService
 
@@ -33,10 +34,10 @@ class ClientViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="login",
+        url_path="login-email",
         serializer_class=UserAuthSerializer,
     )
-    def login_email(self, request):
+    def client_login_email(self, request):
         """
         Performs email-based login for clients using a custom action.
 
@@ -53,18 +54,36 @@ class ClientViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="login",
+        url_path="send-code",
         serializer_class=UserAuthPhoneSerializer,
     )
-    def login_phone(self, request):
+    def client_send_verification_code(self, request):
         """
-        Performs phone number-based login for clients using a custom action.
+        Sends a verification code to the client's phone number.
 
         Args:
-            self (ClientViewSet): Instance of the ClientViewSet class.
-            request (Request): HTTP request object containing login data.
+            request (Request): HTTP request object containing the phone number.
 
         Returns:
-            Response: Response indicating success or failure of the login attempt.
+            Response: Response indicating whether the verification code was sent successfully.
         """
-        return ClientService.client_login_phone(request)
+        return ClientService.client_send_verification_code(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="verify-code",
+        serializer_class=VerifyCodeSerializer,
+    )
+    def client_verify_verification_code(self, request):
+        """
+        Verifies the client's phone number using the verification code.
+
+        Args:
+            request (Request): HTTP request object containing the phone number and verification code.
+
+        Returns:
+            Response: Response indicating success or failure of the verification.
+        """
+        return ClientService.client_verify_verification_code(request)

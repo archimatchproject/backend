@@ -9,6 +9,7 @@ Classes:
 """
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.serializers import ArchimatchUserSerializer
 
@@ -19,7 +20,6 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
 
     This serializer extends TokenObtainPairSerializer to include user
     data in the token response.
-
     """
 
     @classmethod
@@ -31,8 +31,29 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
             user: The user object for which the token is being obtained.
 
         Returns:
-            dict: JWT token with user data serialized.
+            RefreshToken: JWT refresh token.
         """
-        token = super().get_token(user)
-        token["user"] = ArchimatchUserSerializer(user).data
-        return token
+        return super().get_token(user)
+
+    def validate(self, attrs):
+        """
+        Validate the data and return the custom response.
+
+        Args:
+            attrs: The attributes to validate.
+
+        Returns:
+            dict: Custom response containing the auth pair and user data.
+        """
+        data = super().validate(attrs)
+
+        refresh = self.get_token(self.user)
+        access = refresh.access_token
+
+        user_data = ArchimatchUserSerializer(self.user).data
+
+        return {
+            "refresh": str(refresh),
+            "access": str(access),
+            "user": user_data,
+        }
