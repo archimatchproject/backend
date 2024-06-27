@@ -93,7 +93,7 @@ class ArchimatchUserService:
             confirm_password = data.get("confirm_password")
 
             # Set password if conditions are met
-            if password == confirm_password and user.password == "":
+            if password == confirm_password:
                 user.set_password(confirm_password)
                 user.username = req_email
                 user.save()
@@ -109,7 +109,7 @@ class ArchimatchUserService:
 
             else:
                 response_data = {
-                    "message": "Password already set or passwords do not match",
+                    "message": "Passwords do not match",
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
                 return Response(
