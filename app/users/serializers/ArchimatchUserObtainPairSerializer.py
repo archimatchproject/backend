@@ -8,9 +8,11 @@ Classes:
     ArchimatchUserObtainPairSerializer: Serializer for obtaining JWT tokens with user data.
 """
 
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ArchimatchUserSerializer
 
 
@@ -57,3 +59,63 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
             "access": str(access),
             "user": user_data,
         }
+
+
+class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Serializer for obtaining JWT tokens with user data using phone_number field.
+
+    This serializer extends TokenObtainPairSerializer to include user
+    data in the token response.
+    """
+
+    username_field = "phone_number"
+    phone_number = serializers.CharField()
+
+    def validate(self, attrs):
+        """
+        Validate the data and return the custom response.
+
+        Args:
+            attrs: The attributes to validate.
+
+        Returns:
+            dict: Custom response containing the auth pair and user data.
+        """
+
+        phone_number = attrs.get("phone_number")
+        password = attrs.get("password")
+
+        user = ArchimatchUser.objects.filter(phone_number=phone_number).first()
+
+        if user and user.check_password(password):
+            attrs["email"] = user.email
+            attrs.pop("phone_number")
+            self.username_field = "email"
+            data = super().validate(attrs)
+
+            refresh = self.get_token(self.user)
+            access = refresh.access_token
+
+            user_data = ArchimatchUserSerializer(self.user).data
+
+            return {
+                "refresh": str(refresh),
+                "access": str(access),
+                "user": user_data,
+            }
+        raise serializers.ValidationError("Invalid credentials")
+
+    @classmethod
+    def get_token(cls, user):
+        """
+        Return the token with additional user data serialized.
+
+        Args:
+            user: The user object for which the token is being obtained.
+
+        Returns:
+            RefreshToken: JWT refresh token.
+        """
+        token = super().get_token(user)
+        return token

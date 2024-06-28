@@ -17,6 +17,7 @@ from app.users.controllers import (
     ArchimatchUserObtainPairView,
     ArchimatchUserViewSet,
     ClientViewSet,
+    PhoneTokenObtainPairView,
     SupplierViewSet,
 )
 
@@ -28,6 +29,7 @@ router.register("archimatch-user", ArchimatchUserViewSet, basename="archimatch-u
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("token/", ArchimatchUserObtainPairView.as_view(), name="token_obtain_pair"),
+    path("login-email/", ArchimatchUserObtainPairView.as_view(), name="login_email"),
+    path("login-phone/", PhoneTokenObtainPairView.as_view(), name="login_phone"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

@@ -17,6 +17,7 @@ from app.users.serializers import (
 )
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
+    PhoneTokenObtainPairSerializer,
 )
 from app.users.services import ArchimatchUserService
 
@@ -30,6 +31,17 @@ class ArchimatchUserObtainPairView(TokenObtainPairView):
     """
 
     serializer_class = ArchimatchUserObtainPairSerializer
+
+
+class PhoneTokenObtainPairView(TokenObtainPairView):
+    """
+    View for obtaining JSON Web Tokens for ArchimatchUser.
+
+    Inherits from TokenObtainPairView and uses PhoneTokenObtainPairSerializer
+    for token retrieval.
+    """
+
+    serializer_class = PhoneTokenObtainPairSerializer
 
 
 class ArchimatchUserViewSet(viewsets.ModelViewSet):

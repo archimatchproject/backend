@@ -9,6 +9,7 @@ Classes:
 
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from app.users import USER_TYPE_CHOICES
 
@@ -26,6 +27,10 @@ class ArchimatchUser(AbstractUser):
 
     """
 
+    email = models.EmailField(_("email address"), blank=True, unique=True)
+    USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
     image = models.ImageField(blank=True, null=True, upload_to="ProfileImages/")
     phone_number = models.CharField(max_length=20, unique=True, null=True)
     user_type = models.CharField(
