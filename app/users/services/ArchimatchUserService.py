@@ -43,13 +43,13 @@ class ArchimatchUserService:
             missing_keys = expected_keys - request_keys
             raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
-    def generate_tokens_for_user(username, password):
+    def generate_tokens_for_user(email, password):
         """
         Generates token for user
         """
         serializer = ArchimatchUserObtainPairSerializer(
             data={
-                "username": username,
+                "email": email,
                 "password": password,
             }
         )

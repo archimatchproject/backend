@@ -123,7 +123,7 @@ class SupplierService:
             email = data.get("email")
 
             if Supplier.objects.filter(user__email=email).exists():
-                user = ArchimatchUser.objects.get(username=email)
+                user = ArchimatchUser.objects.get(email=email)
                 if user.password == "":
                     response_data = {
                         "message": {"has_password": False, "email": user.email},
