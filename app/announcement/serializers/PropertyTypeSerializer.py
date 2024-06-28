@@ -6,7 +6,7 @@ This module defines a serializer class for the PropertyType model.
 
 from rest_framework import serializers
 
-from app.announcement.models.PropertyType import PropertyType
+from app.core.models.PropertyType import PropertyType
 
 
 class PropertyTypeSerializer(serializers.ModelSerializer):

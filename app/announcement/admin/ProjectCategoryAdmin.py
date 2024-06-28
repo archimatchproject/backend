@@ -7,7 +7,7 @@ the Django admin interface for the ProjectCategory model.
 
 from django.contrib import admin
 
-from app.announcement.models.ProjectCategory import ProjectCategory
+from app.core.models.ProjectCategory import ProjectCategory
 
 
 class ProjectCategoryAdmin(admin.ModelAdmin):

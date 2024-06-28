@@ -7,7 +7,7 @@ the Django admin interface for the ArchitecturalStyle model.
 
 from django.contrib import admin
 
-from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 
 
 class ArchitecturalStyleAdmin(admin.ModelAdmin):

@@ -16,9 +16,7 @@ from app.architect_request.controllers.ArchitectRequestViewSet import (
 )
 
 router = routers.DefaultRouter()
-router.register(
-    "architect-request", ArchitectRequestViewSet, basename="architect-request"
-)
+router.register("", ArchitectRequestViewSet, basename="architect-request")
 urlpatterns = [
     path("", include(router.urls)),
 ]

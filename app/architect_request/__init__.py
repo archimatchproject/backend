@@ -21,3 +21,10 @@ TIME_SLOT_CHOICES = [
     (datetime.time(hour=16, minute=30), "16:30"),
     (datetime.time(hour=17, minute=0), "17:00"),
 ]
+
+ARCHITECT_REQUEST_STATUS_CHOICES = [
+    ("Accepted", "Accepted"),
+    ("Refused", "Refused"),
+    ("Awaiting Demo", "Awaiting Demo"),
+    ("Awaiting Decision", "Awaiting Decision"),
+]

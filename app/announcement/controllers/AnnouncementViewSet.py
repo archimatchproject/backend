@@ -14,9 +14,6 @@ from app.announcement.serializers.AnnouncementSerializer import (
     AnnouncementPOSTSerializer,
     AnnouncementPUTSerializer,
 )
-from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
-    AnnouncementWorkTypeSerializer,
-)
 from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
 )
@@ -32,6 +29,7 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
     ProjectExtensionSerializer,
 )
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.announcement.services import AnnouncementService
 
 
@@ -158,7 +156,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="work-types",
         url_name="work-types",
-        serializer_class=AnnouncementWorkTypeSerializer,
+        serializer_class=WorkTypeSerializer,
     )
     def get_announcement_work_types(self, request):
         """
