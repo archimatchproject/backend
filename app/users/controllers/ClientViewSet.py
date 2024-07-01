@@ -10,12 +10,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.users.models import Client
-from app.users.serializers import (
-    ClientSerializer,
-    UserAuthPhoneSerializer,
-    UserAuthSerializer,
-    VerifyCodeSerializer,
-)
+from app.users.serializers import ClientSerializer
+from app.users.serializers import UserAuthPhoneSerializer
+from app.users.serializers import UserAuthSerializer
+from app.users.serializers import VerifyCodeSerializer
 from app.users.services import ClientService
 
 

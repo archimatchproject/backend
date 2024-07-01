@@ -14,13 +14,12 @@ from rest_framework.response import Response
 
 from app.core.services import TwilioVerifyService
 from app.core.services.SMS.SMSVerificationService import SMSVerificationService
-from app.core.validation.exceptions import (
-    InvalidPhoneNumberException,
-    SMSException,
-    UserDataException,
-)
+from app.core.validation.exceptions import InvalidPhoneNumberException
+from app.core.validation.exceptions import SMSException
+from app.core.validation.exceptions import UserDataException
 from app.core.validation.validate_data import is_valid_phone_number
-from app.users.models import ArchimatchUser, Client
+from app.users.models import ArchimatchUser
+from app.users.models import Client
 
 
 class ClientService:
@@ -88,9 +87,7 @@ class ClientService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
         except APIException as e:
             return Response({"message": str(e)}, status=e.status_code)
         except Exception as e:
@@ -139,9 +136,7 @@ class ClientService:
                     "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
         except SMSException as e:
             return Response(
                 {"message": "Error Sending SMS Code"},
@@ -205,9 +200,7 @@ class ClientService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
         except SMSException as e:
             return Response(
                 {"message": "Error Verifying SMS Code"},

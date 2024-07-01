@@ -4,6 +4,7 @@ Module defining the AnnouncementPieceRenovate model.
 This module contains the AnnouncementPieceRenovate class, which represents an AnnouncementPieceRenovate
 for a construction or renovation project in the application.
 """
+
 from django.db import models
 
 from app.announcement.models.Announcement import Announcement

@@ -35,9 +35,7 @@ class Supplier(BaseModel):
     company_speciality = models.CharField(max_length=255, default="")
     bio = models.TextField(max_length=1000, default="")
     company_name = models.CharField(max_length=255, default="")
-    presentation_video = models.FileField(
-        upload_to="SupplierVideos/", blank=True, null=True
-    )
+    presentation_video = models.FileField(upload_to="SupplierVideos/", blank=True, null=True)
     speciality_type = models.ManyToManyField(
         SupplierSpeciality, related_name="speciality_type_suppliers"
     )

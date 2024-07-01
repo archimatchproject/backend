@@ -27,20 +27,12 @@ from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
@@ -66,15 +58,9 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectCategory.objects.all()
-    )
-    property_type = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all()
-    )
-    work_type = serializers.PrimaryKeyRelatedField(
-        queryset=AnnouncementWorkType.objects.all()
-    )
+    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    work_type = serializers.PrimaryKeyRelatedField(queryset=AnnouncementWorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
             child=serializers.IntegerField(required=True), allow_empty=False
@@ -131,15 +117,9 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectCategory.objects.all()
-    )
-    property_type = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all()
-    )
-    work_type = serializers.PrimaryKeyRelatedField(
-        queryset=AnnouncementWorkType.objects.all()
-    )
+    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    work_type = serializers.PrimaryKeyRelatedField(queryset=AnnouncementWorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
             child=serializers.IntegerField(required=True), allow_empty=False

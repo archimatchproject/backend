@@ -9,7 +9,8 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import ArchimatchUser, Client
+from app.users.models import ArchimatchUser
+from app.users.models import Client
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 

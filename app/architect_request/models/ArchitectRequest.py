@@ -42,9 +42,7 @@ class ArchitectRequest(BaseModel):
     architect_identifier = models.CharField(max_length=10, default="")
     email = models.EmailField(unique=True)
 
-    architect_speciality = models.ForeignKey(
-        ArchitectSpeciality, on_delete=models.CASCADE
-    )
+    architect_speciality = models.ForeignKey(ArchitectSpeciality, on_delete=models.CASCADE)
 
     date = models.DateField()
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
@@ -53,12 +51,8 @@ class ArchitectRequest(BaseModel):
         """
         Custom validation to ensure the time slot is not already taken for the same date.
         """
-        if ArchitectRequest.objects.filter(
-            date=self.date, time_slot=self.time_slot
-        ).exists():
-            raise ValidationError(
-                "This time slot on the selected date is already taken."
-            )
+        if ArchitectRequest.objects.filter(date=self.date, time_slot=self.time_slot).exists():
+            raise ValidationError("This time slot on the selected date is already taken.")
 
         now = timezone.now()
         meeting_naive_datetime = datetime.datetime.combine(self.date, self.time_slot)

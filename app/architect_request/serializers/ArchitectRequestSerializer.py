@@ -10,9 +10,7 @@ Classes:
 
 from rest_framework import serializers
 
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 

@@ -9,6 +9,7 @@ This module registers the SupplierSpeciality model with the Django admin interfa
 and specifies basic configurations for managing SupplierSpeciality instances.
 
 """
+
 from django.contrib import admin
 
 from app.users.models import SupplierSpeciality

@@ -1,6 +1,7 @@
 """
 Module for defining preference models dynamically based on CHOICE_MODEL_NAMES.
 """
+
 from django.db import models
 
 

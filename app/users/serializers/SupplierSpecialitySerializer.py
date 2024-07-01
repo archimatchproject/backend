@@ -6,6 +6,7 @@ This module provides a serializer for the SupplierSpeciality  model, including n
 Classes:
     SupplierSpeciality Serializer: Serializer for the SupplierSpeciality  model with nested ArchimatchUser.
 """
+
 from rest_framework import serializers
 
 from app.users.models import SupplierSpeciality

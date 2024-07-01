@@ -3,6 +3,7 @@ Serializer module for ArchitectWorkType model.
 
 This module defines a serializer class for the ArchitectWorkType model.
 """
+
 from rest_framework import serializers
 
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType

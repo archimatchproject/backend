@@ -7,18 +7,19 @@ It includes routing configurations for various API endpoints using Django Rest F
 
 """
 
-from django.urls import include, path
+from django.urls import include
+from django.urls import path
 
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
+
+from app.users.controllers import ArchimatchUserObtainPairView
+from app.users.controllers import PhoneTokenObtainPairView
 from app.users.routes.AdminUrls import admin_urlpatterns
 from app.users.routes.ArchimatchUserUrls import archimatch_user_urlpatterns
 from app.users.routes.ClientUrls import client_urlpatterns
 from app.users.routes.SupplierUrls import supplier_urlpatterns
-from app.users.controllers import (
-    ArchimatchUserObtainPairView,
-    PhoneTokenObtainPairView,
-)
+
 
 router = routers.DefaultRouter()
 

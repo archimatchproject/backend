@@ -11,14 +11,12 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from app.users.models import ArchimatchUser
-from app.users.serializers import (
-    ArchimatchUserCreatePWSerializer,
-    ArchimatchUserSerializer,
-)
+from app.users.serializers import ArchimatchUserCreatePWSerializer
+from app.users.serializers import ArchimatchUserSerializer
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
-    PhoneTokenObtainPairSerializer,
 )
+from app.users.serializers.ArchimatchUserObtainPairSerializer import PhoneTokenObtainPairSerializer
 from app.users.services import ArchimatchUserService
 
 

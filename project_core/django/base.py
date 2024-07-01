@@ -5,6 +5,7 @@ This module defines the base configuration constants and settings for the Django
 """
 
 import os
+
 from pathlib import Path
 
 import environ
@@ -14,6 +15,7 @@ from project_core.settings.cors import *
 from project_core.settings.email_sending import *
 from project_core.settings.jwt import *
 from project_core.settings.sms_sending import *
+
 
 env = environ.Env()
 
@@ -38,7 +40,6 @@ LOCAL_APPS = [
     "app.announcement",
     "app.architect_request",
 ]
-
 
 
 """
@@ -183,5 +184,3 @@ Media files (uploads) configuration.
 """
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
-
-

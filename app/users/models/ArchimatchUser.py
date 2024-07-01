@@ -7,7 +7,9 @@ Classes:
     ArchimatchUser: Custom user model for the Archimatch application.
 """
 
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -37,9 +39,7 @@ class ArchimatchUser(AbstractUser):
         max_length=200, choices=USER_TYPE_CHOICES, default=USER_TYPE_CHOICES[0][0]
     )
 
-    groups = models.ManyToManyField(
-        Group, related_name="groups_archimatchuser_set", blank=True
-    )
+    groups = models.ManyToManyField(Group, related_name="groups_archimatchuser_set", blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name="user_permissions_archimatchuser_set", blank=True
     )

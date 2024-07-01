@@ -4,13 +4,16 @@ Module: app.views.admin
 Class: AdminViewSet
 
 """
-from rest_framework import status, viewsets
+
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models import Admin
-from app.users.serializers import AdminSerializer, UserAuthSerializer
+from app.users.serializers import AdminSerializer
+from app.users.serializers import UserAuthSerializer
 from app.users.services import AdminService
 
 
@@ -56,9 +59,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         return AdminService.update_admin(instance, request.data)
 
-    @action(
-        detail=False, methods=["POST"], permission_classes=[], name="retrieve_by_token"
-    )
+    @action(detail=False, methods=["POST"], permission_classes=[], name="retrieve_by_token")
     def retrieve_by_token(self, request):
         """
         Retrieve admin details using a token provided in the request.

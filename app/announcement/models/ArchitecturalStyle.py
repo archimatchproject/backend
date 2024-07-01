@@ -4,6 +4,7 @@ Module defining the ArchitecturalStyle model.
 This module contains the ArchitecturalStyle class, which represents
 the specialty of an architect in the application.
 """
+
 from django.db import models
 
 from app.core.models import LabeledIcon

@@ -17,7 +17,8 @@ and defines custom forms and configurations for managing these models.
 from django import forms
 from django.contrib import admin
 
-from app.users.models import Architect, ArchitectType
+from app.users.models import Architect
+from app.users.models import ArchitectType
 
 
 class ArchitectForm(forms.ModelForm):

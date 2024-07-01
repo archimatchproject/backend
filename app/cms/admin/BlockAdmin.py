@@ -7,7 +7,8 @@ in the Django admin interface.
 
 from django.contrib import admin
 
-from app.cms.models import Block, SliderImage
+from app.cms.models import Block
+from app.cms.models import SliderImage
 
 
 class SliderImageInline(admin.TabularInline):

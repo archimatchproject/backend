@@ -8,19 +8,19 @@ Classes:
 """
 
 import jwt
+
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
 from app.users import APPEARANCES
-from app.users.models import ArchimatchUser, Supplier
+from app.users.models import ArchimatchUser
+from app.users.models import Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.models.SupplierSpeciality import SupplierSpeciality
 from app.users.serializers import SupplierSerializer
-from app.users.serializers.SupplierSpecialitySerializer import (
-    SupplierSpecialitySerializer,
-)
+from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 
 
 class SupplierService:
@@ -90,9 +90,7 @@ class SupplierService:
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -140,9 +138,7 @@ class SupplierService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -206,9 +202,7 @@ class SupplierService:
                 "message": {"message": "supplier successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -267,9 +261,7 @@ class SupplierService:
                 "message": {"message": "supplier successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -313,9 +305,7 @@ class SupplierService:
                 "message": {"message": "Supplier bio successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -358,14 +348,10 @@ class SupplierService:
             )
 
             response_data = {
-                "message": {
-                    "message": "Supplier presentation video successfully updated"
-                },
+                "message": {"message": "Supplier presentation video successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -418,18 +404,14 @@ class SupplierService:
                 supplier.save()
             else:
                 social_links = supplier.social_links
-                SupplierSocialMedia.objects.filter(id=social_links.id).update(
-                    **social_links_data
-                )
+                SupplierSocialMedia.objects.filter(id=social_links.id).update(**social_links_data)
                 supplier.refresh_from_db()
 
             response_data = {
                 "message": {"message": "Supplier social links successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -447,9 +429,7 @@ class SupplierService:
         """
         try:
             speciality_types = SupplierSpeciality.objects.all()
-            speciality_types_data = SupplierSpecialitySerializer(
-                speciality_types, many=True
-            ).data
+            speciality_types_data = SupplierSpecialitySerializer(speciality_types, many=True).data
 
             return Response(speciality_types_data, status=status.HTTP_200_OK)
 

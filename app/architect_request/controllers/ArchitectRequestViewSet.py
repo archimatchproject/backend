@@ -18,11 +18,9 @@ from app.architect_request.controllers.ManageArchitectRequestPermission import (
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
-    ArchitectRequestSerializer,
 )
-from app.architect_request.services.ArchitectRequestService import (
-    ArchitectRequestService,
-)
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
+from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
 
 
 class ArchitectRequestViewSet(viewsets.ModelViewSet):

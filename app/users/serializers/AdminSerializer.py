@@ -9,7 +9,8 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import Admin, ArchimatchUser
+from app.users.models import Admin
+from app.users.models import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
@@ -102,7 +103,5 @@ class AdminSerializer(serializers.ModelSerializer):
         if instance.super_user:
             data["rights"] = ["__All__"]
         else:
-            data["rights"] = list(
-                instance.permissions.values_list("codename", flat=True)
-            )
+            data["rights"] = list(instance.permissions.values_list("codename", flat=True))
         return data

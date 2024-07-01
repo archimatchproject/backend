@@ -15,7 +15,10 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
+from app.announcement import BUDGETS
+from app.announcement import CITIES
+from app.announcement import TERRAIN_SURFACES
+from app.announcement import WORK_SURFACES
 from app.announcement.models.Announcement import Announcement
 from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
@@ -26,28 +29,18 @@ from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementOutputSerializer,
-    AnnouncementPOSTSerializer,
-    AnnouncementPUTSerializer,
-)
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users import USER_TYPE_CHOICES
@@ -85,15 +78,11 @@ class AnnouncementService:
                     user_data["username"] = user_data["email"]
                     user_data["user_type"] = USER_TYPE_CHOICES[1][0]
                     user_instance = ArchimatchUser.objects.create_user(**user_data)
-                    client_instance = Client.objects.create(
-                        user=user_instance, **client_data
-                    )
+                    client_instance = Client.objects.create(user=user_instance, **client_data)
                 else:
                     client_instance = None
 
-                announcement = Announcement.objects.create(
-                    client=client_instance, **validated_data
-                )
+                announcement = Announcement.objects.create(client=client_instance, **validated_data)
                 announcement.needs.set(needs_data)
 
                 for piece_data in pieces_renovate_data:
@@ -179,9 +168,7 @@ class AnnouncementService:
         """
         try:
             architect_specialities = ArchitectSpeciality.objects.all()
-            serializer = ArchitectSpecialitySerializer(
-                architect_specialities, many=True
-            )
+            serializer = ArchitectSpecialitySerializer(architect_specialities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             raise APIException(f"Error retrieving architect specialities")
@@ -198,9 +185,7 @@ class AnnouncementService:
             Response: Response containing list of needs related to the architect speciality.
         """
         try:
-            if not ArchitectSpeciality.objects.filter(
-                id=architect_speciality_id
-            ).exists():
+            if not ArchitectSpeciality.objects.filter(id=architect_speciality_id).exists():
                 return Response(
                     {"message": "No architect speciality found with the given ID"},
                     status=status.HTTP_404_NOT_FOUND,
@@ -243,9 +228,7 @@ class AnnouncementService:
                     {"message": "No project category found with the given ID"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-            property_types = PropertyType.objects.filter(
-                project_category_id=project_category_id
-            )
+            property_types = PropertyType.objects.filter(project_category_id=project_category_id)
             serializer = PropertyTypeSerializer(property_types, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -261,9 +244,7 @@ class AnnouncementService:
         """
         try:
             announcement_work_types = AnnouncementWorkType.objects.all()
-            serializer = AnnouncementWorkTypeSerializer(
-                announcement_work_types, many=True
-            )
+            serializer = AnnouncementWorkTypeSerializer(announcement_work_types, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             raise APIException(f"Error retrieving announcement work types")
@@ -303,8 +284,7 @@ class AnnouncementService:
             Response: Response containing list of terrain surfaces.
         """
         terrain_surfaces = [
-            {"value": surface[0], "display_name": surface[1]}
-            for surface in TERRAIN_SURFACES
+            {"value": surface[0], "display_name": surface[1]} for surface in TERRAIN_SURFACES
         ]
         return Response(terrain_surfaces, status=status.HTTP_200_OK)
 
@@ -317,8 +297,7 @@ class AnnouncementService:
             Response: Response containing list of work surfaces.
         """
         work_surfaces = [
-            {"value": surface[0], "display_name": surface[1]}
-            for surface in WORK_SURFACES
+            {"value": surface[0], "display_name": surface[1]} for surface in WORK_SURFACES
         ]
         return Response(work_surfaces, status=status.HTTP_200_OK)
 
@@ -330,9 +309,7 @@ class AnnouncementService:
         Returns:
             Response: Response containing list of budgets.
         """
-        budgets = [
-            {"value": budget[0], "display_name": budget[1]} for budget in BUDGETS
-        ]
+        budgets = [{"value": budget[0], "display_name": budget[1]} for budget in BUDGETS]
         return Response(budgets, status=status.HTTP_200_OK)
 
     @classmethod

@@ -84,9 +84,7 @@ class ArchimatchUserService:
                     "message": "User does not exist",
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
-                return Response(
-                    response_data["message"], status=response_data["status_code"]
-                )
+                return Response(response_data["message"], status=response_data["status_code"])
 
             user = ArchimatchUser.objects.get(email=req_email)
             password = data.get("password")
@@ -112,9 +110,7 @@ class ArchimatchUserService:
                     "message": "Passwords do not match",
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
-                return Response(
-                    response_data["message"], status=response_data["status_code"]
-                )
+                return Response(response_data["message"], status=response_data["status_code"])
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -155,9 +151,7 @@ class ArchimatchUserService:
                     "message": {"message": "User does not exist"},
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
-                return Response(
-                    response_data["message"], status=response_data["status_code"]
-                )
+                return Response(response_data["message"], status=response_data["status_code"])
 
             user = ArchimatchUser.objects.get(id=data.get("id"))
             old_password = data.get("old_password")
@@ -170,9 +164,7 @@ class ArchimatchUserService:
                     "message": {"message": "Incorrect old password"},
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
-                return Response(
-                    response_data["message"], status=response_data["status_code"]
-                )
+                return Response(response_data["message"], status=response_data["status_code"])
 
             # Set new password if conditions are met
             if new_password == confirm_new_password:
@@ -188,9 +180,7 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
 
-            return Response(
-                response_data["message"], status=response_data["status_code"]
-            )
+            return Response(response_data["message"], status=response_data["status_code"])
 
         except UserDataException as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)

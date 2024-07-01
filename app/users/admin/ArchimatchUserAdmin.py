@@ -8,6 +8,7 @@ Description:
     and defines how the user data is displayed and managed.
 
 """
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 

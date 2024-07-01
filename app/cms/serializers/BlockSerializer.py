@@ -1,6 +1,7 @@
 """
 Serializers for handling Block model instances.
 """
+
 from rest_framework import serializers
 
 from app.cms.models import Block

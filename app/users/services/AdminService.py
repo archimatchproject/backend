@@ -11,12 +11,14 @@ Classes:
 
 import environ
 import jwt
+
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.users.models import Admin
 from app.users.serializers import AdminSerializer
+
 
 env = environ.Env()
 
@@ -89,7 +91,7 @@ class AdminService:
             return {"error": "Token has expired"}
         except jwt.InvalidTokenError:
             return {"error": "Invalid token"}
-        except Exception as e:
+        except Exception:
             return {"error": "Error decoding token"}
 
     @classmethod
@@ -135,9 +137,7 @@ class AdminService:
             payload = cls.decode_token(token)
 
             if "error" in payload:
-                return Response(
-                    {"error": payload["error"]}, status=status.HTTP_401_UNAUTHORIZED
-                )
+                return Response({"error": payload["error"]}, status=status.HTTP_401_UNAUTHORIZED)
 
             user_id = payload.get("user_id")
             if user_id:
@@ -145,9 +145,7 @@ class AdminService:
                 if admin:
                     serializer = AdminSerializer(admin)
                     return Response(serializer.data)
-                return Response(
-                    {"error": "Admin not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Admin not found"}, status=status.HTTP_404_NOT_FOUND)
 
             return Response(
                 {"error": "Token decoded successfully but no user ID found"},
@@ -202,12 +200,10 @@ class AdminService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
-            return Response(
-                response_data.get("message"), status=response_data.get("status_code")
-            )
+            return Response(response_data.get("message"), status=response_data.get("status_code"))
         except APIException as e:
             return Response({"message": str(e)}, status=e.status_code)
-        except Exception as e:
+        except Exception:
             return Response(
                 {"message": "An error occurred during admin login"},
                 status=status.HTTP_410_GONE,

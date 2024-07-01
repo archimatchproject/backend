@@ -7,7 +7,10 @@ for a construction or renovation project in the application.
 
 from django.db import models
 
-from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
+from app.announcement import BUDGETS
+from app.announcement import CITIES
+from app.announcement import TERRAIN_SURFACES
+from app.announcement import WORK_SURFACES
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
 from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
@@ -44,9 +47,7 @@ class Announcement(BaseModel):
     """
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    architect_speciality = models.ForeignKey(
-        ArchitectSpeciality, on_delete=models.CASCADE
-    )
+    architect_speciality = models.ForeignKey(ArchitectSpeciality, on_delete=models.CASCADE)
     needs = models.ManyToManyField(Need, related_name="needs_announcements")
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
@@ -56,9 +57,7 @@ class Announcement(BaseModel):
     terrain_surface = models.CharField(
         max_length=50, choices=TERRAIN_SURFACES, default=TERRAIN_SURFACES[0]
     )
-    work_surface = models.CharField(
-        max_length=50, choices=WORK_SURFACES, default=WORK_SURFACES[0]
-    )
+    work_surface = models.CharField(max_length=50, choices=WORK_SURFACES, default=WORK_SURFACES[0])
     budget = models.CharField(max_length=50, choices=BUDGETS, default=BUDGETS[0])
     description = models.TextField()
     architectural_style = models.ForeignKey(
