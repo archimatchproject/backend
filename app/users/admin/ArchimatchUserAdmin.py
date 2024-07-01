@@ -25,7 +25,7 @@ class ArchimatchUserAdmin(UserAdmin):
 
     fieldsets = (
         (
-            None,
+            "User details",
             {
                 "fields": (
                     "email",
@@ -45,7 +45,7 @@ class ArchimatchUserAdmin(UserAdmin):
 
     add_fieldsets = (
         (
-            None,
+            "User Details",
             {
                 "classes": ("wide",),
                 "fields": (
