@@ -51,7 +51,7 @@ class Architect(BaseModel):
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality, on_delete=models.CASCADE
     )
-    bio = models.TextField(max_length=1000, default="")
+    bio = models.TextField(max_length=500, default="")
     company_name = models.CharField(max_length=255, default="")
     company_logo = models.ImageField(blank=True, null=True, upload_to="CompanyLogos/")
     presentation_video = models.FileField(

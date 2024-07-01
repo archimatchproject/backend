@@ -1,12 +1,3 @@
-"""
-Module containing the Admin model.
-
-This module defines the Admin model, representing an administrative user with extended permissions.
-
-Classes:
-    Admin: Model representing an administrative user with extended permissions.
-"""
-
 from django.contrib.auth.models import Permission
 from django.db import models
 
@@ -37,6 +28,20 @@ class Admin(BaseModel):
             str: The email address of the user.
         """
         return self.user.email
+
+    @property
+    def permissions_list(self):
+        """
+        Returns a list of codenames of permissions granted to this admin.
+        """
+        return list(self.permissions.values_list('codename', flat=True))
+
+    @property
+    def has_super_user_permission(self):
+        """
+        Checks if the admin has superuser privileges.
+        """
+        return self.super_user
 
     def set_permissions(self, rights):
         """

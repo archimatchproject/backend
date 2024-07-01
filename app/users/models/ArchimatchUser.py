@@ -1,12 +1,3 @@
-"""
-Module containing the ArchimatchUser model.
-
-This module defines the custom user model for the Archimatch application, extending the AbstractUser model.
-
-Classes:
-    ArchimatchUser: Custom user model for the Archimatch application.
-"""
-
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -53,14 +44,12 @@ class ArchimatchUser(AbstractUser):
         """
         return self.email
 
-    def get_user_type(self):
+    @property
+    def user_type_display(self):
         """
-        Returns the user type of the user.
-
-        Returns:
-            str: The user type.
+        Returns the display name of the user type.
         """
-        return self.user_type
+        return dict(USER_TYPE_CHOICES).get(self.user_type, "Unknown")
 
     def save(self, *args, **kwargs):
         """
@@ -84,3 +73,4 @@ class ArchimatchUser(AbstractUser):
         """
 
         verbose_name = "Archimatch User"
+        verbose_name_plural = "Archimatch Users"
