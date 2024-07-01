@@ -12,15 +12,11 @@ from django.db import models
 
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
+from app.core.models.WorkType import WorkType
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.models.ArchitectPreferences import (
-    BudgetType,
-    HouseType,
-    LocationType,
-    ServiceType,
-    WorkSurfaceType,
-    WorkType,
-)
 
 
 class Architect(BaseModel):
@@ -59,12 +55,10 @@ class Architect(BaseModel):
     )
 
     # preferences
+    project_categories = models.ManyToManyField(ProjectCategory)
+    property_types = models.ManyToManyField(PropertyType)
     work_types = models.ManyToManyField(WorkType)
-    house_types = models.ManyToManyField(HouseType)
-    services = models.ManyToManyField(ServiceType)
-    locations = models.ManyToManyField(LocationType)
-    work_surfaces = models.ManyToManyField(WorkSurfaceType)
-    budgets = models.ManyToManyField(BudgetType)
+    architectural_styles = models.ManyToManyField(ArchitecturalStyle)
 
     def __str__(self):
         """

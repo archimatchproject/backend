@@ -6,7 +6,7 @@ This module defines a serializer class for the ProjectCategory model.
 
 from rest_framework import serializers
 
-from app.announcement.models.ProjectCategory import ProjectCategory
+from app.core.models.ProjectCategory import ProjectCategory
 
 
 class ProjectCategorySerializer(serializers.ModelSerializer):

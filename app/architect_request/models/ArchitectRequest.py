@@ -14,9 +14,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from app.architect_request import TIME_SLOT_CHOICES
+from app.architect_request import ARCHITECT_REQUEST_STATUS_CHOICES, TIME_SLOT_CHOICES
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.users.models.Admin import Admin
 
 
 class ArchitectRequest(BaseModel):
@@ -49,13 +50,20 @@ class ArchitectRequest(BaseModel):
     date = models.DateField()
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
 
+    meeting_responsable = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
+    )
+
     def clean(self):
         """
         Custom validation to ensure the time slot is not already taken for the same date.
         """
-        if ArchitectRequest.objects.filter(
+        conflicting_requests = ArchitectRequest.objects.filter(
             date=self.date, time_slot=self.time_slot
-        ).exists():
+        ).exclude(pk=self.pk)
+
+        if conflicting_requests.exists():
             raise ValidationError(
                 "This time slot on the selected date is already taken."
             )

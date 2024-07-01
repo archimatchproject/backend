@@ -13,19 +13,12 @@ from rest_framework import serializers
 
 from app.announcement.models import Announcement
 from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
-from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
-from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
-from app.announcement.models.PropertyType import PropertyType
 from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
     AnnouncementPieceRenovateSerializer,
-)
-from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
-    AnnouncementWorkTypeSerializer,
 )
 from app.announcement.serializers.ArchitectSpecialitySerializer import (
     ArchitectSpecialitySerializer,
@@ -43,7 +36,12 @@ from app.announcement.serializers.ProjectExtensionSerializer import (
 )
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
+from app.core.models.WorkType import WorkType
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ClientSerializer
@@ -72,9 +70,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     property_type = serializers.PrimaryKeyRelatedField(
         queryset=PropertyType.objects.all()
     )
-    work_type = serializers.PrimaryKeyRelatedField(
-        queryset=AnnouncementWorkType.objects.all()
-    )
+    work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
             child=serializers.IntegerField(required=True), allow_empty=False
@@ -137,9 +133,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
     property_type = serializers.PrimaryKeyRelatedField(
         queryset=PropertyType.objects.all()
     )
-    work_type = serializers.PrimaryKeyRelatedField(
-        queryset=AnnouncementWorkType.objects.all()
-    )
+    work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
             child=serializers.IntegerField(required=True), allow_empty=False
@@ -193,7 +187,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     needs = NeedSerializer(many=True)
     project_category = ProjectCategorySerializer()
     property_type = PropertyTypeSerializer()
-    work_type = AnnouncementWorkTypeSerializer()
+    work_type = WorkTypeSerializer()
     pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
