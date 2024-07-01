@@ -29,7 +29,7 @@ urlpatterns = [
     *archimatch_user_urlpatterns,
     *client_urlpatterns,
     *supplier_urlpatterns,
-    path("login-email/", ArchimatchUserObtainPairView.as_view(), name="login_email"),
-    path("login-phone/", PhoneTokenObtainPairView.as_view(), name="login_phone"),
-    path("token-refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("login-email/", ArchimatchUserObtainPairView.as_view(), name="login-email"),
+    path("login-phone/", PhoneTokenObtainPairView.as_view(), name="login-phone"),
+    path("token-refresh/", TokenRefreshView.as_view(), name="token-refresh"),
 ]

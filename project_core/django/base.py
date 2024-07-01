@@ -1,6 +1,9 @@
 """
 Module-level constants for base configuration.
+
+This module defines the base configuration constants and settings for the Django project.
 """
+
 import os
 from pathlib import Path
 
@@ -14,6 +17,9 @@ from project_core.settings.sms_sending import *
 
 env = environ.Env()
 
+"""
+Third-party applications used in the project.
+"""
 THIRD_PARTY_APPS = [
     "rest_framework",
     "corsheaders",
@@ -21,6 +27,10 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "djangorestframework_camel_case",
 ]
+
+"""
+Local applications specific to this Django project.
+"""
 LOCAL_APPS = [
     "app.core",
     "app.users",
@@ -29,8 +39,14 @@ LOCAL_APPS = [
     "app.architect_request",
 ]
 
+"""
+Custom user model for authentication.
+"""
 AUTH_USER_MODEL = "users.ArchimatchUser"
 
+"""
+Combined list of installed applications.
+"""
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -42,6 +58,9 @@ INSTALLED_APPS = [
     *THIRD_PARTY_APPS,
 ]
 
+"""
+Configuration for Django Rest Framework.
+"""
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -57,6 +76,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+"""
+Middleware stack for request/response processing.
+"""
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -68,8 +90,15 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+"""
+URL configuration for the project.
+"""
 ROOT_URLCONF = "project_core.urls"
 
+"""
+Template engine configuration.
+"""
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -85,10 +114,15 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = "project_core.wsgi.application"
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
+"""
+WSGI application configuration.
+"""
+WSGI_APPLICATION = "project_core.wsgi.application"
+
+"""
+Password validation configuration.
+"""
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -104,7 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+"""
+Database configuration.
+"""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -116,26 +152,34 @@ DATABASES = {
     }
 }
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+"""
+Internationalization and localization settings.
+"""
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "Africa/Tunis"
 USE_TZ = True
-
 USE_I18N = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
+"""
+Static files (CSS, JavaScript, Images) serving configuration.
+"""
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+"""
+Static files storage configuration for production.
+"""
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+"""
+Default primary key field type configuration.
+"""
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+"""
+Media files (uploads) configuration.
+"""
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+
