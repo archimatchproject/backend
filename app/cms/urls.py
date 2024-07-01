@@ -9,12 +9,12 @@ It includes routing configurations for various API endpoints using Django Rest F
 from django.urls import include, path
 
 from rest_framework import routers
-
+from app.cms.routes.BlogUrls import blog_urlpatterns
 from app.cms.controllers import BlogViewSet
 
 router = routers.DefaultRouter()
-router.register("blog", BlogViewSet, basename="blog")
 
 urlpatterns = [
     path("", include(router.urls)),
+    *blog_urlpatterns
 ]

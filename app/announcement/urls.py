@@ -7,14 +7,13 @@ It includes routing configurations for various API endpoints using Django Rest F
 
 """
 from django.urls import include, path
-
 from rest_framework import routers
-
 from app.announcement.controllers import AnnouncementViewSet
+from app.announcement.routes.AnnouncementUrls import announcement_urlpatterns
 
 router = routers.DefaultRouter()
-router.register("", AnnouncementViewSet, basename="announcement")
 
 urlpatterns = [
     path("", include(router.urls)),
+    *announcement_urlpatterns
 ]

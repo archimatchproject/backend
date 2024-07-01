@@ -32,7 +32,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[permissions.AllowAny],
-        name="get_blogs",
+        name="get-blogs",
     )
     def get_blogs(self, request):
         """
