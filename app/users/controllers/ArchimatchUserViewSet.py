@@ -125,7 +125,11 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         """
         return ArchimatchUserService.archimatch_user_create_password(request)
 
-    @action(detail=False, methods=["POST"], url_path="reset-password")
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_path="reset-password",
+    )
     def archimatch_user_reset_password(self, request):
         """
         Action to reset a password for an ArchimatchUser.

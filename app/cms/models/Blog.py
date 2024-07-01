@@ -11,11 +11,16 @@ class Blog(models.Model):
 
     Attributes:
         title (CharField): Title of the blog post, maximum length of 255 characters.
-        cover_photo (ImageField): Optional cover photo for the blog post, stored in 'BlogsCoverPhotos/' directory.
+        cover_photo (ImageField): Optional cover photo for the blog post, stored in
+        'BlogsCoverPhotos/' directory.
     """
 
     title = models.CharField(max_length=255)
-    cover_photo = models.ImageField(upload_to="BlogsCoverPhotos/", blank=True, null=True)
+    cover_photo = models.ImageField(
+        upload_to="BlogsCoverPhotos/",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         """

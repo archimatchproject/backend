@@ -73,13 +73,18 @@ class ArchitectRequestService:
             except ArchitectSpeciality.DoesNotExist:
                 return Response(
                     {
-                        "error": f"ArchitectSpeciality with id {architect_speciality_id} does not exist."
+                        "error": (
+                            f"ArchitectSpeciality with id {architect_speciality_id} does not exist."
+                        )
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            except Exception as e:
+            except Exception:
                 return Response(
                     {"error handling request"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )

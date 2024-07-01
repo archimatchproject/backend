@@ -33,10 +33,15 @@ class TwilioVerifyService(SMSService):
         Initializes the TwilioVerifyService with the given client and verify service SID.
 
         Args:
-            client (Client, optional): The Twilio Client. If not provided, it is initialized with settings.
-            verify_service_sid (str, optional): The SID for the Twilio Verify service. If not provided, it is taken from settings.
+            client (Client, optional): The Twilio Client. If not provided, it is initialized with
+            settings.
+            verify_service_sid (str, optional): The SID for the Twilio Verify service. If not
+            provided, it is taken from settings.
         """
-        self.client = client or Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        self.client = client or Client(
+            settings.TWILIO_ACCOUNT_SID,
+            settings.TWILIO_AUTH_TOKEN,
+        )
         self.verify_service_sid = verify_service_sid or settings.TWILIO_VERIFY_SERVICE_SID
         self.verify = self.client.verify.services(self.verify_service_sid)
 
@@ -51,10 +56,13 @@ class TwilioVerifyService(SMSService):
             str: The verification SID if successful, otherwise an error message.
         """
         try:
-            verification = self.verify.verifications.create(to=phone, channel=settings.CHANNEL)
+            verification = self.verify.verifications.create(
+                to=phone,
+                channel=settings.CHANNEL,
+            )
             return verification.sid
         except TwilioRestException:
-            raise SMSException(f"Error sending verification code")
+            raise SMSException("Error sending verification code")
 
     def check_verification_code(self, phone, code):
         """
@@ -70,5 +78,5 @@ class TwilioVerifyService(SMSService):
         try:
             result = self.verify.verification_checks.create(to=phone, code=code)
             return result.status == "approved"
-        except TwilioRestException as e:
-            raise SMSException(f"Error receiving verification code")
+        except TwilioRestException:
+            raise SMSException("Error receiving verification code")

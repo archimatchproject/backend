@@ -10,7 +10,6 @@ Classes:
 
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers import ArchimatchUserSerializer
@@ -47,7 +46,7 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         Returns:
             dict: Custom response containing the auth pair and user data.
         """
-        data = super().validate(attrs)
+        super().validate(attrs)
 
         refresh = self.get_token(self.user)
         access = refresh.access_token
@@ -92,7 +91,7 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
             attrs["email"] = user.email
             attrs.pop("phone_number")
             self.username_field = "email"
-            data = super().validate(attrs)
+            super().validate(attrs)
 
             refresh = self.get_token(self.user)
             access = refresh.access_token

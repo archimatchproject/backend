@@ -54,11 +54,17 @@ class BlockAdmin(admin.ModelAdmin):
     """
     Admin configuration for Block model.
 
-    This admin class provides customizations for the Block model in the Django admin site.
-    It includes list display fields, filters, and inline editing for associated SliderImage instances.
+    This admin class provides customizations for the Block model in the Django
+     admin site.
+    It includes list display fields, filters, and inline editing for associated
+     SliderImage instances.
     """
 
-    list_display = ("block_type", "blog", "content")
+    list_display = (
+        "block_type",
+        "blog",
+        "content",
+    )
     list_filter = ("block_type", "blog")
 
     inlines = [SliderImageInline]

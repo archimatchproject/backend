@@ -4,7 +4,8 @@ Module: app.admin
 Class: ArchimatchUserAdmin
 
 Description:
-    Admin configuration for the ArchimatchUser model. Registers the ArchimatchUser model with the Django admin interface
+    Admin configuration for the ArchimatchUser model. Registers the ArchimatchUser model with the
+    Django admin interface
     and defines how the user data is displayed and managed.
 
 """
@@ -22,7 +23,13 @@ class ArchimatchUserAdmin(UserAdmin):
 
     model = ArchimatchUser
 
-    list_display = ("email", "username", "image", "phone_number", "user_type")
+    list_display = (
+        "email",
+        "username",
+        "image",
+        "phone_number",
+        "user_type",
+    )
 
     fieldsets = (
         (
@@ -40,7 +47,14 @@ class ArchimatchUserAdmin(UserAdmin):
         ),
         (
             "Permissions",
-            {"fields": ("is_staff", "is_active", "groups", "user_permissions")},
+            {
+                "fields": (
+                    "is_staff",
+                    "is_active",
+                    "groups",
+                    "user_permissions",
+                )
+            },
         ),
     )
 

@@ -6,20 +6,14 @@ and AnnouncementSerializer classes, which handle the serialization and deseriali
 of Announcement instances for API views.
 """
 
-from django.core.exceptions import ValidationError
-from django.db import transaction
-
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
-from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
 from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
-from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
 from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
     AnnouncementPieceRenovateSerializer,
@@ -30,15 +24,12 @@ from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
-from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
-from app.users.models import Client
-from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers import ClientSerializer
+from app.users.serializers.ClientSerializer import ClientSerializer
 
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
@@ -63,14 +54,17 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     work_type = serializers.PrimaryKeyRelatedField(queryset=AnnouncementWorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
-            child=serializers.IntegerField(required=True), allow_empty=False
+            child=serializers.IntegerField(required=True),
+            allow_empty=False,
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(), many=True
+        queryset=ProjectExtension.objects.all(),
+        many=True,
     )
     project_images = serializers.ListField(
-        child=serializers.ImageField(required=False), required=False
+        child=serializers.ImageField(required=False),
+        required=False,
     )
 
     class Meta:
@@ -122,14 +116,17 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
     work_type = serializers.PrimaryKeyRelatedField(queryset=AnnouncementWorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
-            child=serializers.IntegerField(required=True), allow_empty=False
+            child=serializers.IntegerField(required=True),
+            allow_empty=False,
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(), many=True
+        queryset=ProjectExtension.objects.all(),
+        many=True,
     )
     project_images = serializers.ListField(
-        child=serializers.ImageField(required=False), required=False
+        child=serializers.ImageField(required=False),
+        required=False,
     )
 
     class Meta:

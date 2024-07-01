@@ -5,7 +5,7 @@ viewset : ClientViewSet
 
 from django.urls import path
 
-from app.users.controllers import ClientViewSet
+from app.users.controllers.ClientViewSet import ClientViewSet
 
 
 client_urlpatterns = [

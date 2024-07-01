@@ -1,7 +1,8 @@
 """
 Module containing AdminSerializer class.
 
-This module provides a serializer for the Admin model, including nested serialization for the ArchimatchUser model.
+This module provides a serializer for the Admin model, including nested serialization for
+ the ArchimatchUser model.
 
 Classes:
     AdminSerializer: Serializer for the Admin model with nested ArchimatchUser.
@@ -18,7 +19,8 @@ class AdminSerializer(serializers.ModelSerializer):
     """
     Serializer for the Admin model.
 
-    This serializer includes nested serialization for the ArchimatchUser model and manages admin-specific fields.
+    This serializer includes nested serialization for the ArchimatchUser model and
+     manages admin-specific fields.
 
     Fields:
         id: The unique identifier of the admin.
@@ -29,7 +31,9 @@ class AdminSerializer(serializers.ModelSerializer):
 
     user = ArchimatchUserSerializer()
     rights = serializers.ListField(
-        child=serializers.CharField(max_length=100), required=True, write_only=True
+        child=serializers.CharField(max_length=100),
+        required=True,
+        write_only=True,
     )
 
     class Meta:
@@ -42,13 +46,19 @@ class AdminSerializer(serializers.ModelSerializer):
         """
 
         model = Admin
-        fields = ["id", "super_user", "user", "rights"]
+        fields = [
+            "id",
+            "super_user",
+            "user",
+            "rights",
+        ]
 
     def create(self, validated_data):
         """
         Create a new Admin instance.
 
-        This method handles the creation of a new Admin instance, including the nested ArchimatchUser and setting permissions.
+        This method handles the creation of a new Admin instance, including the nested
+          ArchimatchUser and setting permissions.
 
         Args:
             validated_data (dict): The validated data for creating the admin instance.
@@ -67,7 +77,8 @@ class AdminSerializer(serializers.ModelSerializer):
         """
         Update an existing Admin instance.
 
-        This method handles the update of an Admin instance, including the nested ArchimatchUser and updating permissions.
+        This method handles the update of an Admin instance, including the nested
+          ArchimatchUser and updating permissions.
 
         Args:
             instance (Admin): The existing admin instance to update.
@@ -91,7 +102,8 @@ class AdminSerializer(serializers.ModelSerializer):
         """
         Customize the representation of an Admin instance.
 
-        This method customizes the serialized representation of an Admin instance, including handling superuser rights.
+        This method customizes the serialized representation of an Admin instance,
+          including handling superuser rights.
 
         Args:
             instance (Admin): The admin instance to represent.

@@ -5,7 +5,7 @@ viewset : SupplierViewSet
 
 from django.urls import path
 
-from app.users.controllers import SupplierViewSet
+from app.users.controllers.SupplierViewSet import SupplierViewSet
 
 
 supplier_urlpatterns = [

@@ -4,7 +4,8 @@ Module: app.admin
 Class: AdminAdmin
 
 Description:
-    Admin configuration for the Admin model. Registers the Admin model with the Django admin interface.
+    Admin configuration for the Admin model. Registers the Admin model with the Django
+    admin interface.
 """
 
 from django.contrib import admin

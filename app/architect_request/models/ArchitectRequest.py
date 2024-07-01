@@ -30,9 +30,11 @@ class ArchitectRequest(BaseModel):
         address (CharField): The address of the architect.
         architect_identifier (CharField): Identifier code specific to the architect.
         email (EmailField): The email address of the architect.
-        architect_speciality (ForeignKey): The specialty of the architect, linked to the ArchitectSpeciality model.
+        architect_speciality (ForeignKey): The specialty of the architect, linked to the
+        ArchitectSpeciality model.
         date (DateField): The date of the meeting.
-        time_slot (CharField): The time slot of the meeting, selected from predefined choices.
+        time_slot (CharField): The time slot of the meeting, selected from predefined
+        choices.
     """
 
     first_name = models.CharField(max_length=255, default="")
@@ -42,7 +44,10 @@ class ArchitectRequest(BaseModel):
     architect_identifier = models.CharField(max_length=10, default="")
     email = models.EmailField(unique=True)
 
-    architect_speciality = models.ForeignKey(ArchitectSpeciality, on_delete=models.CASCADE)
+    architect_speciality = models.ForeignKey(
+        ArchitectSpeciality,
+        on_delete=models.CASCADE,
+    )
 
     date = models.DateField()
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
@@ -51,13 +56,17 @@ class ArchitectRequest(BaseModel):
         """
         Custom validation to ensure the time slot is not already taken for the same date.
         """
-        if ArchitectRequest.objects.filter(date=self.date, time_slot=self.time_slot).exists():
+        if ArchitectRequest.objects.filter(
+            date=self.date,
+            time_slot=self.time_slot,
+        ).exists():
             raise ValidationError("This time slot on the selected date is already taken.")
 
         now = timezone.now()
         meeting_naive_datetime = datetime.datetime.combine(self.date, self.time_slot)
         meeting_aware_datetime = timezone.make_aware(
-            meeting_naive_datetime, timezone.get_current_timezone()
+            meeting_naive_datetime,
+            timezone.get_current_timezone(),
         )
 
         if meeting_aware_datetime <= now:

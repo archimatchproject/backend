@@ -1,1 +1,0 @@
-from app.announcement.controllers.AnnouncementViewSet import AnnouncementViewSet

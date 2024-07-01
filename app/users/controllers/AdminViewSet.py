@@ -5,10 +5,8 @@ Class: AdminViewSet
 
 """
 
-from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models import Admin
@@ -59,7 +57,12 @@ class AdminViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         return AdminService.update_admin(instance, request.data)
 
-    @action(detail=False, methods=["POST"], permission_classes=[], name="retrieve_by_token")
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        name="retrieve_by_token",
+    )
     def retrieve_by_token(self, request):
         """
         Retrieve admin details using a token provided in the request.

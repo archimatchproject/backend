@@ -27,16 +27,22 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
     """
     Viewset for the ArchitectRequest model.
 
-    Provides CRUD operations and additional functionality for ArchitectRequest instances.
+    Provides CRUD operations and additional functionality for ArchitectRequest
+    instances.
 
     Attributes:
         queryset (QuerySet): The queryset of ArchitectRequest instances.
-        serializer_class (ArchitectRequestSerializer): The serializer class for ArchitectRequest instances.
+        serializer_class (ArchitectRequestSerializer): The serializer class for
+        ArchitectRequest
+        instances.
     """
 
     queryset = ArchitectRequest.objects.all()
     serializer_class = ArchitectRequestSerializer
-    permission_classes = [IsAuthenticated, ManageArchitectRequestPermission]
+    permission_classes = [
+        IsAuthenticated,
+        ManageArchitectRequestPermission,
+    ]
 
     def get_serializer_class(self):
         """
@@ -62,7 +68,8 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         """
         Custom action to create an ArchitectRequest.
 
-        Uses an input serializer to validate data and calls the service to handle the creation logic.
+        Uses an input serializer to validate data and calls the service to handle the
+        creation logic.
 
         Args:
             request (Request): The request object containing the input data.

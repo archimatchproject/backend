@@ -1,7 +1,8 @@
 """
 Module containing ClientSerializer class.
 
-This module provides a serializer for the Client model, including nested serialization for the ArchimatchUser model.
+This module provides a serializer for the Client model, including nested serialization for the
+ ArchimatchUser model.
 
 Classes:
     ClientSerializer: Serializer for the Client model with nested ArchimatchUser.
@@ -18,7 +19,8 @@ class ClientSerializer(serializers.ModelSerializer):
     """
     Serializer for the Client model.
 
-    This serializer includes nested serialization for the ArchimatchUser model and manages client-specific fields.
+    This serializer includes nested serialization for the ArchimatchUser model and manages
+     client-specific fields.
 
     Fields:
         user: Nested serializer for the ArchimatchUser associated with the client.

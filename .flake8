@@ -15,6 +15,7 @@ exclude =
     .pytest_cache
     .git/
     project_core/django/*
+    */__init__.py
 max-line-length = 100
 inline-quotes = double
 multiline-quote = double

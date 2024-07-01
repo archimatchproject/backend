@@ -8,7 +8,6 @@ and profile management.
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from app.users.models import Supplier
 from app.users.serializers import SupplierSerializer
@@ -86,7 +85,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_first_connection(request)
 
-    @action(detail=False, methods=["PUT"], permission_classes=[], url_path="update-profile")
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-profile",
+    )
     def supplier_update_profile(self, request):
         """
         Allows a supplier to update their profile information using a custom action.
@@ -100,7 +104,11 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_update_profile(request)
 
-    @action(detail=False, methods=["PUT"], url_path="update-bio")
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-bio",
+    )
     def supplier_update_bio(self, request):
         """
         Allows a supplier to update their bio settings using a custom action.
@@ -114,7 +122,11 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_update_bio(request)
 
-    @action(detail=False, methods=["PUT"], url_path="update-presentation-video")
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-presentation-video",
+    )
     def supplier_update_presentation_video(self, request):
         """
         Allows a supplier to update their bio settings using a custom action.
@@ -128,17 +140,24 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_update_presentation_video(request)
 
-    @action(detail=False, methods=["PUT"], permission_classes=[], url_path="update-links")
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-links",
+    )
     def supplier_update_links(self, request):
         """
         Allows a supplier to update their social media links using a custom action.
 
         Args:
             self (SupplierViewSet): Instance of the SupplierViewSet class.
-            request (Request): HTTP request object containing social media links update data.
+            request (Request): HTTP request object containing social media links update
+             data.
 
         Returns:
-            Response: Response indicating success or failure of the social media links update attempt.
+            Response: Response indicating success or failure of the social media links
+            update attempt.
         """
         return SupplierService.supplier_update_links(request)
 

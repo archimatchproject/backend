@@ -5,7 +5,7 @@ viewset : ArchimatchUserViewSet
 
 from django.urls import path
 
-from app.users.controllers import ArchimatchUserViewSet
+from app.users.controllers.ArchimatchUserViewSet import ArchimatchUserViewSet
 
 
 archimatch_user_urlpatterns = [

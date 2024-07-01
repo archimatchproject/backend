@@ -1,7 +1,8 @@
 """
 Module defining the AnnouncementPieceRenovate model.
 
-This module contains the AnnouncementPieceRenovate class, which represents an AnnouncementPieceRenovate
+This module contains the AnnouncementPieceRenovate class, which represents an
+AnnouncementPieceRenovate
 for a construction or renovation project in the application.
 """
 
@@ -18,7 +19,9 @@ class AnnouncementPieceRenovate(models.Model):
     """
 
     announcement = models.ForeignKey(
-        Announcement, on_delete=models.CASCADE, related_name="pieces_renovate"
+        Announcement,
+        on_delete=models.CASCADE,
+        related_name="pieces_renovate",
     )
     piece_renovate = models.ForeignKey(PieceRenovate, on_delete=models.CASCADE)
     number = models.PositiveSmallIntegerField(default=0)
@@ -30,13 +33,17 @@ class AnnouncementPieceRenovate(models.Model):
         Provides unique constraint to prevent duplicate entries.
         """
 
-        unique_together = ("announcement", "piece_renovate")
+        unique_together = (
+            "announcement",
+            "piece_renovate",
+        )
 
     def __str__(self):
         """
         Return a string representation of the annoucement piece renovate.
 
         Returns:
-            str: String representation of the annoucement piece renovate, including its ID and associated client.
+            str: String representation of the annoucement piece renovate, including its ID and
+            associated client.
         """
         return f"{self.announcement} - {self.piece_renovate} ({self.number})"

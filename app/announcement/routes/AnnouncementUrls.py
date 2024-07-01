@@ -5,7 +5,7 @@ viewset : AnnouncementViewSet
 
 from django.urls import path
 
-from app.announcement.controllers import AnnouncementViewSet
+from app.announcement.controllers.AnnouncementViewSet import AnnouncementViewSet
 
 
 announcement_urlpatterns = [

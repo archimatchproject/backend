@@ -18,7 +18,12 @@ class PropertyTypeAdmin(admin.ModelAdmin):
     the PropertyType model in the Django admin site.
     """
 
-    list_display = ("id", "label", "icon", "project_category")
+    list_display = (
+        "id",
+        "label",
+        "icon",
+        "project_category",
+    )
     search_fields = ("label",)
     list_filter = ("project_category",)
 

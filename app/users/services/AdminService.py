@@ -47,8 +47,14 @@ class AdminService:
             serializer = AdminSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED,
+                )
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             return cls.handle_exception(e)
 
@@ -68,8 +74,14 @@ class AdminService:
             serializer = AdminSerializer(instance, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             return cls.handle_exception(e)
 
@@ -85,7 +97,11 @@ class AdminService:
             dict: Decoded payload from the JWT token.
         """
         try:
-            payload = jwt.decode(token, env("SECRET_KEY"), algorithms=["HS256"])
+            payload = jwt.decode(
+                token,
+                env("SECRET_KEY"),
+                algorithms=["HS256"],
+            )
             return payload
         except jwt.ExpiredSignatureError:
             return {"error": "Token has expired"}
@@ -137,7 +153,10 @@ class AdminService:
             payload = cls.decode_token(token)
 
             if "error" in payload:
-                return Response({"error": payload["error"]}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {"error": payload["error"]},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
 
             user_id = payload.get("user_id")
             if user_id:
@@ -145,7 +164,10 @@ class AdminService:
                 if admin:
                     serializer = AdminSerializer(admin)
                     return Response(serializer.data)
-                return Response({"error": "Admin not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             return Response(
                 {"error": "Token decoded successfully but no user ID found"},
@@ -200,9 +222,15 @@ class AdminService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
 
-            return Response(response_data.get("message"), status=response_data.get("status_code"))
+            return Response(
+                response_data.get("message"),
+                status=response_data.get("status_code"),
+            )
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
         except Exception:
             return Response(
                 {"message": "An error occurred during admin login"},

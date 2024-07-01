@@ -22,4 +22,9 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
         """
 
         model = PropertyType
-        fields = ["id", "label", "icon", "project_category"]
+        fields = [
+            "id",
+            "label",
+            "icon",
+            "project_category",
+        ]
