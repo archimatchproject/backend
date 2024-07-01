@@ -8,17 +8,15 @@ It includes routing configurations for various API endpoints using Django Rest F
 """
 
 from django.urls import include, path
-
 from rest_framework import routers
-
 from app.architect_request.controllers.ArchitectRequestViewSet import (
     ArchitectRequestViewSet,
 )
+from app.architect_request.routes.ArchitectRequestUrls import architect_request_urlpatterns
 
 router = routers.DefaultRouter()
-router.register(
-    "architect-request", ArchitectRequestViewSet, basename="architect-request"
-)
+
 urlpatterns = [
     path("", include(router.urls)),
+    *architect_request_urlpatterns,
 ]
