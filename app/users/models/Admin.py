@@ -37,7 +37,7 @@ class Admin(BaseModel):
         return list(self.permissions.values_list('codename', flat=True))
 
     @property
-    def has_super_user_permission(self):
+    def is_supper_user(self):
         """
         Checks if the admin has superuser privileges.
         """

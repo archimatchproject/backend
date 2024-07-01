@@ -49,7 +49,7 @@ class ArchimatchUser(AbstractUser):
         """
         Returns the display name of the user type.
         """
-        return dict(USER_TYPE_CHOICES).get(self.user_type, "Unknown")
+        return self.user_type
 
     def save(self, *args, **kwargs):
         """
