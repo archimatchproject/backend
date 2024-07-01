@@ -39,10 +39,7 @@ LOCAL_APPS = [
     "app.architect_request",
 ]
 
-"""
-Custom user model for authentication.
-"""
-AUTH_USER_MODEL = "users.ArchimatchUser"
+
 
 """
 Combined list of installed applications.
@@ -151,6 +148,11 @@ DATABASES = {
         "PORT": env("DB_PORT"),
     }
 }
+
+"""
+Custom user model for authentication.
+"""
+AUTH_USER_MODEL = "users.ArchimatchUser"
 
 """
 Internationalization and localization settings.
