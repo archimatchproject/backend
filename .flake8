@@ -3,11 +3,22 @@
 max-line-length = 100
 # Exclude some directories and files
 exclude =
-    .git,
-    __pycache__,
-    build,
-    dist,
+    **site-packages**
+    **virtualenv**
+    **setuptools**
     migrations
+    __pycache__
+    manage.py
+    settings.py
+    env
+    .venv
+    venv
+    .env
+    .pytest_cache
+    .git/
+max-line-length = 100
+inline-quotes = double
+multiline-quote = double
 # Specify the files that should be checked
 # Only include the files you want to lint
 select = E9,F63,F7,F82
