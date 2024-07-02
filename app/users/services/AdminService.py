@@ -59,9 +59,7 @@ class AdminService:
         with transaction.atomic():
             rights = validated_data.pop("rights", [])
             user = ArchimatchUser.objects.create(**user_data)
-            print(user)
             admin = Admin.objects.create(user=user, **validated_data)
-            print(admin)
             try:
                 admin.set_permissions(rights)
             except serializers.ValidationError as e:
