@@ -28,6 +28,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "rest_framework_simplejwt",
     "djangorestframework_camel_case",
+    "drf_standardized_errors",
 ]
 
 """
@@ -72,6 +73,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ),
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
 """

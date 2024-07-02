@@ -13,7 +13,7 @@ from rest_framework.response import Response
 
 from app.cms.controllers.utils.ManageBlogPermission import ManageBlogPermission
 from app.cms.models import Blog
-from app.cms.serializers import BlogSerializer
+from app.cms.serializers.BlogSerializer import BlogSerializer
 
 
 class BlogViewSet(viewsets.ModelViewSet):

@@ -9,10 +9,10 @@ and profile management.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from app.users.models import Supplier
-from app.users.serializers import SupplierSerializer
-from app.users.serializers import UserAuthSerializer
-from app.users.services import SupplierService
+from app.users.models.Supplier import Supplier
+from app.users.serializers.SupplierSerializer import SupplierSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.services.SupplierService import SupplierService
 
 
 class SupplierViewSet(viewsets.ModelViewSet):

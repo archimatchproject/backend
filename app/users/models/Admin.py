@@ -1,5 +1,14 @@
+"""
+Module containing the Admin model.
+This module defines the Admin model, representing an administrative user with extended permissions.
+Classes:
+    Admin: Model representing an administrative user with extended permissions.
+"""
+
 from django.contrib.auth.models import Permission
 from django.db import models
+
+from rest_framework import serializers
 
 from app.core.models import BaseModel
 from app.users import PERMISSION_CODENAMES
@@ -34,7 +43,7 @@ class Admin(BaseModel):
         """
         Returns a list of codenames of permissions granted to this admin.
         """
-        return list(self.permissions.values_list('codename', flat=True))
+        return list(self.permissions.values_list("codename", flat=True))
 
     @property
     def is_supper_user(self):
@@ -53,8 +62,19 @@ class Admin(BaseModel):
         for right in rights:
             if right in PERMISSION_CODENAMES:
                 for codename in PERMISSION_CODENAMES[right]:
-                    perm = Permission.objects.get(codename=codename)
-                    self.permissions.add(perm)
+                    try:
+                        permission = Permission.objects.get(codename=codename)
+                        self.permissions.add(permission)
+                    except Permission.DoesNotExist:
+                        raise serializers.ValidationError(
+                            {
+                                "permissions": [
+                                    f"Permission with codename '{codename}' does not exist."
+                                ]
+                            }
+                        )
+            else:
+                raise serializers.ValidationError({"rights": [f"Right '{right}' is not valid."]})
 
     def has_permission(self, perm):
         """

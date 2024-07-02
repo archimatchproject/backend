@@ -9,11 +9,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.users.models import Client
-from app.users.serializers import ClientSerializer
+from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
-from app.users.services import ClientService
+from app.users.services.ClientService import ClientService
 
 
 class ClientViewSet(viewsets.ModelViewSet):

@@ -9,15 +9,20 @@ Classes:
     AdminService: Service class for admin user operations.
 """
 
+from django.db import transaction
+
 import environ
 import jwt
 
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.users.models import Admin
-from app.users.serializers import AdminSerializer
+from app.users.models.Admin import Admin
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.serializers.AdminSerializer import AdminSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
 
 env = environ.Env()
@@ -43,20 +48,28 @@ class AdminService:
         Returns:
             Response: HTTP response containing serialized admin data or errors.
         """
-        try:
-            serializer = AdminSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED,
-                )
+
+        admin_serializer = AdminSerializer(data=data)
+        admin_serializer.is_valid(raise_exception=True)
+        validated_data = admin_serializer.validated_data
+        user_data = validated_data.pop("user")
+        user_serializer = ArchimatchUserSimpleSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            rights = validated_data.pop("rights", [])
+            user = ArchimatchUser.objects.create(**user_data)
+            print(user)
+            admin = Admin.objects.create(user=user, **validated_data)
+            print(admin)
+            try:
+                admin.set_permissions(rights)
+            except serializers.ValidationError as e:
+                raise serializers.ValidationError(e.detail)
             return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
+                AdminSerializer(admin).data,
+                status=status.HTTP_201_CREATED,
             )
-        except Exception as e:
-            return cls.handle_exception(e)
 
     @classmethod
     def update_admin(cls, instance, data):

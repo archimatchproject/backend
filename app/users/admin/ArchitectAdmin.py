@@ -14,13 +14,9 @@ and defines custom forms and configurations for managing these models.
 
 """
 
-from django import forms
 from django.contrib import admin
 
 from app.users.models import Architect
-from app.users.models import ArchitectType
-
-
 
 
 class ArchitectAdmin(admin.ModelAdmin):
@@ -37,4 +33,3 @@ class ArchitectAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Architect, ArchitectAdmin)
-
