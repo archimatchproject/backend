@@ -73,12 +73,10 @@ class ArchimatchUser(AbstractUser):
         """
         return self.email
 
-    def get_user_type(self):
+    @property
+    def user_type_display(self):
         """
-        Returns the user type of the user.
-
-        Returns:
-            str: The user type.
+        Returns the display name of the user type.
         """
         return self.user_type
 
@@ -104,3 +102,4 @@ class ArchimatchUser(AbstractUser):
         """
 
         verbose_name = "Archimatch User"
+        verbose_name_plural = "Archimatch Users"
