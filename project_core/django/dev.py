@@ -1,7 +1,9 @@
 """
 Module-level constants for dev configuration.
 """
+
 from project_core.django.base import *
+
 
 DEBUG = True
 

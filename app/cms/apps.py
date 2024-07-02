@@ -1,6 +1,7 @@
 """
 This module contains the AppConfig class for configuring the 'app.cms' Django application.
 """
+
 from django.apps import AppConfig
 
 

@@ -8,7 +8,9 @@ Classes:
     SMSService: An abstract service class for Verify operations.
 
 """
-from abc import ABC, abstractmethod
+
+from abc import ABC
+from abc import abstractmethod
 
 
 class SMSService(ABC):

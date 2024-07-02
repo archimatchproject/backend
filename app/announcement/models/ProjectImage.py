@@ -4,7 +4,7 @@ Module defining the ProjectImage model.
 This module contains  ProjectImage classe,
 representing different aspects of a project in the application.
 """
-from django.core.exceptions import ValidationError
+
 from django.db import models
 
 from app.announcement.models import Announcement

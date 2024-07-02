@@ -5,16 +5,13 @@ This module contains the ProjectExtension classe,
 representing different aspects of a project in the application.
 """
 
-from django.core.exceptions import ValidationError
-from django.db import models
-
-from app.announcement.models.ProjectCategory import ProjectCategory
 from app.core.models import LabeledIcon
 
 
 class ProjectExtension(LabeledIcon):
     """
-    Model representing an extension or additional feature for a project, inheriting from LabeledIcon.
+    Model representing an extension or additional feature for a project, inheriting from
+    LabeledIcon.
 
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.

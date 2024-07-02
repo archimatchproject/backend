@@ -18,7 +18,12 @@ class NeedAdmin(admin.ModelAdmin):
     the Need model in the Django admin site.
     """
 
-    list_display = ("id", "label", "icon", "architect_speciality")
+    list_display = (
+        "id",
+        "label",
+        "icon",
+        "architect_speciality",
+    )
     search_fields = ("label",)
     list_filter = ("architect_speciality",)
 

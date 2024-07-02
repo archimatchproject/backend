@@ -1,6 +1,7 @@
 """
 Serializers for handling Block model instances.
 """
+
 from rest_framework import serializers
 
 from app.cms.models import Block
@@ -25,7 +26,13 @@ class BlockSerializer(serializers.ModelSerializer):
         """
 
         model = Block
-        fields = ["id", "block_type", "content", "image", "slider_images"]
+        fields = [
+            "id",
+            "block_type",
+            "content",
+            "image",
+            "slider_images",
+        ]
 
     def to_representation(self, instance):
         """
@@ -44,7 +51,10 @@ class BlockSerializer(serializers.ModelSerializer):
             representation.pop("slider_images", None)
         if instance.block_type != "image":
             representation.pop("image", None)
-        if instance.block_type not in ["title", "paragraph"]:
+        if instance.block_type not in [
+            "title",
+            "paragraph",
+        ]:
             representation.pop("content", None)
 
         return representation

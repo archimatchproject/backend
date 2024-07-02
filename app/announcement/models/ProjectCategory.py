@@ -5,8 +5,6 @@ This module contains the ProjectCategory class, which represents a category of p
 in the application, inheriting from the LabeledIcon base class.
 """
 
-from django.db import models
-
 from app.core.models import LabeledIcon
 
 

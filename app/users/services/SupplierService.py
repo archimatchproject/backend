@@ -1,31 +1,31 @@
 """
 Module: Supplier Service
 
-This module defines the SupplierService class that handles supplier-related operations such as signup, login, and profile updates.
+This module defines the SupplierService class that handles supplier-related operations such as
+signup, login, and profile updates.
 
 Classes:
     SupplierService: Service class for supplier-related operations.
 """
 
-import jwt
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
 from app.users import APPEARANCES
-from app.users.models import ArchimatchUser, Supplier
+from app.users.models import ArchimatchUser
+from app.users.models import Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.models.SupplierSpeciality import SupplierSpeciality
 from app.users.serializers import SupplierSerializer
-from app.users.serializers.SupplierSpecialitySerializer import (
-    SupplierSpecialitySerializer,
-)
+from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 
 
 class SupplierService:
     """
-    Service class for handling supplier-related operations such as signup, login, and profile updates.
+    Service class for handling supplier-related operations such as signup, login, and
+    profile updates.
 
     Attributes:
         serializer_class (Serializer): Serializer class for the Supplier model.
@@ -72,9 +72,11 @@ class SupplierService:
             if not Supplier.objects.filter(user__email=email).exists():
                 if not ArchimatchUser.objects.filter(email=email).exists():
                     user = ArchimatchUser.objects.create(
-                        email=email, username=email, user_type="Supplier"
+                        email=email,
+                        username=email,
+                        user_type="Supplier",
                     )
-                    supplier = Supplier.objects.create(user=user)
+                    Supplier.objects.create(user=user)
                     response_data = {
                         "message": {"message": "supplier_created"},
                         "status_code": status.HTTP_201_CREATED,
@@ -91,14 +93,21 @@ class SupplierService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_login(cls, request):
@@ -126,12 +135,18 @@ class SupplierService:
                 user = ArchimatchUser.objects.get(username=email)
                 if user.password == "":
                     response_data = {
-                        "message": {"has_password": False, "email": user.email},
+                        "message": {
+                            "has_password": False,
+                            "email": user.email,
+                        },
                         "status_code": status.HTTP_200_OK,
                     }
                 else:
                     response_data = {
-                        "message": {"has_password": True, "email": user.email},
+                        "message": {
+                            "has_password": True,
+                            "email": user.email,
+                        },
                         "status_code": status.HTTP_200_OK,
                     }
             else:
@@ -141,14 +156,21 @@ class SupplierService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_first_connection(cls, request):
@@ -207,14 +229,21 @@ class SupplierService:
                 "status_code": status.HTTP_200_OK,
             }
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_update_profile(cls, request):
@@ -268,14 +297,21 @@ class SupplierService:
                 "status_code": status.HTTP_200_OK,
             }
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_update_bio(cls, request):
@@ -314,14 +350,21 @@ class SupplierService:
                 "status_code": status.HTTP_200_OK,
             }
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_update_presentation_video(cls, request):
@@ -340,7 +383,10 @@ class SupplierService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"presentation_video", "id"}
+            expected_keys = {
+                "presentation_video",
+                "id",
+            }
             cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
@@ -358,20 +404,25 @@ class SupplierService:
             )
 
             response_data = {
-                "message": {
-                    "message": "Supplier presentation video successfully updated"
-                },
+                "message": {"message": "Supplier presentation video successfully updated"},
                 "status_code": status.HTTP_200_OK,
             }
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def supplier_update_links(cls, request):
@@ -382,7 +433,8 @@ class SupplierService:
             request (Request): Django request object containing supplier's social media data.
 
         Returns:
-            Response: Response object indicating success or failure of the social media links update.
+            Response: Response object indicating success or failure of the social media links
+            update.
 
         Raises:
             APIException: If there are errors during social media links update.
@@ -390,7 +442,12 @@ class SupplierService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"facebook", "instagram", "website", "id"}
+            expected_keys = {
+                "facebook",
+                "instagram",
+                "website",
+                "id",
+            }
             cls.handle_user_data(request_keys, expected_keys)
 
             if not Supplier.objects.filter(id=data.get("id")).exists():
@@ -418,9 +475,7 @@ class SupplierService:
                 supplier.save()
             else:
                 social_links = supplier.social_links
-                SupplierSocialMedia.objects.filter(id=social_links.id).update(
-                    **social_links_data
-                )
+                SupplierSocialMedia.objects.filter(id=social_links.id).update(**social_links_data)
                 supplier.refresh_from_db()
 
             response_data = {
@@ -428,14 +483,21 @@ class SupplierService:
                 "status_code": status.HTTP_200_OK,
             }
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def get_speciality_types(cls):
@@ -447,15 +509,16 @@ class SupplierService:
         """
         try:
             speciality_types = SupplierSpeciality.objects.all()
-            speciality_types_data = SupplierSpecialitySerializer(
-                speciality_types, many=True
-            ).data
+            speciality_types_data = SupplierSpecialitySerializer(speciality_types, many=True).data
 
-            return Response(speciality_types_data, status=status.HTTP_200_OK)
-
-        except Exception as e:
             return Response(
-                {"message": f"Error retrieving speciality types"},
+                speciality_types_data,
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception:
+            return Response(
+                {"message": "Error retrieving speciality types"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -469,10 +532,13 @@ class SupplierService:
         """
         try:
             appearances_data = APPEARANCES
-            return Response(appearances_data, status=status.HTTP_200_OK)
-
-        except Exception as e:
             return Response(
-                {"message": f"Error retrieving appearances"},
+                appearances_data,
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception:
+            return Response(
+                {"message": "Error retrieving appearances"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

@@ -1,7 +1,8 @@
 """
 Module containing ArchitectSerializer class.
 
-This module provides a serializer for the Architect model, including nested serialization for the ArchimatchUser model.
+This module provides a serializer for the Architect model, including nested serialization for the
+ ArchimatchUser model.
 
 Classes:
     ArchitectSerializer: Serializer for the Architect model with nested ArchimatchUser.
@@ -17,7 +18,8 @@ class ArchitectSerializer(serializers.ModelSerializer):
     """
     Serializer for the Architect model.
 
-    This serializer includes nested serialization for the ArchimatchUser model and manages architect-specific fields.
+    This serializer includes nested serialization for the ArchimatchUser model and manages
+    architect-specific fields.
 
     Fields:
         user: Nested serializer for the ArchimatchUser associated with the architect.

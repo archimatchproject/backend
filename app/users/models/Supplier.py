@@ -22,13 +22,20 @@ class Supplier(BaseModel):
 
     Attributes:
         address (CharField): Address of the supplier, maximum length of 255 characters.
-        speciality (CharField): Specialization or field of expertise of the supplier, maximum length of 255 characters.
-        bio (TextField): Biography or description of the supplier, maximum length of 1000 characters.
-        company_name (CharField): Name of the company associated with the supplier, maximum length of 255 characters.
-        presentation_video (FileField): Video presentation file uploaded by the supplier, stored in 'SupplierVideos/' directory.
-        type (TextField): Type or category of the supplier, maximum length of 1000 characters.
-        social_links (OneToOneField): Associated SocialMedia instance for social media links, optional.
-        user (OneToOneField): Associated ArchimatchUser instance for this supplier.
+        speciality (CharField): Specialization or field of expertise of the supplier,
+        maximum length of 255 characters.
+        bio (TextField): Biography or description of the supplier, maximum length of
+        1000 characters.
+        company_name (CharField): Name of the company associated with the supplier,
+        maximum length of 255 characters.
+        presentation_video (FileField): Video presentation file uploaded by the supplier,
+        stored in 'SupplierVideos/' directory.
+        type (TextField): Type or category of the supplier, maximum length of
+        1000 characters.
+        social_links (OneToOneField): Associated SocialMedia instance for social
+        media links, optional.
+        user (OneToOneField): Associated ArchimatchUser instance for this
+        supplier.
     """
 
     company_address = models.CharField(max_length=255, default="")
@@ -36,14 +43,24 @@ class Supplier(BaseModel):
     bio = models.TextField(max_length=1000, default="")
     company_name = models.CharField(max_length=255, default="")
     presentation_video = models.FileField(
-        upload_to="SupplierVideos/", blank=True, null=True
+        upload_to="SupplierVideos/",
+        blank=True,
+        null=True,
     )
     speciality_type = models.ManyToManyField(
-        SupplierSpeciality, related_name="speciality_type_suppliers"
+        SupplierSpeciality,
+        related_name="speciality_type_suppliers",
     )
-    appearance = models.CharField(max_length=10, choices=APPEARANCES, default="Petite")
+    appearance = models.CharField(
+        max_length=10,
+        choices=APPEARANCES,
+        default="Petite",
+    )
     social_links = models.OneToOneField(
-        SupplierSocialMedia, blank=True, null=True, on_delete=models.CASCADE
+        SupplierSocialMedia,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
 

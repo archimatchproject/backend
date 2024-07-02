@@ -20,8 +20,10 @@ class UserDataException(APIException):
         Initialize the exception with custom detail and status code.
 
         Args:
-            detail (str): Detail message for the exception. Defaults to default_detail if not provided.
-            status_code (int): HTTP status code for the exception. Defaults to default_status_code if not provided.
+            detail (str): Detail message for the exception. Defaults to default_detail if
+             not provided.
+            status_code (int): HTTP status code for the exception. Defaults to default_status_code
+             if not provided.
         """
         self.detail = detail or self.default_detail
         self.status_code = status_code or self.default_status_code

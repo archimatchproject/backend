@@ -1,7 +1,8 @@
 """
 Module: Client Service
 
-This module defines the ClientService class that handles client-related operations such as login using email or phone number.
+This module defines the ClientService class that handles client-related operations such as login
+ using email or phone number.
 
 Classes:
     ClientService: Service class for client-related operations.
@@ -12,15 +13,14 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.core.services import TwilioVerifyService
 from app.core.services.SMS.SMSVerificationService import SMSVerificationService
-from app.core.validation.exceptions import (
-    InvalidPhoneNumberException,
-    SMSException,
-    UserDataException,
-)
+from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
+from app.core.validation.exceptions import InvalidPhoneNumberException
+from app.core.validation.exceptions import SMSException
+from app.core.validation.exceptions import UserDataException
 from app.core.validation.validate_data import is_valid_phone_number
-from app.users.models import ArchimatchUser, Client
+from app.users.models import ArchimatchUser
+from app.users.models import Client
 
 
 class ClientService:
@@ -89,12 +89,19 @@ class ClientService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
         except Exception as e:
-            return Response({"message": str(e)}, status=status.HTTP_410_GONE)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_410_GONE,
+            )
 
     @classmethod
     def client_send_verification_code(cls, request):
@@ -105,7 +112,8 @@ class ClientService:
             request (Request): Django request object containing client's phone number.
 
         Returns:
-            Response: Response object indicating whether the verification code was sent successfully.
+            Response: Response object indicating whether the verification code was
+            sent successfully.
         """
         try:
             data = request.data
@@ -140,19 +148,29 @@ class ClientService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
-        except SMSException as e:
+        except SMSException:
             return Response(
                 {"message": "Error Sending SMS Code"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except InvalidPhoneNumberException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def client_verify_verification_code(cls, request):
@@ -160,10 +178,12 @@ class ClientService:
         Authenticates a client using phone number and verifies the SMS code.
 
         Args:
-            request (Request): Django request object containing client's phone number and verification code.
+            request (Request): Django request object containing client's phone number and
+            verification code.
 
         Returns:
-            Response: Response object with a message indicating if the client has set a password and their email.
+            Response: Response object with a message indicating if the client has set a password
+            and their email.
 
         Raises:
             APIException: If there are errors during client authentication.
@@ -171,7 +191,10 @@ class ClientService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"phone_number", "verification_code"}
+            expected_keys = {
+                "phone_number",
+                "verification_code",
+            }
             cls.handle_user_data(request_keys, expected_keys)
 
             phone_number = data.get("phone_number")
@@ -182,16 +205,23 @@ class ClientService:
 
                 # Verify the SMS code
                 if cls.sms_verification_service.check_verification_code(
-                    phone_number, verification_code
+                    phone_number,
+                    verification_code,
                 ):
                     if user.password == "":
                         response_data = {
-                            "message": {"has_password": False, "email": user.username},
+                            "message": {
+                                "has_password": False,
+                                "email": user.username,
+                            },
                             "status_code": status.HTTP_200_OK,
                         }
                     else:
                         response_data = {
-                            "message": {"has_password": True, "email": user.username},
+                            "message": {
+                                "has_password": True,
+                                "email": user.username,
+                            },
                             "status_code": status.HTTP_200_OK,
                         }
                 else:
@@ -206,14 +236,21 @@ class ClientService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
-        except SMSException as e:
+        except SMSException:
             return Response(
                 {"message": "Error Verifying SMS Code"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )

@@ -7,15 +7,12 @@ using Django REST Framework, including custom login actions.
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from app.users.models import Client
-from app.users.serializers import (
-    ClientSerializer,
-    UserAuthPhoneSerializer,
-    UserAuthSerializer,
-    VerifyCodeSerializer,
-)
+from app.users.serializers import ClientSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services import ClientService
 
 
@@ -81,7 +78,8 @@ class ClientViewSet(viewsets.ModelViewSet):
         Verifies the client's phone number using the verification code.
 
         Args:
-            request (Request): HTTP request object containing the phone number and verification code.
+            request (Request): HTTP request object containing the phone number and
+            verification code.
 
         Returns:
             Response: Response indicating success or failure of the verification.

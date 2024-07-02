@@ -16,7 +16,8 @@ class Block(models.Model):
         blog (ForeignKey): Blog to which the block belongs, related_name is 'blocks'.
         block_type (CharField): Type of the block, selected from BLOG_BLOCK_TYPES.
         content (TextField): Optional content of the block.
-        image (ImageField): Optional image associated with the block, stored in 'BlockImages/' directory.
+        image (ImageField): Optional image associated with the block, stored in 'BlockImages/'
+          directory.
     """
 
     BLOG_BLOCK_TYPES = [
@@ -26,12 +27,22 @@ class Block(models.Model):
         ("slider", "Slider"),
     ]
 
-    blog = models.ForeignKey(Blog, related_name="blog_blocks", on_delete=models.CASCADE)
+    blog = models.ForeignKey(
+        Blog,
+        related_name="blog_blocks",
+        on_delete=models.CASCADE,
+    )
     block_type = models.CharField(
-        max_length=10, choices=BLOG_BLOCK_TYPES, default=BLOG_BLOCK_TYPES[0]
+        max_length=10,
+        choices=BLOG_BLOCK_TYPES,
+        default=BLOG_BLOCK_TYPES[0],
     )
     content = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to="BlockImages/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="BlockImages/",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         """

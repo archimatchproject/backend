@@ -7,11 +7,13 @@ for a construction or renovation project in the application.
 
 from django.db import models
 
-from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
+from app.announcement import BUDGETS
+from app.announcement import CITIES
+from app.announcement import TERRAIN_SURFACES
+from app.announcement import WORK_SURFACES
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
 from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
-from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.PropertyType import PropertyType
@@ -32,34 +34,56 @@ class Announcement(BaseModel):
         property_type (ForeignKey): Type of property for the project.
         work_type (ForeignKey): Type of work involved in the project.
         pieces_renovate (ManyToManyField): Pieces or areas to be renovated in the project.
-        address (CharField): Address where the project will take place, maximum length of 255 characters.
-        city (CharField): City where the project will take place, selected from predefined choices.
-        terrain_surface (CharField): Surface type of the terrain for the project, selected from predefined choices.
-        work_surface (CharField): Surface type where work will be performed, selected from predefined choices.
+        address (CharField): Address where the project will take place, maximum length of 255
+        characters.
+        city (CharField): City where the project will take place, selected from predefined
+        choices.
+        terrain_surface (CharField): Surface type of the terrain for the project, selected from
+        predefined choices.
+        work_surface (CharField): Surface type where work will be performed, selected from
+        predefined choices.
         budget (CharField): Budget range for the project, selected from predefined choices.
         description (TextField): Description of the project.
-        architectural_style (CharField): Architectural style preferred for the project, selected from predefined choices.
-        project_extensions (ManyToManyField): Extensions or additional features planned for the project.
+        architectural_style (CharField): Architectural style preferred for the project,
+        selected from predefined choices.
+        project_extensions (ManyToManyField): Extensions or additional features
+        planned for the project.
 
     """
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     architect_speciality = models.ForeignKey(
-        ArchitectSpeciality, on_delete=models.CASCADE
+        ArchitectSpeciality,
+        on_delete=models.CASCADE,
     )
     needs = models.ManyToManyField(Need, related_name="needs_announcements")
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
-    work_type = models.ForeignKey(AnnouncementWorkType, on_delete=models.CASCADE)
+    work_type = models.ForeignKey(
+        AnnouncementWorkType,
+        on_delete=models.CASCADE,
+    )
     address = models.CharField(max_length=255)
-    city = models.CharField(max_length=50, choices=CITIES, default=CITIES[0])
+    city = models.CharField(
+        max_length=50,
+        choices=CITIES,
+        default=CITIES[0],
+    )
     terrain_surface = models.CharField(
-        max_length=50, choices=TERRAIN_SURFACES, default=TERRAIN_SURFACES[0]
+        max_length=50,
+        choices=TERRAIN_SURFACES,
+        default=TERRAIN_SURFACES[0],
     )
     work_surface = models.CharField(
-        max_length=50, choices=WORK_SURFACES, default=WORK_SURFACES[0]
+        max_length=50,
+        choices=WORK_SURFACES,
+        default=WORK_SURFACES[0],
     )
-    budget = models.CharField(max_length=50, choices=BUDGETS, default=BUDGETS[0])
+    budget = models.CharField(
+        max_length=50,
+        choices=BUDGETS,
+        default=BUDGETS[0],
+    )
     description = models.TextField()
     architectural_style = models.ForeignKey(
         ArchitecturalStyle,
@@ -68,7 +92,8 @@ class Announcement(BaseModel):
         null=True,
     )
     project_extensions = models.ManyToManyField(
-        ProjectExtension, related_name="project_extensions_announcements"
+        ProjectExtension,
+        related_name="project_extensions_announcements",
     )
 
     def __str__(self):

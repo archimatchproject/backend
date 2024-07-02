@@ -1,6 +1,7 @@
 """
 Module-level constants for backend and frontend URLs, and CORS configuration.
 """
+
 BASE_BACKEND_URL = ""
 BASE_FRONTEND_URL = ""
 

@@ -1,5 +1,6 @@
 import datetime
 
+
 TIME_SLOT_CHOICES = [
     (datetime.time(hour=8, minute=0), "08:00"),
     (datetime.time(hour=8, minute=30), "08:30"),

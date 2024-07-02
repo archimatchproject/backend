@@ -1,5 +1,6 @@
 """
-This module contains the AppConfig class for configuring the 'app.architect_request' Django application.
+This module contains the AppConfig class for configuring the 'app.architect_request'
+Django application.
 """
 
 from django.apps import AppConfig

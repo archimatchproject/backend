@@ -1,4 +1,16 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+"""
+Module containing the ArchimatchUser model.
+
+This module defines the custom user model for the Archimatch application, extending the
+AbstractUser model.
+
+Classes:
+    ArchimatchUser: Custom user model for the Archimatch application.
+"""
+
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -10,29 +22,46 @@ class ArchimatchUser(AbstractUser):
     Custom user model for the Archimatch application.
 
     Attributes:
-        image (ImageField): Optional profile image for the user. Stored in 'ProfileImages/' directory.
-        phone_number (CharField): Unique phone number of the user, maximum length of 20 characters.
-        user_type (CharField): Type of the user, selected from choices defined in USER_TYPE_CHOICES.
+        image (ImageField): Optional profile image for the user. Stored in
+         'ProfileImages/' directory.
+        phone_number (CharField): Unique phone number of the user, maximum
+         length of 20 characters.
+        user_type (CharField): Type of the user, selected from choices defined
+         in USER_TYPE_CHOICES.
         groups (ManyToManyField): Groups to which the user belongs.
         user_permissions (ManyToManyField): Permissions assigned to the user.
 
     """
 
-    email = models.EmailField(_("email address"), blank=True, unique=True)
+    email = models.EmailField(
+        _("email address"),
+        blank=True,
+        unique=True,
+    )
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
-    image = models.ImageField(blank=True, null=True, upload_to="ProfileImages/")
+    image = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="ProfileImages/",
+    )
     phone_number = models.CharField(max_length=20, unique=True, null=True)
     user_type = models.CharField(
-        max_length=200, choices=USER_TYPE_CHOICES, default=USER_TYPE_CHOICES[0][0]
+        max_length=200,
+        choices=USER_TYPE_CHOICES,
+        default=USER_TYPE_CHOICES[0][0],
     )
 
     groups = models.ManyToManyField(
-        Group, related_name="groups_archimatchuser_set", blank=True
+        Group,
+        related_name="groups_archimatchuser_set",
+        blank=True,
     )
     user_permissions = models.ManyToManyField(
-        Permission, related_name="user_permissions_archimatchuser_set", blank=True
+        Permission,
+        related_name="user_permissions_archimatchuser_set",
+        blank=True,
     )
 
     def __str__(self):
