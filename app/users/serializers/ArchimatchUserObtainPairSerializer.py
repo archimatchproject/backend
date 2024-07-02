@@ -12,7 +12,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers import ArchimatchUserSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
 class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):

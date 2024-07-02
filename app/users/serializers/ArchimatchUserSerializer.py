@@ -82,4 +82,5 @@ class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             "email": {"required": True},
+            "phone_number": {"required": True},
         }
