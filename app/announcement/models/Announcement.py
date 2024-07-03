@@ -11,14 +11,14 @@ from app.announcement import BUDGETS
 from app.announcement import CITIES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
-from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
-from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
 from app.announcement.models.Need import Need
-from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.models.PropertyType import PropertyType
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
+from app.core.models.WorkType import WorkType
 from app.users.models import Client
 
 
@@ -59,10 +59,7 @@ class Announcement(BaseModel):
     needs = models.ManyToManyField(Need, related_name="needs_announcements")
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
-    work_type = models.ForeignKey(
-        AnnouncementWorkType,
-        on_delete=models.CASCADE,
-    )
+    work_type = models.ForeignKey(WorkType, on_delete=models.CASCADE)
     address = models.CharField(max_length=255)
     city = models.CharField(
         max_length=50,

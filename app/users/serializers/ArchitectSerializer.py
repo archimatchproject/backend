@@ -10,6 +10,11 @@ Classes:
 
 from rest_framework import serializers
 
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.users.models import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
@@ -26,6 +31,11 @@ class ArchitectSerializer(serializers.ModelSerializer):
     """
 
     user = ArchimatchUserSerializer(required=True)
+    architectural_styles = ArchitecturalStyleSerializer(many=True)
+    project_categories = ProjectCategorySerializer(many=True)
+    property_types = PropertyTypeSerializer(many=True)
+    work_types = WorkTypeSerializer(many=True)
+    architect_speciality = ArchitectSpecialitySerializer()
 
     class Meta:
         """

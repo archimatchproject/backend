@@ -6,23 +6,23 @@ This module defines a serializer class for the ArchitectWorkType model.
 
 from rest_framework import serializers
 
-from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
+from app.core.models.WorkType import WorkType
 
 
-class AnnouncementWorkTypeSerializer(serializers.ModelSerializer):
+class WorkTypeSerializer(serializers.ModelSerializer):
     """
-    Serializer for the AnnouncementWorkType model.
+    Serializer for the WorkType model.
 
-    This serializer handles the representation of AnnouncementWorkType instances,
+    This serializer handles the representation of WorkType instances,
     including validation and conversion between Python objects and JSON.
     """
 
     class Meta:
         """
-        Meta class for AnnouncementWorkTypeSerializer.
+        Meta class for WorkTypeSerializer.
 
         Specifies the model to be serialized and the fields to be included in the serialization.
         """
 
-        model = AnnouncementWorkType
+        model = WorkType
         fields = ["id", "header", "description"]
