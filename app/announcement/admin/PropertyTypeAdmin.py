@@ -7,7 +7,7 @@ the Django admin interface for the PropertyType model.
 
 from django.contrib import admin
 
-from app.announcement.models.PropertyType import PropertyType
+from app.core.models.PropertyType import PropertyType
 
 
 class PropertyTypeAdmin(admin.ModelAdmin):

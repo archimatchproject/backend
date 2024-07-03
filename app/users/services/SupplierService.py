@@ -132,7 +132,7 @@ class SupplierService:
             email = data.get("email")
 
             if Supplier.objects.filter(user__email=email).exists():
-                user = ArchimatchUser.objects.get(username=email)
+                user = ArchimatchUser.objects.get(email=email)
                 if user.password == "":
                     response_data = {
                         "message": {
@@ -195,12 +195,12 @@ class SupplierService:
                 "company_name",
                 "phone_number",
                 "speciality_type",
-                "id",
+                "email",
                 "appearance",
             }
             cls.handle_user_data(request_keys, expected_keys)
-
-            if not Supplier.objects.filter(id=data.get("id")).exists():
+            email = data.pop("email")
+            if not Supplier.objects.filter(user__email=email).exists():
                 response_data = {
                     "message": {"message": "supplier doesn't exist"},
                     "status_code": status.HTTP_404_NOT_FOUND,
@@ -210,7 +210,7 @@ class SupplierService:
                     status=response_data.get("status_code"),
                 )
 
-            supplier = Supplier.objects.get(id=data.get("id"))
+            supplier = Supplier.objects.get(user__email=email)
             phone_number = data.pop("phone_number")
 
             # Update user data
@@ -222,7 +222,7 @@ class SupplierService:
             speciality_type_ids = data.pop("speciality_type")
             supplier.speciality_type.set(speciality_type_ids)
 
-            Supplier.objects.filter(id=data.get("id")).update(**data)
+            Supplier.objects.filter(user__email=email).update(**data)
 
             response_data = {
                 "message": {"message": "supplier successfully updated"},

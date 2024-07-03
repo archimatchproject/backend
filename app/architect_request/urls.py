@@ -18,7 +18,6 @@ from app.architect_request.routes.ArchitectRequestUrls import architect_request_
 
 
 router = routers.DefaultRouter()
-
 urlpatterns = [
     path("", include(router.urls)),
     *architect_request_urlpatterns,

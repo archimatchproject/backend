@@ -6,7 +6,7 @@ This module defines a serializer class for the ArchitecturalStyle model.
 
 from rest_framework import serializers
 
-from app.announcement.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 
 
 class ArchitecturalStyleSerializer(serializers.ModelSerializer):

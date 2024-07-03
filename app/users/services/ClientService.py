@@ -68,10 +68,10 @@ class ClientService:
             expected_keys = {"email"}
             cls.handle_user_data(request_keys, expected_keys)
 
-            email = data.get("email")
+            email_req = data.get("email")
 
-            if Client.objects.filter(user__email=email).exists():
-                user = ArchimatchUser.objects.get(username=email)
+            if Client.objects.filter(user__email=email_req).exists():
+                user = ArchimatchUser.objects.get(email=email_req)
                 if user.password == "":
                     response_data = {
                         "message": {"has_password": False},
@@ -218,10 +218,7 @@ class ClientService:
                         }
                     else:
                         response_data = {
-                            "message": {
-                                "has_password": True,
-                                "email": user.username,
-                            },
+                            "message": {"has_password": True, "email": user.email},
                             "status_code": status.HTTP_200_OK,
                         }
                 else:
