@@ -1,34 +1,36 @@
 """
 Module containing SupplierSerializer class.
 
-This module provides a serializer for the Supplier model, including nested serialization for the ArchimatchUser and SupplierSocialMedia models.
+This module provides a serializer for the Supplier model, including nested serialization for
+ the ArchimatchUser and SupplierSocialMedia models.
 
 Classes:
-    SupplierSerializer: Serializer for the Supplier model with nested ArchimatchUser and SupplierSocialMedia.
+    SupplierSerializer: Serializer for the Supplier model with nested ArchimatchUser and
+     SupplierSocialMedia.
 """
 
 from rest_framework import serializers
 
 from app.users.models import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.SupplierSocialMediaSerializer import (
-    SupplierSocialMediaSerializer,
-)
-from app.users.serializers.SupplierSpecialitySerializer import (
-    SupplierSpecialitySerializer,
-)
+from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
+from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 
 
 class SupplierSerializer(serializers.ModelSerializer):
     """
     Serializer for the Supplier model.
 
-    This serializer includes nested serialization for the ArchimatchUser and SupplierSocialMedia models.
+    This serializer includes nested serialization for the ArchimatchUser and
+    SupplierSocialMedia models.
 
     Fields:
-        user: Nested serializer for the ArchimatchUser associated with the supplier.
-        social_links: Nested serializer for the SupplierSocialMedia associated with the supplier.
-        speciality_type: Nested serializer for the SupplierSpeciality associated with the supplier.
+        user: Nested serializer for the ArchimatchUser associated with the
+        supplier.
+        social_links: Nested serializer for the SupplierSocialMedia associated
+        with the supplier.
+        speciality_type: Nested serializer for the SupplierSpeciality associated
+        with the supplier.
     """
 
     user = ArchimatchUserSerializer(required=True)

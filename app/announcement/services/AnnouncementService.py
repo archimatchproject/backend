@@ -9,13 +9,15 @@ Classes:
 """
 
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.announcement import BUDGETS, CITIES, TERRAIN_SURFACES, WORK_SURFACES
+from app.announcement import BUDGETS
+from app.announcement import CITIES
+from app.announcement import TERRAIN_SURFACES
+from app.announcement import WORK_SURFACES
 from app.announcement.models.Announcement import Announcement
 from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.AnnouncementWorkType import AnnouncementWorkType
@@ -26,28 +28,18 @@ from app.announcement.models.ProjectCategory import ProjectCategory
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
 from app.announcement.models.PropertyType import PropertyType
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementOutputSerializer,
-    AnnouncementPOSTSerializer,
-    AnnouncementPUTSerializer,
-)
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.users import USER_TYPE_CHOICES
@@ -68,7 +60,10 @@ class AnnouncementService:
         """
         serializer = AnnouncementPOSTSerializer(data=data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         validated_data = serializer.validated_data
 
@@ -86,13 +81,15 @@ class AnnouncementService:
                     user_data["user_type"] = USER_TYPE_CHOICES[1][0]
                     user_instance = ArchimatchUser.objects.create_user(**user_data)
                     client_instance = Client.objects.create(
-                        user=user_instance, **client_data
+                        user=user_instance,
+                        **client_data,
                     )
                 else:
                     client_instance = None
 
                 announcement = Announcement.objects.create(
-                    client=client_instance, **validated_data
+                    client=client_instance,
+                    **validated_data,
                 )
                 announcement.needs.set(needs_data)
 
@@ -108,7 +105,10 @@ class AnnouncementService:
                 announcement.project_extensions.set(project_extensions_data)
 
                 for image in project_images_data:
-                    ProjectImage.objects.create(announcement=announcement, image=image)
+                    ProjectImage.objects.create(
+                        announcement=announcement,
+                        image=image,
+                    )
 
             return Response(
                 {
@@ -117,8 +117,8 @@ class AnnouncementService:
                 },
                 status=status.HTTP_201_CREATED,
             )
-        except Exception as e:
-            raise APIException(f"Error creating announcement")
+        except Exception:
+            raise APIException("Error creating announcement")
 
     @classmethod
     def update_announcement(cls, instance, data):
@@ -127,7 +127,10 @@ class AnnouncementService:
         """
         serializer = AnnouncementPUTSerializer(instance, data=data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         validated_data = serializer.validated_data
 
@@ -153,9 +156,15 @@ class AnnouncementService:
 
             ProjectImage.objects.filter(announcement=instance).delete()
             for image in project_images_data:
-                ProjectImage.objects.create(announcement=instance, image=image)
+                ProjectImage.objects.create(
+                    announcement=instance,
+                    image=image,
+                )
 
-            for attr, value in validated_data.items():
+            for (
+                attr,
+                value,
+            ) in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
@@ -166,8 +175,8 @@ class AnnouncementService:
                 },
                 status=status.HTTP_200_OK,
             )
-        except Exception as e:
-            raise APIException(f"Error updating announcement")
+        except Exception:
+            raise APIException("Error updating announcement")
 
     @classmethod
     def get_architect_specialities(cls):
@@ -180,11 +189,15 @@ class AnnouncementService:
         try:
             architect_specialities = ArchitectSpeciality.objects.all()
             serializer = ArchitectSpecialitySerializer(
-                architect_specialities, many=True
+                architect_specialities,
+                many=True,
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving architect specialities")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving architect specialities")
 
     @classmethod
     def get_architect_speciality_needs(cls, architect_speciality_id):
@@ -198,18 +211,19 @@ class AnnouncementService:
             Response: Response containing list of needs related to the architect speciality.
         """
         try:
-            if not ArchitectSpeciality.objects.filter(
-                id=architect_speciality_id
-            ).exists():
+            if not ArchitectSpeciality.objects.filter(id=architect_speciality_id).exists():
                 return Response(
                     {"message": "No architect speciality found with the given ID"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
             needs = Need.objects.filter(architect_speciality_id=architect_speciality_id)
             serializer = NeedSerializer(needs, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving architect speciality needs")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving architect speciality needs")
 
     @classmethod
     def get_project_categories(cls):
@@ -222,9 +236,12 @@ class AnnouncementService:
         try:
             project_categories = ProjectCategory.objects.all()
             serializer = ProjectCategorySerializer(project_categories, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving project categories")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving project categories")
 
     @classmethod
     def get_property_types(cls, project_category_id):
@@ -243,13 +260,14 @@ class AnnouncementService:
                     {"message": "No project category found with the given ID"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-            property_types = PropertyType.objects.filter(
-                project_category_id=project_category_id
-            )
+            property_types = PropertyType.objects.filter(project_category_id=project_category_id)
             serializer = PropertyTypeSerializer(property_types, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving property types")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving property types")
 
     @classmethod
     def get_announcement_work_types(cls):
@@ -262,11 +280,15 @@ class AnnouncementService:
         try:
             announcement_work_types = AnnouncementWorkType.objects.all()
             serializer = AnnouncementWorkTypeSerializer(
-                announcement_work_types, many=True
+                announcement_work_types,
+                many=True,
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving announcement work types")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving announcement work types")
 
     @classmethod
     def get_renovation_pieces(cls):
@@ -279,9 +301,12 @@ class AnnouncementService:
         try:
             renovation_pieces = PieceRenovate.objects.all()
             serializer = PieceRenovateSerializer(renovation_pieces, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(f"Error retrieving renovation pieces")
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            raise APIException("Error retrieving renovation pieces")
 
     @classmethod
     def get_cities(cls):
@@ -291,7 +316,13 @@ class AnnouncementService:
         Returns:
             Response: Response containing list of cities.
         """
-        cities = [{"value": city[0], "display_name": city[1]} for city in CITIES]
+        cities = [
+            {
+                "value": city[0],
+                "display_name": city[1],
+            }
+            for city in CITIES
+        ]
         return Response(cities, status=status.HTTP_200_OK)
 
     @classmethod
@@ -303,10 +334,16 @@ class AnnouncementService:
             Response: Response containing list of terrain surfaces.
         """
         terrain_surfaces = [
-            {"value": surface[0], "display_name": surface[1]}
+            {
+                "value": surface[0],
+                "display_name": surface[1],
+            }
             for surface in TERRAIN_SURFACES
         ]
-        return Response(terrain_surfaces, status=status.HTTP_200_OK)
+        return Response(
+            terrain_surfaces,
+            status=status.HTTP_200_OK,
+        )
 
     @classmethod
     def get_work_surfaces(cls):
@@ -317,10 +354,16 @@ class AnnouncementService:
             Response: Response containing list of work surfaces.
         """
         work_surfaces = [
-            {"value": surface[0], "display_name": surface[1]}
+            {
+                "value": surface[0],
+                "display_name": surface[1],
+            }
             for surface in WORK_SURFACES
         ]
-        return Response(work_surfaces, status=status.HTTP_200_OK)
+        return Response(
+            work_surfaces,
+            status=status.HTTP_200_OK,
+        )
 
     @classmethod
     def get_budgets(cls):
@@ -331,7 +374,11 @@ class AnnouncementService:
             Response: Response containing list of budgets.
         """
         budgets = [
-            {"value": budget[0], "display_name": budget[1]} for budget in BUDGETS
+            {
+                "value": budget[0],
+                "display_name": budget[1],
+            }
+            for budget in BUDGETS
         ]
         return Response(budgets, status=status.HTTP_200_OK)
 
@@ -345,11 +392,17 @@ class AnnouncementService:
         """
         try:
             architectural_styles = ArchitecturalStyle.objects.all()
-            serializer = ArchitecturalStyleSerializer(architectural_styles, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
+            serializer = ArchitecturalStyleSerializer(
+                architectural_styles,
+                many=True,
+            )
             return Response(
-                {"message": f"Error retrieving architectural styles"},
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            return Response(
+                {"message": "Error retrieving architectural styles"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -364,9 +417,12 @@ class AnnouncementService:
         try:
             project_extensions = ProjectExtension.objects.all()
             serializer = ProjectExtensionSerializer(project_extensions, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
             return Response(
-                {"message": f"Error retrieving project extensions"},
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            return Response(
+                {"message": "Error retrieving project extensions"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

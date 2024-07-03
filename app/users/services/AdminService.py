@@ -9,14 +9,21 @@ Classes:
     AdminService: Service class for admin user operations.
 """
 
+from django.db import transaction
+
 import environ
 import jwt
+
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.users.models import Admin
-from app.users.serializers import AdminSerializer
+from app.users.models.Admin import Admin
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.serializers.AdminSerializer import AdminSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
+
 
 env = environ.Env()
 
@@ -41,14 +48,26 @@ class AdminService:
         Returns:
             Response: HTTP response containing serialized admin data or errors.
         """
-        try:
-            serializer = AdminSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return cls.handle_exception(e)
+
+        admin_serializer = AdminSerializer(data=data)
+        admin_serializer.is_valid(raise_exception=True)
+        validated_data = admin_serializer.validated_data
+        user_data = validated_data.pop("user")
+        user_serializer = ArchimatchUserSimpleSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            rights = validated_data.pop("rights", [])
+            user = ArchimatchUser.objects.create(**user_data)
+            admin = Admin.objects.create(user=user, **validated_data)
+            try:
+                admin.set_permissions(rights)
+            except serializers.ValidationError as e:
+                raise serializers.ValidationError(e.detail)
+            return Response(
+                AdminSerializer(admin).data,
+                status=status.HTTP_201_CREATED,
+            )
 
     @classmethod
     def update_admin(cls, instance, data):
@@ -66,8 +85,14 @@ class AdminService:
             serializer = AdminSerializer(instance, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             return cls.handle_exception(e)
 
@@ -83,13 +108,17 @@ class AdminService:
             dict: Decoded payload from the JWT token.
         """
         try:
-            payload = jwt.decode(token, env("SECRET_KEY"), algorithms=["HS256"])
+            payload = jwt.decode(
+                token,
+                env("SECRET_KEY"),
+                algorithms=["HS256"],
+            )
             return payload
         except jwt.ExpiredSignatureError:
             return {"error": "Token has expired"}
         except jwt.InvalidTokenError:
             return {"error": "Invalid token"}
-        except Exception as e:
+        except Exception:
             return {"error": "Error decoding token"}
 
     @classmethod
@@ -136,7 +165,8 @@ class AdminService:
 
             if "error" in payload:
                 return Response(
-                    {"error": payload["error"]}, status=status.HTTP_401_UNAUTHORIZED
+                    {"error": payload["error"]},
+                    status=status.HTTP_401_UNAUTHORIZED,
                 )
 
             user_id = payload.get("user_id")
@@ -146,7 +176,8 @@ class AdminService:
                     serializer = AdminSerializer(admin)
                     return Response(serializer.data)
                 return Response(
-                    {"error": "Admin not found"}, status=status.HTTP_404_NOT_FOUND
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
 
             return Response(
@@ -203,11 +234,15 @@ class AdminService:
                 }
 
             return Response(
-                response_data.get("message"), status=response_data.get("status_code")
+                response_data.get("message"),
+                status=response_data.get("status_code"),
             )
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
-        except Exception as e:
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
+        except Exception:
             return Response(
                 {"message": "An error occurred during admin login"},
                 status=status.HTTP_410_GONE,

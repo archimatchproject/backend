@@ -5,32 +5,22 @@ This module defines the AnnouncementViewSet class, which is a viewset
 for viewing and editing Announcement instances using Django REST Framework.
 """
 
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.announcement.models import Announcement
-from app.announcement.serializers import AnnouncementSerializer
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementPOSTSerializer,
-    AnnouncementPUTSerializer,
-)
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
 from app.announcement.serializers.AnnouncementWorkTypeSerializer import (
     AnnouncementWorkTypeSerializer,
 )
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.services import AnnouncementService
 
@@ -107,9 +97,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of needs related to the architect speciality.
         """
-        return AnnouncementService.get_architect_speciality_needs(
-            architect_speciality_id
-        )
+        return AnnouncementService.get_architect_speciality_needs(architect_speciality_id)
 
     @action(
         detail=False,

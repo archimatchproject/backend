@@ -4,6 +4,7 @@ Module: app.permissions
 Class: IsSuperUser
 
 """
+
 from rest_framework.permissions import BasePermission
 
 

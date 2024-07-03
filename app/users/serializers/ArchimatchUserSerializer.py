@@ -56,7 +56,8 @@ class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):
     """
     Simplified serializer for ArchimatchUser model.
 
-    This serializer includes a subset of fields from the ArchimatchUser model for simplified serialization.
+    This serializer includes a subset of fields from the ArchimatchUser model for
+    simplified serialization.
 
     Fields:
         first_name: First name of the user.
@@ -73,7 +74,13 @@ class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):
         """
 
         model = ArchimatchUser
-        fields = ["first_name", "last_name", "email", "phone_number"]
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+        ]
         extra_kwargs = {
             "email": {"required": True},
+            "phone_number": {"required": True},
         }

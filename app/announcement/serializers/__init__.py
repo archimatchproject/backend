@@ -1,1 +1,0 @@
-from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer

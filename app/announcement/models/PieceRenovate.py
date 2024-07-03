@@ -5,8 +5,6 @@ This module contains the PieceRenovate class, which represents a piece or area
 to be renovated in the application, inheriting from the LabeledIcon base class.
 """
 
-from django.db import models
-
 from app.core.models import LabeledIcon
 
 

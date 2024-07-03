@@ -23,4 +23,7 @@ class AnnouncementWorkTypeAdmin(admin.ModelAdmin):
 
 
 # Register the admin class with the AnnouncementWorkType model
-admin.site.register(AnnouncementWorkType, AnnouncementWorkTypeAdmin)
+admin.site.register(
+    AnnouncementWorkType,
+    AnnouncementWorkTypeAdmin,
+)

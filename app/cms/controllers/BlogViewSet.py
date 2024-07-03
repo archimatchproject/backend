@@ -5,14 +5,15 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to Blog instances via REST API endpoints.
 """
 
-from rest_framework import permissions, viewsets
+from rest_framework import permissions
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from app.cms.controllers.utils.ManageBlogPermission import ManageBlogPermission
 from app.cms.models import Blog
-from app.cms.serializers import BlogSerializer
+from app.cms.serializers.BlogSerializer import BlogSerializer
 
 
 class BlogViewSet(viewsets.ModelViewSet):
@@ -26,13 +27,16 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
-    permission_classes = [IsAuthenticated, ManageBlogPermission]
+    permission_classes = [
+        IsAuthenticated,
+        ManageBlogPermission,
+    ]
 
     @action(
         detail=False,
         methods=["GET"],
         permission_classes=[permissions.AllowAny],
-        name="get_blogs",
+        name="get-blogs",
     )
     def get_blogs(self, request):
         """

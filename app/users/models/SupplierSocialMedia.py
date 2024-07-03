@@ -1,7 +1,8 @@
 """
 Module: Supplier Social Media Model
 
-This module defines the SupplierSocialMedia model, representing social media links for suppliers in the Archimatch application.
+This module defines the SupplierSocialMedia model, representing social media links for
+suppliers in the Archimatch application.
 
 Classes:
     SupplierSocialMedia: Model representing social media links for suppliers.
@@ -15,12 +16,16 @@ from app.core.models import BaseModel
 
 class SupplierSocialMedia(BaseModel):
     """
-    Model representing social media links for suppliers in the Archimatch application.
+    Model representing social media links for suppliers in the Archimatch
+     application.
 
     Attributes:
-        facebook (CharField): Facebook profile link of the supplier, maximum length of 255 characters.
-        instagram (CharField): Instagram profile link of the supplier, maximum length of 255 characters.
-        website (CharField): Website link of the supplier, maximum length of 255 characters.
+        facebook (CharField): Facebook profile link of the supplier, maximum
+         length of 255 characters.
+        instagram (CharField): Instagram profile link of the supplier, maximum
+         length of 255 characters.
+        website (CharField): Website link of the supplier, maximum length of
+         255 characters.
     """
 
     facebook = models.CharField(max_length=255, default="")

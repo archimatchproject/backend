@@ -1,7 +1,8 @@
 """
 Module for defining custom permissions related to managing architect requests.
 
-This module provides the `ManageArchitectRequestPermission` class, which extends `BasePermission`
+This module provides the `ManageArchitectRequestPermission` class, which extends
+`BasePermission`
 from Django REST Framework. It checks if the authenticated user has the necessary
 permissions to manage architect requests.
 
@@ -14,12 +15,14 @@ from rest_framework.permissions import BasePermission
 
 class ManageArchitectRequestPermission(BasePermission):
     """
-    Custom permission class to check if the user has specific permissions to manage architect requests.
+    Custom permission class to check if the user has specific permissions to manage
+    architect requests.
     """
 
     def has_permission(self, request, view):
         """
-        Check if the authenticated user has the necessary permissions to manage architect requests.
+        Check if the authenticated user has the necessary permissions to manage
+        architect requests.
 
         Args:
             request (HttpRequest): The request object.

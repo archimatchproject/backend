@@ -4,14 +4,15 @@ Module: app.views.admin
 Class: AdminViewSet
 
 """
-from rest_framework import status, viewsets
+
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models import Admin
-from app.users.serializers import AdminSerializer, UserAuthSerializer
-from app.users.services import AdminService
+from app.users.serializers.AdminSerializer import AdminSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.services.AdminService import AdminService
 
 
 class AdminViewSet(viewsets.ModelViewSet):
@@ -57,7 +58,10 @@ class AdminViewSet(viewsets.ModelViewSet):
         return AdminService.update_admin(instance, request.data)
 
     @action(
-        detail=False, methods=["POST"], permission_classes=[], name="retrieve_by_token"
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        name="retrieve_by_token",
     )
     def retrieve_by_token(self, request):
         """

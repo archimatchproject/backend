@@ -1,9 +1,11 @@
 """
 Module-level constants for jwt configuration.
 """
+
 from datetime import timedelta
 
 import environ
+
 
 env = environ.Env()
 

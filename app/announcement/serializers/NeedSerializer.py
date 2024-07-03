@@ -22,4 +22,9 @@ class NeedSerializer(serializers.ModelSerializer):
         """
 
         model = Need
-        fields = ["id", "label", "icon", "architect_speciality"]
+        fields = [
+            "id",
+            "label",
+            "icon",
+            "architect_speciality",
+        ]

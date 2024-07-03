@@ -18,9 +18,16 @@ class AnnouncementPieceRenovateAdmin(admin.ModelAdmin):
     the AnnouncementPieceRenovate model in the Django admin site.
     """
 
-    list_display = ["announcement", "piece_renovate", "number"]
+    list_display = [
+        "announcement",
+        "piece_renovate",
+        "number",
+    ]
     search_fields = ("piece_renovate",)
 
 
 # Register the admin class with the AnnouncementPieceRenovate model
-admin.site.register(AnnouncementPieceRenovate, AnnouncementPieceRenovateAdmin)
+admin.site.register(
+    AnnouncementPieceRenovate,
+    AnnouncementPieceRenovateAdmin,
+)

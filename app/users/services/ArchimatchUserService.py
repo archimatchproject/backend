@@ -1,7 +1,8 @@
 """
 Module: Archimatch User Service
 
-This module defines the ArchimatchUserService class that provides methods for handling user data and password creation.
+This module defines the ArchimatchUserService class that provides methods for handling user data
+ and password creation.
 
 Classes:
     ArchimatchUserService: Service class for handling user data and password creation.
@@ -11,7 +12,6 @@ Classes:
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.core.validation.exceptions import UserDataException
 from app.users.models import ArchimatchUser
@@ -73,7 +73,11 @@ class ArchimatchUserService:
         try:
             data = request.data
             request_keys = set(data.keys())
-            expected_keys = {"email", "password", "confirm_password"}
+            expected_keys = {
+                "email",
+                "password",
+                "confirm_password",
+            }
 
             # Validate input keys
             cls.handle_user_data(request_keys, expected_keys)
@@ -85,7 +89,8 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
                 return Response(
-                    response_data["message"], status=response_data["status_code"]
+                    response_data["message"],
+                    status=response_data["status_code"],
                 )
 
             user = ArchimatchUser.objects.get(email=req_email)
@@ -105,7 +110,10 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_200_OK,
                     "tokens": tokens,
                 }
-                return Response(response_data, status=response_data["status_code"])
+                return Response(
+                    response_data,
+                    status=response_data["status_code"],
+                )
 
             else:
                 response_data = {
@@ -113,14 +121,21 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
                 return Response(
-                    response_data["message"], status=response_data["status_code"]
+                    response_data["message"],
+                    status=response_data["status_code"],
                 )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )
 
     @classmethod
     def archimatch_user_reset_password(cls, request):
@@ -156,7 +171,8 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_404_NOT_FOUND,
                 }
                 return Response(
-                    response_data["message"], status=response_data["status_code"]
+                    response_data["message"],
+                    status=response_data["status_code"],
                 )
 
             user = ArchimatchUser.objects.get(id=data.get("id"))
@@ -171,7 +187,8 @@ class ArchimatchUserService:
                     "status_code": status.HTTP_400_BAD_REQUEST,
                 }
                 return Response(
-                    response_data["message"], status=response_data["status_code"]
+                    response_data["message"],
+                    status=response_data["status_code"],
                 )
 
             # Set new password if conditions are met
@@ -189,11 +206,18 @@ class ArchimatchUserService:
                 }
 
             return Response(
-                response_data["message"], status=response_data["status_code"]
+                response_data["message"],
+                status=response_data["status_code"],
             )
 
         except UserDataException as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         except APIException as e:
-            return Response({"message": str(e)}, status=e.status_code)
+            return Response(
+                {"message": str(e)},
+                status=e.status_code,
+            )

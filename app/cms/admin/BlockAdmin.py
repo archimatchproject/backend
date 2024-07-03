@@ -7,7 +7,8 @@ in the Django admin interface.
 
 from django.contrib import admin
 
-from app.cms.models import Block, SliderImage
+from app.cms.models import Block
+from app.cms.models import SliderImage
 
 
 class SliderImageInline(admin.TabularInline):
@@ -53,11 +54,17 @@ class BlockAdmin(admin.ModelAdmin):
     """
     Admin configuration for Block model.
 
-    This admin class provides customizations for the Block model in the Django admin site.
-    It includes list display fields, filters, and inline editing for associated SliderImage instances.
+    This admin class provides customizations for the Block model in the Django
+     admin site.
+    It includes list display fields, filters, and inline editing for associated
+     SliderImage instances.
     """
 
-    list_display = ("block_type", "blog", "content")
+    list_display = (
+        "block_type",
+        "blog",
+        "content",
+    )
     list_filter = ("block_type", "blog")
 
     inlines = [SliderImageInline]

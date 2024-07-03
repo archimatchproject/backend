@@ -16,8 +16,8 @@ from rest_framework.response import Response
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
-    ArchitectRequestSerializer,
 )
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 
 
@@ -73,13 +73,18 @@ class ArchitectRequestService:
             except ArchitectSpeciality.DoesNotExist:
                 return Response(
                     {
-                        "error": f"ArchitectSpeciality with id {architect_speciality_id} does not exist."
+                        "error": (
+                            f"ArchitectSpeciality with id {architect_speciality_id} does not exist."
+                        )
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            except Exception as e:
+            except Exception:
                 return Response(
                     {"error handling request"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )

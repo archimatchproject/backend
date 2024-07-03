@@ -4,6 +4,7 @@ Module defining the PropertyType model.
 This module contains the PropertyType classe,
 representing different aspects of a project in the application.
 """
+
 from django.db import models
 
 from app.announcement.models.ProjectCategory import ProjectCategory

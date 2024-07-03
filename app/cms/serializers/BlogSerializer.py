@@ -4,7 +4,8 @@ Module for serializing Blog instances with Blocks using Django REST Framework se
 
 from rest_framework import serializers
 
-from app.cms.models import Block, Blog
+from app.cms.models import Block
+from app.cms.models import Blog
 from app.cms.serializers.BlockSerializer import BlockSerializer
 
 
@@ -21,7 +22,12 @@ class BlogInputSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blog_blocks"]
+        fields = [
+            "id",
+            "title",
+            "cover_photo",
+            "blog_blocks",
+        ]
 
     def create(self, validated_data):
         """
@@ -78,7 +84,12 @@ class BlogOutputSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blog_blocks"]
+        fields = [
+            "id",
+            "title",
+            "cover_photo",
+            "blog_blocks",
+        ]
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -93,7 +104,12 @@ class BlogSerializer(serializers.ModelSerializer):
         """
 
         model = Blog
-        fields = ["id", "title", "cover_photo", "blog_blocks"]
+        fields = [
+            "id",
+            "title",
+            "cover_photo",
+            "blog_blocks",
+        ]
 
     def to_representation(self, instance):
         """
