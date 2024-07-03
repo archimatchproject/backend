@@ -5,26 +5,19 @@ This module contains the ArchitecturalStyle class, which represents
 the specialty of an architect in the application.
 """
 
-from app.core.models.LabeledIcon import LabeledIcon
+from django.db import models
 
 
-class ArchitecturalStyle(LabeledIcon):
+class ArchitecturalStyle(models.Model):
     """
     Model representing architectural styles.
 
-    Inherits:
-        LabeledIcon: Base class providing fields for label and icon.
+    label
+    icon
     """
 
-    class Meta:
-        """
-        Meta class for ArchitecturalStyle model.
-
-        Provides verbose names for the model in the Django admin interface.
-        """
-
-        verbose_name = "Architectural Style"
-        verbose_name_plural = "Architectural Styles"
+    label = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="ArchitecturalStyleIcons/")
 
     def __str__(self):
         """
@@ -35,3 +28,13 @@ class ArchitecturalStyle(LabeledIcon):
             client.
         """
         return self.label
+
+    class Meta:
+        """
+        Meta class for ArchitecturalStyle model.
+
+        Provides verbose names for the model in the Django admin interface.
+        """
+
+        verbose_name = "Architectural Style"
+        verbose_name_plural = "Architectural Styles"

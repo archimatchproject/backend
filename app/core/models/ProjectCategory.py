@@ -2,19 +2,31 @@
 Module defining the ProjectCategory model.
 
 This module contains the ProjectCategory class, which represents a category of project
-in the application, inheriting from the LabeledIcon base class.
+in the application.
 """
 
-from app.core.models import LabeledIcon
+from django.db import models
 
 
-class ProjectCategory(LabeledIcon):
+class ProjectCategory(models.Model):
     """
-    Model representing a category of project, inheriting from LabeledIcon.
+    Model representing a category of project.
 
-    Inherits:
-        LabeledIcon: Base class providing fields for label and icon.
+    label
+    icon
     """
+
+    label = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="ProjectCategoryIcons/")
+
+    def __str__(self):
+        """
+        Return a string representation of the labeled icon.
+
+        Returns:
+            str: Label or name associated with the icon.
+        """
+        return self.label
 
     class Meta:
         """

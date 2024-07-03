@@ -17,9 +17,7 @@ psycopg2-binary = "2.9.9"
 whitenoise = "==6.6.0"
 twilio = "==9.2.0"
 djangorestframework-camel-case = "==1.4.2"
-pip = "*"
-install = "*"
-drf-standardized-errors = "*"
+pyyaml = "*"
 
 [dev-packages]
 black = "==24.4.0"

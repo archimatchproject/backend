@@ -5,16 +5,28 @@ This module contains the ArchitectSpeciality class, which represents
 the specialty of an architect in the application.
 """
 
-from app.core.models.LabeledIcon import LabeledIcon
+from django.db import models
 
 
-class ArchitectSpeciality(LabeledIcon):
+class ArchitectSpeciality(models.Model):
     """
-    Model representing the specialty of an architect, inheriting from LabeledIcon.
+    Model representing the specialty of an architect.
 
-    Inherits:
-        LabeledIcon: Base class providing fields for label and icon.
+    label
+    icon
     """
+
+    label = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="ArchitectSpecialityIcons/")
+
+    def __str__(self):
+        """
+        Return a string representation of the labeled icon.
+
+        Returns:
+            str: Label or name associated with the icon.
+        """
+        return self.label
 
     class Meta:
         """

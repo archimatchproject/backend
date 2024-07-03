@@ -7,20 +7,32 @@ representing different aspects of a project in the application.
 
 from django.db import models
 
-from app.core.models import LabeledIcon
 from app.core.models.ProjectCategory import ProjectCategory
 
 
-class PropertyType(LabeledIcon):
+class PropertyType(models.Model):
     """
-    Model representing a type of property, inheriting from LabeledIcon.
+    Model representing a type of property.
 
-    Inherits:
-        LabeledIcon: Base class providing fields for label and icon.
+
 
     Attributes:
         project_category (ForeignKey): Category of project associated with this property type.
+        label
+        icon
     """
+
+    label = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="PropertyTypeIcons/")
+
+    def __str__(self):
+        """
+        Return a string representation of the labeled icon.
+
+        Returns:
+            str: Label or name associated with the icon.
+        """
+        return self.label
 
     project_category = models.ForeignKey(
         ProjectCategory,
