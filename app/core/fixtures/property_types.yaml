@@ -1,0 +1,140 @@
+# property_types.yaml
+
+# Property Types for Projet résidentiel (Project Category)
+- model: core.PropertyType
+  pk: 1
+  fields:
+    label: "Maison"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 2
+  fields:
+    label: "Immobilier"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 3
+  fields:
+    label: "Villa"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 4
+  fields:
+    label: "Appartement"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 1
+
+# Property Types for Grand œuvre immobilier (Project Category)
+- model: core.PropertyType
+  pk: 5
+  fields:
+    label: "Immeubles bureaux"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 2
+
+- model: core.PropertyType
+  pk: 6
+  fields:
+    label: "Clinique"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 2
+
+- model: core.PropertyType
+  pk: 7
+  fields:
+    label: "Showroom"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 2
+
+# Property Types for Point de Vente et Commercial (Project Category)
+- model: core.PropertyType
+  pk: 8
+  fields:
+    label: "Restaurant/Salon de thé"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 3
+
+- model: core.PropertyType
+  pk: 9
+  fields:
+    label: "Magasin"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 3
+
+- model: core.PropertyType
+  pk: 10
+  fields:
+    label: "Agences/Bureaux"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 3
+
+# Property Types for projet Industriel (Project Category)
+- model: core.PropertyType
+  pk: 11
+  fields:
+    label: "Entrepôt"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 4
+
+- model: core.PropertyType
+  pk: 12
+  fields:
+    label: "Usines"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 4
+
+- model: core.PropertyType
+  pk: 13
+  fields:
+    label: "Atelier conception"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 4
+
+# Property Types for Projet Institutionnel (Project Category)
+- model: core.PropertyType
+  pk: 14
+  fields:
+    label: "Écoles"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 5
+
+- model: core.PropertyType
+  pk: 15
+  fields:
+    label: "Hopital"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 5
+
+- model: core.PropertyType
+  pk: 16
+  fields:
+    label: "Bibliothèque publique"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 5
+
+# Property Types for Patrimoine et conservation (Project Category)
+- model: core.PropertyType
+  pk: 17
+  fields:
+    label: "Monument"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 6
+
+- model: core.PropertyType
+  pk: 18
+  fields:
+    label: "Musée historique"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 6
+
+- model: core.PropertyType
+  pk: 19
+  fields:
+    label: "Place et parc historique"
+    icon: "PropertyTypeIcons/img.png"
+    project_category: 6

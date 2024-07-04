@@ -5,7 +5,10 @@ This module contains the ProjectExtension classe,
 representing different aspects of a project in the application.
 """
 
+from django.db import models
+
 from app.core.models import LabeledIcon
+from app.core.models.PropertyType import PropertyType
 
 
 class ProjectExtension(LabeledIcon):
@@ -16,6 +19,14 @@ class ProjectExtension(LabeledIcon):
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
     """
+
+    icon = models.ImageField(upload_to="ProjectExtensionIcons/")
+    property_type = models.ForeignKey(
+        PropertyType,
+        related_name="property_type_project_extensions",
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     class Meta:
         """

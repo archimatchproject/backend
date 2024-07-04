@@ -36,5 +36,6 @@ class LabeledIcon(models.Model):
         Provides verbose names for the model in the Django admin interface.
         """
 
+        abstract = True
         verbose_name = "Labeled Icon"
         verbose_name_plural = "Labeled Icons"

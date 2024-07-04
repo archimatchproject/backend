@@ -22,6 +22,7 @@ class PropertyType(LabeledIcon):
         project_category (ForeignKey): Category of project associated with this property type.
     """
 
+    icon = models.ImageField(upload_to="PropertyTypeIcons/")
     project_category = models.ForeignKey(
         ProjectCategory,
         related_name="project_category_property_types",

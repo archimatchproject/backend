@@ -5,7 +5,10 @@ This module contains the PieceRenovate class, which represents a piece or area
 to be renovated in the application, inheriting from the LabeledIcon base class.
 """
 
+from django.db import models
+
 from app.core.models import LabeledIcon
+from app.core.models.PropertyType import PropertyType
 
 
 class PieceRenovate(LabeledIcon):
@@ -15,6 +18,14 @@ class PieceRenovate(LabeledIcon):
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
     """
+
+    icon = models.ImageField(upload_to="PieceRenovateIcons/")
+    property_type = models.ForeignKey(
+        PropertyType,
+        related_name="property_type_renovation_pieces",
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     class Meta:
         """

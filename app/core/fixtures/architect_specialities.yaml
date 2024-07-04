@@ -1,0 +1,37 @@
+# architect_specialities.yaml
+
+- model: core.ArchitectSpeciality
+  pk: 1
+  fields:
+    label: "Architecte de construction"
+    icon: "ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 2
+  fields:
+    label: "Designer d'interieur"
+    icon: "ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 3
+  fields:
+    label: "Architecte paysagiste"
+    icon: "ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 4
+  fields:
+    label: "Architecte urbaniste"
+    icon: "ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 5
+  fields:
+    label: "Architecte technique ou ingénieur en architecture"
+    icon: "ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 6
+  fields:
+    label: "Architecte en restauration du patrimoine"
+    icon: "ArchitectSpecialityIcons/img.png"

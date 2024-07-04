@@ -1,0 +1,37 @@
+# project_categories.yaml
+
+- model: core.ProjectCategory
+  pk: 1
+  fields:
+    label: "Projet résidentiel"
+    icon: "ProjectCategoryIcons/img.png"
+
+- model: core.ProjectCategory
+  pk: 2
+  fields:
+    label: "Grand œuvre immobilier"
+    icon: "ProjectCategoryIcons/img.png"
+
+- model: core.ProjectCategory
+  pk: 3
+  fields:
+    label: "Point de Vente et Commercial"
+    icon: "ProjectCategoryIcons/img.png"
+
+- model: core.ProjectCategory
+  pk: 4
+  fields:
+    label: "Projet Industriel"
+    icon: "ProjectCategoryIcons/img.png"
+
+- model: core.ProjectCategory
+  pk: 5
+  fields:
+    label: "Projet Institutionnel"
+    icon: "ProjectCategoryIcons/img.png"
+
+- model: core.ProjectCategory
+  pk: 6
+  fields:
+    label: "Patrimoine et conservation"
+    icon: "ProjectCategoryIcons/img.png"

@@ -1,0 +1,65 @@
+# Project Extensions for Projet résidentiel (Project Category)
+- model: announcement.ProjectExtension
+  pk: 1
+  fields:
+    label: "Piscine"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 1 # Replace with the primary key of Maison
+
+- model: announcement.ProjectExtension
+  pk: 2
+  fields:
+    label: "Jardin aménagé"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 1 # Replace with the primary key of Maison
+
+- model: announcement.ProjectExtension
+  pk: 3
+  fields:
+    label: "Garage"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 1 # Replace with the primary key of Maison
+
+- model: announcement.ProjectExtension
+  pk: 4
+  fields:
+    label: "Balcon"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 2 # Replace with the primary key of Immobilier
+
+- model: announcement.ProjectExtension
+  pk: 5
+  fields:
+    label: "Terrasse"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 2 # Replace with the primary key of Immobilier
+
+- model: announcement.ProjectExtension
+  pk: 6
+  fields:
+    label: "Ascenseur"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 2 # Replace with the primary key of Immobilier
+
+- model: announcement.ProjectExtension
+  pk: 7
+  fields:
+    label: "Piscine intérieure"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 3 # Replace with the primary key of Villa
+
+- model: announcement.ProjectExtension
+  pk: 8
+  fields:
+    label: "Sauna"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 3 # Replace with the primary key of Villa
+
+- model: announcement.ProjectExtension
+  pk: 9
+  fields:
+    label: "Jacuzzi"
+    icon: "ProjectExtensionIcons/img.png"
+    property_type: 3 # Replace with the primary key of Villa
+
+# Add more Project Extensions for other Property Types as needed
