@@ -15,3 +15,9 @@ class EmailTemplatesConfig(AppConfig):
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "app.email_templates"
+
+    def ready(self):
+        """
+        Performs initialization tasks when the Django application is fully loaded.
+        """
+        import app.email_templates.receivers  # noqa

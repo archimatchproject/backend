@@ -30,6 +30,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "djangorestframework_camel_case",
     "drf_standardized_errors",
+    "background_task",
 ]
 
 """
