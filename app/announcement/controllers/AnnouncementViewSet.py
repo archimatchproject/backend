@@ -8,10 +8,10 @@ for viewing and editing Announcement instances using Django REST Framework.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from app.announcement.models import Announcement
-from app.announcement.serializers import AnnouncementSerializer
+from app.announcement.models.Announcement import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
