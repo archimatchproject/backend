@@ -14,7 +14,7 @@ If you don't have `pipenv` installed, you can install it using pip:
 pip install pipenv
 ```
 
-### Create a Virtual Environment and Install DependenciesX
+### Create a Virtual Environment and Install Dependencies
 
 Inside your project directory, use `pipenv` to create a virtual environment and install project dependencies:
 

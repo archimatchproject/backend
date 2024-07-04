@@ -8,7 +8,7 @@ using Django REST Framework, including custom login actions.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from app.users.models import Client
+from app.users.models.Client import Client
 from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer

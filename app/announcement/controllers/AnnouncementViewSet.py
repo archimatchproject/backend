@@ -20,7 +20,7 @@ from app.announcement.serializers.ProjectCategorySerializer import ProjectCatego
 from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.announcement.services import AnnouncementService
+from app.announcement.services.AnnouncementService import AnnouncementService
 
 
 class AnnouncementViewSet(viewsets.ModelViewSet):

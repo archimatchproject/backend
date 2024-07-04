@@ -11,7 +11,7 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import Supplier
+from app.users.models.Supplier import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer

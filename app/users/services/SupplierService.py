@@ -14,11 +14,11 @@ from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
 from app.users import APPEARANCES
-from app.users.models import ArchimatchUser
-from app.users.models import Supplier
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Supplier import Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.models.SupplierSpeciality import SupplierSpeciality
-from app.users.serializers import SupplierSerializer
+from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 
 

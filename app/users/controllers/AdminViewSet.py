@@ -9,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
-from app.users.models import Admin
+from app.users.models.Admin import Admin
 from app.users.serializers.AdminSerializer import AdminSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.AdminService import AdminService

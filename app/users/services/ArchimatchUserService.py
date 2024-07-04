@@ -14,7 +14,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.core.validation.exceptions import UserDataException
-from app.users.models import ArchimatchUser
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )

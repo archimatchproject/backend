@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from app.users.models import ArchimatchUser
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserCreatePWSerializer import ArchimatchUserCreatePWSerializer
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
