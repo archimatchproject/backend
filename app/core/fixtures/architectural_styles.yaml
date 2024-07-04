@@ -1,0 +1,66 @@
+# Architectural Styles
+- model: core.ArchitecturalStyle
+  pk: 1
+  fields:
+    label: "Contemporain"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 2
+  fields:
+    label: "Vintage"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 3
+  fields:
+    label: "Méditerranéen"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 4
+  fields:
+    label: "Moderne"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 5
+  fields:
+    label: "Industriel"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 6
+  fields:
+    label: "Bohème"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 7
+  fields:
+    label: "Colonial"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 8
+  fields:
+    label: "Traditionnel"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 9
+  fields:
+    label: "Éclectique"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 10
+  fields:
+    label: "Scandinave"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
+
+- model: core.ArchitecturalStyle
+  pk: 11
+  fields:
+    label: "Rustique"
+    icon: "icons/ArchitecturalStyleIcons/img.png"
