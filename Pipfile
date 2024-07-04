@@ -19,6 +19,8 @@ twilio = "==9.2.0"
 djangorestframework-camel-case = "==1.4.2"
 django-rosetta = "==0.9.9"
 django4-background-tasks = "==1.2.10"
+pyyaml = "==6.0.1"
+
 
 [dev-packages]
 black = "==24.4.0"
