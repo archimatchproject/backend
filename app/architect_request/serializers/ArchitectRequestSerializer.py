@@ -35,6 +35,8 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
         queryset=ArchitectSpeciality.objects.all()
     )
     meeting_responsable = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all())
+    date = serializers.DateField()
+    time_slot = serializers.CharField(source="get_time_slot_display")
 
     class Meta:
         """

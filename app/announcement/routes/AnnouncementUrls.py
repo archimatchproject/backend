@@ -40,12 +40,12 @@ announcement_urlpatterns = [
         name="property-types",
     ),
     path(
-        "work-types/",
+        "work-types/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_announcement_work_types"}),
         name="work-types",
     ),
     path(
-        "renovation-pieces/",
+        "renovation-pieces/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_renovation_pieces"}),
         name="renovation-pieces",
     ),
@@ -75,7 +75,7 @@ announcement_urlpatterns = [
         name="architectural-styles",
     ),
     path(
-        "project-extensions/",
+        "project-extensions/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_project_extensions"}),
         name="project-extensions",
     ),

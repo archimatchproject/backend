@@ -63,7 +63,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         url_path="create-architect-request",
-        permission_classes=[],
+        permission_classes=[IsAuthenticated, ManageArchitectRequestPermission],
     )
     def create_architect_request(self, request):
         """

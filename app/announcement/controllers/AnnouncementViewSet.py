@@ -142,11 +142,11 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="work-types",
+        url_path="work-types/(?P<property_type_id>[^/.]+)",
         url_name="work-types",
         serializer_class=WorkTypeSerializer,
     )
-    def get_announcement_work_types(self, request):
+    def get_announcement_work_types(self, request, property_type_id):
         """
         Retrieves all announcement work types.
 
@@ -156,17 +156,17 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of announcement work types.
         """
-        return AnnouncementService.get_announcement_work_types()
+        return AnnouncementService.get_announcement_work_types(property_type_id)
 
     @action(
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="renovation-pieces",
+        url_path="renovation-pieces/(?P<property_type_id>[^/.]+)",
         url_name="renovation-pieces",
         serializer_class=PieceRenovateSerializer,
     )
-    def get_renovation_pieces(self, request):
+    def get_renovation_pieces(self, request, property_type_id):
         """
         Retrieves all renovation pieces.
 
@@ -176,7 +176,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of renovation pieces.
         """
-        return AnnouncementService.get_renovation_pieces()
+        return AnnouncementService.get_renovation_pieces(property_type_id)
 
     @action(
         detail=False,
@@ -278,11 +278,11 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="project-extensions",
+        url_path="project-extensions/(?P<property_type_id>[^/.]+)",
         url_name="project-extensions",
         serializer_class=ProjectExtensionSerializer,
     )
-    def get_project_extensions(self, request):
+    def get_project_extensions(self, request, property_type_id):
         """
         Retrieves all project extensions.
 
@@ -292,4 +292,4 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of project extensions.
         """
-        return AnnouncementService.get_project_extensions()
+        return AnnouncementService.get_project_extensions(property_type_id)
