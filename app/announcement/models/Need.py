@@ -22,7 +22,7 @@ class Need(LabeledIcon):
         architect_speciality (ForeignKey): Specialization of the architect related to this need.
     """
 
-    icon = models.ImageField(upload_to="NeedIcons/")
+    icon = models.ImageField(upload_to="icons/NeedIcons/")
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality,
         related_name="architect_speciality_needs",

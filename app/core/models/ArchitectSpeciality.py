@@ -18,7 +18,7 @@ class ArchitectSpeciality(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    icon = models.ImageField(upload_to="ArchitectSpecialityIcons/")
+    icon = models.ImageField(upload_to="icons/ArchitectSpecialityIcons/")
 
     class Meta:
         """

@@ -18,7 +18,7 @@ class ProjectCategory(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    icon = models.ImageField(upload_to="ProjectCategoryIcons/")
+    icon = models.ImageField(upload_to="icons/ProjectCategoryIcons/")
 
     class Meta:
         """

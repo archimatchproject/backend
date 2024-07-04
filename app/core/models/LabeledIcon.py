@@ -18,7 +18,7 @@ class LabeledIcon(models.Model):
     """
 
     label = models.CharField(max_length=255, default="")
-    icon = models.ImageField(upload_to="LabeledIcons/")
+    icon = models.ImageField(upload_to="icons/LabeledIcons/")
 
     def __str__(self):
         """

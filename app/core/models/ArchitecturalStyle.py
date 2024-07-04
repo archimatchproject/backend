@@ -18,7 +18,7 @@ class ArchitecturalStyle(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    icon = models.ImageField(upload_to="ArchitecturalStyleIcons/")
+    icon = models.ImageField(upload_to="icons/ArchitecturalStyleIcons/")
 
     class Meta:
         """

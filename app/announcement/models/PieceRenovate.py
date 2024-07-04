@@ -19,7 +19,7 @@ class PieceRenovate(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    icon = models.ImageField(upload_to="PieceRenovateIcons/")
+    icon = models.ImageField(upload_to="icons/PieceRenovateIcons/")
     property_type = models.ForeignKey(
         PropertyType,
         related_name="property_type_renovation_pieces",

@@ -3,49 +3,49 @@
   pk: 1
   fields:
     label: "Étude de faisabilité"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 2
   fields:
     label: "Conception architecturale"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 3
   fields:
     label: "Documents techniques et administratifs"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 4
   fields:
     label: "Coordination et gestion de projet"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 5
   fields:
     label: "Suivi de la construction"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 6
   fields:
     label: "Assistance à la réception des travaux"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 - model: announcement.Need
   pk: 7
   fields:
     label: "Services post-construction"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
 
 # Needs for Designer d'interieur
@@ -53,35 +53,35 @@
   pk: 8
   fields:
     label: "Plans permis et suivi chantier"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
 
 - model: announcement.Need
   pk: 9
   fields:
     label: "Plan 3d de décoration intérieur"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
 
 - model: announcement.Need
   pk: 10
   fields:
     label: "Plans et permis de construire"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
 
 - model: announcement.Need
   pk: 11
   fields:
     label: "Plan 3d de décoration extérieur"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
 
 - model: announcement.Need
   pk: 12
   fields:
     label: "Plans et documents techniques"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
 
 # Needs for Architecte paysagiste
@@ -89,49 +89,49 @@
   pk: 13
   fields:
     label: "Étude de faisabilité et analyse du site"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 14
   fields:
     label: "Conception paysagère"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 15
   fields:
     label: "Documents techniques et administratifs"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 16
   fields:
     label: "Gestion de projet et coordination"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 17
   fields:
     label: "Suivi et supervision des travaux"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 18
   fields:
     label: "Assistance à la réception des travaux"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 - model: announcement.Need
   pk: 19
   fields:
     label: "Services post-construction"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
 
 # Needs for Architecte urbaniste
@@ -139,56 +139,56 @@
   pk: 20
   fields:
     label: "Études préliminaires et analyses"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 21
   fields:
     label: "Planification et conception urbaine"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 22
   fields:
     label: "Réglementation et cadre légal"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 23
   fields:
     label: "Gestion de projet et coordination"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 24
   fields:
     label: "Conception détaillée et mise en œuvre"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 25
   fields:
     label: "Participation publique et communication"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 26
   fields:
     label: "Évaluation et suivi post-projet"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 - model: announcement.Need
   pk: 27
   fields:
     label: "Innovations et durabilité"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 4
 
 # Needs for Architecte technique ou ingénieur en architecture
@@ -196,56 +196,56 @@
   pk: 28
   fields:
     label: "Études et analyses techniques"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 29
   fields:
     label: "Conception technique détaillée"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 30
   fields:
     label: "Documentation et spécifications"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 31
   fields:
     label: "Gestion de projet et coordination"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 32
   fields:
     label: "Supervision et contrôle de la qualité"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 33
   fields:
     label: "Assistance à la réception des travaux"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 34
   fields:
     label: "Services post-construction"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 - model: announcement.Need
   pk: 35
   fields:
     label: "Innovation et durabilité"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 
 # Needs for Architecte en restauration du patrimoine
@@ -253,53 +253,53 @@
   pk: 36
   fields:
     label: "Études et analyses préliminaires"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 5
 - model: announcement.Need
   pk: 37
   fields:
     label: "Études et analyses préliminaires"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 38
   fields:
     label: "Conception de projets de restauration"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 39
   fields:
     label: "Documentation et spécifications techniques"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 40
   fields:
     label: "Gestion de projet et coordination"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 41
   fields:
     label: "Supervision et contrôle de la qualité"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 42
   fields:
     label: "Assistance à la réception des travaux"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6
 
 - model: announcement.Need
   pk: 43
   fields:
     label: "Services post-restauration"
-    icon: "NeedIcons/img.png"
+    icon: "icons/NeedIcons/img.png"
     architect_speciality: 6

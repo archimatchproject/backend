@@ -20,7 +20,7 @@ class ProjectExtension(LabeledIcon):
         LabeledIcon: Base class providing fields for label and icon.
     """
 
-    icon = models.ImageField(upload_to="ProjectExtensionIcons/")
+    icon = models.ImageField(upload_to="icons/ProjectExtensionIcons/")
     property_type = models.ForeignKey(
         PropertyType,
         related_name="property_type_project_extensions",
