@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from app.cms.controllers.utils.ManageBlogPermission import ManageBlogPermission
-from app.cms.models import Blog
+from app.cms.models.Blog import Blog
 from app.cms.serializers.BlogSerializer import BlogSerializer
 
 

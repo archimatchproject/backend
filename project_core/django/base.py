@@ -15,6 +15,7 @@ from project_core.settings.cors import *
 from project_core.settings.email_sending import *
 from project_core.settings.jwt import *
 from project_core.settings.sms_sending import *
+from project_core.settings.templates_icon import *
 
 
 env = environ.Env()
@@ -40,6 +41,7 @@ LOCAL_APPS = [
     "app.cms",
     "app.announcement",
     "app.architect_request",
+    "app.email_templates",
 ]
 
 
@@ -102,7 +104,9 @@ Template engine configuration.
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "app/email_templates/templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

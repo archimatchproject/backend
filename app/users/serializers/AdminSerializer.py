@@ -10,8 +10,8 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import Admin
-from app.users.models import ArchimatchUser
+from app.users.models.Admin import Admin
+from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 

@@ -11,7 +11,7 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import SupplierSpeciality
+from app.users.models.SupplierSpeciality import SupplierSpeciality
 
 
 class SupplierSpecialitySerializer(serializers.ModelSerializer):

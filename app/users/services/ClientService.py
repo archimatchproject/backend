@@ -19,8 +19,8 @@ from app.core.validation.exceptions import InvalidPhoneNumberException
 from app.core.validation.exceptions import SMSException
 from app.core.validation.exceptions import UserDataException
 from app.core.validation.validate_data import is_valid_phone_number
-from app.users.models import ArchimatchUser
-from app.users.models import Client
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Client import Client
 
 
 class ClientService:
