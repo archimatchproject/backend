@@ -19,10 +19,12 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
+from app.email_templates.signals import api_success_signal
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.AdminSerializer import AdminSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
+from project_core.django import base as settings
 
 
 env = environ.Env()
@@ -64,6 +66,15 @@ class AdminService:
                 admin.set_permissions(rights)
             except serializers.ValidationError as e:
                 raise serializers.ValidationError(e.detail)
+            signal_data = {
+                "template_name": "architect_request.html",
+                "context": {"reset_link": "google.com"},
+                "to_email": "ghazichaftar.pfe@gmail.com",
+                "subject": "Architect Account Creation",
+                "images": settings.COMMON_IMAGES,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            # send_email_background_task(signal_data)
             return Response(
                 AdminSerializer(admin).data,
                 status=status.HTTP_201_CREATED,

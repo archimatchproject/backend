@@ -17,11 +17,14 @@ from project_core.django import base as settings
 
 def send_email_with_template(to_email, subject, body, images):
     """Global function to send email with HTML template."""
-    from_email = settings.DEFAULT_FROM_EMAIL
-    email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
-    email_message.attach_alternative(body, "text/html")
-    attach_email_icons(email_message, images)
-    email_message.send()
+    try:
+        from_email = settings.DEFAULT_FROM_EMAIL
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        email_message.attach_alternative(body, "text/html")
+        attach_email_icons(email_message, images)
+        email_message.send()
+    except Exception:
+        raise
 
 
 def attach_email_icons(msg, images):
