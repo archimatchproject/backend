@@ -21,7 +21,6 @@ def run_background_task(sender, **kwargs):
     """
     data = kwargs.get("data")
     try:
-        print("Signal received. Initiating background task...")
         send_email_background_task(data)
 
     except Exception as e:

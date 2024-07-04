@@ -13,5 +13,5 @@ EMAIL_HOST_USER = "ghazichaftar@gmail.com"
 EMAIL_HOST_PASSWORD = "rfbq luxr lzmk pxom"
 
 
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 5
 BACKGROUND_TASK_RUN_ASYNC = True

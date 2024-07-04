@@ -74,7 +74,6 @@ class AdminService:
                 "images": settings.COMMON_IMAGES,
             }
             api_success_signal.send(sender=cls, data=signal_data)
-            # send_email_background_task(signal_data)
             return Response(
                 AdminSerializer(admin).data,
                 status=status.HTTP_201_CREATED,
