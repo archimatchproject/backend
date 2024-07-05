@@ -181,6 +181,35 @@ class AnnouncementService:
             raise APIException("Error updating announcement")
 
     @classmethod
+    def update_announcement_images(cls, instance, request):
+        """
+        Updating existing announcement images
+        """
+        try:
+            project_images_files = request.data.getlist("projectImages")
+            with transaction.atomic():
+                # Clear existing images
+                instance.project_images.all().delete()
+                # Add new images
+                for image in project_images_files:
+                    ProjectImage.objects.create(
+                        announcement=instance,
+                        image=image,
+                    )
+
+            return Response(
+                {
+                    "message": "Announcement images updated successfully",
+                    "data": AnnouncementOutputSerializer(instance).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(f"Error updating announcement images: {str(e)}")
+
+    @classmethod
     def get_architect_specialities(cls):
         """
         Retrieves all architect specialities.

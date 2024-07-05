@@ -59,6 +59,18 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         return AnnouncementService.update_announcement(instance, request.data)
 
     @action(
+        detail=True,
+        url_path="update-announcement-images",
+        methods=["PUT"],
+    )
+    def update_announcement_images(self, request, pk=None):
+        """
+        Updating existing announcement
+        """
+        instance = self.get_object()
+        return AnnouncementService.update_announcement_images(instance, request)
+
+    @action(
         detail=False,
         methods=["GET"],
         permission_classes=[],

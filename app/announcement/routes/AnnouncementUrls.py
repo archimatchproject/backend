@@ -20,6 +20,11 @@ announcement_urlpatterns = [
         name="update-announcement",
     ),
     path(
+        "update-announcement-images/<int:pk>/",
+        AnnouncementViewSet.as_view({"put": "update_announcement_images"}),
+        name="update-announcement",
+    ),
+    path(
         "architect-specialities/",
         AnnouncementViewSet.as_view({"get": "get_architect_specialities"}),
         name="architect-specialities",
