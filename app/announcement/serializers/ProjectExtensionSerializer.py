@@ -23,4 +23,4 @@ class ProjectExtensionSerializer(serializers.ModelSerializer):
         """
 
         model = ProjectExtension
-        fields = ["id", "label", "icon"]
+        fields = ["id", "label", "icon", "property_type"]

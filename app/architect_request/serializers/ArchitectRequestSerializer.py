@@ -17,7 +17,6 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
-from app.users.models.Admin import Admin
 
 
 class ArchitectRequestInputSerializer(serializers.ModelSerializer):
@@ -34,7 +33,8 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
     )
-    meeting_responsable = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all())
+    date = serializers.DateField()
+    time_slot = serializers.CharField(source="get_time_slot_display")
 
     class Meta:
         """
@@ -57,8 +57,6 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
             "architect_speciality",
             "date",
             "time_slot",
-            "meeting_responsable",
-            "status",
         ]
 
 

@@ -20,6 +20,11 @@ announcement_urlpatterns = [
         name="update-announcement",
     ),
     path(
+        "update-announcement-images/<int:pk>/",
+        AnnouncementViewSet.as_view({"put": "update_announcement_images"}),
+        name="update-announcement",
+    ),
+    path(
         "architect-specialities/",
         AnnouncementViewSet.as_view({"get": "get_architect_specialities"}),
         name="architect-specialities",
@@ -40,12 +45,12 @@ announcement_urlpatterns = [
         name="property-types",
     ),
     path(
-        "work-types/",
+        "work-types/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_announcement_work_types"}),
         name="work-types",
     ),
     path(
-        "renovation-pieces/",
+        "renovation-pieces/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_renovation_pieces"}),
         name="renovation-pieces",
     ),
@@ -75,7 +80,7 @@ announcement_urlpatterns = [
         name="architectural-styles",
     ),
     path(
-        "project-extensions/",
+        "project-extensions/<int:property_type_id>",
         AnnouncementViewSet.as_view({"get": "get_project_extensions"}),
         name="project-extensions",
     ),

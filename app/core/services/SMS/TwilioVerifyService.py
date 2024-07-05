@@ -58,7 +58,7 @@ class TwilioVerifyService(SMSService):
         try:
             verification = self.verify.verifications.create(
                 to=phone,
-                channel=settings.CHANNEL,
+                channel=settings.TWILIO_SMS_CHANNEL,
             )
             return verification.sid
         except TwilioRestException:

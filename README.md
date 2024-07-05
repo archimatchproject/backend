@@ -29,6 +29,7 @@ Activate the virtual environment:
 ```sh
 pipenv shell
 ```
+
 ### Create Migrations
 
 Create the initial database migrations:
@@ -43,6 +44,14 @@ Apply the initial database migrations:
 
 ```sh
 python manage.py migrate --settings=project_core.django.dev
+```
+
+### Insert Fixtures
+
+Apply the initial Model Instances:
+
+```sh
+python manage.py loaddata  --format=yaml architect_specialities.yaml announcement_needs.yaml project_categories.yaml property_types.yaml work_types.yaml renovation_pieces.yaml architectural_styles.yaml project_extensions.yaml
 ```
 
 ### Create Superuser (Optional)

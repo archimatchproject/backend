@@ -40,10 +40,6 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
 
     queryset = ArchitectRequest.objects.all()
     serializer_class = ArchitectRequestSerializer
-    permission_classes = [
-        IsAuthenticated,
-        ManageArchitectRequestPermission,
-    ]
 
     def get_serializer_class(self):
         """
@@ -59,12 +55,22 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             return ArchitectRequestInputSerializer
         return ArchitectRequestSerializer
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        url_path="create-architect-request",
-        permission_classes=[],
-    )
+    def get_permissions(self):
+        """
+        Return the list of permissions that this view requires.
+
+        Applies different permissions based on the action being executed.
+
+        Returns:
+            list: The list of permission classes.
+        """
+        if self.action == "create_architect_request":
+            self.permission_classes = []
+        else:
+            self.permission_classes = [IsAuthenticated, ManageArchitectRequestPermission]
+        return super().get_permissions()
+
+    @action(detail=False, methods=["POST"], url_path="create-architect-request")
     def create_architect_request(self, request):
         """
         Custom action to create an ArchitectRequest.

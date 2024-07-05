@@ -274,6 +274,13 @@
             "index": "pypi",
             "version": "==0.9.9"
         },
+        "django4-background-tasks": {
+            "hashes": [
+                "sha256:6a36e23fcf003a662aa7dbc743c915c77a8a7582766d4567b29ee727f5af4092"
+            ],
+            "index": "pypi",
+            "version": "==1.2.10"
+        },
         "djangorestframework": {
             "hashes": [
                 "sha256:579a333e6256b09489cbe0a067e66abe55c6595d8926be6b99423786334350c8",
