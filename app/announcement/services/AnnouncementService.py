@@ -118,7 +118,7 @@ class AnnouncementService:
         except serializers.ValidationError as e:
             raise e
         except Exception:
-            raise APIException("Error creating announcement")
+            raise APIException(detail="Error creating announcement")
 
     @classmethod
     def update_announcement(cls, instance, data):
@@ -178,7 +178,7 @@ class AnnouncementService:
         except serializers.ValidationError as e:
             raise e
         except Exception:
-            raise APIException("Error updating announcement")
+            raise APIException(detail="Error updating announcement")
 
     @classmethod
     def update_announcement_images(cls, instance, request):
@@ -207,7 +207,7 @@ class AnnouncementService:
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException(f"Error updating announcement images: {str(e)}")
+            raise APIException(detail=f"Error updating announcement images: {str(e)}")
 
     @classmethod
     def get_architect_specialities(cls):
