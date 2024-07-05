@@ -116,7 +116,7 @@ class AnnouncementService:
                 status=status.HTTP_201_CREATED,
             )
         except serializers.ValidationError as e:
-            raise serializers.ValidationError(e.detail)
+            raise e
         except Exception:
             raise APIException("Error creating announcement")
 
@@ -176,7 +176,7 @@ class AnnouncementService:
                 status=status.HTTP_200_OK,
             )
         except serializers.ValidationError as e:
-            raise serializers.ValidationError(e.detail)
+            raise e
         except Exception:
             raise APIException("Error updating announcement")
 
