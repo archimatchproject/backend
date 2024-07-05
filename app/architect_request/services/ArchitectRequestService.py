@@ -13,6 +13,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
@@ -53,20 +54,25 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
         try:
             with transaction.atomic():
-                architect_speciality_id = data["architect_speciality"]
+                architect_speciality_id = data.get("architect_speciality")
                 architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
 
-                architect_request = ArchitectRequest(
-                    first_name=data["first_name"],
-                    last_name=data["last_name"],
-                    phone_number=data["phone_number"],
-                    address=data["address"],
-                    architect_identifier=data["architect_identifier"],
-                    email=data["email"],
-                    date=data["date"],
-                    time_slot=data["time_slot"],
-                    architect_speciality=architect_speciality,
-                )
+                field_names = [
+                    "first_name",
+                    "last_name",
+                    "phone_number",
+                    "address",
+                    "architect_identifier",
+                    "email",
+                    "date",
+                    "time_slot",
+                ]
+
+                architect_request = ArchitectRequest()
+                for field in field_names:
+                    setattr(architect_request, field, data.get(field))
+
+                architect_request.architect_speciality = architect_speciality
 
                 architect_request.clean()
                 architect_request.save()
@@ -76,9 +82,9 @@ class ArchitectRequestService:
                     status=status.HTTP_201_CREATED,
                 )
         except serializers.ValidationError as e:
-            raise serializers.ValidationError(e.detail)
-        except Exception as e:
-            raise APIException(e.__str__())
+            raise e
+        except Exception:
+            raise APIException(detail="Error creating architect request")
 
     @classmethod
     def admin_accept_architect_request(cls, architect_request_id, data):
@@ -95,11 +101,11 @@ class ArchitectRequestService:
         try:
             architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
         except ArchitectRequest.DoesNotExist:
-            raise serializers.ValidationError("No architect request found with the given ID")
+            raise NotFound(detail="No architect request found with the given ID")
 
         serializer = ArchitectAcceptSerializer(data=data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.is_valid(raise_exception=True)
 
         validated_data = serializer.validated_data
 
@@ -115,7 +121,6 @@ class ArchitectRequestService:
             with transaction.atomic():
                 user = ArchimatchUser.objects.create(**user_data)
                 user.save()
-
                 architect = Architect.objects.create(
                     user=user,
                     address=architect_request.address,
@@ -123,7 +128,6 @@ class ArchitectRequestService:
                     architect_speciality=architect_request.architect_speciality,
                 )
 
-                # Assign preferences
                 for field in [
                     "project_categories",
                     "property_types",
@@ -141,8 +145,10 @@ class ArchitectRequestService:
                     ArchitectSerializer(architect).data,
                     status=status.HTTP_201_CREATED,
                 )
+        except serializers.ValidationError as e:
+            raise e
         except Exception:
-            APIException("Error accepting architect request")
+            raise APIException(detail="Error accepting architect request")
 
     @classmethod
     def admin_refuse_architect_request(cls, pk):
@@ -165,9 +171,9 @@ class ArchitectRequestService:
                 status=status.HTTP_200_OK,
             )
         except ArchitectRequest.DoesNotExist:
-            raise serializers.ValidationError("No architect request found with the given ID")
+            raise NotFound(detail="No architect request found with the given ID")
         except Exception:
-            raise APIException("Error refusing architect request")
+            raise APIException(detail="Error refusing architect request")
 
     @classmethod
     def admin_assign_responsable(cls, pk, admin_id):
@@ -192,8 +198,8 @@ class ArchitectRequestService:
                 status=status.HTTP_200_OK,
             )
         except ArchitectRequest.DoesNotExist:
-            raise serializers.ValidationError("No architect request found with the given ID")
+            raise NotFound(detail="No architect request found with the given ID")
         except Admin.DoesNotExist:
-            raise serializers.ValidationError("No admin found with the given ID")
+            raise NotFound(detail="No admin found with the given ID")
         except Exception:
-            raise APIException("Error assinging admin to architect request")
+            raise APIException(detail="Error assinging admin to architect request")
