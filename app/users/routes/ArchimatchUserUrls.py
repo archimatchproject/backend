@@ -19,4 +19,9 @@ archimatch_user_urlpatterns = [
         ArchimatchUserViewSet.as_view({"post": "archimatch_user_reset_password"}),
         name="reset-password",
     ),
+    path(
+        "archimatch-user/update-data/",
+        ArchimatchUserViewSet.as_view({"put": "archimatch_user_update_data"}),
+        name="update-data",
+    ),
 ]

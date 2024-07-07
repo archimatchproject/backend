@@ -7,16 +7,18 @@ using Django REST Framework.
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers.ArchimatchUserCreatePWSerializer import ArchimatchUserCreatePWSerializer
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )
 from app.users.serializers.ArchimatchUserObtainPairSerializer import PhoneTokenObtainPairSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 from app.users.services.ArchimatchUserService import ArchimatchUserService
 
 
@@ -53,66 +55,27 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
     queryset = ArchimatchUser.objects.all()
     serializer_class = ArchimatchUserSerializer
 
-    def list(self, request, *args, **kwargs):
+    def get_serializer_class(self):
         """
-        MethodNotAllowed exception for listing ArchimatchUser instances.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow GET requests.
+        Return the serializer class to be used for the request.
         """
-        raise MethodNotAllowed("GET")
+        if self.action == "archimatch_user_create_password":
+            return ArchimatchUserCreatePWSerializer
+        elif self.action == "archimatch_user_reset_password":
+            return ArchimatchUserResetPWSerializer
+        elif self.action == "archimatch_user_update_data":
+            return ArchimatchUserSimpleSerializer
+        return super().get_serializer_class()
 
-    def retrieve(self, request, *args, **kwargs):
+    def get_permissions(self):
         """
-        MethodNotAllowed exception for retrieving a single ArchimatchUser instance.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow GET requests.
+        Override this method to specify custom permissions for different actions.
         """
-        raise MethodNotAllowed("GET")
+        if self.action in ["archimatch_user_reset_password", "archimatch_user_update_data"]:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
-    def create(self, request, *args, **kwargs):
-        """
-        MethodNotAllowed exception for creating a new ArchimatchUser instance.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow POST requests.
-        """
-        raise MethodNotAllowed("POST")
-
-    def update(self, request, *args, **kwargs):
-        """
-        MethodNotAllowed exception for updating an existing ArchimatchUser instance.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow PUT requests.
-        """
-        raise MethodNotAllowed("PUT")
-
-    def partial_update(self, request, *args, **kwargs):
-        """
-        MethodNotAllowed exception for partially updating an ArchimatchUser instance.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow PATCH requests.
-        """
-        raise MethodNotAllowed("PATCH")
-
-    def destroy(self, request, *args, **kwargs):
-        """
-        MethodNotAllowed exception for deleting an ArchimatchUser instance.
-
-        Raises:
-            MethodNotAllowed: Always raised to disallow DELETE requests.
-        """
-        raise MethodNotAllowed("DELETE")
-
-    @action(
-        detail=False,
-        methods=["POST"],
-        url_path="create-password",
-        serializer_class=ArchimatchUserCreatePWSerializer,
-    )
+    @action(detail=False, methods=["POST"], url_path="create-password")
     def archimatch_user_create_password(self, request):
         """
         Action to create a password for an ArchimatchUser.
@@ -125,11 +88,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         """
         return ArchimatchUserService.archimatch_user_create_password(request)
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        url_path="reset-password",
-    )
+    @action(detail=False, methods=["POST"], url_path="reset-password")
     def archimatch_user_reset_password(self, request):
         """
         Action to reset a password for an ArchimatchUser.
@@ -141,3 +100,16 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of password reset.
         """
         return ArchimatchUserService.archimatch_user_reset_password(request)
+
+    @action(detail=False, methods=["PUT"], url_path="update-data")
+    def archimatch_user_update_data(self, request):
+        """
+        Action to update data for an ArchimatchUser.
+
+        Args:
+            request (Request): HTTP request object containing user data.
+
+        Returns:
+            Response: HTTP response object indicating success or failure of updating data.
+        """
+        return ArchimatchUserService.archimatch_user_update_data(request)

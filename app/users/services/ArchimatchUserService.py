@@ -12,12 +12,15 @@ Classes:
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 
-from app.core.validation.exceptions import UserDataException
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
 
 class ArchimatchUserService:
@@ -26,22 +29,6 @@ class ArchimatchUserService:
 
 
     """
-
-    @classmethod
-    def handle_user_data(cls, request_keys, expected_keys):
-        """
-        Validates the presence of expected keys in request data.
-
-        Args:
-            request_keys (set): Set of keys present in the request data.
-            expected_keys (set): Set of keys expected to be present in the request data.
-
-        Raises:
-            APIException: If any expected key is missing in the request data.
-        """
-        if not expected_keys.issubset(request_keys):
-            missing_keys = expected_keys - request_keys
-            raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
     def generate_tokens_for_user(email, password):
         """
@@ -72,70 +59,43 @@ class ArchimatchUserService:
         """
         try:
             data = request.data
-            request_keys = set(data.keys())
-            expected_keys = {
-                "email",
-                "password",
-                "confirm_password",
-            }
+            serializer = ArchimatchUserCreatePWSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            validated_data = serializer.validated_data
 
-            # Validate input keys
-            cls.handle_user_data(request_keys, expected_keys)
-            req_email = data.get("email")
+            email = validated_data.get("email")
+            password = validated_data.get("password")
+            confirm_password = validated_data.get("confirm_password")
+
             # Check if user exists
-            if not ArchimatchUser.objects.filter(email=req_email).exists():
-                response_data = {
-                    "message": "User does not exist",
-                    "status_code": status.HTTP_404_NOT_FOUND,
-                }
-                return Response(
-                    response_data["message"],
-                    status=response_data["status_code"],
-                )
+            if not ArchimatchUser.objects.filter(email=email).exists():
+                raise ValidationError("User does not exist")
 
-            user = ArchimatchUser.objects.get(email=req_email)
-            password = data.get("password")
-            confirm_password = data.get("confirm_password")
+            user = ArchimatchUser.objects.get(email=email)
 
             # Set password if conditions are met
             if password == confirm_password:
                 user.set_password(confirm_password)
-                user.username = req_email
+                user.username = email
                 user.save()
 
                 # Generate tokens for the user
-                tokens = cls.generate_tokens_for_user(req_email, password)
-                response_data = {
-                    "message": "Password successfully updated",
-                    "status_code": status.HTTP_200_OK,
-                    "tokens": tokens,
-                }
+                tokens = cls.generate_tokens_for_user(email, password)
                 return Response(
-                    response_data,
-                    status=response_data["status_code"],
+                    {
+                        "message": "Password successfully updated",
+                        "tokens": tokens,
+                    },
+                    status=status.HTTP_200_OK,
                 )
-
             else:
-                response_data = {
-                    "message": "Passwords do not match",
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                }
-                return Response(
-                    response_data["message"],
-                    status=response_data["status_code"],
-                )
+                raise ValidationError("Passwords do not match")
 
-        except UserDataException as e:
-            return Response(
-                {"message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        except ValidationError as e:
+            raise e
 
-        except APIException as e:
-            return Response(
-                {"message": str(e)},
-                status=e.status_code,
-            )
+        except Exception as e:
+            raise APIException("Error creating password", str(e))
 
     @classmethod
     def archimatch_user_reset_password(cls, request):
@@ -153,71 +113,52 @@ class ArchimatchUserService:
         """
         try:
             data = request.data
-            request_keys = set(data.keys())
-            expected_keys = {
-                "id",
-                "old_password",
-                "new_password",
-                "confirm_new_password",
-            }
-
-            # Validate input keys
-            cls.handle_user_data(request_keys, expected_keys)
+            serializer = ArchimatchUserResetPWSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            validated_data = serializer.validated_data
 
             # Check if user exists
-            if not ArchimatchUser.objects.filter(id=data.get("id")).exists():
-                response_data = {
-                    "message": {"message": "User does not exist"},
-                    "status_code": status.HTTP_404_NOT_FOUND,
-                }
-                return Response(
-                    response_data["message"],
-                    status=response_data["status_code"],
-                )
+            user = request.user
+            old_password = validated_data.get("old_password")
+            new_password = validated_data.get("new_password")
+            confirm_new_password = validated_data.get("confirm_new_password")
 
-            user = ArchimatchUser.objects.get(id=data.get("id"))
-            old_password = data.get("old_password")
-            new_password = data.get("new_password")
-            confirm_new_password = data.get("confirm_new_password")
-
-            # Check if old password matches
             if not user.check_password(old_password):
-                response_data = {
-                    "message": {"message": "Incorrect old password"},
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                }
-                return Response(
-                    response_data["message"],
-                    status=response_data["status_code"],
-                )
-
+                raise ValidationError("Incorrect old password")
             # Set new password if conditions are met
             if new_password == confirm_new_password:
                 user.set_password(new_password)
                 user.save()
-                response_data = {
-                    "message": {"message": "Password successfully updated"},
-                    "status_code": status.HTTP_200_OK,
-                }
+                return Response(
+                    {"message": "Password successfully updated"},
+                    status=status.HTTP_200_OK,
+                )
             else:
-                response_data = {
-                    "message": {"message": "New passwords do not match"},
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                }
+                raise ValidationError("New passwords do not match")
 
-            return Response(
-                response_data["message"],
-                status=response_data["status_code"],
-            )
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException("Error resetting password", str(e))
 
-        except UserDataException as e:
+    @classmethod
+    def archimatch_user_update_data(cls, request):
+        """
+        Updates the basic data for a user based on provided data.
+        """
+        try:
+            user = request.user
+            data = request.data
+            if not data:
+                raise ValidationError("At least one field must be provided for update.")
+            serializer = ArchimatchUserSimpleSerializer(user, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
             return Response(
-                {"message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"message": "User data successfully updated", "user": serializer.data},
+                status=status.HTTP_200_OK,
             )
-
-        except APIException as e:
-            return Response(
-                {"message": str(e)},
-                status=e.status_code,
-            )
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException("Error updating user data", str(e))
