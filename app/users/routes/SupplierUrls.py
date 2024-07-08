@@ -54,4 +54,9 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"get": "get_appearances"}),
         name="appearances",
     ),
+    path(
+        "supplier/get-profile/",
+        SupplierViewSet.as_view({"get": "supplier_get_profile"}),
+        name="profile",
+    ),
 ]

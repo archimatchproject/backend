@@ -61,25 +61,6 @@ class AdminViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        name="retrieve_by_token",
-    )
-    def retrieve_by_token(self, request):
-        """
-        Retrieve admin details using a token provided in the request.
-
-        Args:
-            self: Instance of the AdminViewSet class.
-            request: HTTP request object containing token.
-
-        Returns:
-            Response: Response containing admin details retrieved using the token.
-        """
-        return AdminService.retrieve_by_token(request)
-
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
         name="login",
         serializer_class=UserAuthSerializer,
     )
