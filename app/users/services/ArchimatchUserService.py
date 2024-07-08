@@ -82,7 +82,6 @@ class ArchimatchUserService:
 
             response_data = {
                 "message": "Password successfully updated",
-                "status_code": status.HTTP_200_OK,
                 "tokens": tokens,
             }
             return Response(
@@ -134,11 +133,10 @@ class ArchimatchUserService:
 
             response_data = {
                 "message": "Password successfully updated",
-                "status_code": status.HTTP_200_OK,
             }
             return Response(
                 response_data,
-                status=response_data["status_code"],
+                status=status.HTTP_200_OK,
             )
         except NotFound as e:
             raise e

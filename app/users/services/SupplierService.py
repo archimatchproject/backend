@@ -295,14 +295,8 @@ class SupplierService:
 
             Supplier.objects.filter(id=id).update(presentation_video=data.get("presentation_video"))
 
-            response_data = {
-                "message": {"message": "Supplier presentation video successfully updated"},
-                "status_code": status.HTTP_200_OK,
-            }
-            return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
-            )
+            response_data = {"message": "Supplier presentation video successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
 
         except APIException as e:
             raise e
@@ -348,13 +342,10 @@ class SupplierService:
                 social_links = supplier.social_links
                 SupplierSocialMedia.objects.filter(id=social_links.id).update(**validated_data)
 
-            response_data = {
-                "message": {"message": "Supplier social links successfully updated"},
-                "status_code": status.HTTP_200_OK,
-            }
+            response_data = {"message": "Supplier social links successfully updated"}
             return Response(
                 response_data.get("message"),
-                status=response_data.get("status_code"),
+                status=status.HTTP_200_OK,
             )
 
         except APIException as e:

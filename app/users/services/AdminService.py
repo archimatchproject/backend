@@ -137,10 +137,10 @@ class AdminService:
         try:
             admin = Admin.objects.get(user__id=user_id)
             return admin
-        except Admin.DoesNotExist:
-            return None
+        except Admin.DoesNotExist as e:
+            return APIException(detail=str(e))
         except Exception as e:
-            return cls.handle_exception(e)
+            raise APIException(detail=str(e))
 
     @classmethod
     def admin_login(cls, request):
@@ -174,5 +174,5 @@ class AdminService:
             )
         except APIException as e:
             raise e
-        except Exception:
-            raise APIException
+        except Exception as e:
+            raise APIException(detail=str(e))

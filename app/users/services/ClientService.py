@@ -95,7 +95,7 @@ class ClientService:
                 raise serializers.ValidationError(detail="Failed to send verification code.")
 
             return Response(
-                {"message": ["Verification code sent successfully."]},
+                {"message": "Verification code sent successfully."},
                 status=status.HTTP_200_OK,
             )
 
@@ -125,7 +125,7 @@ class ClientService:
             data = request.data
             phone_number = data.get("phone_number", None)
             verification_code = data.get("verification_code", None)
-            if verification_code is None or phone_number in None:
+            if verification_code is None or phone_number is None:
                 raise serializers.ValidationError(
                     detail="verification code and phone number are required"
                 )
@@ -149,17 +149,15 @@ class ClientService:
                         "has_password": False,
                         "email": user.username,
                     },
-                    "status_code": status.HTTP_200_OK,
                 }
             else:
                 response_data = {
                     "message": {"has_password": True, "email": user.email},
-                    "status_code": status.HTTP_200_OK,
                 }
 
             return Response(
                 response_data.get("message"),
-                status=response_data.get("status_code"),
+                status=status.HTTP_200_OK,
             )
 
         except SMSException:
