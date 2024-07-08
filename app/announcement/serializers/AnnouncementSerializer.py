@@ -57,8 +57,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(),
-        many=True,
+        queryset=ProjectExtension.objects.all(), many=True, required=False
     )
     project_images = serializers.ListField(
         child=serializers.ImageField(required=False),

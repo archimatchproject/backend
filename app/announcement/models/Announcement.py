@@ -90,8 +90,7 @@ class Announcement(BaseModel):
         blank=True,
     )
     project_extensions = models.ManyToManyField(
-        ProjectExtension,
-        related_name="project_extensions_announcements",
+        ProjectExtension, related_name="project_extensions_announcements"
     )
 
     def __str__(self):
