@@ -10,6 +10,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.users.models.Supplier import Supplier
+from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.SupplierService import SupplierService
@@ -71,6 +72,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         methods=["POST"],
         permission_classes=[],
         url_path="first-connection",
+        serializer_class=UserAuthSerializer,
     )
     def supplier_first_cnx(self, request):
         """
@@ -90,6 +92,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         methods=["PUT"],
         permission_classes=[],
         url_path="update-profile",
+        serializer_class=SupplierInputSerializer,
     )
     def supplier_update_profile(self, request):
         """
@@ -198,3 +201,23 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing the appearances.
         """
         return SupplierService.get_appearances()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile",
+    )
+    def supplier_get_profile(self, request):
+        """
+        Retrieves supplier details.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.supplier_get_profile(request)

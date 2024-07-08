@@ -38,6 +38,7 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
 
         model = ArchimatchUser
         fields = [
+            "id",
             "username",
             "first_name",
             "last_name",
@@ -48,7 +49,6 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             "username": {"read_only": True},
-            "email": {"required": True},
         }
 
 
