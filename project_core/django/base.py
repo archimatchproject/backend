@@ -43,6 +43,7 @@ LOCAL_APPS = [
     "app.announcement",
     "app.architect_request",
     "app.email_templates",
+    "app.architect_realization",
 ]
 
 
