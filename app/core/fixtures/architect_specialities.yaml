@@ -15,23 +15,5 @@
 - model: core.ArchitectSpeciality
   pk: 3
   fields:
-    label: "Architecte paysagiste"
-    icon: "icons/ArchitectSpecialityIcons/img.png"
-
-- model: core.ArchitectSpeciality
-  pk: 4
-  fields:
-    label: "Architecte urbaniste"
-    icon: "icons/ArchitectSpecialityIcons/img.png"
-
-- model: core.ArchitectSpeciality
-  pk: 5
-  fields:
-    label: "Architecte technique ou ingénieur en architecture"
-    icon: "icons/ArchitectSpecialityIcons/img.png"
-
-- model: core.ArchitectSpeciality
-  pk: 6
-  fields:
-    label: "Architecte en restauration du patrimoine"
+    label: "Artisan de construction"
     icon: "icons/ArchitectSpecialityIcons/img.png"

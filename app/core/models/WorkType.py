@@ -7,8 +7,6 @@ work types for announcements in the Archimatch application.
 
 from django.db import models
 
-from app.core.models.PropertyType import PropertyType
-
 
 class WorkType(models.Model):
     """
@@ -21,12 +19,6 @@ class WorkType(models.Model):
 
     header = models.CharField(max_length=255, default="")
     description = models.CharField(max_length=255, default="")
-    property_type = models.ForeignKey(
-        PropertyType,
-        related_name="property_type_work_types",
-        on_delete=models.CASCADE,
-        null=True,
-    )
 
     def __str__(self) -> str:
         """
