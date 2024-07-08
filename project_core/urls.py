@@ -38,6 +38,10 @@ urlpatterns = [
         include("app.architect_request.urls"),
     ),
     path(
+        "api/architect-realization/",
+        include("app.architect_realization.urls"),
+    ),
+    path(
         "",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
