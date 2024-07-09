@@ -12,6 +12,7 @@ from datetime import date
 from datetime import datetime
 from datetime import time
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils import timezone
 
@@ -21,6 +22,7 @@ from app.architect_request import ARCHITECT_REQUEST_STATUS_CHOICES
 from app.architect_request import TIME_SLOT_CHOICES
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.Note import Note
 from app.users.models.Admin import Admin
 
 
@@ -61,6 +63,8 @@ class ArchitectRequest(BaseModel):
     status = models.CharField(
         max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
     )
+
+    notes = GenericRelation(Note)
 
     def clean(self):
         """

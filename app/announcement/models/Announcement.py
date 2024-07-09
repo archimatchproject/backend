@@ -5,6 +5,7 @@ This module contains the Announcement class, which represents an announcement
 for a construction or renovation project in the application.
 """
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 from app.announcement import BUDGETS
@@ -16,6 +17,7 @@ from app.announcement.models.ProjectExtension import ProjectExtension
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
@@ -92,6 +94,7 @@ class Announcement(BaseModel):
     project_extensions = models.ManyToManyField(
         ProjectExtension, related_name="project_extensions_announcements"
     )
+    notes = GenericRelation(Note)
 
     def __str__(self):
         """

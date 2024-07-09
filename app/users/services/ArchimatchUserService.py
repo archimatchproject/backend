@@ -9,7 +9,6 @@ Classes:
 
 """
 
-from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
@@ -158,4 +157,3 @@ class ArchimatchUserService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating user data ${str(e)}")
-

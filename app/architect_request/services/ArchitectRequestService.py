@@ -23,6 +23,8 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
 )
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.Note import Note
+from app.core.serializers.NoteSerializer import NoteSerializer
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Architect import Architect
@@ -203,3 +205,33 @@ class ArchitectRequestService:
             raise NotFound(detail="No admin found with the given ID")
         except Exception:
             raise APIException(detail="Error assinging admin to architect request")
+
+    @classmethod
+    def add_note_to_architect_request(cls, architect_request_id, data):
+        """
+        Handles adding a note to an ArchitectRequest.
+
+        Args:
+            architect_request_id (int): The ID of the ArchitectRequest to which
+            the note will be added.
+            data (dict): The validated data for creating a new Note.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        try:
+            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
+
+            serializer = NoteSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+
+            note = Note.objects.create(
+                message=serializer.validated_data["message"],
+                content_object=architect_request,
+            )
+
+            return Response(NoteSerializer(note).data, status=status.HTTP_201_CREATED)
+        except ArchitectRequest.DoesNotExist:
+            raise NotFound(detail="No architect request found with the given ID")
+        except Exception as e:
+            raise APIException(f"Error adding not to architect request ${e}")

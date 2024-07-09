@@ -27,6 +27,7 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.serializers.NoteSerializer import NoteSerializer
 from app.users.serializers.ClientSerializer import ClientSerializer
 
 
@@ -171,6 +172,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
+    notes = NoteSerializer(many=True)
 
     class Meta:
         """
@@ -198,6 +200,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "notes",
         ]
 
 

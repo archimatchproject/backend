@@ -22,6 +22,7 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
 )
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
+from app.core.serializers.NoteSerializer import NoteSerializer
 
 
 class ArchitectRequestViewSet(viewsets.ModelViewSet):
@@ -141,3 +142,22 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         """
         admin_id = request.data.get("admin_id")
         return ArchitectRequestService.admin_assign_responsable(pk, admin_id)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="add-note",
+        serializer_class=NoteSerializer,
+    )
+    def add_note(self, request, pk=None):
+        """
+        Custom action to add a note to an ArchitectRequest.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the ArchitectRequest to which the note will be added.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return ArchitectRequestService.add_note_to_architect_request(pk, request.data)

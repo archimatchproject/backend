@@ -49,4 +49,9 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"post": "admin_assign_responsable"}),
         name="architect-request-admin-assign-responsable",
     ),
+    path(
+        "add-note/<int:pk>/",
+        ArchitectRequestViewSet.as_view({"post": "add_note"}),
+        name="architect-request-add-note",
+    ),
 ]
