@@ -7,11 +7,11 @@ Class: AdminViewSet
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models.Admin import Admin
 from app.users.serializers.AdminSerializer import AdminSerializer
-from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.AdminService import AdminService
 
 
@@ -28,7 +28,19 @@ class AdminViewSet(viewsets.ModelViewSet):
 
     serializer_class = AdminSerializer
     queryset = Admin.objects.all()
-    permission_classes = [IsSuperUser]
+
+    def get_permissions(self):
+        """
+        Override this method to specify custom permissions for different actions.
+        """
+        if self.action in ["create", "update"]:
+            self.permission_classes = [IsAuthenticated, IsSuperUser]
+        elif self.action == "list":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [IsAuthenticated]
+
+        return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
         """
@@ -57,22 +69,16 @@ class AdminViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         return AdminService.update_admin(instance, request.data)
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        name="login",
-        serializer_class=UserAuthSerializer,
-    )
-    def login(self, request):
+    @action(detail=False, methods=["GET"], url_path="get-permissions", name="get_permissions")
+    def get_admin_permissions(self, request):
         """
-        Log in an admin using credentials provided in the request.
+        Get all permissions with their associated colors.
 
         Args:
             self: Instance of the AdminViewSet class.
-            request: HTTP request object containing login credentials.
+            request: HTTP request object.
 
         Returns:
-            Response: Response indicating success or failure of admin login.
+            Response: Response containing all permissions and their colors.
         """
-        return AdminService.admin_login(request)
+        return AdminService.get_all_permissions()

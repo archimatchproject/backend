@@ -6,20 +6,39 @@ USER_TYPE_CHOICES = [
 ]
 
 PERMISSION_CODENAMES = {
-    "manage_blog": [
-        "add_blog",
-        "change_blog",
-        "delete_blog",
-        "view_blog",
-    ],
-    "manage_architect_request": [
-        "add_architectrequest",
-        "change_architectrequest",
-        "delete_architectrequest",
-        "view_architectrequest",
-    ],
+    "manage_blog": {
+        "permissions": [
+            "add_blog",
+            "change_blog",
+            "delete_blog",
+            "view_blog",
+        ],
+        "color": "#FFD700",
+    },
+    "manage_architect_request": {
+        "permissions": [
+            "add_architectrequest",
+            "change_architectrequest",
+            "delete_architectrequest",
+            "view_architectrequest",
+        ],
+        "color": "#0C1E5B",
+    },
+    "manage_announcement": {
+        "permissions": [
+            "add_announcement",
+            "change_announcement",
+            "delete_announcement",
+            "view_announcement",
+        ],
+        "color": "#11ABEC",
+    },
 }
-
+CODENAME_TO_RIGHTS = {
+    codename: right
+    for right, data in PERMISSION_CODENAMES.items()
+    for codename in data["permissions"]
+}
 APPEARANCES = [
     ("Petite", "Petite"),
     ("Grande", "Grande"),

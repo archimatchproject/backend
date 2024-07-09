@@ -61,7 +61,7 @@ class Admin(BaseModel):
         """
         for right in rights:
             if right in PERMISSION_CODENAMES:
-                for codename in PERMISSION_CODENAMES[right]:
+                for codename in PERMISSION_CODENAMES[right]["permissions"]:
                     try:
                         permission = Permission.objects.get(codename=codename)
                         self.permissions.add(permission)

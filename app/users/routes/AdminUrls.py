@@ -19,4 +19,14 @@ admin_urlpatterns = [
         AdminViewSet.as_view({"put": "update"}),
         name="admin-update",
     ),
+    path(
+        "admin/get-admins",
+        AdminViewSet.as_view({"get": "list"}),
+        name="admin-list",
+    ),
+    path(
+        "admin/get-permissions",
+        AdminViewSet.as_view({"get": "get_admin_permissions"}),
+        name="admin-get-permissions",
+    ),
 ]
