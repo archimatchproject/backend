@@ -14,4 +14,9 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"post": "realization_create"}),
         name="create-realization",
     ),
+    path(
+        "all-realizations/",
+        RealizationViewSet.as_view({"get": "get"}),
+        name="get-all-realizations",
+    ),
 ]
