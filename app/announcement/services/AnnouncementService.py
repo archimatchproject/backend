@@ -18,12 +18,6 @@ from rest_framework.response import Response
 
 from app.announcement import BUDGETS
 from app.announcement import CITIES
-from app.announcement import EXTERIOR_WORKTYPES
-from app.announcement import NEW_CONSTRUCTION_WORKTYPES
-from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP6
-from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP10
-from app.announcement import PROPERTIES_NO_EXTERIOR
-from app.announcement import RENOVATION_WORKTYPES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
 from app.announcement.models.Announcement import Announcement
@@ -325,19 +319,17 @@ class AnnouncementService:
 
             if not PropertyType.objects.filter(id=property_type_id).exists():
                 raise NotFound(detail="No property type found with the given ID")
-            work_types = WorkType.objects.all()
-            if int(property_type_id) in PROPERTIES_NO_EXTERIOR:
-                work_types = work_types.exclude(id__in=EXTERIOR_WORKTYPES)
+            work_types = WorkType.objects.filter(property_type_id=property_type_id)
             serializer = WorkTypeSerializer(work_types, many=True)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         except NotFound as e:
             raise e
-        except Exception as e:
-            raise APIException(detail=f"Error retrieving announcement work types, ${str(e)}")
+        except Exception:
+            raise APIException("Error retrieving announcement work types")
 
     @classmethod
-    def get_renovation_pieces(cls, property_type_id, work_type_id):
+    def get_renovation_pieces(cls, property_type_id):
         """
         Retrieves all renovation pieces.
 
@@ -347,18 +339,10 @@ class AnnouncementService:
         try:
             if not PropertyType.objects.filter(id=property_type_id).exists():
                 raise NotFound(detail="No property type found with the given ID")
-            if not WorkType.objects.filter(id=work_type_id).exists():
-                raise NotFound(detail="No work type found with the given ID")
-
             renovation_pieces = PieceRenovate.objects.filter(property_type_id=property_type_id)
             serializer = PieceRenovateSerializer(renovation_pieces, many=True)
             return Response(
-                data={
-                    "data": serializer.data,
-                    "new_construction": int(work_type_id) not in RENOVATION_WORKTYPES,
-                    "eliminate_step": int(property_type_id)
-                    not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
-                },
+                serializer.data,
                 status=status.HTTP_200_OK,
             )
 
@@ -454,7 +438,7 @@ class AnnouncementService:
             raise APIException("Error retrieving budgets")
 
     @classmethod
-    def get_architectural_styles(cls, property_type_id):
+    def get_architectural_styles(cls):
         """
         Retrieves all architectural styles.
 
@@ -468,18 +452,14 @@ class AnnouncementService:
                 many=True,
             )
             return Response(
-                data={
-                    "data": serializer.data,
-                    "eliminate_step": int(property_type_id)
-                    not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
-                },
+                serializer.data,
                 status=status.HTTP_200_OK,
             )
         except Exception:
             return APIException("Error retrieving architectural styles")
 
     @classmethod
-    def get_project_extensions(cls, property_type_id, work_type_id):
+    def get_project_extensions(cls, property_type_id):
         """
         Retrieves all project extensions.
 
@@ -489,18 +469,10 @@ class AnnouncementService:
         try:
             if not PropertyType.objects.filter(id=property_type_id).exists():
                 raise NotFound(detail="No property type found with the given ID")
-            if not WorkType.objects.filter(id=work_type_id).exists():
-                raise NotFound(detail="No work type found with the given ID")
             project_extensions = ProjectExtension.objects.filter(property_type_id=property_type_id)
             serializer = ProjectExtensionSerializer(project_extensions, many=True)
             return Response(
-                data={
-                    "data": serializer.data,
-                    "eliminate_step": (
-                        int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP10
-                    )
-                    and int(work_type_id) in NEW_CONSTRUCTION_WORKTYPES,
-                },
+                serializer.data,
                 status=status.HTTP_200_OK,
             )
         except NotFound as e:

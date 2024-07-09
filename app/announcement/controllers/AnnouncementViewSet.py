@@ -93,10 +93,10 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="architect-speciality-needs",
+        url_path="architect-speciality-needs/(?P<architect_speciality_id>[^/.]+)",
         serializer_class=NeedSerializer,
     )
-    def get_architect_speciality_needs(self, request):
+    def get_architect_speciality_needs(self, request, architect_speciality_id):
         """
         Retrieves needs based on architect speciality.
 
@@ -107,7 +107,6 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of needs related to the architect speciality.
         """
-        architect_speciality_id = request.query_params.get("architect_speciality_id")
         return AnnouncementService.get_architect_speciality_needs(architect_speciality_id)
 
     @action(
@@ -134,11 +133,11 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="property-types",
+        url_path="property-types/(?P<project_category_id>[^/.]+)",
         url_name="property-types",
         serializer_class=PropertyTypeSerializer,
     )
-    def get_property_types(self, request):
+    def get_property_types(self, request, project_category_id):
         """
         Retrieves property types based on project category.
 
@@ -149,18 +148,17 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of property types related to the project category.
         """
-        project_category_id = request.query_params.get("project_category_id")
         return AnnouncementService.get_property_types(project_category_id)
 
     @action(
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="work-types",
+        url_path="work-types/(?P<property_type_id>[^/.]+)",
         url_name="work-types",
         serializer_class=WorkTypeSerializer,
     )
-    def get_announcement_work_types(self, request):
+    def get_announcement_work_types(self, request, property_type_id):
         """
         Retrieves all announcement work types.
 
@@ -170,18 +168,17 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of announcement work types.
         """
-        property_type_id = request.query_params.get("property_type_id")
         return AnnouncementService.get_announcement_work_types(property_type_id)
 
     @action(
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="renovation-pieces",
+        url_path="renovation-pieces/(?P<property_type_id>[^/.]+)",
         url_name="renovation-pieces",
         serializer_class=PieceRenovateSerializer,
     )
-    def get_renovation_pieces(self, request):
+    def get_renovation_pieces(self, request, property_type_id):
         """
         Retrieves all renovation pieces.
 
@@ -191,9 +188,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of renovation pieces.
         """
-        property_type_id = request.query_params.get("property_type_id")
-        work_type_id = request.query_params.get("work_type_id")
-        return AnnouncementService.get_renovation_pieces(property_type_id, work_type_id)
+        return AnnouncementService.get_renovation_pieces(property_type_id)
 
     @action(
         detail=False,
@@ -289,18 +284,17 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of architectural styles.
         """
-        property_type_id = request.query_params.get("property_type_id")
-        return AnnouncementService.get_architectural_styles(property_type_id)
+        return AnnouncementService.get_architectural_styles()
 
     @action(
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="project-extensions",
+        url_path="project-extensions/(?P<property_type_id>[^/.]+)",
         url_name="project-extensions",
         serializer_class=ProjectExtensionSerializer,
     )
-    def get_project_extensions(self, request):
+    def get_project_extensions(self, request, property_type_id):
         """
         Retrieves all project extensions.
 
@@ -310,6 +304,4 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of project extensions.
         """
-        property_type_id = request.query_params.get("property_type_id")
-        work_type_id = request.query_params.get("work_type_id")
-        return AnnouncementService.get_project_extensions(property_type_id, work_type_id)
+        return AnnouncementService.get_project_extensions(property_type_id)

@@ -25,4 +25,4 @@ class WorkTypeSerializer(serializers.ModelSerializer):
         """
 
         model = WorkType
-        fields = ["id", "header", "description"]
+        fields = ["id", "header", "description", "property_type"]

@@ -1,42 +1,131 @@
-# Work Types
+# Work Types for Projet résidentiel (Property Type)
 - model: core.WorkType
   pk: 1
   fields:
-    header: "Construction neuve"
-    description: "La création d'une structure entièrement nouvelle à partir de zéro"
+    header: "Étude de faisabilité"
+    description: "Étude de faisabilité pour projets résidentiels"
+    property_type: 1 # Replace with the primary key of Maison
 
 - model: core.WorkType
   pk: 2
   fields:
-    header: "Rénovation extérieure"
-    description: "Transformer et améliorer l'apparence et la fonctionnalité d'un bâtiment existant"
+    header: "Conception architecturale"
+    description: "Conception architecturale pour projets résidentiels"
+    property_type: 1 # Replace with the primary key of Maison
 
 - model: core.WorkType
   pk: 3
   fields:
-    header: "Extension & aménagement"
-    description: "Agrandir et améliorer un espace existant."
+    header: "Documents techniques et administratifs"
+    description: "Documents techniques et administratifs pour projets résidentiels"
+    property_type: 1 # Replace with the primary key of Maison
 
+# Work Types for Grand œuvre immobilier (Property Type)
 - model: core.WorkType
   pk: 4
   fields:
-    header: "Rénovation intérieure"
-    description: "Transformer et moderniser les espaces existants"
+    header: "Immeubles bureaux"
+    description: "Conception d'immeubles de bureaux"
+    property_type: 5 # Replace with the primary key of Immeubles bureaux
 
 - model: core.WorkType
   pk: 5
   fields:
-    header: "Surélévation"
-    description: "L'ajout de nouveaux niveaux ou étages à une construction existante"
+    header: "Clinique"
+    description: "Aménagement de cliniques"
+    property_type: 6 # Replace with the primary key of Clinique
 
 - model: core.WorkType
   pk: 6
   fields:
-    header: "Aménagement de combles"
-    description: "La réalisation de l'isolation thermique, etc."
+    header: "Showroom"
+    description: "Création de showrooms"
+    property_type: 7 # Replace with the primary key of Showroom
 
+# Work Types for Point de Vente et Commercial (Property Type)
 - model: core.WorkType
   pk: 7
   fields:
-    header: "Autre"
-    description: "Autres types de travaux et projets de construction"
+    header: "Restaurant/Salon de thé"
+    description: "Design de restaurants et salons de thé"
+    property_type: 8 # Replace with the primary key of Restaurant/Salon de thé
+
+- model: core.WorkType
+  pk: 8
+  fields:
+    header: "Magasin"
+    description: "Aménagement de magasins"
+    property_type: 9 # Replace with the primary key of Magasin
+
+- model: core.WorkType
+  pk: 9
+  fields:
+    header: "Agences/Bureaux"
+    description: "Conception d'agences et bureaux"
+    property_type: 10 # Replace with the primary key of Agences/Bureaux
+
+# Work Types for projet Industriel (Property Type)
+- model: core.WorkType
+  pk: 10
+  fields:
+    header: "Entrepôt"
+    description: "Conception d'entrepôts industriels"
+    property_type: 11 # Replace with the primary key of Entrepôt
+
+- model: core.WorkType
+  pk: 11
+  fields:
+    header: "Usines"
+    description: "Aménagement d'usines"
+    property_type: 12 # Replace with the primary key of Usines
+
+- model: core.WorkType
+  pk: 12
+  fields:
+    header: "Atelier conception"
+    description: "Conception d'ateliers"
+    property_type: 13 # Replace with the primary key of Atelier conception
+
+# Work Types for Projet Institutionnel (Property Type)
+- model: core.WorkType
+  pk: 13
+  fields:
+    header: "Écoles"
+    description: "Aménagement d'écoles"
+    property_type: 14 # Replace with the primary key of Écoles
+
+- model: core.WorkType
+  pk: 14
+  fields:
+    header: "Hopital"
+    description: "Conception d'hôpitaux"
+    property_type: 15 # Replace with the primary key of Hopital
+
+- model: core.WorkType
+  pk: 15
+  fields:
+    header: "Bibliothèque publique"
+    description: "Aménagement de bibliothèques publiques"
+    property_type: 16 # Replace with the primary key of Bibliothèque publique
+
+# Work Types for Patrimoine et conservation (Property Type)
+- model: core.WorkType
+  pk: 16
+  fields:
+    header: "Monument"
+    description: "Restauration de monuments"
+    property_type: 17 # Replace with the primary key of Monument
+
+- model: core.WorkType
+  pk: 17
+  fields:
+    header: "Musée historique"
+    description: "Préservation de musées historiques"
+    property_type: 18 # Replace with the primary key of Musée historique
+
+- model: core.WorkType
+  pk: 18
+  fields:
+    header: "Place et parc historique"
+    description: "Aménagement de places et parcs historiques"
+    property_type: 19 # Replace with the primary key of Place et parc historique

@@ -44,7 +44,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         queryset=ArchitectSpeciality.objects.all()
     )
     architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False
+        queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
@@ -57,7 +57,8 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(), many=True, required=False
+        queryset=ProjectExtension.objects.all(),
+        many=True,
     )
     project_images = serializers.ListField(
         child=serializers.ImageField(required=False),

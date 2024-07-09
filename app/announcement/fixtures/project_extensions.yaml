@@ -1,165 +1,65 @@
-# project_extensions.yaml
-
-# Project Extensions for Maison (Property Type)
+# Project Extensions for Projet résidentiel (Project Category)
 - model: announcement.ProjectExtension
   pk: 1
   fields:
-    label: "Système de sécurité"
+    label: "Piscine"
     icon: "icons/ProjectExtensionIcons/img.png"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.ProjectExtension
   pk: 2
   fields:
-    label: "Système de domotique"
+    label: "Jardin aménagé"
     icon: "icons/ProjectExtensionIcons/img.png"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.ProjectExtension
   pk: 3
   fields:
-    label: "Espaces de détentes extérieures"
+    label: "Garage"
     icon: "icons/ProjectExtensionIcons/img.png"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.ProjectExtension
   pk: 4
   fields:
-    label: "Piscine"
+    label: "Balcon"
     icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 2 # Replace with the primary key of Immobilier
 
 - model: announcement.ProjectExtension
   pk: 5
   fields:
-    label: "Ascenseur"
+    label: "Terrasse"
     icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 2 # Replace with the primary key of Immobilier
 
 - model: announcement.ProjectExtension
   pk: 6
   fields:
-    label: "Système de filtration d'eau"
+    label: "Ascenseur"
     icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 2 # Replace with the primary key of Immobilier
 
 - model: announcement.ProjectExtension
   pk: 7
   fields:
-    label: "Salle de cinéma"
+    label: "Piscine intérieure"
     icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 3 # Replace with the primary key of Villa
 
 - model: announcement.ProjectExtension
   pk: 8
   fields:
-    label: "Salle de jeux"
+    label: "Sauna"
     icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 3 # Replace with the primary key of Villa
 
 - model: announcement.ProjectExtension
   pk: 9
   fields:
-    label: "Terrasse"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
-
-# Project Extensions for Immeuble (Property Type)
-- model: announcement.ProjectExtension
-  pk: 10
-  fields:
-    label: "Système de sécurité"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-- model: announcement.ProjectExtension
-  pk: 11
-  fields:
-    label: "Système de domotique"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-- model: announcement.ProjectExtension
-  pk: 12
-  fields:
-    label: "Espaces de détentes extérieures"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-- model: announcement.ProjectExtension
-  pk: 13
-  fields:
-    label: "Piscine"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-- model: announcement.ProjectExtension
-  pk: 14
-  fields:
-    label: "Ascenseur"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-- model: announcement.ProjectExtension
-  pk: 15
-  fields:
-    label: "Escaliers en béton"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
-
-# Project Extensions for Villa (Property Type)
-- model: announcement.ProjectExtension
-  pk: 16
-  fields:
-    label: "Système de sécurité"
+    label: "Jacuzzi"
     icon: "icons/ProjectExtensionIcons/img.png"
     property_type: 3 # Replace with the primary key of Villa
 
-- model: announcement.ProjectExtension
-  pk: 17
-  fields:
-    label: "Système de domotique"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 18
-  fields:
-    label: "Espaces de détentes extérieures"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 19
-  fields:
-    label: "Piscine"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 20
-  fields:
-    label: "Ascenseur"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 21
-  fields:
-    label: "Salle de cinéma"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 22
-  fields:
-    label: "Salle de jeux"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
-
-- model: announcement.ProjectExtension
-  pk: 23
-  fields:
-    label: "Terrasse"
-    icon: "icons/ProjectExtensionIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
+# Add more Project Extensions for other Property Types as needed

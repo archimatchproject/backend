@@ -11,7 +11,7 @@
 - model: core.PropertyType
   pk: 2
   fields:
-    label: "Immeuble"
+    label: "Immobilier"
     icon: "icons/PropertyTypeIcons/img.png"
     project_category: 1
 
@@ -94,3 +94,47 @@
     label: "Atelier conception"
     icon: "icons/PropertyTypeIcons/img.png"
     project_category: 4
+
+# Property Types for Projet Institutionnel (Project Category)
+- model: core.PropertyType
+  pk: 14
+  fields:
+    label: "Écoles"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 5
+
+- model: core.PropertyType
+  pk: 15
+  fields:
+    label: "Hopital"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 5
+
+- model: core.PropertyType
+  pk: 16
+  fields:
+    label: "Bibliothèque publique"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 5
+
+# Property Types for Patrimoine et conservation (Project Category)
+- model: core.PropertyType
+  pk: 17
+  fields:
+    label: "Monument"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 6
+
+- model: core.PropertyType
+  pk: 18
+  fields:
+    label: "Musée historique"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 6
+
+- model: core.PropertyType
+  pk: 19
+  fields:
+    label: "Place et parc historique"
+    icon: "icons/PropertyTypeIcons/img.png"
+    project_category: 6

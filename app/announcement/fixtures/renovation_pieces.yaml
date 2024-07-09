@@ -1,5 +1,3 @@
-# pieces.yaml
-
 # Pieces for Maison (Property Type)
 - model: announcement.PieceRenovate
   pk: 1
@@ -22,96 +20,112 @@
     icon: "icons/PieceRenovateIcons/img.png"
     property_type: 1 # Replace with the primary key of Maison
 
+# Pieces for Immeubles bureaux (Property Type)
 - model: announcement.PieceRenovate
   pk: 4
   fields:
-    label: "Salon"
+    label: "Hall d'entrée"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 1 # Replace with the primary key of Maison
+    property_type: 5 # Replace with the primary key of Immeubles bureaux
 
-# Pieces for Immeuble (Property Type)
 - model: announcement.PieceRenovate
   pk: 5
   fields:
-    label: "Hall d'entrée"
+    label: "Bureaux individuels"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
+    property_type: 5 # Replace with the primary key of Immeubles bureaux
 
 - model: announcement.PieceRenovate
   pk: 6
   fields:
-    label: "Bureaux individuels"
+    label: "Salle de conférence"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
+    property_type: 5 # Replace with the primary key of Immeubles bureaux
 
+# Pieces for Restaurant/Salon de thé (Property Type)
 - model: announcement.PieceRenovate
   pk: 7
   fields:
-    label: "Salle de conférence"
+    label: "Espace de restauration"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
+    property_type: 8 # Replace with the primary key of Restaurant/Salon de thé
 
 - model: announcement.PieceRenovate
   pk: 8
   fields:
-    label: "Espace de réception"
+    label: "Salle de thé"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 2 # Replace with the primary key of Immeuble
+    property_type: 8 # Replace with the primary key of Restaurant/Salon de thé
 
-# Pieces for Villa (Property Type)
 - model: announcement.PieceRenovate
   pk: 9
   fields:
-    label: "Suite parentale"
+    label: "Espace détente"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
+    property_type: 8 # Replace with the primary key of Restaurant/Salon de thé
 
+# Pieces for Entrepôt (Property Type)
 - model: announcement.PieceRenovate
   pk: 10
   fields:
-    label: "Salle de sport"
+    label: "Zone de stockage"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
+    property_type: 11 # Replace with the primary key of Entrepôt
 
 - model: announcement.PieceRenovate
   pk: 11
   fields:
-    label: "Bibliothèque"
+    label: "Atelier de production"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
+    property_type: 11 # Replace with the primary key of Entrepôt
 
 - model: announcement.PieceRenovate
   pk: 12
   fields:
-    label: "Piscine"
+    label: "Zone administrative"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 3 # Replace with the primary key of Villa
+    property_type: 11 # Replace with the primary key of Entrepôt
 
-# Pieces for Appartement (Property Type)
+# Pieces for Écoles (Property Type)
 - model: announcement.PieceRenovate
   pk: 13
   fields:
-    label: "Cuisine ouverte"
+    label: "Salle de classe"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 4 # Replace with the primary key of Appartement
+    property_type: 14 # Replace with the primary key of Écoles
 
 - model: announcement.PieceRenovate
   pk: 14
   fields:
-    label: "Balcon"
+    label: "Laboratoire"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 4 # Replace with the primary key of Appartement
+    property_type: 14 # Replace with the primary key of Écoles
 
 - model: announcement.PieceRenovate
   pk: 15
   fields:
-    label: "Chambre à coucher"
+    label: "Bibliothèque"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 4 # Replace with the primary key of Appartement
+    property_type: 14 # Replace with the primary key of Écoles
 
+# Pieces for Monument (Property Type)
 - model: announcement.PieceRenovate
   pk: 16
   fields:
-    label: "Salle à manger"
+    label: "Monument principal"
     icon: "icons/PieceRenovateIcons/img.png"
-    property_type: 4 # Replace with the primary key of Appartement
+    property_type: 17 # Replace with the primary key of Monument
+
+- model: announcement.PieceRenovate
+  pk: 17
+  fields:
+    label: "Galerie d'art"
+    icon: "icons/PieceRenovateIcons/img.png"
+    property_type: 17 # Replace with the primary key of Monument
+
+- model: announcement.PieceRenovate
+  pk: 18
+  fields:
+    label: "Jardin historique"
+    icon: "icons/PieceRenovateIcons/img.png"
+    property_type: 17 # Replace with the primary key of Monument
