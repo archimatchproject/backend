@@ -45,9 +45,11 @@ from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSeri
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.serializers.NoteSerializer import NoteSerializer
 from app.users import USER_TYPE_CHOICES
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
@@ -507,3 +509,32 @@ class AnnouncementService:
             raise e
         except Exception:
             raise APIException("Error retrieving renovation pieces")
+
+    @classmethod
+    def add_note_to_announcement(cls, announcement_id, data):
+        """
+        Handles adding a note to an ArchitectRequest.
+
+        Args:
+            announcement_id (int): The ID of the ArchitectRequest to which the note will be added.
+            data (dict): The validated data for creating a new Note.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=announcement_id)
+
+            serializer = NoteSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+
+            note = Note.objects.create(
+                message=serializer.validated_data["message"],
+                content_object=announcement,
+            )
+
+            return Response(NoteSerializer(note).data, status=status.HTTP_201_CREATED)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="No announcement found with the given ID")
+        except Exception as e:
+            raise APIException(detail=f"Error adding not to announcement ${e}")

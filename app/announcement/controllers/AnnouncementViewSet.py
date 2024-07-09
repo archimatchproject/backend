@@ -21,6 +21,7 @@ from app.announcement.serializers.ProjectExtensionSerializer import ProjectExten
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.announcement.services.AnnouncementService import AnnouncementService
+from app.core.serializers.NoteSerializer import NoteSerializer
 
 
 class AnnouncementViewSet(viewsets.ModelViewSet):
@@ -313,3 +314,22 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         property_type_id = request.query_params.get("property_type_id")
         work_type_id = request.query_params.get("work_type_id")
         return AnnouncementService.get_project_extensions(property_type_id, work_type_id)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="add-note",
+        serializer_class=NoteSerializer,
+    )
+    def add_note(self, request, pk=None):
+        """
+        Custom action to add a note to an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to which the note will be added.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return AnnouncementService.add_note_to_announcement(pk, request.data)

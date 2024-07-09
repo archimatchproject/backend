@@ -17,6 +17,7 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.serializers.NoteSerializer import NoteSerializer
 
 
 class ArchitectRequestInputSerializer(serializers.ModelSerializer):
@@ -75,6 +76,7 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
     meeting_responsable = serializers.EmailField(
         source="meeting_responsable.user.email", read_only=True
     )
+    notes = NoteSerializer(many=True)
 
     class Meta:
         """
@@ -99,6 +101,7 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
             "time_slot",
             "meeting_responsable",
             "status",
+            "notes",
         ]
 
 
