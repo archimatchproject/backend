@@ -65,13 +65,19 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             return ArchimatchUserResetPWSerializer
         elif self.action == "archimatch_user_update_data":
             return ArchimatchUserSimpleSerializer
+        elif self.action == "archimatch_user_get_user_data":
+            return ArchimatchUserSerializer
         return super().get_serializer_class()
 
     def get_permissions(self):
         """
         Override this method to specify custom permissions for different actions.
         """
-        if self.action in ["archimatch_user_reset_password", "archimatch_user_update_data"]:
+        if self.action in [
+            "archimatch_user_reset_password",
+            "archimatch_user_update_data",
+            "archimatch_user_get_user_data",
+        ]:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
@@ -113,3 +119,16 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of updating data.
         """
         return ArchimatchUserService.archimatch_user_update_data(request)
+
+    @action(detail=False, methods=["GET"], url_path="get-user-data")
+    def archimatch_user_get_user_data(self, request):
+        """
+        Action to get data for the authenticated ArchimatchUser.
+
+        Args:
+            request (Request): HTTP request object containing user data.
+
+        Returns:
+            Response: HTTP response object with the user data.
+        """
+        return ArchimatchUserService.archimatch_user_get_user_data(request)

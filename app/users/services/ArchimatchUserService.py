@@ -21,6 +21,7 @@ from app.users.serializers.ArchimatchUserObtainPairSerializer import (
 )
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
 
@@ -157,3 +158,24 @@ class ArchimatchUserService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating user data ${str(e)}")
+
+    @classmethod
+    def archimatch_user_get_user_data(cls, request):
+        """
+        Retrieves the data for the authenticated user.
+
+        Args:
+            request (Request): Django request object containing user data.
+
+        Returns:
+            Response: Response object with the user's data.
+        """
+        try:
+            user = request.user
+            serializer = ArchimatchUserSerializer(user)
+            return Response(
+                {"user": serializer.data},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            raise APIException(detail=f"Error retrieving user data: {str(e)}")
