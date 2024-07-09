@@ -11,6 +11,18 @@ COMMON_IMAGES = (
     (GLOBAL_PATH, "facebook.png"),
     (GLOBAL_PATH, "instagram.png"),
     (GLOBAL_PATH, "twitter.png"),
+    (GLOBAL_PATH, "footer_logo.png"),
+)
+
+ARCHITECT_REQUEST_IMAGES = (
     (GLOBAL_PATH, "architect_logo.png"),
-    (GLOBAL_PATH, "welcome_architect_header.png"),
+    (GLOBAL_PATH, "architect_request_header.png"),
+)
+ARCHITECT_PASSWORD_IMAGES = (
+    (GLOBAL_PATH, "architect_logo.png"),
+    (GLOBAL_PATH, "architect_password_header.png"),
+)
+CLIENT_PASSWORD_IMAGES = (
+    (GLOBAL_PATH, "client_logo.png"),
+    (GLOBAL_PATH, "client_password_header.png"),
 )

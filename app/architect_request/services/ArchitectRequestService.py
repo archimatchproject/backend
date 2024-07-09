@@ -25,10 +25,12 @@ from app.architect_request.serializers.ArchitectRequestSerializer import Archite
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.Note import Note
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.email_templates.signals import api_success_signal
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+from project_core.django import base as settings
 
 
 class ArchitectRequestService:
@@ -78,6 +80,22 @@ class ArchitectRequestService:
 
                 architect_request.clean()
                 architect_request.save()
+                email_images = settings.COMMON_IMAGES + settings.ARCHITECT_REQUEST_IMAGES
+
+                signal_data = {
+                    "template_name": "architect_request.html",
+                    "context": {
+                        "first_name": data.get("first_name"),
+                        "last_name": data.get("last_name"),
+                        "date": data.get("date"),
+                        "time_slot": data.get("time_slot"),
+                        "email": data.get("email"),
+                    },
+                    "to_email": data.get("email"),
+                    "subject": "Architect Account Creation",
+                    "images": email_images,
+                }
+                api_success_signal.send(sender=cls, data=signal_data)
 
                 return Response(
                     ArchitectRequestSerializer(architect_request).data,
@@ -85,8 +103,8 @@ class ArchitectRequestService:
                 )
         except serializers.ValidationError as e:
             raise e
-        except Exception:
-            raise APIException(detail="Error creating architect request")
+        except Exception as e:
+            raise APIException(detail=str(e))
 
     @classmethod
     def admin_accept_architect_request(cls, architect_request_id, data):

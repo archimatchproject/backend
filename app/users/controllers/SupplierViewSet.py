@@ -221,3 +221,23 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         return SupplierService.supplier_get_profile(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="send-reset-password-link",
+        url_name="send-reset-password-link",
+    )
+    def supplier_send_reset_password_link(self, request):
+        """
+        Retrieves supplier details.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.supplier_send_reset_password_link(request)

@@ -59,4 +59,9 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"get": "supplier_get_profile"}),
         name="profile",
     ),
+    path(
+        "supplier/send-reset-password-link/",
+        SupplierViewSet.as_view({"post": "supplier_send_reset_password_link"}),
+        name="send-reset-password-link",
+    ),
 ]
