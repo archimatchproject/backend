@@ -34,7 +34,11 @@ PERMISSION_CODENAMES = {
         "color": "#11ABEC",
     },
 }
-
+CODENAME_TO_RIGHTS = {
+    codename: right
+    for right, data in PERMISSION_CODENAMES.items()
+    for codename in data["permissions"]
+}
 APPEARANCES = [
     ("Petite", "Petite"),
     ("Grande", "Grande"),

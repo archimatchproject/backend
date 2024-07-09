@@ -35,8 +35,11 @@ class AdminViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["create", "update"]:
             self.permission_classes = [IsAuthenticated, IsSuperUser]
-        if self.action in ["list"]:
+        elif self.action == "list":
             self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = []
+
         return super().get_permissions()
 
     def create(self, request, *args, **kwargs):

@@ -10,6 +10,7 @@ Classes:
 
 from rest_framework import serializers
 
+from app.users import CODENAME_TO_RIGHTS
 from app.users import PERMISSION_CODENAMES
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
@@ -112,11 +113,7 @@ class AdminSerializer(serializers.ModelSerializer):
         Returns:
             dict: The customized serialized representation of the admin instance.
         """
-        CODENAME_TO_RIGHTS = {
-            codename: right
-            for right, data in PERMISSION_CODENAMES.items()
-            for codename in data["permissions"]
-        }
+
         data = super().to_representation(instance)
         if instance.super_user:
             data["rights"] = [
@@ -125,11 +122,11 @@ class AdminSerializer(serializers.ModelSerializer):
             ]
         else:
             permissions = instance.permissions.values_list("codename", flat=True)
-            rights_set = set(
+            rights_set = {
                 CODENAME_TO_RIGHTS[codename]
                 for codename in permissions
                 if codename in CODENAME_TO_RIGHTS
-            )
+            }
             data["rights"] = [
                 {"right": right, "color": PERMISSION_CODENAMES[right]["color"]}
                 for right in rights_set
