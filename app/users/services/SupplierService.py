@@ -200,11 +200,9 @@ class SupplierService:
             data = request.data
             serializer = SupplierPersonalInformationSerializer(data=data)
             serializer.is_valid(raise_exception=True)
-            id = data.get("id")
-            if not Supplier.objects.filter(id=id).exists():
-                raise NotFound(detail="Supplier does not exist", code=status.HTTP_404_NOT_FOUND)
+            user_id = request.user.id
+            supplier = Supplier.objects.get(user__id=user_id)
 
-            supplier = Supplier.objects.get(id=id)
             phone_number = data.pop("phone_number")
 
             # Update user data
@@ -218,13 +216,14 @@ class SupplierService:
             supplier.save()
 
             response_data = {
-                "message": {"message": "supplier successfully updated"},
-                "status_code": status.HTTP_200_OK,
+                "message": "supplier successfully updated",
             }
             return Response(
                 response_data,
                 status=status.HTTP_200_OK,
             )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
         except APIException as e:
             raise e
         except Exception as e:
@@ -246,24 +245,25 @@ class SupplierService:
         """
         try:
             data = request.data
-            id = data.get("id", None)
+            user_id = request.user.id
             bio = data.get("bio", None)
-            if bio is None or id is None:
-                raise serializers.ValidationError(detail="Bio and id are required")
 
-            if not Supplier.objects.filter(id=id).exists():
-                raise NotFound(detail="Supplier does not exist", code=status.HTTP_404_NOT_FOUND)
+            if bio is None:
+                raise serializers.ValidationError(detail="Bio is required")
 
-            Supplier.objects.filter(id=id).update(bio=bio)
+            supplier = Supplier.objects.get(user__id=user_id)
+            supplier.bio = bio
+            supplier.save()
 
             response_data = {
-                "message": {"message": "Supplier bio successfully updated"},
-                "status_code": status.HTTP_200_OK,
+                "message": "Supplier bio successfully updated",
             }
             return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
+                response_data,
+                status=status.HTTP_200_OK,
             )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
         except APIException as e:
             raise e
         except Exception as e:
@@ -285,19 +285,20 @@ class SupplierService:
         """
         try:
             data = request.data
-            id = data.get("id", None)
+            user_id = request.user.id
             presentation_video = data.get("presentation_video", None)
-            if presentation_video is None or id is None:
-                raise serializers.ValidationError(detail="presentation video and id are required")
+            if presentation_video is None:
+                raise serializers.ValidationError(detail="presentation video is required")
 
-            if not Supplier.objects.filter(id=id).exists():
-                raise NotFound(detail="Supplier does not exist", code=status.HTTP_404_NOT_FOUND)
-
-            Supplier.objects.filter(id=id).update(presentation_video=data.get("presentation_video"))
+            supplier = Supplier.objects.get(user__id=user_id)
+            supplier.presentation_video = presentation_video
+            supplier.save()
 
             response_data = {"message": "Supplier presentation video successfully updated"}
             return Response(response_data.get("message"), status=status.HTTP_200_OK)
 
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
         except APIException as e:
             raise e
         except Exception as e:
@@ -320,17 +321,14 @@ class SupplierService:
         """
         try:
             data = request.data
-            supplier_id = data.pop("id", None)
-            if supplier_id is None:
-                raise serializers.ValidationError(detail="supplier id is required")
+            user_id = request.user.id
+
             social_media_serializer = SupplierSocialMediaSerializer(data=data)
             social_media_serializer.is_valid(raise_exception=True)
 
             validated_data = social_media_serializer.validated_data
-            if not Supplier.objects.filter(id=supplier_id).exists():
-                raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
 
-            supplier = Supplier.objects.get(id=supplier_id)
+            supplier = Supplier.objects.get(user__id=user_id)
 
             if not supplier.social_links:
                 social_links, created = SupplierSocialMedia.objects.update_or_create(
@@ -348,6 +346,8 @@ class SupplierService:
                 status=status.HTTP_200_OK,
             )
 
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
         except APIException as e:
             raise e
         except Exception as e:
