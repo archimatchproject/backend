@@ -110,7 +110,6 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
     """
 
     phone_number = serializers.CharField(source="user.phone_number")
-    email = serializers.CharField(source="user.email")
 
     class Meta:
         """
@@ -122,4 +121,4 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
         """
 
         model = Supplier
-        fields = ("id", "company_address", "company_speciality", "phone_number", "email")
+        fields = ("id", "company_address", "company_speciality", "phone_number", "company_name")
