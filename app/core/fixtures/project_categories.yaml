@@ -23,15 +23,3 @@
   fields:
     label: "Projet Industriel"
     icon: "icons/ProjectCategoryIcons/img.png"
-
-- model: core.ProjectCategory
-  pk: 5
-  fields:
-    label: "Projet Institutionnel"
-    icon: "icons/ProjectCategoryIcons/img.png"
-
-- model: core.ProjectCategory
-  pk: 6
-  fields:
-    label: "Patrimoine et conservation"
-    icon: "icons/ProjectCategoryIcons/img.png"

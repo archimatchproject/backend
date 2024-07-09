@@ -16,7 +16,8 @@ BUDGETS = [
         "250.000dt - 500.000dt",
         "250.000dt - 500.000dt",
     ),
-    ("> 500.000dt", "> 500.000dt"),
+    ("500.000dt - 1.000.000dt", "500.000dt - 1.000.000dt"),
+    ("> 1.000.000dt", "> 1.000.000dt"),
 ]
 CITIES = [
     ("Tunis", "Tunis"),
@@ -62,3 +63,13 @@ WORK_SURFACES = [
     ("200m² - 500m²", "200m² - 500m²"),
     ("> 500m²", "> 500m²"),
 ]
+
+# STEP5
+PROPERTIES_NO_EXTERIOR = [4]  # Appartement
+EXTERIOR_WORKTYPES = [2]  # Rénovation extérieure
+# STEP6
+NEW_CONSTRUCTION_WORKTYPES = [1, 5]  # Construction neuve , Surélévation
+RENOVATION_WORKTYPES = [2, 4]  # Rénovation extérieure , Rénovation intérieure
+NOT_ELIMINATE_STEP_PROPERTIES_STEP6 = [1, 3, 4]  # Maison,Villa,Appartement
+# STEP10
+NOT_ELIMINATE_STEP_PROPERTIES_STEP10 = [1, 2, 3]  # Maison,Immeuble,Villa

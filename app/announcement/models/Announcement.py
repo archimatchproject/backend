@@ -87,10 +87,10 @@ class Announcement(BaseModel):
         on_delete=models.SET_NULL,
         related_name="architectural_style",
         null=True,
+        blank=True,
     )
     project_extensions = models.ManyToManyField(
-        ProjectExtension,
-        related_name="project_extensions_announcements",
+        ProjectExtension, related_name="project_extensions_announcements"
     )
 
     def __str__(self):
