@@ -11,6 +11,7 @@ Classes:
 
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -69,7 +70,7 @@ class ArchimatchUserService:
 
             # Check if user exists
             if not ArchimatchUser.objects.filter(email=email).exists():
-                raise ValidationError("User does not exist")
+                raise NotFound(detail="User does not exist")
 
             user = ArchimatchUser.objects.get(email=email)
 
@@ -89,13 +90,13 @@ class ArchimatchUserService:
                     status=status.HTTP_200_OK,
                 )
             else:
-                raise ValidationError("Passwords do not match")
+                raise ValidationError(detail="Passwords do not match")
 
         except ValidationError as e:
             raise e
 
         except Exception as e:
-            raise APIException("Error creating password", str(e))
+            raise APIException(detail=f"Error creating password ${str(e)}")
 
     @classmethod
     def archimatch_user_reset_password(cls, request):
@@ -124,7 +125,7 @@ class ArchimatchUserService:
             confirm_new_password = validated_data.get("confirm_new_password")
 
             if not user.check_password(old_password):
-                raise ValidationError("Incorrect old password")
+                raise ValidationError(detail="Incorrect old password")
             # Set new password if conditions are met
             if new_password == confirm_new_password:
                 user.set_password(new_password)
@@ -134,12 +135,12 @@ class ArchimatchUserService:
                     status=status.HTTP_200_OK,
                 )
             else:
-                raise ValidationError("New passwords do not match")
+                raise ValidationError(detail="New passwords do not match")
 
         except ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException("Error resetting password", str(e))
+            raise APIException(detail=f"Error resetting password ${str(e)}")
 
     @classmethod
     def archimatch_user_update_data(cls, request):
@@ -150,7 +151,7 @@ class ArchimatchUserService:
             user = request.user
             data = request.data
             if not data:
-                raise ValidationError("At least one field must be provided for update.")
+                raise ValidationError(detail="At least one field must be provided for update.")
             serializer = ArchimatchUserSimpleSerializer(user, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -161,4 +162,4 @@ class ArchimatchUserService:
         except ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException("Error updating user data", str(e))
+            raise APIException(detail=f"Error updating user data ${str(e)}")
