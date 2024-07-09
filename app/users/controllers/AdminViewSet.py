@@ -38,7 +38,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         elif self.action == "list":
             self.permission_classes = [IsAuthenticated]
         else:
-            self.permission_classes = []
+            self.permission_classes = [IsAuthenticated]
 
         return super().get_permissions()
 
