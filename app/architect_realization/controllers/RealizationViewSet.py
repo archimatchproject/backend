@@ -50,7 +50,6 @@ class RealizationViewSet(viewsets.ModelViewSet):
 
         # Instantiate the paginator
         paginator = self.pagination_class()
-        print(paginator)
 
         # Apply pagination to the queryset
         page = paginator.paginate_queryset(queryset, request)
@@ -60,7 +59,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
 
         # If pagination is not applied correctly, return a 400 Bad Request response
         serializer = RealizationSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=False,
