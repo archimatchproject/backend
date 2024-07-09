@@ -9,6 +9,7 @@ Classes:
 
 """
 
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
@@ -54,9 +55,6 @@ class ArchimatchUserService:
 
         Returns:
             Response: Response object with a message indicating the status of the password update.
-
-        Raises:
-            APIException: If there are errors in the password update process.
         """
         try:
             data = request.data
@@ -101,16 +99,13 @@ class ArchimatchUserService:
     @classmethod
     def archimatch_user_reset_password(cls, request):
         """
-        Resest the password for a user based on provided data.
+        Resets the password for a user based on provided data.
 
         Args:
             request (Request): Django request object containing user data.
 
         Returns:
             Response: Response object with a message indicating the status of the password update.
-
-        Raises:
-            APIException: If there are errors in the password update process.
         """
         try:
             data = request.data
@@ -163,3 +158,4 @@ class ArchimatchUserService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating user data ${str(e)}")
+
