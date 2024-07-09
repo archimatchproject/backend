@@ -537,4 +537,4 @@ class AnnouncementService:
         except Announcement.DoesNotExist:
             raise NotFound(detail="No announcement found with the given ID")
         except Exception as e:
-            raise APIException(f"Error adding not to announcement ${e}")
+            raise APIException(detail=f"Error adding not to announcement ${e}")

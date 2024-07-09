@@ -234,4 +234,4 @@ class ArchitectRequestService:
         except ArchitectRequest.DoesNotExist:
             raise NotFound(detail="No architect request found with the given ID")
         except Exception as e:
-            raise APIException(f"Error adding not to architect request ${e}")
+            raise APIException(detail=f"Error adding not to architect request ${e}")
