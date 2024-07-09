@@ -15,11 +15,10 @@ import environ
 
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.email_templates.signals import api_success_signal
+from app.users import PERMISSION_CODENAMES
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.AdminSerializer import AdminSerializer
@@ -124,55 +123,14 @@ class AdminService:
         )
 
     @classmethod
-    def get_admin_by_user_id(cls, user_id):
+    def get_all_permissions(cls):
         """
-        Retrieves an admin user based on the provided user ID.
-
-        Args:
-            user_id (int): ID of the user associated with the admin user.
+        Retrieves all permissions with their associated colors.
 
         Returns:
-            Admin: Admin object associated with the provided user ID.
+            Response: HTTP response containing all permissions and their colors.
         """
-        try:
-            admin = Admin.objects.get(user__id=user_id)
-            return admin
-        except Admin.DoesNotExist as e:
-            return APIException(detail=str(e))
-        except Exception as e:
-            raise APIException(detail=str(e))
-
-    @classmethod
-    def admin_login(cls, request):
-        """
-        Authenticates an admin user based on the provided email address.
-
-        Args:
-            request (Request): HTTP request object containing the email address.
-
-        Returns:
-            Response: HTTP response indicating the status of the admin login attempt.
-        """
-        try:
-            data = request.data
-
-            email = data.get("email")
-            if email is None:
-                raise serializers.ValidationError(detail="email is required")
-
-            if not Admin.objects.filter(user__email=email).exists():
-                raise NotFound(detail="Admin not found")
-
-            response_data = {
-                "message": "Admin Found",
-                "status_code": status.HTTP_200_OK,
-            }
-
-            return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
-            )
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        permissions_with_colors = [
+            {"right": right, "color": data["color"]} for right, data in PERMISSION_CODENAMES.items()
+        ]
+        return Response(permissions_with_colors, status=status.HTTP_200_OK)

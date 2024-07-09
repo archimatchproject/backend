@@ -10,6 +10,7 @@ Classes:
 
 from rest_framework import serializers
 
+from app.users import PERMISSION_CODENAMES
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
@@ -103,7 +104,7 @@ class AdminSerializer(serializers.ModelSerializer):
         Customize the representation of an Admin instance.
 
         This method customizes the serialized representation of an Admin instance,
-          including handling superuser rights.
+        including handling superuser rights.
 
         Args:
             instance (Admin): The admin instance to represent.
@@ -111,9 +112,26 @@ class AdminSerializer(serializers.ModelSerializer):
         Returns:
             dict: The customized serialized representation of the admin instance.
         """
+        CODENAME_TO_RIGHTS = {
+            codename: right
+            for right, data in PERMISSION_CODENAMES.items()
+            for codename in data["permissions"]
+        }
         data = super().to_representation(instance)
         if instance.super_user:
-            data["rights"] = ["__All__"]
+            data["rights"] = [
+                {"right": right, "color": PERMISSION_CODENAMES[right]["color"]}
+                for right in PERMISSION_CODENAMES
+            ]
         else:
-            data["rights"] = list(instance.permissions.values_list("codename", flat=True))
+            permissions = instance.permissions.values_list("codename", flat=True)
+            rights_set = set(
+                CODENAME_TO_RIGHTS[codename]
+                for codename in permissions
+                if codename in CODENAME_TO_RIGHTS
+            )
+            data["rights"] = [
+                {"right": right, "color": PERMISSION_CODENAMES[right]["color"]}
+                for right in rights_set
+            ]
         return data
