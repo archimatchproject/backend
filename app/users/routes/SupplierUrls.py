@@ -59,4 +59,19 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"get": "supplier_get_profile"}),
         name="profile",
     ),
+    path(
+        "supplier/update-profile-image/",
+        SupplierViewSet.as_view({"put": "supplier_update_profile_image"}),
+        name="update-profile-image",
+    ),
+    path(
+        "supplier/update-cover-image/",
+        SupplierViewSet.as_view({"put": "supplier_update_cover_image"}),
+        name="update-cover-image",
+    ),
+    path(
+        "supplier/update-visibility/",
+        SupplierViewSet.as_view({"put": "supplier_update_visibility"}),
+        name="update-visibility",
+    ),
 ]
