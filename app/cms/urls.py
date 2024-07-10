@@ -14,11 +14,9 @@ from django.urls import path
 from rest_framework import routers
 
 from app.cms.routes.BlogUrls import blog_urlpatterns
+from app.cms.routes.FAQThematicUrls import faq_thematic_urlpatterns
 
 
 router = routers.DefaultRouter()
 
-urlpatterns = [
-    path("", include(router.urls)),
-    *blog_urlpatterns,
-]
+urlpatterns = [path("", include(router.urls)), *blog_urlpatterns, *faq_thematic_urlpatterns]
