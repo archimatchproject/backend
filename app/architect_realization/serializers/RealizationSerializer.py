@@ -127,7 +127,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
             "project_name",
             "architect",
             "project_category",
-            "work_type",
+            "needs",
             "address",
             "city",
             "work_surface",
