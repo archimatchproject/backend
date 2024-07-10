@@ -96,6 +96,7 @@ class AdminService:
             Response: HTTP response containing serialized admin data or errors.
         """
 
+        # Extract and handle user data separately
         user_data = data.pop("user", {})
         email = user_data.pop("email", None)
         phone_number = user_data.pop("phone_number", None)
@@ -104,13 +105,18 @@ class AdminService:
         admin_serializer.is_valid(raise_exception=True)
         validated_data = admin_serializer.validated_data
 
-        # Update user data
+        # Update user data if provided
         if email is not None:
-            user_data["email"] = email
+            if email != instance.user.email:  # Check if email is changing
+                if ArchimatchUser.objects.filter(email=email).exclude(id=instance.user.id).exists():
+                    raise serializers.ValidationError(
+                        "Email already exists."
+                    )  # Handle duplicate email
+                instance.user.email = email
         if phone_number is not None:
             user_data["phone_number"] = phone_number
 
-        ArchimatchUser.objects.filter(id=instance.user.id).update(**user_data)
+        instance.user.save()
 
         rights = validated_data.pop("rights", [])
 
