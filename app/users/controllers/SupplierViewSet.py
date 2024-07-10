@@ -278,12 +278,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
         """
         return SupplierService.supplier_update_cover_image(request)
 
-      @action(
+    @action(
           detail=False,
           methods=["PUT"],
           url_path="update-visibility",
       )
-      def supplier_update_visibility(self, request):
+    def supplier_update_visibility(self, request):
           """
           Allows a supplier to update their visibility using a custom action.
 
