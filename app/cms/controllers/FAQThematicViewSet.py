@@ -6,7 +6,9 @@ view-level logic for the FAQThematic model, including creation and update operat
 """
 
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
+from app.cms.controllers.ManageFAQPermission import ManageFAQPermission
 from app.cms.models.FAQThematic import FAQThematic
 from app.cms.serializers.FAQThematicSerializer import FAQThematicSerializer
 from app.cms.services.FAQThematicService import FAQThematicService
@@ -23,6 +25,24 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
 
     queryset = FAQThematic.objects.all()
     serializer_class = FAQThematicSerializer
+
+    def get_permissions(self):
+        """
+        Get the permissions that the view requires.
+
+        For `list` and `retrieve` actions (`GET` requests), no specific permissions are required.
+        For `create`, `update`, `partial_update`, and `destroy` actions
+        (`POST`, `PUT`, `PATCH`, `DELETE` requests),
+        the view requires `IsAuthenticated` and `ManageBlogPermission` permissions.
+
+        Returns:
+            list: List of permission instances.
+        """
+        if self.action in ["list", "retrieve"]:
+            return []
+        elif self.action in ["create", "update", "partial_update", "destroy"]:
+            return [IsAuthenticated(), ManageFAQPermission()]
+        return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
         """

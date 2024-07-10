@@ -241,7 +241,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         return SupplierService.supplier_send_reset_password_link(request)
-      
+
     @action(
         detail=False,
         methods=["PUT"],
@@ -279,19 +279,19 @@ class SupplierViewSet(viewsets.ModelViewSet):
         return SupplierService.supplier_update_cover_image(request)
 
     @action(
-          detail=False,
-          methods=["PUT"],
-          url_path="update-visibility",
-      )
+        detail=False,
+        methods=["PUT"],
+        url_path="update-visibility",
+    )
     def supplier_update_visibility(self, request):
-          """
-          Allows a supplier to update their visibility using a custom action.
+        """
+        Allows a supplier to update their visibility using a custom action.
 
-          Args:
-              self (SupplierViewSet): Instance of the SupplierViewSet class.
-              request (Request): HTTP request object containing bio settings update data.
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
 
-          Returns:
-              Response: Response indicating success or failure of the bio settings update attempt.
-          """
-          return SupplierService.supplier_update_visibility(request)
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_visibility(request)

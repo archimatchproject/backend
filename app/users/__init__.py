@@ -33,6 +33,28 @@ PERMISSION_CODENAMES = {
         ],
         "color": "#11ABEC",
     },
+    "manage_faq": {
+        "permissions": [
+            "add_faqthematic",
+            "change_faqthematic",
+            "delete_faqthematic",
+            "view_faqthematic",
+        ],
+        "color": "#22ABEC",
+    },
+    "manage_guide": {
+        "permissions": [
+            "add_guidethematic",
+            "change_guidethematic",
+            "delete_guidethematic",
+            "view_guidethematic",
+            "add_guidearticle",
+            "change_guidearticle",
+            "delete_guidearticle",
+            "view_guidearticle",
+        ],
+        "color": "#33ABEC",
+    },
 }
 CODENAME_TO_RIGHTS = {
     codename: right
