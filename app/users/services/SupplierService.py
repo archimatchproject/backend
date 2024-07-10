@@ -408,7 +408,6 @@ class SupplierService:
             Response: Response object containing supplier object.
         """
         user_id = request.user.id
-        print(user_id)
         try:
             if not Supplier.objects.filter(user__id=user_id).exists():
                 raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
@@ -437,17 +436,17 @@ class SupplierService:
             email = serializer.validated_data.get("email")
 
             supplier = Supplier.objects.get(user__email=email)
-            email_images = settings.COMMON_IMAGES + settings.ARCHITECT_PASSWORD_IMAGES
+            email_images = settings.ARCHITECT_PASSWORD_IMAGES
             context = {
                 "first_name": supplier.user.first_name,
                 "last_name": supplier.user.last_name,
-                "email": data.get("email"),
+                "email": email,
                 "reset_link": "www.google.com",
             }
             signal_data = {
                 "template_name": "architect_reset_password.html",
                 "context": context,
-                "to_email": data.get("email"),
+                "to_email": email,
                 "subject": "Supplier Reset Password",
                 "images": email_images,
             }

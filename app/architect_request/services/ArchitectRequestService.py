@@ -80,7 +80,7 @@ class ArchitectRequestService:
 
                 architect_request.clean()
                 architect_request.save()
-                email_images = settings.COMMON_IMAGES + settings.ARCHITECT_REQUEST_IMAGES
+                email_images = settings.ARCHITECT_REQUEST_IMAGES
 
                 signal_data = {
                     "template_name": "architect_request.html",
@@ -128,7 +128,6 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
 
         validated_data = serializer.validated_data
-        print(architect_request.email)
         user_data = {
             "email": architect_request.email,
             "username": architect_request.email,
@@ -161,7 +160,7 @@ class ArchitectRequestService:
                 architect_request.status = "Accepted"
                 architect_request.save()
 
-                email_images = settings.COMMON_IMAGES + settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
+                email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
 
                 signal_data = {
                     "template_name": "accept_architect_request.html",
@@ -200,7 +199,7 @@ class ArchitectRequestService:
             architect_request = ArchitectRequest.objects.get(pk=pk)
             architect_request.status = "Refused"
             architect_request.save()
-            email_images = settings.COMMON_IMAGES + settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
             signal_data = {
                 "template_name": "refuse_architect_request.html",
                 "context": {

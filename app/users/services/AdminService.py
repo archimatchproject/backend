@@ -65,7 +65,7 @@ class AdminService:
                 admin.set_permissions(rights)
             except serializers.ValidationError as e:
                 raise serializers.ValidationError(e.detail)
-            email_images = settings.COMMON_IMAGES + settings.ADD_ADMIN_IMAGES
+            email_images = settings.ADD_ADMIN_IMAGES
             signal_data = {
                 "template_name": "add_sub_admin.html",
                 "context": {

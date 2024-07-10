@@ -184,17 +184,17 @@ class ClientService:
             email = serializer.validated_data.get("email")
 
             client = Client.objects.get(user__email=email)
-            email_images = settings.COMMON_IMAGES + settings.CLIENT_PASSWORD_IMAGES
+            email_images = settings.CLIENT_PASSWORD_IMAGES
             context = {
                 "first_name": client.user.first_name,
                 "last_name": client.user.last_name,
-                "email": data.get("email"),
+                "email": email,
                 "reset_link": "www.google.com",
             }
             signal_data = {
                 "template_name": "client_reset_password.html",
                 "context": context,
-                "to_email": data.get("email"),
+                "to_email": email,
                 "subject": "client Reset Password",
                 "images": email_images,
             }
