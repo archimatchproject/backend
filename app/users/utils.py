@@ -20,7 +20,7 @@ def generate_password_reset_token(user_id, expires_in=60):
     Returns:
         str: The generated password reset token.
     """
-    serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+    serializer = URLSafeTimedSerializer(settings.SECRET_KEY, expires_in)
     return serializer.dumps({"user_id": user_id}, salt="azaerzaratzaezae")
 
 
