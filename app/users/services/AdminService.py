@@ -65,12 +65,17 @@ class AdminService:
                 admin.set_permissions(rights)
             except serializers.ValidationError as e:
                 raise serializers.ValidationError(e.detail)
+            email_images = settings.ADD_ADMIN_IMAGES
             signal_data = {
-                "template_name": "architect_request.html",
-                "context": {"reset_link": "google.com"},
-                "to_email": "ghazichaftar.pfe@gmail.com",
-                "subject": "Architect Account Creation",
-                "images": settings.COMMON_IMAGES,
+                "template_name": "add_sub_admin.html",
+                "context": {
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": user.email,
+                },
+                "to_email": user.email,
+                "subject": "Refusing Architect Request",
+                "images": email_images,
             }
             api_success_signal.send(sender=cls, data=signal_data)
             return Response(

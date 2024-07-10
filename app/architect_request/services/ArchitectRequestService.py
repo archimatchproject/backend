@@ -25,10 +25,12 @@ from app.architect_request.serializers.ArchitectRequestSerializer import Archite
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.Note import Note
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.email_templates.signals import api_success_signal
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+from project_core.django import base as settings
 
 
 class ArchitectRequestService:
@@ -78,6 +80,22 @@ class ArchitectRequestService:
 
                 architect_request.clean()
                 architect_request.save()
+                email_images = settings.ARCHITECT_REQUEST_IMAGES
+
+                signal_data = {
+                    "template_name": "architect_request.html",
+                    "context": {
+                        "first_name": data.get("first_name"),
+                        "last_name": data.get("last_name"),
+                        "date": data.get("date"),
+                        "time_slot": data.get("time_slot"),
+                        "email": data.get("email"),
+                    },
+                    "to_email": data.get("email"),
+                    "subject": "Architect Account Creation",
+                    "images": email_images,
+                }
+                api_success_signal.send(sender=cls, data=signal_data)
 
                 return Response(
                     ArchitectRequestSerializer(architect_request).data,
@@ -85,8 +103,8 @@ class ArchitectRequestService:
                 )
         except serializers.ValidationError as e:
             raise e
-        except Exception:
-            raise APIException(detail="Error creating architect request")
+        except Exception as e:
+            raise APIException(detail=str(e))
 
     @classmethod
     def admin_accept_architect_request(cls, architect_request_id, data):
@@ -110,7 +128,6 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
 
         validated_data = serializer.validated_data
-
         user_data = {
             "email": architect_request.email,
             "username": architect_request.email,
@@ -143,6 +160,21 @@ class ArchitectRequestService:
                 architect_request.status = "Accepted"
                 architect_request.save()
 
+                email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
+
+                signal_data = {
+                    "template_name": "accept_architect_request.html",
+                    "context": {
+                        "first_name": user_data.get("first_name"),
+                        "last_name": user_data.get("last_name"),
+                        "email": user_data.get("email"),
+                    },
+                    "to_email": user_data.get("email"),
+                    "subject": "Accepting Architect Request",
+                    "images": email_images,
+                }
+                api_success_signal.send(sender=cls, data=signal_data)
+
                 return Response(
                     ArchitectSerializer(architect).data,
                     status=status.HTTP_201_CREATED,
@@ -167,6 +199,19 @@ class ArchitectRequestService:
             architect_request = ArchitectRequest.objects.get(pk=pk)
             architect_request.status = "Refused"
             architect_request.save()
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            signal_data = {
+                "template_name": "refuse_architect_request.html",
+                "context": {
+                    "first_name": architect_request.first_name,
+                    "last_name": architect_request.last_name,
+                    "email": architect_request.email,
+                },
+                "to_email": architect_request.email,
+                "subject": "Refusing Architect Request",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
 
             return Response(
                 ArchitectRequestSerializer(architect_request).data,

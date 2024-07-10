@@ -85,3 +85,20 @@ class ClientViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the verification.
         """
         return ClientService.client_verify_verification_code(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="send-reset-password-link",
+        url_name="send-reset-password-link",
+    )
+    def client_send_reset_password_link(self, request):
+        """
+        sends client reset password email.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+        """
+        return ClientService.client_send_reset_password_link(request)

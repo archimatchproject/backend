@@ -20,8 +20,11 @@ from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
 from app.core.validation.exceptions import InvalidPhoneNumberException
 from app.core.validation.exceptions import SMSException
 from app.core.validation.validate_data import is_valid_phone_number
+from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from project_core.django import base as settings
 
 
 class ClientService:
@@ -166,3 +169,43 @@ class ClientService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def client_send_reset_password_link(cls, request):
+        """
+        send reset password link for clients.
+
+
+        """
+        try:
+            data = request.data
+            serializer = UserAuthSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data.get("email")
+
+            client = Client.objects.get(user__email=email)
+            email_images = settings.CLIENT_PASSWORD_IMAGES
+            context = {
+                "first_name": client.user.first_name,
+                "last_name": client.user.last_name,
+                "email": email,
+                "reset_link": "www.google.com",
+            }
+            signal_data = {
+                "template_name": "client_reset_password.html",
+                "context": context,
+                "to_email": email,
+                "subject": "client Reset Password",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            return Response(
+                {"message": "email sent successfully"},
+                status=status.HTTP_200_OK,
+            )
+        except Client.DoesNotExist:
+            raise NotFound(detail="Client not found")
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )

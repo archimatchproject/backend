@@ -173,41 +173,29 @@
             alt=""
             class="align-items-center logo"
           />
-          <!-- <div class="social-media align-right">
-            <img src="cid:twitter.png" alt="" class="social-icon" />
-            <img src="cid:facebook.png" alt="" class="social-icon" />
-            <img src="cid:instagram.png" alt="" class="social-icon" />
-          </div> -->
         </div>
       </div>
       <div class="sub-container">
-        <img src="cid:architect_request_header.png" alt="" class="header-img" />
+        <img
+          src="cid:accept_architect_request_header.png"
+          alt=""
+          class="header-img"
+        />
 
         <div class="content align-center align-items-center">
           <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
 
-          <p>Nous sommes heureux de vous accueillir sur Archimatch !</p>
           <p>
-            Nous organiserons un entretien d'acceptation pour mieux vous
-            connaître, discuter de votre profil et vous présenter notre
-            plateforme.
+            Votre entretien s'est bien déroulé ! Nous sommes enchantés de vous
+            accueillir en tant que membre d’Archimatch !
           </p>
-
-          <div class="date-container">
-            <div
-              style="
-                display: inline-block;
-                vertical-align: top;
-                padding-right: 20% !important;
-              "
+          <p>
+            Pour accéder à notre plateforme, veuillez créer votre mot de passe
+          </p>
+          <div class="btn-container">
+            <a href="{{ reset_link }}" class="btn btn-architect btn-login"
+              >Créer votre mot de passe</a
             >
-              <p>Date</p>
-              <p>{{ date }}</p>
-            </div>
-            <div style="display: inline-block; vertical-align: top">
-              <p>Temps</p>
-              <p>{{ time_slot }}</p>
-            </div>
           </div>
           <p>
             Pour toute question préalable à l'entretien, contactez-nous à

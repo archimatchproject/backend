@@ -14,6 +14,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.email_templates.signals import api_success_signal
 from app.users import APPEARANCES
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Supplier import Supplier
@@ -25,6 +26,7 @@ from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from project_core.django import base as settings
 
 
 class SupplierService:
@@ -511,7 +513,6 @@ class SupplierService:
             Response: Response object containing supplier object.
         """
         user_id = request.user.id
-        print(user_id)
         try:
             if not Supplier.objects.filter(user__id=user_id).exists():
                 raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
@@ -525,3 +526,43 @@ class SupplierService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def supplier_send_reset_password_link(cls, request):
+        """
+        send reset password link for suppliers.
+
+
+        """
+        try:
+            data = request.data
+            serializer = UserAuthSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data.get("email")
+
+            supplier = Supplier.objects.get(user__email=email)
+            email_images = settings.ARCHITECT_PASSWORD_IMAGES
+            context = {
+                "first_name": supplier.user.first_name,
+                "last_name": supplier.user.last_name,
+                "email": email,
+                "reset_link": "www.google.com",
+            }
+            signal_data = {
+                "template_name": "architect_reset_password.html",
+                "context": context,
+                "to_email": email,
+                "subject": "Supplier Reset Password",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            return Response(
+                {"message": "email sent successfully"},
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found")
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )
