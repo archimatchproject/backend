@@ -356,6 +356,111 @@ class SupplierService:
             raise APIException(detail=str(e))
 
     @classmethod
+    def supplier_update_profile_image(cls, request):
+        """
+        Updates a supplier's Profie Image such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing supplier's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during supplier settings update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            profile_image = data.get("profile_image", None)
+            if profile_image is None:
+                raise serializers.ValidationError(detail="profile image is required")
+
+            supplier = Supplier.objects.get(user__id=user_id)
+            supplier.profile_image = profile_image
+            supplier.save()
+
+            response_data = {"message": "Supplier profile image successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def supplier_update_cover_image(cls, request):
+        """
+        Updates a supplier's Cover Image such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing supplier's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during supplier settings update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            cover_image = data.get("cover_image", None)
+            if cover_image is None:
+                raise serializers.ValidationError(detail="cover image is required")
+
+            supplier = Supplier.objects.get(user__id=user_id)
+            supplier.cover_image = cover_image
+            supplier.save()
+
+            response_data = {"message": "Supplier cover image successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def supplier_update_visibility(cls, request):
+        """
+        Updates a supplier's Cover Image such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing supplier's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during supplier settings update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            is_public = data.get("is_public", None)
+            if is_public is None:
+                raise serializers.ValidationError(detail="is_public is required")
+
+            supplier = Supplier.objects.get(user__id=user_id)
+            supplier.is_public = is_public
+            supplier.save()
+
+            response_data = {"message": "Supplier Visibility successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
     def get_speciality_types(cls):
         """
         Retrieves all speciality types.

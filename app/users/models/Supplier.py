@@ -21,26 +21,43 @@ class Supplier(BaseModel):
     Model representing a supplier in the Archimatch application.
 
     Attributes:
-        address (CharField): Address of the supplier, maximum length of 255 characters.
-        speciality (CharField): Specialization or field of expertise of the supplier,
-        maximum length of 255 characters.
-        bio (TextField): Biography or description of the supplier, maximum length of
-        1000 characters.
+        profile_image (ImageField): Profile image of the supplier, stored in
+        'SupplierProfileImages/' directory.
+        cover_image (ImageField): Cover image of the supplier, stored in
+        'SupplierCoverImages/' directory.
+        is_public (BooleanField): Indicates if the supplier's profile is public.
+        company_address (CharField): Address of the supplier's company, maximum length
+        of 255 characters.
+        company_speciality (CharField): Specialization or field of expertise of the supplier's
+        company, maximum length of 255 characters.
+        bio (TextField): Biography or description of the supplier, maximum length of 500 characters.
         company_name (CharField): Name of the company associated with the supplier,
         maximum length of 255 characters.
         presentation_video (FileField): Video presentation file uploaded by the supplier,
         stored in 'SupplierVideos/' directory.
-        type (TextField): Type or category of the supplier, maximum length of
-        1000 characters.
-        social_links (OneToOneField): Associated SocialMedia instance for social
-        media links, optional.
-        user (OneToOneField): Associated ArchimatchUser instance for this
-        supplier.
+        speciality_type (ManyToManyField): Many-to-many relationship with SupplierSpeciality
+        for the supplier's specialities.
+        appearance (CharField): Appearance attribute of the supplier, choices defined by
+        APPEARANCES, maximum length of 10 characters.
+        social_links (OneToOneField): Associated SupplierSocialMedia instance for social media
+        links, optional.
+        user (OneToOneField): Associated ArchimatchUser instance for this supplier.
     """
 
+    profile_image = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="SupplierProfileImages/",
+    )
+    cover_image = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to="SupplierCoverImages/",
+    )
+    is_public = models.BooleanField(default=False)
     company_address = models.CharField(max_length=255, default="")
     company_speciality = models.CharField(max_length=255, default="")
-    bio = models.TextField(max_length=1000, default="")
+    bio = models.TextField(max_length=500, default="")
     company_name = models.CharField(max_length=255, default="")
     presentation_video = models.FileField(
         upload_to="SupplierVideos/",

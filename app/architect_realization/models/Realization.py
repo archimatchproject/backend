@@ -10,10 +10,10 @@ from django.db import models
 from app.announcement import CITIES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
+from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
-from app.core.models.WorkType import WorkType
 from app.users.models.Architect import Architect
 
 
@@ -40,7 +40,7 @@ class Realization(BaseModel):
 
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
-    work_type = models.ForeignKey(WorkType, on_delete=models.CASCADE)
+    needs = models.ManyToManyField(Need, related_name="needs_architect_realization")
     address = models.CharField(max_length=255)
     city = models.CharField(
         max_length=50,

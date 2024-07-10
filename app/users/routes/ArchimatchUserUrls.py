@@ -24,4 +24,9 @@ archimatch_user_urlpatterns = [
         ArchimatchUserViewSet.as_view({"put": "archimatch_user_update_data"}),
         name="update-data",
     ),
+    path(
+        "archimatch-user/get-user-data",
+        ArchimatchUserViewSet.as_view({"get": "archimatch_user_get_user_data"}),
+        name="get-user-data",
+    ),
 ]
