@@ -221,3 +221,57 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         return SupplierService.supplier_get_profile(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-profile-image",
+    )
+    def supplier_update_profile_image(self, request):
+        """
+        Allows a supplier to update their profile image using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_profile_image(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-cover-image",
+    )
+    def supplier_update_cover_image(self, request):
+        """
+        Allows a supplier to update their cover image using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_cover_image(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-visibility",
+    )
+    def supplier_update_visibility(self, request):
+        """
+        Allows a supplier to update their visibility using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_visibility(request)
