@@ -85,6 +85,8 @@ class FAQThematicService:
                 # Handle questions update or create new questions
                 questions_data = data.get("questions", [])
 
+                updated_question_ids = []
+
                 for question_data in questions_data:
                     question_id = question_data.get("id", None)
 
@@ -94,9 +96,15 @@ class FAQThematicService:
                         question.question = question_data.get("question", question.question)
                         question.response = question_data.get("response", question.response)
                         question.save()
+                        updated_question_ids.append(question.id)
                     else:
                         # Create new question
                         FAQQuestion.objects.create(faq_thematic=instance, **question_data)
+
+                # Delete questions not in updated_question_ids
+                FAQQuestion.objects.filter(faq_thematic=instance).exclude(
+                    id__in=updated_question_ids
+                ).delete()
 
                 return Response(FAQThematicSerializer(instance).data, status=status.HTTP_200_OK)
 

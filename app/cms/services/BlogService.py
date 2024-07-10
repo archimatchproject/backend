@@ -91,6 +91,8 @@ class BlogService:
                 # Handle sections update or create new sections
                 sections_data = data.get("sections", [])
 
+                updated_section_ids = []
+
                 for section_data in sections_data:
                     section_id = section_data.get("id", None)
 
@@ -103,9 +105,13 @@ class BlogService:
                         section.content = section_data.get("content", section.content)
                         section.image = section_data.get("image", section.image)
                         section.save()
+                        updated_section_ids.append(section.id)
                     else:
                         # Create new section
                         Section.objects.create(blog=instance, **section_data)
+
+                # Delete sections not in updated_section_ids
+                Section.objects.filter(blog=instance).exclude(id__in=updated_section_ids).delete()
 
                 return Response(BlogSerializer(instance).data, status=status.HTTP_200_OK)
 
