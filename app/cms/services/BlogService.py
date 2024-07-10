@@ -15,8 +15,8 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.cms.models.Block import Block
 from app.cms.models.Blog import Blog
+from app.cms.models.Section import Section
 from app.cms.serializers.BlogSerializer import BlogSerializer
 
 
@@ -52,10 +52,10 @@ class BlogService:
                     title=validated_data.get("title"), cover_photo=validated_data.get("cover_photo")
                 )
 
-                # Create related blocks if provided
-                blocks_data = validated_data.get("blocks", [])
-                for block_data in blocks_data:
-                    Block.objects.create(blog=blog, **block_data)
+                # Create related sections if provided
+                sections_data = validated_data.get("sections", [])
+                for section_data in sections_data:
+                    Section.objects.create(blog=blog, **section_data)
 
                 return Response(BlogSerializer(blog).data, status=status.HTTP_201_CREATED)
 
@@ -65,35 +65,51 @@ class BlogService:
             raise APIException(detail=f"Error creating blog {str(e)}")
 
     @classmethod
-    def update_blog(cls, blog_instance, data, partial=False):
+    def update_blog(cls, instance, data, partial=False):
         """
-        Handles updating an existing Blog.
+        Handle the update of an existing Blog instance along with related Section instances.
 
         Args:
-            blog_instance (Blog): The existing Blog instance to update.
-            data (dict): The validated data for updating the Blog instance.
-            partial (bool): If True, allow partial updating of the Blog instance.
+            instance (Blog): The existing Blog instance.
+            data (dict): The validated data for updating a Blog.
+            partial (bool): Whether to perform partial update (default: False).
 
         Returns:
-            Response: The response object containing the result of the operation.
+            Response: The response object containing the updated instance data.
         """
-        serializer = BlogSerializer(blog_instance, data=data, partial=partial)
+        serializer = BlogSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         try:
             with transaction.atomic():
-                # Update Blog instance
-                blog = serializer.save()
+                instance.title = serializer.validated_data.get("title", instance.title)
+                instance.cover_photo = serializer.validated_data.get(
+                    "cover_photo", instance.cover_photo
+                )
+                instance.save()
 
-                # Clear existing blocks and create new ones if provided
-                blog.blog_blocks.all().delete()
-                blocks_data = data.get("blocks", [])
-                for block_data in blocks_data:
-                    Block.objects.create(blog=blog, **block_data)
+                # Handle sections update or create new sections
+                sections_data = data.get("sections", [])
 
-                return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+                for section_data in sections_data:
+                    section_id = section_data.get("id", None)
+
+                    if section_id:
+                        # Update existing section
+                        section = Section.objects.get(id=section_id, blog=instance)
+                        section.section_type = section_data.get(
+                            "section_type", section.section_type
+                        )
+                        section.content = section_data.get("content", section.content)
+                        section.image = section_data.get("image", section.image)
+                        section.save()
+                    else:
+                        # Create new section
+                        Section.objects.create(blog=instance, **section_data)
+
+                return Response(BlogSerializer(instance).data, status=status.HTTP_200_OK)
 
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException(detail=f"Error updating blog {str(e)}")
+            raise APIException(detail=f"Error updating blog: {e}")

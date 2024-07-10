@@ -76,20 +76,30 @@ class FAQThematicService:
         """
         serializer = FAQThematicSerializer(instance, data=data)
         serializer.is_valid(raise_exception=True)
+
         try:
             with transaction.atomic():
-                instance.title = serializer.validated_data["title"]
+                instance.title = serializer.validated_data.get("title", instance.title)
                 instance.save()
 
-                # Clear existing questions
-                instance.faq_thematic_questions.all().delete()
-
-                # Create new questions
+                # Handle questions update or create new questions
                 questions_data = data.get("questions", [])
+
                 for question_data in questions_data:
-                    FAQQuestion.objects.create(faq_thematic=instance, **question_data)
+                    question_id = question_data.get("id", None)
+
+                    if question_id:
+                        # Update existing question
+                        question = FAQQuestion.objects.get(id=question_id, faq_thematic=instance)
+                        question.question = question_data.get("question", question.question)
+                        question.response = question_data.get("response", question.response)
+                        question.save()
+                    else:
+                        # Create new question
+                        FAQQuestion.objects.create(faq_thematic=instance, **question_data)
 
                 return Response(FAQThematicSerializer(instance).data, status=status.HTTP_200_OK)
+
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
