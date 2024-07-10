@@ -228,7 +228,6 @@ class ClientService:
             user_id, error = validate_password_reset_token(token)
             if error:
                 raise APIException(detail=error)
-            print("aaaaaaaaaaaaaa", user_id)
             client = Client.objects.get(user__id=user_id)
             serializer = ClientSerializer(client)
             return Response(

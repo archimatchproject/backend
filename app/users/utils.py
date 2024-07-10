@@ -9,7 +9,7 @@ from itsdangerous import URLSafeTimedSerializer
 from project_core.django import base as settings
 
 
-def generate_password_reset_token(user_id, expires_in=60):
+def generate_password_reset_token(user_id, expires_in=settings.TOKEN_VALIDITY):
     """
     Generate a password reset token for a user with a specified expiration time.
 
@@ -21,10 +21,10 @@ def generate_password_reset_token(user_id, expires_in=60):
         str: The generated password reset token.
     """
     serializer = URLSafeTimedSerializer(settings.SECRET_KEY, expires_in)
-    return serializer.dumps({"user_id": user_id}, salt="azaerzaratzaezae")
+    return serializer.dumps({"user_id": user_id}, salt=settings.TOKEN_SALT)
 
 
-def validate_password_reset_token(token, max_age=60):
+def validate_password_reset_token(token, max_age=settings.TOKEN_VALIDITY):
     """
     Validate a password reset token to ensure it is valid and has not expired.
 
@@ -37,7 +37,7 @@ def validate_password_reset_token(token, max_age=60):
     """
     serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
     try:
-        data = serializer.loads(token, salt="azaerzaratzaezae", max_age=max_age)
+        data = serializer.loads(token, salt=settings.TOKEN_SALT, max_age=max_age)
     except SignatureExpired:
         return None, "Token has expired"
     except BadSignature:
