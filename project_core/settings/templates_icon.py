@@ -22,6 +22,19 @@ ARCHITECT_PASSWORD_IMAGES = (
     (GLOBAL_PATH, "architect_logo.png"),
     (GLOBAL_PATH, "architect_password_header.png"),
 )
+ACCEPT_ARCHITECT_REQUEST_IMAGES = (
+    (GLOBAL_PATH, "architect_logo.png"),
+    (GLOBAL_PATH, "accept_architect_request_header.png"),
+)
+REFUSE_ARCHITECT_REQUEST_IMAGES = (
+    (GLOBAL_PATH, "architect_logo.png"),
+    (GLOBAL_PATH, "refuse_architect_request_header.png"),
+)
+
+ADD_ADMIN_IMAGES = (
+    (GLOBAL_PATH, "architect_logo.png"),
+    (GLOBAL_PATH, "refuse_architect_request_header.png"),
+)
 CLIENT_PASSWORD_IMAGES = (
     (GLOBAL_PATH, "client_logo.png"),
     (GLOBAL_PATH, "client_password_header.png"),
