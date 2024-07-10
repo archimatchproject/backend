@@ -47,11 +47,11 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
 
         model = Realization
         fields = [
+            "project_name",
             "project_category",
             "needs",
             "address",
             "city",
-            "terrain_surface",
             "work_surface",
             "description",
             "architectural_style",
@@ -88,11 +88,11 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
 
         model = Realization
         fields = [
+            "project_name",
             "project_category",
             "needs",
             "address",
             "city",
-            "terrain_surface",
             "work_surface",
             "description",
             "architectural_style",
@@ -124,12 +124,12 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
         model = Realization
         fields = [
             "id",
+            "project_name",
             "architect",
             "project_category",
             "work_type",
             "address",
             "city",
-            "terrain_surface",
             "work_surface",
             "description",
             "architectural_style",
@@ -156,12 +156,12 @@ class RealizationSerializer(serializers.ModelSerializer):
         model = Realization
         fields = [
             "id",
+            "project_name",
             "architect",
             "project_category",
             "needs",
             "address",
             "city",
-            "terrain_surface",
             "work_surface",
             "description",
             "architectural_style",

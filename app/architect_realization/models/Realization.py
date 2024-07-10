@@ -8,7 +8,6 @@ for a construction or renovation project in the application.
 from django.db import models
 
 from app.announcement import CITIES
-from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
 from app.announcement.models.Need import Need
 from app.core.models import BaseModel
@@ -38,6 +37,7 @@ class Realization(BaseModel):
         selected from predefined choices.
     """
 
+    project_name = models.CharField(max_length=255)
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
     needs = models.ManyToManyField(Need, related_name="needs_architect_realization")
@@ -46,11 +46,6 @@ class Realization(BaseModel):
         max_length=50,
         choices=CITIES,
         default=CITIES[0],
-    )
-    terrain_surface = models.CharField(
-        max_length=50,
-        choices=TERRAIN_SURFACES,
-        default=TERRAIN_SURFACES[0],
     )
     work_surface = models.CharField(
         max_length=50,
