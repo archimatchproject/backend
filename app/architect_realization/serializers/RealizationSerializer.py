@@ -8,14 +8,14 @@ of Announcement instances for API views.
 
 from rest_framework import serializers
 
+from app.announcement.models.Need import Need
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
-from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.architect_realization.models.Realization import Realization
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
-from app.core.models.WorkType import WorkType
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 
 
@@ -32,8 +32,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all()
     )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
-
+    needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     realization_images = serializers.ListField(
         child=serializers.ImageField(required=False),
         required=False,
@@ -49,7 +48,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
         model = Realization
         fields = [
             "project_category",
-            "work_type",
+            "needs",
             "address",
             "city",
             "terrain_surface",
@@ -73,7 +72,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all()
     )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
+    needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
 
     realization_images = serializers.ListField(
         child=serializers.ImageField(required=False),
@@ -90,7 +89,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
         model = Realization
         fields = [
             "project_category",
-            "work_type",
+            "needs",
             "address",
             "city",
             "terrain_surface",
@@ -112,7 +111,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
     architect = ArchitectSerializer()
     architectural_style = ArchitecturalStyleSerializer()
     project_category = ProjectCategorySerializer()
-    work_type = WorkTypeSerializer()
+    needs = NeedSerializer(many=True)
     realization_images = ProjectImageSerializer(many=True, required=False)
 
     class Meta:
@@ -159,7 +158,7 @@ class RealizationSerializer(serializers.ModelSerializer):
             "id",
             "architect",
             "project_category",
-            "work_type",
+            "needs",
             "address",
             "city",
             "terrain_surface",

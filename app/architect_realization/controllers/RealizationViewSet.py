@@ -72,3 +72,41 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Creating new realization
         """
         return RealizationService.realization_create(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="needs",
+        url_name="needs",
+    )
+    def get_needs(self, request):
+        """
+        Retrieves all  work types.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of work types.
+        """
+        return RealizationService.get_architect_speciality_needs(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="architectural-styles",
+        url_name="architectural-styles",
+    )
+    def get_architectural_styles(self, request):
+        """
+        Retrieves all architectural styles.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of architectural styles.
+        """
+        return RealizationService.get_architectural_styles()

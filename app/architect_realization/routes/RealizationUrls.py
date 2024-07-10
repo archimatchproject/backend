@@ -19,4 +19,14 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"get": "get"}),
         name="get-all-realizations",
     ),
+    path(
+        "architectural-styles/",
+        RealizationViewSet.as_view({"get": "get_architectural_styles"}),
+        name="architectural-styles",
+    ),
+    path(
+        "needs/",
+        RealizationViewSet.as_view({"get": "get_needs"}),
+        name="needs",
+    ),
 ]
