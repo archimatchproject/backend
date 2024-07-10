@@ -29,4 +29,9 @@ client_urlpatterns = [
         ClientViewSet.as_view({"post": "client_send_reset_password_link"}),
         name="send-reset-password-link",
     ),
+    path(
+        "client/validate-password-token/",
+        ClientViewSet.as_view({"post": "client_validate_password_token"}),
+        name="validate-password-token",
+    ),
 ]

@@ -102,3 +102,20 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         return ClientService.client_send_reset_password_link(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="validate-password-token",
+        url_name="validate-password-token",
+    )
+    def client_validate_password_token(self, request):
+        """
+        sends client reset password email.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+        """
+        return ClientService.client_validate_password_token(request)

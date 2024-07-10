@@ -23,7 +23,10 @@ from app.core.validation.validate_data import is_valid_phone_number
 from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
+from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.utils import generate_password_reset_token
+from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
 
 
@@ -184,12 +187,13 @@ class ClientService:
             email = serializer.validated_data.get("email")
 
             client = Client.objects.get(user__email=email)
+            token = generate_password_reset_token(client.user.id)
             email_images = settings.CLIENT_PASSWORD_IMAGES
             context = {
                 "first_name": client.user.first_name,
                 "last_name": client.user.last_name,
                 "email": email,
-                "reset_link": "www.google.com",
+                "reset_link": f"http://localhost:8000/fr/client/reset_password/{str(token)}",
             }
             signal_data = {
                 "template_name": "client_reset_password.html",
@@ -205,6 +209,36 @@ class ClientService:
             )
         except Client.DoesNotExist:
             raise NotFound(detail="Client not found")
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )
+
+    @classmethod
+    def client_validate_password_token(cls, request):
+        """
+        validate password token
+        """
+        try:
+            data = request.data
+            token = data.get("token", False)
+            if not token:
+                raise serializers.ValidationError(detail="token is required")
+
+            user_id, error = validate_password_reset_token(token)
+            if error:
+                raise APIException(detail=error)
+            print("aaaaaaaaaaaaaa", user_id)
+            client = Client.objects.get(user__id=user_id)
+            serializer = ClientSerializer(client)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Client.DoesNotExist:
+            raise NotFound(detail="Client not found")
+        except APIException as e:
+            raise e
         except Exception as e:
             raise APIException(
                 detail=str(e),
