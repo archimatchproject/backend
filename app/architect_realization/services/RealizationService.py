@@ -95,7 +95,7 @@ class RealizationService:
                 status=status.HTTP_200_OK,
             )
         except Exception:
-            return APIException("Error retrieving architectural styles")
+            return APIException(detail="Error retrieving architectural styles")
 
     @classmethod
     def get_architect_speciality_needs(cls, request):
@@ -123,7 +123,5 @@ class RealizationService:
             raise NotFound(detail="Architect not found.")
         except ArchitectSpeciality.DoesNotExist:
             raise NotFound(detail="No architect speciality found with the given ID")
-        except NotFound as e:
-            raise e
         except Exception:
             raise APIException(detail="Error retrieving architect speciality needs")
