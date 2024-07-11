@@ -16,4 +16,4 @@ EMAIL_HOST_PASSWORD = "rfbq luxr lzmk pxom"
 MAX_ATTEMPTS = 5
 BACKGROUND_TASK_RUN_ASYNC = True
 TOKEN_VALIDITY = 600
-TOKEN_SALT = "A8z#sG$5@!2&$kzE"
+TOKEN_SALT = "B+I-/I.]po68Y=HmubAHZYqufX.f.\S*\:2T),*yI,v87MKa#Es}-iy'UdiY=Ljt"
