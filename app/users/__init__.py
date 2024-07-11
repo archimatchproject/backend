@@ -55,6 +55,19 @@ PERMISSION_CODENAMES = {
         ],
         "color": "#33ABEC",
     },
+    "manage_subscription": {
+        "permissions": [
+            "add_tokenpack",
+            "change_tokenpack",
+            "delete_tokenpack",
+            "view_tokenpack",
+            "add_subscriptionplan",
+            "change_subscriptionplan",
+            "delete_subscriptionplan",
+            "view_subscriptionplan",
+        ],
+        "color": "#123BEC",
+    },
 }
 CODENAME_TO_RIGHTS = {
     codename: right
