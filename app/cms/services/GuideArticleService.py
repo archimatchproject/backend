@@ -13,10 +13,10 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.cms.models import GuideArticle
-from app.cms.models import GuideSection
-from app.cms.serializers import GuideArticleSerializer
-from app.cms.serializers import GuideSectionSerializer
+from app.cms.models.GuideArticle import GuideArticle
+from app.cms.models.GuideSection import GuideSection
+from app.cms.serializers.GuideArticleSerializer import GuideArticleSerializer
+from app.cms.serializers.GuideSectionSerializer import GuideSectionSerializer
 
 
 class GuideArticleService:
@@ -120,8 +120,17 @@ class GuideArticleService:
 
                 for section_data in sections_data:
                     section_id = section_data.get("id")
+                    section_instance = None
+                    if section_id:
+                        try:
+                            section_instance = instance.guide_article_sections.get(id=section_id)
+                        except GuideSection.DoesNotExist:
+                            raise serializers.ValidationError(
+                                f"GuideSection with id {section_id} does not exist."
+                            )
+
                     section_serializer = GuideSectionSerializer(
-                        instance.guide_article_sections.filter(id=section_id).first(),
+                        section_instance,
                         data=section_data,
                         partial=partial,
                     )
