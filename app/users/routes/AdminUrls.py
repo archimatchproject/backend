@@ -29,4 +29,9 @@ admin_urlpatterns = [
         AdminViewSet.as_view({"get": "get_admin_permissions"}),
         name="admin-get-permissions",
     ),
+     path(
+        "admin/delete/<int:pk>/",
+        AdminViewSet.as_view({"delete": "destroy"}),
+        name="admin-delete",
+    ),
 ]
