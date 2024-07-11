@@ -15,8 +15,16 @@ from rest_framework import routers
 
 from app.cms.routes.BlogUrls import blog_urlpatterns
 from app.cms.routes.FAQThematicUrls import faq_thematic_urlpatterns
+from app.cms.routes.GuideArticleUrls import guide_article_urlpatterns
+from app.cms.routes.GuideThematicUrls import guide_thematic_urlpatterns
 
 
 router = routers.DefaultRouter()
 
-urlpatterns = [path("", include(router.urls)), *blog_urlpatterns, *faq_thematic_urlpatterns]
+urlpatterns = [
+    path("", include(router.urls)),
+    *blog_urlpatterns,
+    *faq_thematic_urlpatterns,
+    *guide_thematic_urlpatterns,
+    *guide_article_urlpatterns,
+]
