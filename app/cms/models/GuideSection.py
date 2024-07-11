@@ -4,8 +4,7 @@ Module defining the GuideSection model for representing sections within a guide 
 
 from django.db import models
 
-
-# from app.cms.models.GuideArticle import GuideArticle
+from app.cms.models.GuideArticle import GuideArticle
 
 
 class GuideSection(models.Model):
@@ -30,11 +29,11 @@ class GuideSection(models.Model):
         ("video", "Video"),
     ]
 
-    # guide_article = models.ForeignKey(
-    #     GuideArticle,
-    #     related_name="guide_article_sections",
-    #     on_delete=models.CASCADE,
-    # )
+    guide_article = models.ForeignKey(
+        GuideArticle,
+        related_name="guide_article_sections",
+        on_delete=models.CASCADE,
+    )
     section_type = models.CharField(
         max_length=10,
         choices=GUIDE_SECTION_TYPES,

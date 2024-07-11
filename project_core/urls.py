@@ -42,6 +42,10 @@ urlpatterns = [
         include("app.architect_realization.urls"),
     ),
     path(
+        "api/subscription/",
+        include("app.subscription.urls"),
+    ),
+    path(
         "",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
