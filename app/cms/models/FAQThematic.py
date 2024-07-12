@@ -7,6 +7,7 @@ a thematic category for frequently asked questions in the application.
 
 from django.db import models
 
+from app.cms import TARGET_USER_TYPE
 from app.core.models.BaseModel import BaseModel
 
 
@@ -19,6 +20,9 @@ class FAQThematic(BaseModel):
     """
 
     title = models.CharField(max_length=255, unique=True)
+    target_user_type = models.CharField(
+        max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
+    )
 
     class Meta:
         """

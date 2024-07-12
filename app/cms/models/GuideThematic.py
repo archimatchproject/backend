@@ -7,6 +7,7 @@ a thematic category for guide articles in the application.
 
 from django.db import models
 
+from app.cms import TARGET_USER_TYPE
 from app.core.models.LabeledIcon import LabeledIcon
 
 
@@ -22,6 +23,10 @@ class GuideThematic(LabeledIcon):
     """
 
     icon = models.ImageField(upload_to="icons/GuideThematicIcons/", blank=True, null=True)
+
+    target_user_type = models.CharField(
+        max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
+    )
 
     class Meta:
         """

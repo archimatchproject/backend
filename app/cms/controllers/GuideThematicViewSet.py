@@ -7,6 +7,7 @@ related to GuideThematic instances via REST API endpoints.
 """
 
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageGuidePermission import ManageGuidePermission
@@ -24,6 +25,21 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
 
     queryset = GuideThematic.objects.all()
     serializer_class = GuideThematicSerializer
+
+    def get_queryset(self):
+        """
+        Get the queryset for the view.
+
+        Raises:
+            ValidationError: If the `target_user_type` query parameter is not provided.
+
+        Returns:
+            QuerySet: The filtered queryset based on the `target_user_type` parameter.
+        """
+        target_user_type = self.request.query_params.get("target_user_type")
+        if not target_user_type:
+            raise ValidationError("The 'target_user_type' query parameter is required.")
+        return GuideThematic.objects.filter(target_user_type=target_user_type)
 
     def get_permissions(self):
         """
