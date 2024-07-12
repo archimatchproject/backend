@@ -19,6 +19,8 @@ from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreat
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
+from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services.ArchimatchUserService import ArchimatchUserService
 
 
@@ -132,3 +134,42 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object with the user data.
         """
         return ArchimatchUserService.archimatch_user_get_user_data(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="send-code",
+        serializer_class=UserAuthPhoneSerializer,
+    )
+    def send_verification_code(self, request):
+        """
+        Sends a verification code to the client's phone number.
+
+        Args:
+            request (Request): HTTP request object containing the phone number.
+
+        Returns:
+            Response: Response indicating whether the verification code was sent successfully.
+        """
+        return ArchimatchUserService.send_verification_code(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="verify-code",
+        serializer_class=VerifyCodeSerializer,
+    )
+    def verify_verification_code(self, request):
+        """
+        Verifies the client's phone number using the verification code.
+
+        Args:
+            request (Request): HTTP request object containing the phone number and
+            verification code.
+
+        Returns:
+            Response: Response indicating success or failure of the verification.
+        """
+        return ArchimatchUserService.verify_verification_code(request)

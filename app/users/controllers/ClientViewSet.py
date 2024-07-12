@@ -10,9 +10,7 @@ from rest_framework.decorators import action
 
 from app.users.models.Client import Client
 from app.users.serializers.ClientSerializer import ClientSerializer
-from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
-from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services.ClientService import ClientService
 
 
@@ -46,45 +44,6 @@ class ClientViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the login attempt.
         """
         return ClientService.client_login_email(request)
-
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        url_path="send-code",
-        serializer_class=UserAuthPhoneSerializer,
-    )
-    def client_send_verification_code(self, request):
-        """
-        Sends a verification code to the client's phone number.
-
-        Args:
-            request (Request): HTTP request object containing the phone number.
-
-        Returns:
-            Response: Response indicating whether the verification code was sent successfully.
-        """
-        return ClientService.client_send_verification_code(request)
-
-    @action(
-        detail=False,
-        methods=["POST"],
-        permission_classes=[],
-        url_path="verify-code",
-        serializer_class=VerifyCodeSerializer,
-    )
-    def client_verify_verification_code(self, request):
-        """
-        Verifies the client's phone number using the verification code.
-
-        Args:
-            request (Request): HTTP request object containing the phone number and
-            verification code.
-
-        Returns:
-            Response: Response indicating success or failure of the verification.
-        """
-        return ClientService.client_verify_verification_code(request)
 
     @action(
         detail=False,
