@@ -79,4 +79,9 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"put": "supplier_update_visibility"}),
         name="update-visibility",
     ),
+    path(
+        "supplier/validate-password-token/",
+        SupplierViewSet.as_view({"post": "supplier_validate_password_token"}),
+        name="validate-password-token",
+    ),
 ]
