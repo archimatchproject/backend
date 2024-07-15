@@ -30,4 +30,4 @@ class GuideThematicSerializer(serializers.ModelSerializer):
         """
 
         model = GuideThematic
-        fields = ["id", "label", "icon", "guide_thematic_articles"]
+        fields = ["id", "label", "target_user_type", "icon", "guide_thematic_articles"]

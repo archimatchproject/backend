@@ -6,6 +6,7 @@ view-level logic for the FAQThematic model, including creation and update operat
 """
 
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageFAQPermission import ManageFAQPermission
@@ -43,6 +44,21 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         elif self.action in ["create", "update", "partial_update", "destroy"]:
             return [IsAuthenticated(), ManageFAQPermission()]
         return super().get_permissions()
+
+    def get_queryset(self):
+        """
+        Get the queryset for the view.
+
+        Raises:
+            ValidationError: If the `target_user_type` query parameter is not provided.
+
+        Returns:
+            QuerySet: The filtered queryset based on the `target_user_type` parameter.
+        """
+        target_user_type = self.request.query_params.get("target_user_type")
+        if not target_user_type:
+            raise ValidationError("The 'target_user_type' query parameter is required.")
+        return FAQThematic.objects.filter(target_user_type=target_user_type)
 
     def create(self, request, *args, **kwargs):
         """

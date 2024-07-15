@@ -30,4 +30,4 @@ class FAQThematicSerializer(serializers.ModelSerializer):
         """
 
         model = FAQThematic
-        fields = ("id", "title", "faq_thematic_questions", "questions")
+        fields = ["id", "title", "target_user_type", "faq_thematic_questions", "questions"]
