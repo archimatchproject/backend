@@ -16,7 +16,7 @@ architect_request_urlpatterns = [
     ),
     path(
         "get-architect-requests",
-        ArchitectRequestViewSet.as_view({"get": "list"}),
+        ArchitectRequestViewSet.as_view({"get": "get"}),
         name="architect-requests-list",
     ),
     path(

@@ -24,6 +24,7 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.Note import Note
+from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.email_templates.signals import api_success_signal
 from app.users.models.Admin import Admin
@@ -42,6 +43,8 @@ class ArchitectRequestService:
     Methods:
         add_architect_request(data): Handles validation and creation of a new ArchitectRequest.
     """
+
+    pagination_class = CustomPagination
 
     @classmethod
     def add_architect_request(cls, data):
@@ -280,3 +283,33 @@ class ArchitectRequestService:
             raise NotFound(detail="No architect request found with the given ID")
         except Exception as e:
             raise APIException(detail=f"Error adding not to architect request ${e}")
+
+    @classmethod
+    def architect_request_paginated(cls, request):
+        """
+        Handle GET request and return paginated Realization objects.
+
+        This method retrieves all Realization objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Realization objects or an error message.
+        """
+        queryset = ArchitectRequest.objects.all()
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the queryset
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ArchitectRequestSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        # If pagination is not applied correctly, return a 400 Bad Request response
+        serializer = ArchitectRequestSerializer(queryset, many=True)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)

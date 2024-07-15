@@ -22,6 +22,7 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
 )
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
+from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 
 
@@ -41,6 +42,23 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
 
     queryset = ArchitectRequest.objects.all()
     serializer_class = ArchitectRequestSerializer
+    pagination_class = CustomPagination
+
+    def get(self, request):
+        """
+        Handle GET request and return paginated Realization objects.
+
+        This method retrieves all Realization objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Realization objects or an error message.
+        """
+        return ArchitectRequestService.architect_request_paginated(request)
 
     def get_serializer_class(self):
         """
