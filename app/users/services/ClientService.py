@@ -9,6 +9,8 @@ Classes:
 
 """
 
+from django.utils.translation import get_language_from_request
+
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -83,11 +85,14 @@ class ClientService:
             client = Client.objects.get(user__email=email)
             token = generate_password_reset_token(client.user.id)
             email_images = settings.CLIENT_PASSWORD_IMAGES
+            language_code = get_language_from_request(request)
+            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
+                            /client/forget-password/{token}"""
             context = {
                 "first_name": client.user.first_name,
                 "last_name": client.user.last_name,
                 "email": email,
-                "reset_link": f"http://localhost:8000/fr/client/reset_password/{str(token)}",
+                "reset_link": reset_link,
             }
             signal_data = {
                 "template_name": "client_reset_password.html",
