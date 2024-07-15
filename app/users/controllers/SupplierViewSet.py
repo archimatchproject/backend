@@ -295,3 +295,20 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         return SupplierService.supplier_update_visibility(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="validate-password-token",
+        url_name="validate-password-token",
+    )
+    def client_validate_password_token(self, request):
+        """
+        sends Supplier reset password email.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+        """
+        return SupplierService.supplier_validate_password_token(request)

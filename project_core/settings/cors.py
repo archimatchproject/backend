@@ -2,10 +2,14 @@
 Module-level constants for backend and frontend URLs, and CORS configuration.
 """
 
-BASE_BACKEND_URL = ""
-BASE_FRONTEND_URL = ""
+import environ
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+
+env = environ.Env()
+
+BASE_BACKEND_URL = ""
+BASE_FRONTEND_URL = (
+    f"http://{env('DNS_ADDRESS')}:3000" if env("IS_LOCAL") else f"https://{env('DNS_ADDRESS')}"
+)
+
+CORS_ALLOWED_ORIGINS = [BASE_FRONTEND_URL]

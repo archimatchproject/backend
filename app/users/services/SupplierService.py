@@ -8,6 +8,8 @@ Classes:
     SupplierService: Service class for supplier-related operations.
 """
 
+from django.utils.translation import get_language_from_request
+
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -26,6 +28,8 @@ from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.utils import generate_password_reset_token
+from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
 
 
@@ -542,11 +546,16 @@ class SupplierService:
 
             supplier = Supplier.objects.get(user__email=email)
             email_images = settings.ARCHITECT_PASSWORD_IMAGES
+            token = generate_password_reset_token(supplier.user.id)
+            language_code = get_language_from_request(request)
+            reset_link = (
+                f"{settings.BASE_FRONTEND_URL}/{language_code}/supplier/create_password/{token}"
+            )
             context = {
                 "first_name": supplier.user.first_name,
                 "last_name": supplier.user.last_name,
                 "email": email,
-                "reset_link": "www.google.com",
+                "reset_link": reset_link,
             }
             signal_data = {
                 "template_name": "architect_reset_password.html",
@@ -562,6 +571,35 @@ class SupplierService:
             )
         except Supplier.DoesNotExist:
             raise NotFound(detail="Supplier not found")
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )
+
+    @classmethod
+    def supplier_validate_password_token(cls, request):
+        """
+        validate password token
+        """
+        try:
+            data = request.data
+            token = data.get("token", False)
+            if not token:
+                raise serializers.ValidationError(detail="token is required")
+
+            user_id, error = validate_password_reset_token(token)
+            if error:
+                raise APIException(detail=error)
+            supplier = Supplier.objects.get(user__id=user_id)
+            serializer = SupplierSerializer(supplier)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found")
+        except APIException as e:
+            raise e
         except Exception as e:
             raise APIException(
                 detail=str(e),
