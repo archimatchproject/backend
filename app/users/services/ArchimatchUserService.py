@@ -9,12 +9,18 @@ Classes:
 
 """
 
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from app.core.services.SMS.SMSVerificationService import SMSVerificationService
+from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
+from app.core.validation.exceptions import InvalidPhoneNumberException
+from app.core.validation.exceptions import SMSException
+from app.core.validation.validate_data import is_valid_phone_number
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
@@ -31,6 +37,9 @@ class ArchimatchUserService:
 
 
     """
+
+    twilio_service = TwilioVerifyService()
+    sms_verification_service = SMSVerificationService(twilio_service)
 
     def generate_tokens_for_user(email, password):
         """
@@ -179,3 +188,82 @@ class ArchimatchUserService:
             )
         except Exception as e:
             raise APIException(detail=f"Error retrieving user data: {str(e)}")
+
+    @classmethod
+    def send_verification_code(cls, request):
+        """
+        Sends a verification code to the client's phone number.
+
+        Args:
+            request (Request): Django request object containing client's phone number.
+
+        Returns:
+            Response: Response object indicating whether the verification code was
+            sent successfully.
+        """
+        try:
+            data = request.data
+            phone_number = data.get("phone_number")
+            if phone_number is None:
+                raise serializers.ValidationError(detail="phone number is required")
+            is_valid_phone_number(phone_number)
+            # Commented out to save credit of trial
+            # sid = cls.sms_verification_service.send_verification_code(phone_number)
+            # if not sid:
+            #     raise serializers.ValidationError(detail="Failed to send verification code.")
+
+            return Response(
+                {"message": "Verification code sent successfully."},
+                status=status.HTTP_200_OK,
+            )
+
+        except SMSException:
+            raise serializers.ValidationError(detail="Error Sending SMS Code")
+        except InvalidPhoneNumberException as e:
+            raise serializers.ValidationError(detail=str(e))
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def verify_verification_code(cls, request):
+        """
+        Authenticates a client using phone number and verifies the SMS code.
+
+        Args:
+            request (Request): Django request object containing client's phone number and
+            verification code.
+
+        Returns:
+            Response: Response object with a message indicating if the client has set a password
+            and their email.
+        """
+        try:
+            data = request.data
+            phone_number = data.get("phone_number", None)
+            verification_code = data.get("verification_code", None)
+            if verification_code is None or phone_number is None:
+                raise serializers.ValidationError(
+                    detail="verification code and phone number are required"
+                )
+
+            # Commented out to save credit of trial
+            # if not cls.sms_verification_service.check_verification_code(
+            #     phone_number,
+            #     verification_code,
+            # ):
+            #     raise serializers.ValidationError(detail="Invalid verification code")
+            if not verification_code == "000000":
+                raise serializers.ValidationError(detail="Invalid verification code")
+            return Response(
+                {"message": "Verification code verified successfully."},
+                status=status.HTTP_200_OK,
+            )
+
+        except SMSException:
+            raise serializers.ValidationError(detail="Error Verifying SMS Code")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))

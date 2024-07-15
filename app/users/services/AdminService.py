@@ -109,12 +109,15 @@ class AdminService:
         if email is not None:
             if email != instance.user.email:  # Check if email is changing
                 if ArchimatchUser.objects.filter(email=email).exclude(id=instance.user.id).exists():
-                    raise serializers.ValidationError(
-                        "Email already exists."
-                    )  # Handle duplicate email
+                    raise serializers.ValidationError("Email already exists.")
                 instance.user.email = email
+
         if phone_number is not None:
-            user_data["phone_number"] = phone_number
+            instance.user.phone_number = phone_number
+
+        # Update any other user fields from user_data
+        for attr, value in user_data.items():
+            setattr(instance.user, attr, value)
 
         instance.user.save()
 
