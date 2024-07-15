@@ -82,3 +82,37 @@ class AdminViewSet(viewsets.ModelViewSet):
             Response: Response containing all permissions and their colors.
         """
         return AdminService.get_all_permissions()
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="send-reset-password-link",
+        url_name="send-reset-password-link",
+    )
+    def admin_send_reset_password_link(self, request):
+        """
+        sends admin reset password email.
+
+        Args:
+            self (adminViewSet): Instance of the adminViewSet class.
+            request (Request): HTTP request object.
+        """
+        return AdminService.admin_send_reset_password_link(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="validate-password-token",
+        url_name="validate-password-token",
+    )
+    def admin_validate_password_token(self, request):
+        """
+        sends admin reset password email.
+
+        Args:
+            self (adminViewSet): Instance of the adminViewSet class.
+            request (Request): HTTP request object.
+        """
+        return AdminService.admin_validate_password_token(request)

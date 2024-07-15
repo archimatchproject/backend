@@ -10,11 +10,12 @@ Classes:
 """
 
 from django.db import transaction
-
-import environ
+from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
+from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.email_templates.signals import api_success_signal
@@ -23,10 +24,10 @@ from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.AdminSerializer import AdminSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.utils import generate_password_reset_token
+from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
-
-
-env = environ.Env()
 
 
 class AdminService:
@@ -148,3 +149,76 @@ class AdminService:
             {"right": right, "color": data["color"]} for right, data in PERMISSION_CODENAMES.items()
         ]
         return Response(permissions_with_colors, status=status.HTTP_200_OK)
+
+    @classmethod
+    def admin_send_reset_password_link(cls, request):
+        """
+        send reset password link for admin.
+
+
+        """
+        try:
+            data = request.data
+            serializer = UserAuthSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data.get("email")
+
+            admin = Admin.objects.get(user__email=email)
+            email_images = settings.ARCHITECT_PASSWORD_IMAGES
+            token = generate_password_reset_token(admin.user.id)
+            language_code = get_language_from_request(request)
+            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
+                            /admin/reset-password/{token}"""
+            context = {
+                "first_name": admin.user.first_name,
+                "last_name": admin.user.last_name,
+                "email": email,
+                "reset_link": reset_link,
+            }
+            signal_data = {
+                "template_name": "architect_reset_password.html",
+                "context": context,
+                "to_email": email,
+                "subject": "Admin Reset Password",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            return Response(
+                {"message": "email sent successfully"},
+                status=status.HTTP_200_OK,
+            )
+        except Admin.DoesNotExist:
+            raise NotFound(detail="Admin not found")
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )
+
+    @classmethod
+    def admin_validate_password_token(cls, request):
+        """
+        validate password token
+        """
+        try:
+            data = request.data
+            token = data.get("token", False)
+            if not token:
+                raise serializers.ValidationError(detail="token is required")
+
+            user_id, error = validate_password_reset_token(token)
+            if error:
+                raise APIException(detail=error)
+            admin = Admin.objects.get(user__id=user_id)
+            serializer = AdminSerializer(admin)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Admin.DoesNotExist:
+            raise NotFound(detail="Admin not found")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )

@@ -312,3 +312,21 @@ class SupplierViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         return SupplierService.supplier_validate_password_token(request)
+
+    def get(self, request):
+        """
+        Retrieve all suppliers.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `supplier_get_all` class method
+        of `SupplierService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        return SupplierService.supplier_get_all(request)

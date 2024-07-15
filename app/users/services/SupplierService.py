@@ -72,7 +72,19 @@ class SupplierService:
                 user_type="Supplier",
             )
             Supplier.objects.create(user=user)
-
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            signal_data = {
+                "template_name": "supplier_invite.html",
+                "context": {
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": email,
+                },
+                "to_email": email,
+                "subject": "Archimatch Invite Supplier",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
             response_data = {
                 "message": "Supplier successfully created",
                 "status_code": status.HTTP_201_CREATED,
@@ -603,3 +615,31 @@ class SupplierService:
             raise APIException(
                 detail=str(e),
             )
+
+    @classmethod
+    def supplier_get_all(cls, request):
+        """
+        Handle GET request and return paginated Supplier objects.
+
+        This method retrieves all Supplier objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or a 400 Bad Request response with an error message.
+        """
+        try:
+            queryset = Supplier.objects.all()
+            serializer = SupplierSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
