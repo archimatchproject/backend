@@ -644,3 +644,45 @@ class SupplierService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def supplier_resend_email(cls, pk):
+        """
+        Registers a new supplier in the system.
+
+        Args:
+            request (Request): Django request object containing supplier's email.
+
+        Returns:
+            Response: Response object indicating success or failure of supplier registration.
+        """
+        try:
+
+            supplier = Supplier.objects.get(id=pk)
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            signal_data = {
+                "template_name": "supplier_invite.html",
+                "context": {
+                    "first_name": supplier.user.first_name,
+                    "last_name": supplier.user.last_name,
+                    "email": supplier.user.email,
+                },
+                "to_email": supplier.user.email,
+                "subject": "Archimatch Invite Supplier",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            response_data = {
+                "message": "Email resent successfully",
+            }
+
+            return Response(
+                response_data,
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier does not exist")
+        except APIException as e:
+            raise e
+        except Exception:
+            raise APIException(detail="error resending email to supplier")

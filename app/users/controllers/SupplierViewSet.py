@@ -330,3 +330,21 @@ class SupplierViewSet(viewsets.ModelViewSet):
                 or an error response if there's a problem during retrieval.
         """
         return SupplierService.supplier_get_all(request)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="resend-email",
+    )
+    def supplier_resend_email(self, request, pk=None):
+        """
+        Custom action to resend email to supplier
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the supplier object
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return SupplierService.supplier_resend_email(pk)
