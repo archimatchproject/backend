@@ -107,10 +107,10 @@ class AnnouncementService:
                         "reset_link": reset_link,
                     }
                     signal_data = {
-                        "template_name": "client_reset_password.html",
+                        "template_name": "client_first_connection.html",
                         "context": context,
                         "to_email": client_instance.user.email,
-                        "subject": "client Reset Password",
+                        "subject": "Client Account Creation",
                         "images": email_images,
                     }
                     api_success_signal.send(sender=cls, data=signal_data)
