@@ -54,4 +54,9 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"post": "add_note"}),
         name="architect-request-add-note",
     ),
+    path(
+        "reschedule/<int:pk>/",
+        ArchitectRequestViewSet.as_view({"put": "reschedule"}),
+        name="reschedule",
+    ),
 ]
