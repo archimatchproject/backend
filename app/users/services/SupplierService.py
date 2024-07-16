@@ -76,7 +76,7 @@ class SupplierService:
             language_code = get_language_from_request(request)
             token = generate_password_reset_token(user.id)
             url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/supplier/first-login-password/{token}"""
+            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
             signal_data = {
                 "template_name": "supplier_invite.html",
                 "context": {
