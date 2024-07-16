@@ -566,7 +566,7 @@ class SupplierService:
             token = generate_password_reset_token(supplier.user.id)
             language_code = get_language_from_request(request)
             url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/supplier/first-login-password/{token}"""
+            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
 
             context = {
                 "first_name": supplier.user.first_name,
