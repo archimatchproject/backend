@@ -73,12 +73,17 @@ class SupplierService:
             )
             Supplier.objects.create(user=user)
             email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            language_code = get_language_from_request(request)
+            token = generate_password_reset_token(user.id)
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/supplier/first-login-password/{token}"""
             signal_data = {
                 "template_name": "supplier_invite.html",
                 "context": {
                     "first_name": user.first_name,
                     "last_name": user.last_name,
                     "email": email,
+                    "reset_link": reset_link,
                 },
                 "to_email": email,
                 "subject": "Archimatch Invite Supplier",
