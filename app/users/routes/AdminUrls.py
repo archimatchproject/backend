@@ -40,7 +40,7 @@ admin_urlpatterns = [
         name="send-reset-password-link",
     ),
     path(
-        "client/validate-password-token/",
+        "admin/validate-password-token/",
         AdminViewSet.as_view({"post": "admin_validate_password_token"}),
         name="validate-password-token",
     ),

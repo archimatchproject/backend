@@ -52,8 +52,8 @@ class ArchitectService:
             email_images = settings.ARCHITECT_PASSWORD_IMAGES
             token = generate_password_reset_token(architect.user.id)
             language_code = get_language_from_request(request)
-            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                            /architect/reset-password/{token}"""
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/architect/reset-password/{token}"""
             context = {
                 "first_name": architect.user.first_name,
                 "last_name": architect.user.last_name,

@@ -560,8 +560,9 @@ class SupplierService:
             email_images = settings.ARCHITECT_PASSWORD_IMAGES
             token = generate_password_reset_token(supplier.user.id)
             language_code = get_language_from_request(request)
-            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                            /supplier/first-login-password/{token}"""
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/supplier/first-login-password/{token}"""
+
             context = {
                 "first_name": supplier.user.first_name,
                 "last_name": supplier.user.last_name,

@@ -167,8 +167,8 @@ class AdminService:
             email_images = settings.ARCHITECT_PASSWORD_IMAGES
             token = generate_password_reset_token(admin.user.id)
             language_code = get_language_from_request(request)
-            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                            /admin/reset-password/{token}"""
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/admin/reset-password/{token}"""
             context = {
                 "first_name": admin.user.first_name,
                 "last_name": admin.user.last_name,

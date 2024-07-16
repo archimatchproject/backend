@@ -303,7 +303,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="validate-password-token",
         url_name="validate-password-token",
     )
-    def client_validate_password_token(self, request):
+    def supplier_validate_password_token(self, request):
         """
         sends Supplier reset password email.
 

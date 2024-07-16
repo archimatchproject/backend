@@ -15,7 +15,7 @@ architect_urlpatterns = [
         name="send-reset-password-link",
     ),
     path(
-        "client/validate-password-token/",
+        "architect/validate-password-token/",
         ArchitectViewSet.as_view({"post": "architect_validate_password_token"}),
         name="validate-password-token",
     ),

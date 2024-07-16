@@ -86,8 +86,9 @@ class ClientService:
             token = generate_password_reset_token(client.user.id)
             email_images = settings.CLIENT_PASSWORD_IMAGES
             language_code = get_language_from_request(request)
-            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                            /client/forget-password/{token}"""
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/client/forget-password/{token}"""
+
             context = {
                 "first_name": client.user.first_name,
                 "last_name": client.user.last_name,

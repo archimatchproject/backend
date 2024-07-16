@@ -98,8 +98,8 @@ class AnnouncementService:
                     token = generate_password_reset_token(client_instance.user.id, expires_in=3600)
                     email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
                     language_code = get_language_from_request(request)
-                    reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                                    /client/first-login/{token}"""
+                    url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+                    reset_link = f"""{url}/client/first-login/{token}"""
                     context = {
                         "first_name": client_instance.user.first_name,
                         "last_name": client_instance.user.last_name,
