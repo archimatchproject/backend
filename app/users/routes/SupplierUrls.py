@@ -94,4 +94,9 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"post": "supplier_resend_email"}),
         name="resend-email",
     ),
+    path(
+        "suppliers/delete/<int:pk>/",
+        SupplierViewSet.as_view({"delete": "delete"}),
+        name="delete-supplier",
+    ),
 ]

@@ -348,3 +348,16 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return SupplierService.supplier_resend_email(pk)
+
+    def delete(self, request, pk=None):
+        """
+        Deletes a supplier from the system.
+
+        Args:
+            request (Request): Django request object.
+            pk (int): ID of the supplier to be deleted.
+
+        Returns:
+            Response: Response object indicating success or failure of the supplier deletion.
+        """
+        return SupplierService.delete_supplier(request, pk)

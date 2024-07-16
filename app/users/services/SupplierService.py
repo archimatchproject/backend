@@ -686,3 +686,35 @@ class SupplierService:
             raise e
         except Exception:
             raise APIException(detail="error resending email to supplier")
+
+    @classmethod
+    def delete_supplier(cls, pk):
+        """
+        Deletes a supplier from the system.
+
+        Args:
+            request (Request): Django request object.
+            supplier_id (int): ID of the supplier to be deleted.
+
+        Returns:
+            Response: Response object indicating success or failure of the supplier deletion.
+        """
+        try:
+            supplier = Supplier.objects.get(id=pk)
+            supplier.delete()
+
+            response_data = {
+                "message": "Supplier successfully deleted",
+            }
+
+            return Response(
+                response_data,
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
