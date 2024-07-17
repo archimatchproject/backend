@@ -54,4 +54,24 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"post": "add_note"}),
         name="architect-request-add-note",
     ),
+    path(
+        "project-categories",
+        ArchitectRequestViewSet.as_view({"get": "get_project_categories"}),
+        name="project-categories",
+    ),
+    path(
+        "property-types",
+        ArchitectRequestViewSet.as_view({"get": "get_property_types"}),
+        name="property-types",
+    ),
+    path(
+        "work-types",
+        ArchitectRequestViewSet.as_view({"get": "get_work_types"}),
+        name="work-types",
+    ),
+    path(
+        "architectural-styles",
+        ArchitectRequestViewSet.as_view({"get": "get_architectural_styles"}),
+        name="architectural-styles",
+    ),
 ]
