@@ -53,7 +53,7 @@ class ArchitectService:
             token = generate_password_reset_token(architect.user.id)
             language_code = get_language_from_request(request)
             url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/architect/reset-password/{token}"""
+            reset_link = f"""{url}/architect/forget-password/{token}"""
             context = {
                 "first_name": architect.user.first_name,
                 "last_name": architect.user.last_name,
