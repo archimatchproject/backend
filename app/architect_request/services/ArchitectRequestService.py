@@ -396,6 +396,7 @@ class ArchitectRequestService:
         serializer = ArchitecturalStyleSerializer(styles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @classmethod
     def reschedule_architect_request(cls, architect_request_id, data):
         """
         Handles rescheduling an ArchitectRequest.
