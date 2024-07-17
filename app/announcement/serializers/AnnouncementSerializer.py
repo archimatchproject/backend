@@ -201,6 +201,8 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
             "notes",
+            "created_at",
+            "status",
         ]
 
 

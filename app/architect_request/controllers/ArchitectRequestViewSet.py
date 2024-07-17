@@ -125,7 +125,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.admin_accept_architect_request(pk, request.data)
+        return ArchitectRequestService.admin_accept_architect_request(pk, request)
 
     @action(
         detail=True,

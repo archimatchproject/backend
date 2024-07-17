@@ -18,6 +18,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.announcement import ACCEPTED
 from app.announcement import BUDGETS
 from app.announcement import CITIES
 from app.announcement import EXTERIOR_WORKTYPES
@@ -25,6 +26,7 @@ from app.announcement import NEW_CONSTRUCTION_WORKTYPES
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP6
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP10
 from app.announcement import PROPERTIES_NO_EXTERIOR
+from app.announcement import REFUSED
 from app.announcement import RENOVATION_WORKTYPES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
@@ -51,6 +53,7 @@ from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.email_templates.signals import api_success_signal
 from app.users import USER_TYPE_CHOICES
@@ -66,6 +69,8 @@ class AnnouncementService:
     Service class for handling announcement-related operations .
 
     """
+
+    pagination_class = CustomPagination
 
     @classmethod
     def create_announcement(cls, request):
@@ -563,3 +568,76 @@ class AnnouncementService:
             raise NotFound(detail="No announcement found with the given ID")
         except Exception as e:
             raise APIException(detail=f"Error adding not to announcement ${e}")
+
+    @classmethod
+    def get_announcements(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        queryset = Announcement.objects.all()
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = AnnouncementOutputSerializer(queryset, many=True)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @classmethod
+    def accept_announcement(cls, pk):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.status = ACCEPTED
+            announcement.save()
+            return Response({"message": "announcement Accepted"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error accepting the announcement")
+
+    @classmethod
+    def refuse_announcement(cls, pk):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.status = REFUSED
+            announcement.save()
+            return Response({"message": "announcement refused"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error accepting the announcement")
