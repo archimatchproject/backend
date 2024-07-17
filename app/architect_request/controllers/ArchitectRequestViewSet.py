@@ -186,7 +186,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["PUT"],
-        url_path="reschedule",
+        url_path="reschedule-meeting",
         serializer_class=ArchitectRequestRescheduleSerializer,
     )
     def reschedule(self, request, pk=None):
