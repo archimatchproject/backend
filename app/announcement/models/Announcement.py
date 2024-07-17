@@ -8,6 +8,7 @@ for a construction or renovation project in the application.
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
+from app.announcement import ANNOUNCEMENT_STATUS_CHOICES
 from app.announcement import BUDGETS
 from app.announcement import CITIES
 from app.announcement import TERRAIN_SURFACES
@@ -95,6 +96,7 @@ class Announcement(BaseModel):
         ProjectExtension, related_name="project_extensions_announcements"
     )
     notes = GenericRelation(Note)
+    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default="Pending")
 
     def __str__(self):
         """

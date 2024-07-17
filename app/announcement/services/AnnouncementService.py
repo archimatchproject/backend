@@ -51,6 +51,7 @@ from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.email_templates.signals import api_success_signal
 from app.users import USER_TYPE_CHOICES
@@ -66,6 +67,8 @@ class AnnouncementService:
     Service class for handling announcement-related operations .
 
     """
+
+    pagination_class = CustomPagination
 
     @classmethod
     def create_announcement(cls, request):
@@ -563,3 +566,28 @@ class AnnouncementService:
             raise NotFound(detail="No announcement found with the given ID")
         except Exception as e:
             raise APIException(detail=f"Error adding not to announcement ${e}")
+
+    @classmethod
+    def get_announcements(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        queryset = Announcement.objects.all()
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = AnnouncementOutputSerializer(queryset, many=True)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)

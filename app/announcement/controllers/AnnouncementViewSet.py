@@ -333,3 +333,19 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return AnnouncementService.add_note_to_announcement(pk, request.data)
+
+    def get(self, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        return AnnouncementService.get_announcements(request)

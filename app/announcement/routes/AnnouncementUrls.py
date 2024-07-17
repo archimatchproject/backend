@@ -89,4 +89,9 @@ announcement_urlpatterns = [
         AnnouncementViewSet.as_view({"post": "add_note"}),
         name="announcement-add-note",
     ),
+    path(
+        "get-announcements",
+        AnnouncementViewSet.as_view({"get": "get"}),
+        name="get-announcements",
+    ),
 ]
