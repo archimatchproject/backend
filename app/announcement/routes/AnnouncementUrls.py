@@ -94,4 +94,14 @@ announcement_urlpatterns = [
         AnnouncementViewSet.as_view({"get": "get"}),
         name="get-announcements",
     ),
+    path(
+        "accept-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "accept_announcement"}),
+        name="accept-announcement",
+    ),
+    path(
+        "refuse-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "refuse_announcement"}),
+        name="refuse-announcement",
+    ),
 ]

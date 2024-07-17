@@ -11,6 +11,7 @@ from django.db import models
 from app.announcement import ANNOUNCEMENT_STATUS_CHOICES
 from app.announcement import BUDGETS
 from app.announcement import CITIES
+from app.announcement import PENDING
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
 from app.announcement.models.Need import Need
@@ -96,7 +97,7 @@ class Announcement(BaseModel):
         ProjectExtension, related_name="project_extensions_announcements"
     )
     notes = GenericRelation(Note)
-    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default="Pending")
+    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
 
     def __str__(self):
         """

@@ -74,8 +74,12 @@ NOT_ELIMINATE_STEP_PROPERTIES_STEP6 = [1, 3, 4]  # Maison,Villa,Appartement
 # STEP10
 NOT_ELIMINATE_STEP_PROPERTIES_STEP10 = [1, 2, 3]  # Maison,Immeuble,Villa
 
+
+ACCEPTED = "Accepted"
+REFUSED = "Refused"
+PENDING = "Pending"
 ANNOUNCEMENT_STATUS_CHOICES = [
-    ("Accepted", "Accepted"),
-    ("Refused", "Refused"),
-    ("Pending", "Pending"),
+    (ACCEPTED, ACCEPTED),
+    (REFUSED, REFUSED),
+    (PENDING, PENDING),
 ]

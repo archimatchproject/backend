@@ -18,6 +18,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.announcement import ACCEPTED
 from app.announcement import BUDGETS
 from app.announcement import CITIES
 from app.announcement import EXTERIOR_WORKTYPES
@@ -25,6 +26,7 @@ from app.announcement import NEW_CONSTRUCTION_WORKTYPES
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP6
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP10
 from app.announcement import PROPERTIES_NO_EXTERIOR
+from app.announcement import REFUSED
 from app.announcement import RENOVATION_WORKTYPES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
@@ -591,3 +593,51 @@ class AnnouncementService:
 
         serializer = AnnouncementOutputSerializer(queryset, many=True)
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @classmethod
+    def accept_announcement(cls, pk):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.status = ACCEPTED
+            announcement.save()
+            return Response({"message": "announcement Accepted"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error accepting the announcement")
+
+    @classmethod
+    def refuse_announcement(cls, pk):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.status = REFUSED
+            announcement.save()
+            return Response({"message": "announcement refused"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error accepting the announcement")

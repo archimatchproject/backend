@@ -349,3 +349,41 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: A paginated response containing Announcement objects or an error message.
         """
         return AnnouncementService.get_announcements(request)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="accept-announcement",
+        serializer_class=NoteSerializer,
+    )
+    def accept_announcement(self, request, pk=None):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        return AnnouncementService.accept_announcement(pk)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="refuse-announcement",
+        serializer_class=NoteSerializer,
+    )
+    def refuse_announcement(self, request, pk=None):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.refuse_announcement(pk)

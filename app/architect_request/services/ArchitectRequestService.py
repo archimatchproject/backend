@@ -9,6 +9,7 @@ Classes:
 """
 
 from django.db import transaction
+from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
@@ -42,6 +43,7 @@ from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
 
 
@@ -121,7 +123,7 @@ class ArchitectRequestService:
             raise APIException(detail=str(e))
 
     @classmethod
-    def admin_accept_architect_request(cls, architect_request_id, data):
+    def admin_accept_architect_request(cls, architect_request_id, request):
         """
         Handles accepting an ArchitectRequest and creating a new Architect.
 
@@ -132,6 +134,7 @@ class ArchitectRequestService:
         Returns:
             Response: The response object containing the result of the operation.
         """
+        data = request.data
         try:
             architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
         except ArchitectRequest.DoesNotExist:
@@ -175,13 +178,17 @@ class ArchitectRequestService:
                 architect_request.save()
 
                 email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
-
+                language_code = get_language_from_request(request)
+                token = generate_password_reset_token(user.id)
+                url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+                reset_link = f"""{url}/architect/first-login/{token}"""
                 signal_data = {
                     "template_name": "accept_architect_request.html",
                     "context": {
                         "first_name": user_data.get("first_name"),
                         "last_name": user_data.get("last_name"),
                         "email": user_data.get("email"),
+                        "reset_link": reset_link,
                     },
                     "to_email": user_data.get("email"),
                     "subject": "Accepting Architect Request",

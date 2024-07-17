@@ -40,7 +40,7 @@ class AdminService:
     """
 
     @classmethod
-    def create_admin(cls, data):
+    def create_admin(cls, request):
         """
         Creates a new admin user with the provided data.
 
@@ -50,7 +50,7 @@ class AdminService:
         Returns:
             Response: HTTP response containing serialized admin data or errors.
         """
-
+        data = request.data
         admin_serializer = AdminSerializer(data=data)
         admin_serializer.is_valid(raise_exception=True)
         validated_data = admin_serializer.validated_data
@@ -67,12 +67,17 @@ class AdminService:
             except serializers.ValidationError as e:
                 raise serializers.ValidationError(e.detail)
             email_images = settings.ADD_ADMIN_IMAGES
+            language_code = get_language_from_request(request)
+            token = generate_password_reset_token(user.id)
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/admin/first-login/{token}"""
             signal_data = {
                 "template_name": "add_sub_admin.html",
                 "context": {
                     "first_name": user.first_name,
                     "last_name": user.last_name,
                     "email": user.email,
+                    "reset_link": reset_link,
                 },
                 "to_email": user.email,
                 "subject": "Refusing Architect Request",
