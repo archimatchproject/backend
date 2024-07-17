@@ -16,6 +16,10 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
     ArchitectRequestRescheduleSerializer,
@@ -26,7 +30,11 @@ from app.architect_request.serializers.ArchitectRequestSerializer import (
 )
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.Note import Note
+from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
+from app.core.models.WorkType import WorkType
 from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.email_templates.signals import api_success_signal
@@ -318,6 +326,69 @@ class ArchitectRequestService:
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
+    def get_all_project_categories(cls):
+        """
+        Retrieve all project categories.
+
+        This method queries the database for all ProjectCategory instances,
+        serializes them, and returns them in the response.
+
+        Returns:
+            Response: A Response object containing serialized project
+            categories and an HTTP 200 status.
+        """
+        categories = ProjectCategory.objects.all()
+        serializer = ProjectCategorySerializer(categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def get_all_property_types(cls):
+        """
+        Retrieve all property types.
+
+        This method queries the database for all PropertyType instances,
+        serializes them, and returns them in the response.
+
+        Returns:
+            Response: A Response object containing serialized property types
+             and an HTTP 200 status.
+        """
+        property_types = PropertyType.objects.all()
+        serializer = PropertyTypeSerializer(property_types, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def get_all_work_types(cls):
+        """
+        Retrieve all work types.
+
+        This method queries the database for all WorkType instances,
+        serializes them, and returns them in the response.
+
+        Returns:
+            Response: A Response object containing serialized work types and
+             an HTTP 200 status.
+        """
+        work_types = WorkType.objects.all()
+        serializer = WorkTypeSerializer(work_types, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def get_all_architectural_styles(cls):
+        """
+        Retrieve all architectural styles.
+
+        This method queries the database for all ArchitecturalStyle instances,
+        serializes them, and returns them in the response.
+
+        Returns:
+            Response: A Response object containing serialized architectural
+            styles and an HTTP 200 status.
+        """
+        styles = ArchitecturalStyle.objects.all()
+        serializer = ArchitecturalStyleSerializer(styles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def reschedule_architect_request(cls, architect_request_id, data):
         """
         Handles rescheduling an ArchitectRequest.

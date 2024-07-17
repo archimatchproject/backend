@@ -183,6 +183,58 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         """
         return ArchitectRequestService.add_note_to_architect_request(pk, request.data)
 
+    @action(detail=False, methods=["GET"], url_path="project-categories")
+    def get_project_categories(self, request):
+        """
+        Retrieve all project categories.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of project categories.
+        """
+        return ArchitectRequestService.get_all_project_categories()
+
+    @action(detail=False, methods=["GET"], url_path="property-types")
+    def get_property_types(self, request):
+        """
+        Retrieve all property types.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of property types.
+        """
+        return ArchitectRequestService.get_all_property_types()
+
+    @action(detail=False, methods=["GET"], url_path="work-types")
+    def get_work_types(self, request):
+        """
+        Retrieve all work types.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of work types.
+        """
+        return ArchitectRequestService.get_all_work_types()
+
+    @action(detail=False, methods=["GET"], url_path="architectural-styles")
+    def get_architectural_styles(self, request):
+        """
+        Retrieve all architectural styles.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of architectural styles.
+        """
+        return ArchitectRequestService.get_all_architectural_styles()
+
     @action(
         detail=True,
         methods=["PUT"],

@@ -303,7 +303,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="validate-password-token",
         url_name="validate-password-token",
     )
-    def client_validate_password_token(self, request):
+    def supplier_validate_password_token(self, request):
         """
         sends Supplier reset password email.
 
@@ -312,3 +312,52 @@ class SupplierViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         return SupplierService.supplier_validate_password_token(request)
+
+    def get(self, request):
+        """
+        Retrieve all suppliers.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `supplier_get_all` class method
+        of `SupplierService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        return SupplierService.supplier_get_all(request)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="resend-email",
+    )
+    def supplier_resend_email(self, request, pk=None):
+        """
+        Custom action to resend email to supplier
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the supplier object
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return SupplierService.supplier_resend_email(pk)
+
+    def delete(self, request, pk=None):
+        """
+        Deletes a supplier from the system.
+
+        Args:
+            request (Request): Django request object.
+            pk (int): ID of the supplier to be deleted.
+
+        Returns:
+            Response: Response object indicating success or failure of the supplier deletion.
+        """
+        return SupplierService.delete_supplier(request, pk)

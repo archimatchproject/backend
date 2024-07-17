@@ -43,3 +43,7 @@ ADD_ADMIN_IMAGES = generate_image_paths(
 CLIENT_PASSWORD_IMAGES = generate_image_paths(
     *COMMON_IMAGES, "client_logo.png", "client_password_header.png"
 )
+
+CLIENT_FIRST_CONNECTION_IMAGES = generate_image_paths(
+    *COMMON_IMAGES, "client_logo.png", "refuse_architect_request_header.png"
+)

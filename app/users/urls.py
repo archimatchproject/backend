@@ -20,6 +20,7 @@ from app.users.controllers.ArchimatchUserViewSet import ArchimatchUserObtainPair
 from app.users.controllers.ArchimatchUserViewSet import PhoneTokenObtainPairView
 from app.users.routes.AdminUrls import admin_urlpatterns
 from app.users.routes.ArchimatchUserUrls import archimatch_user_urlpatterns
+from app.users.routes.ArchitectUrls import architect_urlpatterns
 from app.users.routes.ClientUrls import client_urlpatterns
 from app.users.routes.SupplierUrls import supplier_urlpatterns
 
@@ -34,6 +35,7 @@ urlpatterns = [
     *client_urlpatterns,
     *supplier_urlpatterns,
     *architect_realization_urlpatterns,
+    *architect_urlpatterns,
     path(
         "login-email/",
         ArchimatchUserObtainPairView.as_view(),

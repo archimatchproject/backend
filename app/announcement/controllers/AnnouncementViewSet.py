@@ -44,7 +44,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         Creating new announcement
         """
-        return AnnouncementService.create_announcement(request.data, request.user)
+        return AnnouncementService.create_announcement(request)
 
     @action(
         detail=True,

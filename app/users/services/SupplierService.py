@@ -72,7 +72,24 @@ class SupplierService:
                 user_type="Supplier",
             )
             Supplier.objects.create(user=user)
-
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            language_code = get_language_from_request(request)
+            token = generate_password_reset_token(user.id)
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
+            signal_data = {
+                "template_name": "supplier_invite.html",
+                "context": {
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": email,
+                    "reset_link": reset_link,
+                },
+                "to_email": email,
+                "subject": "Archimatch Invite Supplier",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
             response_data = {
                 "message": "Supplier successfully created",
                 "status_code": status.HTTP_201_CREATED,
@@ -548,8 +565,9 @@ class SupplierService:
             email_images = settings.ARCHITECT_PASSWORD_IMAGES
             token = generate_password_reset_token(supplier.user.id)
             language_code = get_language_from_request(request)
-            reset_link = f"""{settings.BASE_FRONTEND_URL}/{language_code}
-                            /supplier/first-login-password/{token}"""
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
+
             context = {
                 "first_name": supplier.user.first_name,
                 "last_name": supplier.user.last_name,
@@ -603,3 +621,105 @@ class SupplierService:
             raise APIException(
                 detail=str(e),
             )
+
+    @classmethod
+    def supplier_get_all(cls, request):
+        """
+        Handle GET request and return paginated Supplier objects.
+
+        This method retrieves all Supplier objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or a 400 Bad Request response with an error message.
+        """
+        try:
+            queryset = Supplier.objects.all()
+            serializer = SupplierSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def supplier_resend_email(cls, pk):
+        """
+        Registers a new supplier in the system.
+
+        Args:
+            request (Request): Django request object containing supplier's email.
+
+        Returns:
+            Response: Response object indicating success or failure of supplier registration.
+        """
+        try:
+
+            supplier = Supplier.objects.get(id=pk)
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            signal_data = {
+                "template_name": "supplier_invite.html",
+                "context": {
+                    "first_name": supplier.user.first_name,
+                    "last_name": supplier.user.last_name,
+                    "email": supplier.user.email,
+                },
+                "to_email": supplier.user.email,
+                "subject": "Archimatch Invite Supplier",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
+            response_data = {
+                "message": "Email resent successfully",
+            }
+
+            return Response(
+                response_data,
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier does not exist")
+        except APIException as e:
+            raise e
+        except Exception:
+            raise APIException(detail="error resending email to supplier")
+
+    @classmethod
+    def delete_supplier(cls, pk):
+        """
+        Deletes a supplier from the system.
+
+        Args:
+            request (Request): Django request object.
+            supplier_id (int): ID of the supplier to be deleted.
+
+        Returns:
+            Response: Response object indicating success or failure of the supplier deletion.
+        """
+        try:
+            supplier = Supplier.objects.get(id=pk)
+            supplier.delete()
+
+            response_data = {
+                "message": "Supplier successfully deleted",
+            }
+
+            return Response(
+                response_data,
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
