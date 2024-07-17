@@ -85,9 +85,9 @@ supplier_urlpatterns = [
         name="validate-password-token",
     ),
     path(
-        "supplier/get-all/",
+        "supplier/get-all-suppliers/",
         SupplierViewSet.as_view({"get": "get"}),
-        name="get-all",
+        name="get-all-suppliers",
     ),
     path(
         "supplier/resend-email/<int:pk>/",
