@@ -329,15 +329,12 @@ class ArchitectRequestService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
 
         serializer = ArchitectRequestRescheduleSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         try:
+            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
             with transaction.atomic():
                 architect_request.date = serializer.validated_data.get("date")
                 architect_request.time_slot = serializer.validated_data.get("time_slot")
@@ -347,6 +344,8 @@ class ArchitectRequestService:
                     ArchitectRequestSerializer(architect_request).data,
                     status=status.HTTP_200_OK,
                 )
+        except ArchitectRequest.DoesNotExist:
+            raise NotFound(detail="No architect request found with the given ID")
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
