@@ -17,6 +17,9 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
+    ArchitectRequestRescheduleSerializer,
+)
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
@@ -313,3 +316,37 @@ class ArchitectRequestService:
         # If pagination is not applied correctly, return a 400 Bad Request response
         serializer = ArchitectRequestSerializer(queryset, many=True)
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @classmethod
+    def reschedule_architect_request(cls, architect_request_id, data):
+        """
+        Handles rescheduling an ArchitectRequest.
+
+        Args:
+            architect_request_id (int): The ID of the ArchitectRequest to be rescheduled.
+            data (dict): The validated data for rescheduling the ArchitectRequest.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+
+        serializer = ArchitectRequestRescheduleSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
+            with transaction.atomic():
+                architect_request.date = serializer.validated_data.get("date")
+                architect_request.time_slot = serializer.validated_data.get("time_slot")
+                architect_request.save()
+
+                return Response(
+                    ArchitectRequestSerializer(architect_request).data,
+                    status=status.HTTP_200_OK,
+                )
+        except ArchitectRequest.DoesNotExist:
+            raise NotFound(detail="No architect request found with the given ID")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error rescheduling architect request: {str(e)}")

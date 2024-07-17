@@ -16,6 +16,9 @@ from app.architect_request.controllers.ManageArchitectRequestPermission import (
     ManageArchitectRequestPermission,
 )
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
+    ArchitectRequestRescheduleSerializer,
+)
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
@@ -179,3 +182,22 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return ArchitectRequestService.add_note_to_architect_request(pk, request.data)
+
+    @action(
+        detail=True,
+        methods=["PUT"],
+        url_path="reschedule-meeting",
+        serializer_class=ArchitectRequestRescheduleSerializer,
+    )
+    def reschedule(self, request, pk=None):
+        """
+        Custom action to reschedule an ArchitectRequest.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the ArchitectRequest to be rescheduled.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return ArchitectRequestService.reschedule_architect_request(pk, request.data)
