@@ -8,6 +8,7 @@ Classes:
 
 """
 
+from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
 from django.utils.translation import get_language_from_request
 
@@ -72,6 +73,7 @@ class AnnouncementService:
         Creating new announcement
         """
         data = request.data
+        user = request.user
         serializer = AnnouncementPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -115,30 +117,27 @@ class AnnouncementService:
                     }
                     api_success_signal.send(sender=cls, data=signal_data)
                 else:
-                    client_instance = None
+                    if isinstance(user, AnonymousUser):
+                        raise serializers.ValidationError(
+                            detail="You must be logged in to create an announcement. \
+                            Please provide a valid authentication token."
+                        )
+                    client_instance = Client.objects.get(user=user)
 
-                announcement = Announcement.objects.create(
-                    client=client_instance,
-                    **validated_data,
-                )
+                announcement = Announcement.objects.create(client=client_instance, **validated_data)
                 announcement.needs.set(needs_data)
 
                 for piece_data in pieces_renovate_data:
                     for piece_renovate_id, number in piece_data.items():
                         piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
                         AnnouncementPieceRenovate.objects.create(
-                            announcement=announcement,
-                            piece_renovate=piece_renovate,
-                            number=number,
+                            announcement=announcement, piece_renovate=piece_renovate, number=number
                         )
 
                 announcement.project_extensions.set(project_extensions_data)
 
                 for image in project_images_data:
-                    ProjectImage.objects.create(
-                        announcement=announcement,
-                        image=image,
-                    )
+                    ProjectImage.objects.create(announcement=announcement, image=image)
 
             return Response(
                 {
@@ -149,8 +148,10 @@ class AnnouncementService:
             )
         except serializers.ValidationError as e:
             raise e
-        except Exception:
-            raise APIException(detail="Error creating announcement")
+        except Client.DoesNotExist:
+            raise NotFound(detail="Client not found")
+        except Exception as e:
+            raise APIException(detail=f"Error creating announcement ${str(e)}")
 
     @classmethod
     def update_announcement(cls, instance, data):

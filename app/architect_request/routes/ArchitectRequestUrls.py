@@ -74,4 +74,9 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"get": "get_architectural_styles"}),
         name="architectural-styles",
     ),
+    path(
+        "reschedule-meeting/<int:pk>/",
+        ArchitectRequestViewSet.as_view({"put": "reschedule"}),
+        name="reschedule",
+    ),
 ]

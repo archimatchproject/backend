@@ -40,7 +40,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
 
     """
 
-    client = ClientSerializer()
+    client = ClientSerializer(required=False)
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
     )
