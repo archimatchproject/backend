@@ -11,7 +11,7 @@ from app.users.controllers.ArchitectViewSet import ArchitectViewSet
 architect_urlpatterns = [
     path(
         "architect/send-reset-password-link/",
-        ArchitectViewSet.as_view({"post": "arhitect_send_reset_password_link"}),
+        ArchitectViewSet.as_view({"post": "architect_send_reset_password_link"}),
         name="send-reset-password-link",
     ),
     path(
