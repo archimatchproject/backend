@@ -4,7 +4,7 @@ Module defining the SliderImage model for representing images within slider sect
 
 from django.db import models
 
-from app.cms.models.Section import Section
+from app.cms.models.BlogSection import BlogSection
 
 
 class SliderImage(models.Model):
@@ -14,7 +14,7 @@ class SliderImage(models.Model):
     Attributes:
         image (ImageField): Image file for the slider image, stored in 'SectionSliderImages/'
          directory.
-        section (ForeignKey): Section to which the slider image belongs, related_name is
+        section (ForeignKey): BlogSection to which the slider image belongs, related_name is
         'slider_images'.
 
 
@@ -22,7 +22,7 @@ class SliderImage(models.Model):
 
     image = models.ImageField(upload_to="SectionSliderImages/")
     section = models.ForeignKey(
-        Section,
+        BlogSection,
         related_name="section_slider_images",
         on_delete=models.CASCADE,
         null=True,

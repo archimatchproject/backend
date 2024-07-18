@@ -16,7 +16,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from app.cms.models.Blog import Blog
-from app.cms.models.Section import Section
+from app.cms.models.BlogSection import BlogSection
 from app.cms.serializers.BlogSerializer import BlogSerializer
 
 
@@ -32,7 +32,7 @@ class BlogService:
     """
 
     @classmethod
-    def create_blog(cls, data):
+    def create_blog(cls, data, user):
         """
         Handles validation and creation of a new Blog.
 
@@ -49,25 +49,34 @@ class BlogService:
             with transaction.atomic():
                 # Create Blog instance
                 blog = Blog.objects.create(
-                    title=validated_data.get("title"), cover_photo=validated_data.get("cover_photo")
+                    title=validated_data.get("title"),
+                    cover_photo=validated_data.get("cover_photo"),
+                    sub_title=validated_data.get("sub_title"),
+                    blog_thematic=validated_data.get("blog_thematic"),
+                    admin=user.admin,
+                    visible=validated_data.get("visible", False),
                 )
 
                 # Create related sections if provided
                 sections_data = validated_data.get("sections", [])
                 for section_data in sections_data:
-                    Section.objects.create(blog=blog, **section_data)
+                    BlogSection.objects.create(blog=blog, **section_data)
+
+                # Add tags if provided
+                tags = validated_data.get("tags", [])
+                blog.tags.set(tags)
 
                 return Response(BlogSerializer(blog).data, status=status.HTTP_201_CREATED)
 
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException(detail=f"Error creating blog {str(e)}")
+            raise APIException(detail=f"Error creating blog: {str(e)}")
 
     @classmethod
     def update_blog(cls, instance, data, partial=False):
         """
-        Handle the update of an existing Blog instance along with related Section instances.
+        Handle the update of an existing Blog instance along with related BlogSection instances.
 
         Args:
             instance (Blog): The existing Blog instance.
@@ -86,11 +95,15 @@ class BlogService:
                 instance.cover_photo = serializer.validated_data.get(
                     "cover_photo", instance.cover_photo
                 )
+                instance.sub_title = serializer.validated_data.get("sub_title", instance.sub_title)
+                instance.blog_thematic = serializer.validated_data.get(
+                    "blog_thematic", instance.blog_thematic
+                )
+                instance.visible = serializer.validated_data.get("visible", instance.visible)
                 instance.save()
 
                 # Handle sections update or create new sections
                 sections_data = data.get("sections", [])
-
                 updated_section_ids = []
 
                 for section_data in sections_data:
@@ -98,7 +111,7 @@ class BlogService:
 
                     if section_id:
                         # Update existing section
-                        section = Section.objects.get(id=section_id, blog=instance)
+                        section = BlogSection.objects.get(id=section_id, blog=instance)
                         section.section_type = section_data.get(
                             "section_type", section.section_type
                         )
@@ -108,14 +121,23 @@ class BlogService:
                         updated_section_ids.append(section.id)
                     else:
                         # Create new section
-                        Section.objects.create(blog=instance, **section_data)
+
+                        section_created = BlogSection.objects.create(blog=instance, **section_data)
+                        updated_section_ids.append(section_created.id)
 
                 # Delete sections not in updated_section_ids
-                Section.objects.filter(blog=instance).exclude(id__in=updated_section_ids).delete()
+
+                BlogSection.objects.filter(blog=instance).exclude(
+                    id__in=updated_section_ids
+                ).delete()
+
+                # Update tags
+                tags = serializer.validated_data.get("tags", [])
+                instance.tags.set(tags)
 
                 return Response(BlogSerializer(instance).data, status=status.HTTP_200_OK)
 
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException(detail=f"Error updating blog: {e}")
+            raise APIException(detail=f"Error updating blog: {str(e)}")

@@ -1,5 +1,5 @@
 """
-Module defining the Section model for representing sections within a blog post.
+Module defining the BlogSection model for representing sections within a blog post.
 """
 
 from django.db import models
@@ -7,7 +7,7 @@ from django.db import models
 from app.cms.models.Blog import Blog
 
 
-class Section(models.Model):
+class BlogSection(models.Model):
     """
     Model representing a section within a blog post.
 
@@ -52,10 +52,10 @@ class Section(models.Model):
 
     class Meta:
         """
-        Meta class for Section model.
+        Meta class for BlogSection model.
 
-        Defines display names for singular and plural forms of Section in the Django admin.
+        Defines display names for singular and plural forms of BlogSection in the Django admin.
         """
 
-        verbose_name = "Section"
-        verbose_name_plural = "Sections"
+        verbose_name = "Blog Section"
+        verbose_name_plural = "Blog Sections"

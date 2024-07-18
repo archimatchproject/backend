@@ -54,7 +54,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created Blog instance.
         """
-        return BlogService.create_blog(request.data)
+        return BlogService.create_blog(request.data, request.user)
 
     def update(self, request, *args, **kwargs):
         """
