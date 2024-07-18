@@ -34,6 +34,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
         "discount_percentage",
         "start_date",
         "end_date",
+        "discount_message",
     )
     search_fields = ("plan_name",)
     list_filter = ("active", "free_plan")

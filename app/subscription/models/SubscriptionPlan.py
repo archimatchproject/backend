@@ -33,6 +33,7 @@ class SubscriptionPlan(BaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
 
     def save(self, *args, **kwargs):
         """

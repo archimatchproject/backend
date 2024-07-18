@@ -39,4 +39,5 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
             "discount_percentage",
             "start_date",
             "end_date",
+            "discount_message",
         ]
