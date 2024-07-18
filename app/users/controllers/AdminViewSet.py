@@ -37,6 +37,8 @@ class AdminViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsSuperUser]
         elif self.action == "list":
             self.permission_classes = [IsAuthenticated]
+        elif self.action in ["admin_send_reset_password_link","admin_validate_password_token"]:
+            self.permission_classes = []
         else:
             self.permission_classes = [IsAuthenticated]
 
