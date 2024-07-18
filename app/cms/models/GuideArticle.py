@@ -39,6 +39,12 @@ class GuideArticle(BaseModel):
         if not (0 <= self.rating <= 5):
             raise ValidationError("Rating must be between 0 and 5.")
 
+    def __str__(self):
+        """
+        String representation of the GuideArticle.
+        """
+        return self.title
+
     class Meta:
         """
         Meta class for GuideArticle model.
