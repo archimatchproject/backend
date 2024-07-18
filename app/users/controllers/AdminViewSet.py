@@ -53,7 +53,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of admin creation.
         """
-        return AdminService.create_admin(request.data)
+        return AdminService.create_admin(request)
 
     def update(self, request, *args, **kwargs):
         """
