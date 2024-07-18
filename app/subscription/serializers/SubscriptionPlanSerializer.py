@@ -35,4 +35,8 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
             "free_plan",
             "services",
             "plan_services",
+            "discount",
+            "discount_percentage",
+            "start_date",
+            "end_date",
         ]

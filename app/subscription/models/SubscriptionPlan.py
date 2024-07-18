@@ -2,6 +2,8 @@
 Module containing the SubscriptionPlan model.
 """
 
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from app.core.models.BaseModel import BaseModel
@@ -21,6 +23,17 @@ class SubscriptionPlan(BaseModel):
     free_plan = models.BooleanField(default=False)
     services = models.ManyToManyField(PlanService)
 
+    discount = models.BooleanField(default=False)
+    discount_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
     def save(self, *args, **kwargs):
         """
         Custom save method to ensure the plan price is zero if the plan is free.
@@ -38,8 +51,6 @@ class SubscriptionPlan(BaseModel):
     class Meta:
         """
         Meta class for SubscriptionPlan model.
-
-        Provides verbose names for the model in the Django admin interface.
         """
 
         verbose_name = "Subscription Plan"

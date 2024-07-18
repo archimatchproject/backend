@@ -30,6 +30,10 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
         "number_free_tokens",
         "active",
         "free_plan",
+        "discount",
+        "discount_percentage",
+        "start_date",
+        "end_date",
     )
     search_fields = ("plan_name",)
     list_filter = ("active", "free_plan")
