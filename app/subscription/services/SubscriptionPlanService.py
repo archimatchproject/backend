@@ -53,7 +53,7 @@ class SubscriptionPlanService:
                     "Discount percentage, start date, and end date are required \
                     when discount is true."
                 )
-            if int(discount_percentage) < 0 or int(discount_percentage) > 100:
+            if float(discount_percentage) < 0 or float(discount_percentage) > 100:
                 raise serializers.ValidationError("Discount percentage must be between 0 and 100.")
         else:
             data["discount_percentage"] = None
@@ -106,7 +106,7 @@ class SubscriptionPlanService:
                     "Discount percentage, start date, and end date are required \
                     when discount is true."
                 )
-            if int(discount_percentage) < 0 or int(discount_percentage) > 100:
+            if float(discount_percentage) < 0 or float(discount_percentage) > 100:
                 raise serializers.ValidationError("Discount percentage must be between 0 and 100.")
         else:
             data["discount_percentage"] = None
