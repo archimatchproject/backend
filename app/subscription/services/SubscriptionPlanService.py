@@ -42,30 +42,6 @@ class SubscriptionPlanService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        discount = data.get("discount", False)
-        discount_percentage = data.get("discount_percentage")
-        start_date = data.get("start_date")
-        end_date = data.get("end_date")
-        discount_message = data.get("discount_message")
-        if discount:
-            if (
-                discount_percentage is None
-                or start_date is None
-                or end_date is None
-                or discount_message is None
-            ):
-                raise serializers.ValidationError(
-                    "Discount percentage, start date, end date and discount meesage are required \
-                    when discount is true."
-                )
-            if float(discount_percentage) < 0 or float(discount_percentage) > 100:
-                raise serializers.ValidationError("Discount percentage must be between 0 and 100.")
-        else:
-            data["discount_percentage"] = None
-            data["start_date"] = None
-            data["end_date"] = None
-            data["discount_message"] = None
-
         serializer = SubscriptionPlanSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -100,31 +76,6 @@ class SubscriptionPlanService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-
-        discount = data.get("discount", instance.discount)
-        discount_percentage = data.get("discount_percentage", instance.discount_percentage)
-        start_date = data.get("start_date", instance.start_date)
-        end_date = data.get("end_date", instance.end_date)
-        discount_message = data.get("discount_message", instance.discount_message)
-
-        if discount:
-            if (
-                discount_percentage is None
-                or start_date is None
-                or end_date is None
-                or discount_message is None
-            ):
-                raise serializers.ValidationError(
-                    "Discount percentage, start date, end date and discount meesage are required \
-                    when discount is true."
-                )
-            if float(discount_percentage) < 0 or float(discount_percentage) > 100:
-                raise serializers.ValidationError("Discount percentage must be between 0 and 100.")
-        else:
-            data["discount_percentage"] = None
-            data["start_date"] = None
-            data["end_date"] = None
-            data["discount_message"] = None
 
         serializer = SubscriptionPlanSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)

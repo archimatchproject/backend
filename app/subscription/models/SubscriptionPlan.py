@@ -6,6 +6,8 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from rest_framework import serializers
+
 from app.core.models.BaseModel import BaseModel
 from app.subscription.models.PlanService import PlanService
 
@@ -42,6 +44,27 @@ class SubscriptionPlan(BaseModel):
         if self.free_plan:
             self.plan_price = 0
         super().save(*args, **kwargs)
+
+    def clean(self):
+        """
+        Custom validation method to ensure valid discount fields.
+        """
+        if self.discount:
+            if (
+                self.discount_percentage is None
+                or self.start_date is None
+                or self.end_date is None
+                or not self.discount_message
+            ):
+                raise serializers.ValidationError(
+                    "Discount percentage, start date, end date and discount message are required \
+                        when discount is true."
+                )
+        else:
+            self.discount_percentage = None
+            self.start_date = None
+            self.end_date = None
+            self.discount_message = None
 
     def __str__(self):
         """
