@@ -163,7 +163,6 @@ class AnnouncementService:
         """
         Updating existing announcement
         """
-        print(data)
         serializer = AnnouncementPUTSerializer(instance, data=data, partial=True)
         if not serializer.is_valid(raise_exception=True):
             return Response(
@@ -184,7 +183,6 @@ class AnnouncementService:
 
             # Update pieces_renovate if data is not empty
             if pieces_renovate_data:
-                print("aaaaaaaaaaaaaaa", pieces_renovate_data)
                 AnnouncementPieceRenovate.objects.filter(announcement=instance).delete()
                 for piece_data in pieces_renovate_data:
                     for piece_renovate_id, number in piece_data.items():

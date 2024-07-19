@@ -360,4 +360,4 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating success or failure of the supplier deletion.
         """
-        return SupplierService.delete_supplier(request, pk)
+        return SupplierService.delete_supplier(pk)
