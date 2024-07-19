@@ -1,11 +1,9 @@
 """
 Module for defining custom permissions related to managing architect requests.
 
-This module provides the `ManageArchitectRequestPermission` class, which extends
-`BasePermission`
-from Django REST Framework. It checks if the authenticated user has the necessary
-permissions to manage architect requests.
-
+This module provides the `NotDeletedPermission` class, which extends
+`BasePermission` from Django REST Framework. It checks if the authenticated user
+has the necessary permissions to manage architect requests.
 """
 
 from django.contrib.auth import get_user_model
@@ -35,7 +33,6 @@ class NotDeletedPermission(BasePermission):
         User = get_user_model()
         try:
             user = User.objects.get(pk=request.user.pk)
-
         except User.DoesNotExist:
             return False
 
