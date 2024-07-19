@@ -47,3 +47,15 @@ class BlogSerializer(serializers.ModelSerializer):
             "last_update",
         ]
         read_only_fields = ["blog_sections", "last_update"]
+
+    def to_internal_value(self, data):
+        """
+        Method mapping tags and adding those who don't exist
+        """
+        tags = data.get("tags", [])
+        for i, tag in enumerate(tags):
+            if isinstance(tag, str):
+                tag_obj, created = BlogTag.objects.get_or_create(name=tag)
+                tags[i] = tag_obj.name
+        data["tags"] = tags
+        return super().to_internal_value(data)

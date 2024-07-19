@@ -6,6 +6,7 @@ related to BlogThematic instances via REST API endpoints.
 """
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
@@ -70,3 +71,18 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
         return BlogThematicService.update_blog_thematic(instance, request.data, partial=partial)
+
+    @action(detail=True, methods=["PUT"])
+    def change_visibility(self, request, pk=None):
+        """
+        Change the visibility of a Blog instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to change visibility.
+            pk (int): The primary key of the Blog instance to be updated.
+
+        Returns:
+            Response: Serialized data of the updated Blog instance.
+        """
+
+        return BlogThematicService.change_visibility(pk, request)

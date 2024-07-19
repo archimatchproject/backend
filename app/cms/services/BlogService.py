@@ -13,11 +13,15 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.cms.models.Blog import Blog
 from app.cms.models.BlogSection import BlogSection
+from app.cms.models.BlogTag import BlogTag
+from app.cms.models.SliderImage import SliderImage
 from app.cms.serializers.BlogSerializer import BlogSerializer
+from app.cms.serializers.BlogTagSerializer import BlogTagSerializer
 
 
 class BlogService:
@@ -141,3 +145,122 @@ class BlogService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating blog: {str(e)}")
+
+    @classmethod
+    def update_cover_photo(cls, pk, request):
+        """
+        Handle the update of a Blog cover photo.
+
+        Args:
+            blog_id (int): The primary key of the Blog instance.
+            request (Request): The HTTP request object containing data to update Blog instance.
+
+        Returns:
+            Response: The response object containing the updated instance data.
+        """
+        try:
+            blog = Blog.objects.get(pk=pk)
+            cover_photo = request.data.get("cover_photo")
+            if not cover_photo:
+                raise serializers.ValidationError(detail="Cover photo is required.")
+
+            blog.cover_photo = cover_photo
+            blog.save()
+            return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+
+        except Blog.DoesNotExist:
+            raise NotFound(detail="Blog not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating cover photo: {str(e)}")
+
+    @classmethod
+    def change_visibility(cls, blog_id, request):
+        """
+        Handle the change of visibility for a Blog instance.
+
+        Args:
+            blog_id (int): The primary key of the Blog instance.
+            visibility (bool): The new visibility status for the Blog instance.
+
+        Returns:
+            Response: The response object containing the updated instance data.
+        """
+        try:
+            visibility = request.data.get("visible")
+            if visibility is None:
+                raise serializers.ValidationError(detail="Visible field is required.")
+            blog = Blog.objects.get(pk=blog_id)
+            blog.visible = visibility
+            blog.save()
+            return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+        except serializers.ValidationError as e:
+            raise e
+        except Blog.DoesNotExist:
+            raise NotFound(detail="Blog not found.")
+        except Exception as e:
+            raise APIException(detail=f"Error changing visibility: {str(e)}")
+
+    @classmethod
+    def upload_media(cls, request):
+        """
+        Handle the upload of media for a Blog section.
+
+        Args:
+            request (Request): The HTTP request object containing data to update Blog section.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        try:
+            section_id = request.data.get("section_id")
+            image = request.FILES.get("image")
+            slider_images = request.FILES.getlist("slider_images")
+            section = BlogSection.objects.get(id=section_id)
+
+            # Handle image section type
+            if section.section_type == "image":
+                if not image:
+                    raise serializers.ValidationError(
+                        detail="Image file is required for image section type."
+                    )
+                section.image = image
+                section.save()
+                blog = section.blog
+                return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+
+            # Handle slider section type
+            elif section.section_type == "slider":
+                if not slider_images:
+                    raise serializers.ValidationError(
+                        "At least one slider image file is required for slider section type."
+                    )
+
+                # Create multiple SliderImage instances for the slider section
+                SliderImage.objects.filter(section=section).delete()  # Clear existing slider images
+                for img in slider_images:
+                    SliderImage.objects.create(section=section, image=img)
+
+                blog = section.blog
+                return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+
+            else:
+                raise serializers.ValidationError(
+                    detail="Invalid section type. Must be either image or slider."
+                )
+        except BlogSection.DoesNotExist:
+            raise NotFound(detail="Section not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error uploading media: {str(e)}")
+
+    @classmethod
+    def list_tags(cls):
+        """
+        Retrieve all tags.
+        """
+        tags = BlogTag.objects.all()
+        serializer = BlogTagSerializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

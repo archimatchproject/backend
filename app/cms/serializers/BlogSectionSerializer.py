@@ -17,7 +17,7 @@ class BlogSectionSerializer(serializers.ModelSerializer):
 
     """
 
-    slider_images = SliderImageSerializer(many=True, read_only=True)
+    section_slider_images = SliderImageSerializer(many=True, read_only=True)
 
     class Meta:
         """
@@ -30,7 +30,7 @@ class BlogSectionSerializer(serializers.ModelSerializer):
             "section_type",
             "content",
             "image",
-            "slider_images",
+            "section_slider_images",
         ]
 
     def to_representation(self, instance):
@@ -47,7 +47,7 @@ class BlogSectionSerializer(serializers.ModelSerializer):
 
         # Conditionally exclude fields based on section_type
         if instance.section_type != "slider":
-            representation.pop("slider_images", None)
+            representation.pop("section_slider_images", None)
         if instance.section_type != "image":
             representation.pop("image", None)
         if instance.section_type not in [

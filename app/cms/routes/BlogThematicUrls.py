@@ -36,4 +36,9 @@ blog_thematic_urlpatterns = [
         BlogThematicViewSet.as_view({"delete": "destroy"}),
         name="blog-thematic-delete",
     ),
+    path(
+        "blog-thematic/change-visibility/<int:pk>/",
+        BlogThematicViewSet.as_view({"put": "change_visibility"}),
+        name="blog-thematic-change-visibility",
+    ),
 ]

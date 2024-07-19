@@ -13,6 +13,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.cms.models.BlogThematic import BlogThematic
@@ -93,3 +94,30 @@ class BlogThematicService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating blog thematic: {str(e)}")
+
+    @classmethod
+    def change_visibility(cls, blog_thematic_id, request):
+        """
+        Handle the change of visibility for a Blog instance.
+
+        Args:
+            blog_thematic_id (int): The primary key of the Blog instance.
+            visibility (bool): The new visibility status for the Blog instance.
+
+        Returns:
+            Response: The response object containing the updated instance data.
+        """
+        try:
+            visibility = request.data.get("visible")
+            if visibility is None:
+                raise serializers.ValidationError(detail="Visible field is required.")
+            blog_thematic = BlogThematic.objects.get(pk=blog_thematic_id)
+            blog_thematic.visible = visibility
+            blog_thematic.save()
+            return Response(BlogThematicSerializer(blog_thematic).data, status=status.HTTP_200_OK)
+        except serializers.ValidationError as e:
+            raise e
+        except BlogThematic.DoesNotExist:
+            raise NotFound(detail="Blog not found.")
+        except Exception as e:
+            raise APIException(detail=f"Error changing visibility: {str(e)}")
