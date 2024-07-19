@@ -163,46 +163,53 @@ class AnnouncementService:
         """
         Updating existing announcement
         """
-        serializer = AnnouncementPUTSerializer(instance, data=data)
+        print(data)
+        serializer = AnnouncementPUTSerializer(instance, data=data, partial=True)
         if not serializer.is_valid(raise_exception=True):
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         validated_data = serializer.validated_data
 
         try:
-            needs_data = validated_data.pop("needs")
+            needs_data = validated_data.pop("needs", [])
             pieces_renovate_data = validated_data.pop("pieces_renovate", [])
-            project_extensions_data = validated_data.pop("project_extensions")
+            project_extensions_data = validated_data.pop("project_extensions", [])
             project_images_data = validated_data.pop("project_images", [])
 
-            instance.needs.set(needs_data)
+            # Update needs if data is not empty
+            if needs_data:
+                instance.needs.set(needs_data)
 
-            AnnouncementPieceRenovate.objects.filter(announcement=instance).delete()
-            for piece_data in pieces_renovate_data:
-                for piece_renovate_id, number in piece_data.items():
-                    piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
-                    AnnouncementPieceRenovate.objects.create(
+            # Update pieces_renovate if data is not empty
+            if pieces_renovate_data:
+                print("aaaaaaaaaaaaaaa", pieces_renovate_data)
+                AnnouncementPieceRenovate.objects.filter(announcement=instance).delete()
+                for piece_data in pieces_renovate_data:
+                    for piece_renovate_id, number in piece_data.items():
+                        piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
+                        AnnouncementPieceRenovate.objects.create(
+                            announcement=instance,
+                            piece_renovate=piece_renovate,
+                            number=number,
+                        )
+
+            # Update project_extensions if data is not empty
+            if project_extensions_data:
+                instance.project_extensions.set(project_extensions_data)
+
+            # Update project_images if data is not empty
+            if project_images_data:
+                ProjectImage.objects.filter(announcement=instance).delete()
+                for image in project_images_data:
+                    ProjectImage.objects.create(
                         announcement=instance,
-                        piece_renovate=piece_renovate,
-                        number=number,
+                        image=image,
                     )
 
-            instance.project_extensions.set(project_extensions_data)
-
-            ProjectImage.objects.filter(announcement=instance).delete()
-            for image in project_images_data:
-                ProjectImage.objects.create(
-                    announcement=instance,
-                    image=image,
-                )
-
-            for (
-                attr,
-                value,
-            ) in validated_data.items():
+            # Update other attributes if any
+            for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
@@ -641,3 +648,27 @@ class AnnouncementService:
             raise NotFound(detail=str(e))
         except Exception:
             raise APIException(detail="Error accepting the announcement")
+
+    @classmethod
+    def get_announcement_details(cls, pk):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+
+            serializer = AnnouncementOutputSerializer(announcement, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving the announcement")
