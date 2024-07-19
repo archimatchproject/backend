@@ -387,3 +387,21 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the refusal operation.
         """
         return AnnouncementService.refuse_announcement(pk)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="get-details",
+    )
+    def get_announcement_details(self, request, pk=None):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.get_announcement_details(pk)
