@@ -36,4 +36,20 @@ blog_urlpatterns = [
         BlogViewSet.as_view({"delete": "destroy"}),
         name="blog-delete",
     ),
+    path(
+        "blog/update-cover-photo/<int:pk>/",
+        BlogViewSet.as_view({"put": "update_cover_photo"}),
+        name="blog-update-cover-photo",
+    ),
+    path(
+        "blog/change-visibility/<int:pk>/",
+        BlogViewSet.as_view({"put": "change_visibility"}),
+        name="blog-change-visibility",
+    ),
+    path(
+        "blog/upload-media/",
+        BlogViewSet.as_view({"post": "upload_media"}),
+        name="blog-upload-media",
+    ),
+    path("blog/tags", BlogViewSet.as_view({"get": "list_tags"}), name="blog-tags-list"),
 ]

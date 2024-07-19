@@ -33,7 +33,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         """
         Override this method to specify custom permissions for different actions.
         """
-        if self.action in ["create", "update"]:
+        if self.action in ["create", "update", "destroy"]:
             self.permission_classes = [IsAuthenticated, IsSuperUser]
         elif self.action == "list":
             self.permission_classes = [IsAuthenticated]
@@ -53,7 +53,7 @@ class AdminViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of admin creation.
         """
-        return AdminService.create_admin(request.data)
+        return AdminService.create_admin(request)
 
     def update(self, request, *args, **kwargs):
         """

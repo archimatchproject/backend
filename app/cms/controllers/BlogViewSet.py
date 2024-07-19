@@ -6,6 +6,9 @@ related to Blog instances via REST API endpoints.
 """
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
@@ -24,6 +27,14 @@ class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
 
+    def get_parser_classes(self):
+        """
+        Get the parsers that the view requires.
+        """
+        if self.action in ["update_cover_photo", "upload_media"]:
+            return (MultiPartParser, FormParser)
+        return super().get_parser_classes()
+
     def get_permissions(self):
         """
         Get the permissions that the view requires.
@@ -36,9 +47,16 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             list: List of permission instances.
         """
-        if self.action in ["list", "retrieve"]:
+        if self.action in ["update_cover_photo", "upload_media"]:
             return []
-        elif self.action in ["create", "update", "partial_update", "destroy"]:
+        elif self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+            "update_cover_photo",
+            "change_visibility",
+        ]:
             return [IsAuthenticated(), ManageBlogPermission()]
         return super().get_permissions()
 
@@ -54,7 +72,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created Blog instance.
         """
-        return BlogService.create_blog(request.data)
+        return BlogService.create_blog(request.data, request.user)
 
     def update(self, request, *args, **kwargs):
         """
@@ -71,3 +89,52 @@ class BlogViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
         return BlogService.update_blog(instance, request.data, partial=partial)
+
+    @action(detail=True, methods=["PUT"])
+    def update_cover_photo(self, request, pk=None):
+        """
+        Update an existing Blog cover_photo.
+
+        Args:
+            request (Request): The HTTP request object containing data to update Blog instance.
+            pk (int): The primary key of the Blog instance to be updated.
+
+        Returns:
+            Response: Serialized data of the updated Blog instance.
+        """
+        return BlogService.update_cover_photo(pk, request)
+
+    @action(detail=True, methods=["PUT"])
+    def change_visibility(self, request, pk=None):
+        """
+        Change the visibility of a Blog instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to change visibility.
+            pk (int): The primary key of the Blog instance to be updated.
+
+        Returns:
+            Response: Serialized data of the updated Blog instance.
+        """
+
+        return BlogService.change_visibility(pk, request)
+
+    @action(detail=False, methods=["POST"])
+    def upload_media(self, request, *args, **kwargs):
+        """
+        Upload media for blog sections.
+
+        Args:
+            request (Request): The HTTP request object containing media upload data.
+
+        Returns:
+            Response: Serialized data of the updated Blog sections.
+        """
+        return BlogService.upload_media(request)
+
+    @action(detail=False, methods=["GET"])
+    def list_tags(self, request):
+        """
+        Retrieve all tags.
+        """
+        return BlogService.list_tags()

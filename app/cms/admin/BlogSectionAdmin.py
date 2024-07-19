@@ -1,13 +1,13 @@
 """
 Django admin configuration for managing CMS sections and slider images.
 
-This module defines admin classes and inlines for managing Section and SliderImage models
+This module defines admin classes and inlines for managing BlogSection and SliderImage models
 in the Django admin interface.
 """
 
 from django.contrib import admin
 
-from app.cms.models import Section
+from app.cms.models import BlogSection
 from app.cms.models import SliderImage
 
 
@@ -24,13 +24,13 @@ class SliderImageInline(admin.TabularInline):
 
 class SectionInline(admin.StackedInline):
     """
-    Inline admin configuration for Section model with nested SliderImageInline.
+    Inline admin configuration for BlogSection model with nested SliderImageInline.
 
-    This inline admin class is used within SectionAdmin to manage Section instances,
+    This inline admin class is used within SectionAdmin to manage BlogSection instances,
     optionally with nested SliderImage instances based on section_type.
     """
 
-    model = Section
+    model = BlogSection
     extra = 1
     inlines = [SliderImageInline]
 
@@ -40,7 +40,7 @@ class SectionInline(admin.StackedInline):
 
         Args:
             request (HttpRequest): The current HTTP request.
-            obj (Section or None): The Section instance being edited.
+            obj (BlogSection or None): The BlogSection instance being edited.
 
         Returns:
             list: List of inline instances to display.
@@ -50,11 +50,11 @@ class SectionInline(admin.StackedInline):
         return super().get_inline_instances(request, obj)
 
 
-class SectionAdmin(admin.ModelAdmin):
+class BlogSectionAdmin(admin.ModelAdmin):
     """
-    Admin configuration for Section model.
+    Admin configuration for BlogSection model.
 
-    This admin class provides customizations for the Section model in the Django
+    This admin class provides customizations for the BlogSection model in the Django
      admin site.
     It includes list display fields, filters, and inline editing for associated
      SliderImage instances.
@@ -75,7 +75,7 @@ class SectionAdmin(admin.ModelAdmin):
 
         Args:
             request (HttpRequest): The current HTTP request.
-            obj (Section or None): The Section instance being edited.
+            obj (BlogSection or None): The BlogSection instance being edited.
 
         Returns:
             list: List of inline instances to display.
@@ -85,4 +85,4 @@ class SectionAdmin(admin.ModelAdmin):
         return super().get_inline_instances(request, obj)
 
 
-admin.site.register(Section, SectionAdmin)
+admin.site.register(BlogSection, BlogSectionAdmin)
