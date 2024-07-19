@@ -76,6 +76,7 @@ class SubscriptionPlanService:
         Returns:
             Response: The response object containing the updated instance data.
         """
+
         serializer = SubscriptionPlanSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data

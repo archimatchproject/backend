@@ -63,6 +63,7 @@ class ArchimatchUser(AbstractUser):
         related_name="user_permissions_archimatchuser_set",
         blank=True,
     )
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         """

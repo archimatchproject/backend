@@ -73,7 +73,15 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Serializer Class: The appropriate serializer class based on the request method.
         """
-        if self.request.method in ["POST", "PUT"]:
+        if self.action == "create_architect_request":
+            return ArchitectRequestInputSerializer
+        elif self.action == "admin_accept":
+            return ArchitectAcceptSerializer
+        elif self.action == "add_note":
+            return NoteSerializer
+        elif self.action == "reschedule":
+            return ArchitectRequestRescheduleSerializer
+        elif self.action in ["create", "update", "partial_update"]:
             return ArchitectRequestInputSerializer
         return ArchitectRequestSerializer
 
