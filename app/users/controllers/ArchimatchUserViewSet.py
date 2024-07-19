@@ -81,7 +81,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             "archimatch_user_update_data",
             "archimatch_user_get_user_data",
         ]:
-            self.permission_classes = [IsAuthenticated, NotDeletedPermission()]
+            self.permission_classes = [IsAuthenticated, NotDeletedPermission]
         return super().get_permissions()
 
     @action(detail=False, methods=["POST"], url_path="create-password")
