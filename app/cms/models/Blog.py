@@ -40,7 +40,6 @@ class Blog(BaseModel):
     tags = models.ManyToManyField(BlogTag)
     admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
     visible = models.BooleanField(default=False)
-    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         """

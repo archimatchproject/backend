@@ -22,5 +22,5 @@ class BlogThematicSerializer(serializers.ModelSerializer):
         """
 
         model = BlogThematic
-        fields = ["id", "title", "admin", "visible", "last_update", "blog_thematic_blogs"]
+        fields = ["id", "title", "admin", "visible", "updated_at", "blog_thematic_blogs"]
         read_only_fields = ["last_update"]

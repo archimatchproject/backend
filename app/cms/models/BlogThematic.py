@@ -25,7 +25,6 @@ class BlogThematic(BaseModel):
     title = models.CharField(max_length=255, unique=True)
     admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
     visible = models.BooleanField(default=False)
-    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         """
