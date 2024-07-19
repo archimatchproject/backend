@@ -57,8 +57,8 @@ class SubscriptionPlan(BaseModel):
                 or not self.discount_message
             ):
                 raise serializers.ValidationError(
-                    "Discount percentage, start date, end date and discount message are required \
-                        when discount is true."
+                    "the following fields are required: 'discount_percentage', 'start_date', \
+                        'end_date', and 'discount_message'."
                 )
         else:
             self.discount_percentage = None

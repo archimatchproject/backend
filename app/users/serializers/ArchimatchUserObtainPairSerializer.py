@@ -46,8 +46,10 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         Returns:
             dict: Custom response containing the auth pair and user data.
         """
-        super().validate(attrs)
 
+        super().validate(attrs)
+        if self.user.is_deleted:
+            raise serializers.ValidationError(detail="User has been deleted")
         refresh = self.get_token(self.user)
         access = refresh.access_token
 
@@ -86,7 +88,8 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
         password = attrs.get("password")
 
         user = ArchimatchUser.objects.filter(phone_number=phone_number).first()
-
+        if self.user.is_deleted:
+            raise serializers.ValidationError(detail="User has been deleted")
         if user and user.check_password(password):
             attrs["email"] = user.email
             attrs.pop("phone_number")

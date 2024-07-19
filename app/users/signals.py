@@ -20,4 +20,5 @@ def delete_associated_user(sender, instance, **kwargs):
     Deletes the associated ArchimatchUser when the user type instance is deleted.
     """
     if instance.user:
-        instance.user.delete()
+        instance.user.is_deleted = True
+        instance.user.save()
