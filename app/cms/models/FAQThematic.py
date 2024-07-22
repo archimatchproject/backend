@@ -24,6 +24,12 @@ class FAQThematic(BaseModel):
         max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
     )
 
+    def __str__(self):
+        """
+        String representation of the FAQThematic.
+        """
+        return self.title
+
     class Meta:
         """
         Meta class for FAQThematic model.

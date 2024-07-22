@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from app.users.controllers.NotDeletedPermission import NotDeletedPermission
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
@@ -80,7 +81,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             "archimatch_user_update_data",
             "archimatch_user_get_user_data",
         ]:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsAuthenticated, NotDeletedPermission()]
         return super().get_permissions()
 
     @action(detail=False, methods=["POST"], url_path="create-password")

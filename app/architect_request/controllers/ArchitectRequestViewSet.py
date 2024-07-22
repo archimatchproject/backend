@@ -73,7 +73,15 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Serializer Class: The appropriate serializer class based on the request method.
         """
-        if self.request.method in ["POST", "PUT"]:
+        if self.action == "create_architect_request":
+            return ArchitectRequestInputSerializer
+        elif self.action == "admin_accept":
+            return ArchitectAcceptSerializer
+        elif self.action == "add_note":
+            return NoteSerializer
+        elif self.action == "reschedule":
+            return ArchitectRequestRescheduleSerializer
+        elif self.action in ["create", "update", "partial_update"]:
             return ArchitectRequestInputSerializer
         return ArchitectRequestSerializer
 
@@ -253,3 +261,16 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return ArchitectRequestService.reschedule_architect_request(pk, request.data)
+
+    @action(detail=False, methods=["GET"], url_path="time-slots")
+    def get_time_slots(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        return ArchitectRequestService.get_all_time_slots()
