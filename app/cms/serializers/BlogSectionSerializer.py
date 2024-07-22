@@ -1,36 +1,36 @@
 """
-Serializers for handling Section model instances.
+Serializers for handling BlogSection model instances.
 """
 
 from rest_framework import serializers
 
-from app.cms.models.Section import Section
+from app.cms.models.BlogSection import BlogSection
 from app.cms.serializers.SliderImageSerializer import SliderImageSerializer
 
 
-class SectionSerializer(serializers.ModelSerializer):
+class BlogSectionSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Section model.
+    Serializer for the BlogSection model.
 
-    This serializer handles the serialization and deserialization of Section instances,
+    This serializer handles the serialization and deserialization of BlogSection instances,
     including fields such as id, section_type, content, image, and slider_images.
 
     """
 
-    slider_images = SliderImageSerializer(many=True, read_only=True)
+    section_slider_images = SliderImageSerializer(many=True, read_only=True)
 
     class Meta:
         """
         Meta class specifying the model and fields for the serializer.
         """
 
-        model = Section
+        model = BlogSection
         fields = [
             "id",
             "section_type",
             "content",
             "image",
-            "slider_images",
+            "section_slider_images",
         ]
 
     def to_representation(self, instance):
@@ -38,16 +38,16 @@ class SectionSerializer(serializers.ModelSerializer):
         Customizes the serialized representation based on the section_type.
 
         Args:
-            instance (Section): Instance of the Section model.
+            instance (BlogSection): Instance of the BlogSection model.
 
         Returns:
-            dict: Serialized representation of the Section instance.
+            dict: Serialized representation of the BlogSection instance.
         """
         representation = super().to_representation(instance)
 
         # Conditionally exclude fields based on section_type
         if instance.section_type != "slider":
-            representation.pop("slider_images", None)
+            representation.pop("section_slider_images", None)
         if instance.section_type != "image":
             representation.pop("image", None)
         if instance.section_type not in [
