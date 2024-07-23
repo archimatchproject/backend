@@ -297,7 +297,6 @@ class ArchimatchUserService:
             serializer.is_valid(raise_exception=True)
             validated_data = serializer.validated_data
 
-            print(validated_data.get("phone_number"))
             if ArchitectRequest.objects.filter(
                 phone_number=validated_data.get("phone_number")
             ).exists():

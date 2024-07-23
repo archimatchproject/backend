@@ -178,7 +178,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        url_path="is-found",
+        url_path="verify-credentials",
     )
     def archimatch_user_is_found(self, request):
         """
