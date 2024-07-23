@@ -32,11 +32,17 @@ def attach_email_icons(msg, images):
     msg.mixed_subtype = "related"
 
     for path, filename in images:
-        with open(os.path.join(path, filename), "rb") as f:
-            img = MIMEImage(f.read())
+        try:
+            with open(os.path.join(path, filename), "rb") as f:
+                img = MIMEImage(f.read())
 
-        # Define the content ID
-        img.add_header("Content-ID", f"<{filename}>")
-        img.add_header("Content-Disposition", "inline", filename=filename)
+            # Define the content ID
+            img.add_header("Content-ID", f"<{filename}>")
+            img.add_header("Content-Disposition", "inline", filename=filename)
 
-        msg.attach(img)
+            msg.attach(img)
+        except FileNotFoundError:
+            print(f"File {os.path.join(path, filename)} not found.")
+            # Optionally, handle the error, e.g., log it, or attach a default image
+        except Exception as e:
+            print(f"An error occurred while attaching the file {filename}: {e}")
