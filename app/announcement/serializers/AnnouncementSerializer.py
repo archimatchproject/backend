@@ -151,6 +151,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "admin_note",
         ]
 
 
@@ -203,6 +204,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "notes",
             "created_at",
             "status",
+            "admin_note",
         ]
 
 
@@ -241,6 +243,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "admin_note",
         ]
 
     def to_representation(self, instance):

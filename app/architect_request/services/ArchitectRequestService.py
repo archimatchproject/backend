@@ -87,6 +87,7 @@ class ArchitectRequestService:
                     "email",
                     "date",
                     "time_slot",
+                    "city",
                 ]
 
                 architect_request = ArchitectRequest()
