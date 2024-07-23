@@ -84,4 +84,14 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"get": "get_time_slots"}),
         name="architect-request-time-slots",
     ),
+    path(
+        "project-complexities",
+        ArchitectRequestViewSet.as_view({"get": "get_project_complexities"}),
+        name="architect-request-project-complexities",
+    ),
+    path(
+        "years-experience",
+        ArchitectRequestViewSet.as_view({"get": "get_years_experience"}),
+        name="architect-request-years-experience",
+    ),
 ]

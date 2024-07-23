@@ -86,3 +86,16 @@ APPEARANCES = [
     ("Petite", "Petite"),
     ("Grande", "Grande"),
 ]
+
+PROJECT_COMPLEXITY_CHOICES = [
+    ("Simple", "Simple"),
+    ("Medium", "Medium"),
+    ("Complex", "Complex"),
+]
+
+YEARS_EXPERIENCE_CHOICES = [
+    ("1-3 years", "1-3 years"),
+    ("3-5 years", "3-5 years"),
+    ("5-8 years", "5-8 years"),
+    ("8+ years", "8+ years"),
+]
