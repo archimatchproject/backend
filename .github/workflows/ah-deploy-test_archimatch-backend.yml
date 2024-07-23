@@ -84,8 +84,3 @@ jobs:
           # Start Supervisor
           ls -al
           source ./venv/bin/activate && supervisord -c ./supervisord.conf
-
-      - name: Ensure Supervisor is enabled and started
-        run: |
-          sudo systemctl enable supervisor
-          sudo systemctl start supervisor
