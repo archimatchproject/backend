@@ -21,6 +21,7 @@ from app.announcement.serializers.ArchitecturalStyleSerializer import Architectu
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
+from app.architect_request import TIME_SLOT_CHOICES
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
     ArchitectRequestRescheduleSerializer,
@@ -86,6 +87,7 @@ class ArchitectRequestService:
                     "email",
                     "date",
                     "time_slot",
+                    "city",
                 ]
 
                 architect_request = ArchitectRequest()
@@ -429,3 +431,16 @@ class ArchitectRequestService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error rescheduling architect request: {str(e)}")
+
+    @classmethod
+    def get_all_time_slots(cls):
+        """
+        Retrieve all available time slots.
+
+        Returns:
+            Response: A Response object containing the list of time slots.
+        """
+        time_slots = [
+            {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
+        ]
+        return Response(time_slots, status=status.HTTP_200_OK)

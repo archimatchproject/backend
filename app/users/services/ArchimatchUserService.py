@@ -16,6 +16,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.core.services.SMS.SMSVerificationService import SMSVerificationService
 from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
 from app.core.validation.exceptions import InvalidPhoneNumberException
@@ -27,6 +28,7 @@ from app.users.serializers.ArchimatchUserObtainPairSerializer import (
 )
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserEmailPhoneSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
@@ -267,3 +269,46 @@ class ArchimatchUserService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def archimatch_user_is_found(cls, request):
+        """
+        Validates the phone number and email address from the provided data.
+
+        This method checks if the given phone number and email address are unique
+          in the `ArchitectRequest` model.
+        If either the phone number or the email address already exists,
+        it raises an `APIException`.
+
+        Args:
+            request (Request): Django request object containing user data.
+
+        Returns:
+            Response: Response object with a message indicating the status
+            of the validation.
+
+        Raises:
+            APIException: If the phone number or email address already exists or if any
+            other error occurs during validation.
+        """
+        try:
+            data = request.data
+            serializer = ArchimatchUserEmailPhoneSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            validated_data = serializer.validated_data
+
+            if ArchitectRequest.objects.filter(
+                phone_number=validated_data.get("phone_number")
+            ).exists():
+                raise APIException(detail="phone number already exists")
+            if ArchitectRequest.objects.filter(email=validated_data.get("email")).exists():
+                raise APIException(detail="email already exists")
+
+            return Response(
+                {"message": "phone number and email address are valid"},
+                status=status.HTTP_200_OK,
+            )
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error retrieving user data ${str(e)}")

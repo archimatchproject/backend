@@ -98,6 +98,7 @@ class Announcement(BaseModel):
     )
     notes = GenericRelation(Note)
     status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
+    admin_note = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         """

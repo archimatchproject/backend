@@ -261,3 +261,16 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return ArchitectRequestService.reschedule_architect_request(pk, request.data)
+
+    @action(detail=False, methods=["GET"], url_path="time-slots")
+    def get_time_slots(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        return ArchitectRequestService.get_all_time_slots()

@@ -84,3 +84,35 @@ class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):
             "email": {"required": True},
             "phone_number": {"required": True},
         }
+
+
+class ArchimatchUserEmailPhoneSerializer(serializers.ModelSerializer):
+    """
+    Simplified serializer for ArchimatchUser model.
+
+    This serializer includes a subset of fields from the ArchimatchUser model for
+    simplified serialization.
+
+    Fields:
+        first_name: First name of the user.
+        last_name: Last name of the user.
+        email: Email address of the user.
+        phone_number: Phone number of the user.
+    """
+
+    class Meta:
+        """
+        Meta class for ArchimatchUserSimpleSerializer.
+
+        Includes simplified fields for serialization and additional options.
+        """
+
+        model = ArchimatchUser
+        fields = [
+            "email",
+            "phone_number",
+        ]
+        extra_kwargs = {
+            "email": {"required": True},
+            "phone_number": {"required": True},
+        }

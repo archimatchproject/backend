@@ -79,4 +79,9 @@ architect_request_urlpatterns = [
         ArchitectRequestViewSet.as_view({"put": "reschedule"}),
         name="reschedule",
     ),
+    path(
+        "time-slots",
+        ArchitectRequestViewSet.as_view({"get": "get_time_slots"}),
+        name="architect-request-time-slots",
+    ),
 ]

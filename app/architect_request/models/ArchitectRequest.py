@@ -18,6 +18,7 @@ from django.utils import timezone
 
 from rest_framework.serializers import ValidationError
 
+from app.announcement import CITIES
 from app.architect_request import ARCHITECT_REQUEST_STATUS_CHOICES
 from app.architect_request import TIME_SLOT_CHOICES
 from app.core.models import BaseModel
@@ -48,7 +49,7 @@ class ArchitectRequest(BaseModel):
     last_name = models.CharField(max_length=255, default="")
     phone_number = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(max_length=10, default="")
+    architect_identifier = models.CharField(max_length=10, null=True, blank=True)
     email = models.EmailField(unique=True)
 
     architect_speciality = models.ForeignKey(
@@ -62,6 +63,11 @@ class ArchitectRequest(BaseModel):
     meeting_responsable = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(
         max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
+    )
+    city = models.CharField(
+        max_length=50,
+        choices=CITIES,
+        default=CITIES[0],
     )
 
     notes = GenericRelation(Note)

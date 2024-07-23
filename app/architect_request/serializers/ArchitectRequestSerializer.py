@@ -53,11 +53,11 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "address",
-            "architect_identifier",
             "email",
             "architect_speciality",
             "date",
             "time_slot",
+            "city",
         ]
 
 
@@ -102,6 +102,7 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
             "meeting_responsable",
             "status",
             "notes",
+            "city",
         ]
 
 
