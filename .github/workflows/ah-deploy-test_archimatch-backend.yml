@@ -80,6 +80,7 @@ jobs:
           mkdir -p logs
           chmod 666 logs
           # Start Supervisor
+          ls -al
           source /venv/bin/activate && supervisord -c ./supervisord.conf
 
       - name: Ensure Supervisor is enabled and started
