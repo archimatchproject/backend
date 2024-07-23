@@ -18,6 +18,8 @@ from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.users import PROJECT_COMPLEXITY_CHOICES
+from app.users import YEARS_EXPERIENCE_CHOICES
 
 
 class ArchitectRequestInputSerializer(serializers.ModelSerializer):
@@ -126,6 +128,8 @@ class ArchitectAcceptSerializer(serializers.Serializer):
     architectural_styles = serializers.PrimaryKeyRelatedField(
         queryset=ArchitecturalStyle.objects.all(), many=True, required=True
     )
+    project_complexity = serializers.ChoiceField(choices=PROJECT_COMPLEXITY_CHOICES, required=True)
+    years_experience = serializers.ChoiceField(choices=YEARS_EXPERIENCE_CHOICES, required=True)
 
     def validate_project_categories(self, value):
         """
@@ -172,4 +176,6 @@ class ArchitectAcceptSerializer(serializers.Serializer):
             "property_types",
             "work_types",
             "architectural_styles",
+            "project_complexity",
+            "years_experience",
         ]

@@ -40,6 +40,8 @@ from app.core.models.WorkType import WorkType
 from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.email_templates.signals import api_success_signal
+from app.users import PROJECT_COMPLEXITY_CHOICES
+from app.users import YEARS_EXPERIENCE_CHOICES
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Architect import Architect
@@ -164,6 +166,8 @@ class ArchitectRequestService:
                     address=architect_request.address,
                     architect_identifier=architect_request.architect_identifier,
                     architect_speciality=architect_request.architect_speciality,
+                    project_complexity=validated_data["project_complexity"],
+                    years_experience=validated_data["years_experience"],
                 )
 
                 for field in [
@@ -204,8 +208,8 @@ class ArchitectRequestService:
                 )
         except serializers.ValidationError as e:
             raise e
-        except Exception:
-            raise APIException(detail="Error accepting architect request")
+        except Exception as e:
+            raise APIException(detail=f"Error accepting architect request ${e}")
 
     @classmethod
     def admin_refuse_architect_request(cls, pk):
@@ -444,3 +448,31 @@ class ArchitectRequestService:
             {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
         ]
         return Response(time_slots, status=status.HTTP_200_OK)
+
+    @classmethod
+    def get_all_project_complexities(cls):
+        """
+        Retrieve all available project complexities.
+
+        Returns:
+            Response: A Response object containing the list of time slots.
+        """
+        project_complexities = [
+            {"value": complexity[0], "label": complexity[1]}
+            for complexity in PROJECT_COMPLEXITY_CHOICES
+        ]
+        return Response(project_complexities, status=status.HTTP_200_OK)
+
+    @classmethod
+    def get_all_years_experience(cls):
+        """
+        Retrieve all available years of experience.
+
+        Returns:
+            Response: A Response object containing the list of years of experience.
+        """
+        years_experience = [
+            {"value": year_experience[0], "label": year_experience[1]}
+            for year_experience in YEARS_EXPERIENCE_CHOICES
+        ]
+        return Response(years_experience, status=status.HTTP_200_OK)

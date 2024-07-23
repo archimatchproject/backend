@@ -274,3 +274,29 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the list of time slots.
         """
         return ArchitectRequestService.get_all_time_slots()
+
+    @action(detail=False, methods=["GET"], url_path="project-complexities")
+    def get_project_complexities(self, request):
+        """
+        Retrieve all available project complexities.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of project complexities.
+        """
+        return ArchitectRequestService.get_all_project_complexities()
+
+    @action(detail=False, methods=["GET"], url_path="years-experience")
+    def get_years_experience(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        return ArchitectRequestService.get_all_years_experience()
