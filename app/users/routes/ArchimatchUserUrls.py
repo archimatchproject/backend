@@ -39,4 +39,9 @@ archimatch_user_urlpatterns = [
         ArchimatchUserViewSet.as_view({"post": "verify_verification_code"}),
         name="verify-code",
     ),
+    path(
+        "archimatch-user/is-found/",
+        ArchimatchUserViewSet.as_view({"post": "archimatch_user_is_found"}),
+        name="is-found",
+    ),
 ]

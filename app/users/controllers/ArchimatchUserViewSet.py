@@ -173,3 +173,22 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the verification.
         """
         return ArchimatchUserService.verify_verification_code(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="is-found",
+    )
+    def archimatch_user_is_found(self, request):
+        """
+        Verifies the client's phone number using the verification code.
+
+        Args:
+            request (Request): HTTP request object containing the phone number and
+            verification code.
+
+        Returns:
+            Response: Response indicating success or failure of the verification.
+        """
+        return ArchimatchUserService.archimatch_user_is_found(request)
