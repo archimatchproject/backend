@@ -64,6 +64,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
 
     class Meta:
         """
@@ -90,6 +91,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors"
         ]
 
 
@@ -126,6 +128,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
 
     class Meta:
         """
@@ -152,6 +155,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
             "admin_note",
+            "number_floors"
         ]
 
 
@@ -201,6 +205,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
             "notes",
             "created_at",
             "status",
@@ -243,6 +248,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
             "admin_note",
         ]
 
