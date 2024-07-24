@@ -55,7 +55,7 @@ class Architect(BaseModel):
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(max_length=10, default="")
+    architect_identifier = models.CharField(max_length=10, default="", null=True, blank=True)
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality,
         on_delete=models.CASCADE,
