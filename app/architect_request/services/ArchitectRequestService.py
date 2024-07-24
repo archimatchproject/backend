@@ -423,6 +423,7 @@ class ArchitectRequestService:
             with transaction.atomic():
                 architect_request.date = serializer.validated_data.get("date")
                 architect_request.time_slot = serializer.validated_data.get("time_slot")
+                architect_request.clean()
                 architect_request.save()
 
                 return Response(

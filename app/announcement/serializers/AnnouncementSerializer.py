@@ -91,7 +91,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
-            "number_floors"
+            "number_floors",
         ]
 
 
@@ -155,7 +155,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
             "admin_note",
-            "number_floors"
+            "number_floors",
         ]
 
 
