@@ -94,7 +94,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             list: The list of permission classes.
         """
-        if self.action == "create_architect_request":
+        if self.action in ["create_architect_request","get_time_slots"]:
             self.permission_classes = []
         else:
             self.permission_classes = [IsAuthenticated, ManageArchitectRequestPermission]
@@ -274,3 +274,29 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the list of time slots.
         """
         return ArchitectRequestService.get_all_time_slots()
+
+    @action(detail=False, methods=["GET"], url_path="project-complexities")
+    def get_project_complexities(self, request):
+        """
+        Retrieve all available project complexities.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of project complexities.
+        """
+        return ArchitectRequestService.get_all_project_complexities()
+
+    @action(detail=False, methods=["GET"], url_path="years-experience")
+    def get_years_experience(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        return ArchitectRequestService.get_all_years_experience()

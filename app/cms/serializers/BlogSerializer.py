@@ -44,6 +44,7 @@ class BlogSerializer(serializers.ModelSerializer):
             "tags",
             "admin",
             "visible",
+            "popular",
             "updated_at",
         ]
         read_only_fields = ["blog_sections", "last_update"]

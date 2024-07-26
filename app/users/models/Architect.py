@@ -16,6 +16,8 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.users import PROJECT_COMPLEXITY_CHOICES
+from app.users import YEARS_EXPERIENCE_CHOICES
 from app.users.models.ArchimatchUser import ArchimatchUser
 
 
@@ -53,7 +55,7 @@ class Architect(BaseModel):
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(max_length=10, default="")
+    architect_identifier = models.CharField(max_length=10, default="", null=True, blank=True)
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality,
         on_delete=models.CASCADE,
@@ -76,6 +78,17 @@ class Architect(BaseModel):
     property_types = models.ManyToManyField(PropertyType)
     work_types = models.ManyToManyField(WorkType)
     architectural_styles = models.ManyToManyField(ArchitecturalStyle)
+
+    project_complexity = models.CharField(
+        max_length=10,
+        choices=PROJECT_COMPLEXITY_CHOICES,
+        default=PROJECT_COMPLEXITY_CHOICES[0][0],
+    )
+    years_experience = models.CharField(
+        max_length=10,
+        choices=YEARS_EXPERIENCE_CHOICES,
+        default=YEARS_EXPERIENCE_CHOICES[0][0],
+    )
 
     def __str__(self):
         """

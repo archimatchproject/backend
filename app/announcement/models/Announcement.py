@@ -96,6 +96,7 @@ class Announcement(BaseModel):
     project_extensions = models.ManyToManyField(
         ProjectExtension, related_name="project_extensions_announcements"
     )
+    number_floors = models.PositiveIntegerField(default=0)
     notes = GenericRelation(Note)
     status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
     admin_note = models.CharField(max_length=500, null=True, blank=True)

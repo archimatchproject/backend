@@ -24,6 +24,7 @@ class Blog(BaseModel):
         tags (ManyToManyField): Tags associated with the blog post.
         admin (ForeignKey): The admin who created the blog post.
         visible (bool): Whether the blog post is visible.
+        popular (bool): Whether the blog post is popular.
         last_update (DateTimeField): The date and time of the last update.
     """
 
@@ -40,6 +41,7 @@ class Blog(BaseModel):
     tags = models.ManyToManyField(BlogTag)
     admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
     visible = models.BooleanField(default=False)
+    popular = models.BooleanField(default=False)
 
     class Meta:
         """
