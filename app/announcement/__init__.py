@@ -69,7 +69,7 @@ PROPERTIES_NO_EXTERIOR = [4]  # Appartement
 EXTERIOR_WORKTYPES = [2]  # Rénovation extérieure
 # STEP6
 NEW_CONSTRUCTION_WORKTYPES = [1, 5]  # Construction neuve , Surélévation
-RENOVATION_WORKTYPES = [2, 4]  # Rénovation extérieure , Rénovation intérieure
+RENOVATION_WORKTYPES = [2, 4, 6]  # Rénovation extérieure , Rénovation intérieure , Aménagment de comble
 NOT_ELIMINATE_STEP_PROPERTIES_STEP6 = [1, 3, 4]  # Maison,Villa,Appartement
 # STEP10
 NOT_ELIMINATE_STEP_PROPERTIES_STEP10 = [1, 2, 3]  # Maison,Immeuble,Villa
