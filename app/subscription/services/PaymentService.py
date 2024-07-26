@@ -51,6 +51,8 @@ class PaymentService:
         user = request.user
         try:
             architect = Architect.objects.get(user=user)
+            architect.subscription_plan = validated_data.get("subscription_plan")
+            architect.save()
             with transaction.atomic():
                 # Create Payment instance
                 payment = Payment.objects.create(architect=architect, **validated_data)
