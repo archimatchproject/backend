@@ -26,17 +26,17 @@ architect_urlpatterns = [
     ),
     path(
         "architect/update-base-details/",
-        ArchitectViewSet.as_view({"post": "architect_update_base_details"}),
+        ArchitectViewSet.as_view({"put": "architect_update_base_details"}),
         name="update-base-details",
     ),
     path(
         "architect/update-company-details/",
-        ArchitectViewSet.as_view({"post": "architect_update_company_details"}),
+        ArchitectViewSet.as_view({"put": "architect_update_company_details"}),
         name="update-company-details",
     ),
     path(
         "architect/update-needs/",
-        ArchitectViewSet.as_view({"post": "architect_update_needs"}),
+        ArchitectViewSet.as_view({"put": "architect_update_needs"}),
         name="update-needs",
     ),
 ]

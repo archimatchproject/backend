@@ -153,9 +153,10 @@ class ArchitectService:
         """
         try:
             data = request.data
+            user_id = request.user.id
             serializer = ArchitectBaseDetailsSerializer(data=data)
             serializer.is_valid(raise_exception=True)
-            user_id = request.user.id
+
             architect = Architect.objects.get(user__id=user_id)
             user = architect.user
 
@@ -201,9 +202,10 @@ class ArchitectService:
         """
         try:
             data = request.data
+            user_id = request.user.id
             serializer = ArchitectCompanyDetailsSerializer(data=data)
             serializer.is_valid(raise_exception=True)
-            user_id = request.user.id
+
             architect = Architect.objects.get(user__id=user_id)
 
             for attr, value in data.items():
@@ -240,10 +242,11 @@ class ArchitectService:
         """
         try:
             data = request.data
-            needs = data.get("needs", [])
-            if len(needs) > 0:
-                raise serializers.ValidationError(detail="needs are required")
             user_id = request.user.id
+            needs = data.get("needs", [])
+            if not len(needs) > 0:
+                raise serializers.ValidationError(detail="needs are required")
+
             architect = Architect.objects.get(user__id=user_id)
             architect.needs.set(needs)
             architect.save()
