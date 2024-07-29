@@ -44,7 +44,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Override the create method to use CollectionService for handling the creation
          of a Collection.
         """
-        return CollectionService.create_collection(request, request.data)
+        return CollectionService.create_collection(request)
 
     @action(detail=True, methods=["PUT"])
     def update_order(self, request, pk=None):
@@ -60,4 +60,4 @@ class CollectionViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
 
-        return CollectionService.update_product_order(request, pk, request.data)
+        return CollectionService.update_product_order(request, pk)

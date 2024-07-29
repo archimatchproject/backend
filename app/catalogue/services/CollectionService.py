@@ -33,18 +33,17 @@ class CollectionService:
     """
 
     @classmethod
-    def create_collection(cls, request, data):
+    def create_collection(cls, request):
         """
         Handles validation and creation of a new Collection.
 
         Args:
             request (Request): The request object containing the authenticated user.
-            data (dict): The validated data for creating a Collection instance.
 
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = CollectionSerializer(data=data)
+        serializer = CollectionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
@@ -67,14 +66,13 @@ class CollectionService:
             raise APIException(detail=f"Error creating collection: {str(e)}")
 
     @classmethod
-    def update_product_order(cls, request, pk, data):
+    def update_product_order(cls, request, pk):
         """
         Handles updating the order of products within a collection.
 
         Args:
             request (Request): The request object containing the authenticated user.
             pk (int): The primary key of the collection.
-            data
 
         Returns:
             Response: The response object containing the result of the operation.

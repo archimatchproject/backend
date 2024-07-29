@@ -36,7 +36,7 @@ class ProductService:
     """
 
     @classmethod
-    def create_product(cls, request, data):
+    def create_product(cls, request):
         """
         Handles validation and creation of a new Product.
 
@@ -47,7 +47,7 @@ class ProductService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = ProductSerializer(data=data)
+        serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
@@ -71,19 +71,18 @@ class ProductService:
             raise APIException(detail=f"Error creating product: {str(e)}")
 
     @classmethod
-    def update_product(cls, instance, request, data):
+    def update_product(cls, instance, request):
         """
         Handles validation and updating of an existing Product.
 
         Args:
             instance (Product): The existing Product instance.
             request (Request): The request object containing the authenticated user.
-            data (dict): The validated data for updating a Product instance.
 
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = ProductSerializer(instance, data=data, partial=True)
+        serializer = ProductSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
@@ -113,19 +112,18 @@ class ProductService:
             raise APIException(detail=f"Error updating product: {str(e)}")
 
     @classmethod
-    def update_display_status(cls, request, pk, data):
+    def update_display_status(cls, request, pk):
         """
         Handles updating the display status of a product.
 
         Args:
             request (Request): The request object containing the authenticated user.
             pk (int): The primary key of the product.
-            data
 
         Returns:
             Response: The response object containing the result of the operation.
         """
-        display_status = data.get("display")
+        display_status = request.data.get("display")
         try:
             if display_status is None:
                 raise serializers.ValidationError(detail="Display status is required.")

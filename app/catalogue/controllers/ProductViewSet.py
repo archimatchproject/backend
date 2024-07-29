@@ -53,7 +53,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         Override the create method to use ProductService for handling the creation
         of a Product.
         """
-        return ProductService.create_product(request, request.data)
+        return ProductService.create_product(request)
 
     def update(self, request, *args, **kwargs):
         """
@@ -61,7 +61,7 @@ class ProductViewSet(viewsets.ModelViewSet):
           of a Product.
         """
         instance = self.get_object()
-        return ProductService.update_product(instance, request, request.data)
+        return ProductService.update_product(instance, request)
 
     @action(detail=True, methods=["PUT"])
     def update_display_status(self, request, pk=None):
@@ -75,4 +75,4 @@ class ProductViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ProductService.update_display_status(request, pk, request.data)
+        return ProductService.update_display_status(request, pk)
