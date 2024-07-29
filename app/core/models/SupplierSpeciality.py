@@ -16,7 +16,7 @@ class SupplierSpeciality(LabeledIcon):
 
     """
 
-    icon = models.ImageField(upload_to="SupplierSpecialityIcons/")
+    icon = models.ImageField(upload_to="icons/SupplierSpecialityIcons/")
 
     class Meta:
         """

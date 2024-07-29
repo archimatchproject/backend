@@ -45,6 +45,7 @@ LOCAL_APPS = [
     "app.email_templates",
     "app.architect_realization",
     "app.subscription",
+    "app.catalogue",
 ]
 
 
