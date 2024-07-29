@@ -22,6 +22,7 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+from app.users.serializers.ArchitectSerializer import ArchitectUpdatePreferencesSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -264,3 +265,41 @@ class ArchitectService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_update_preferences(cls, request):
+        """
+        Updating architect preferences
+        """
+        data = request.data
+        user = request.user
+        architect = Architect.objects.get(user__id=user.id)
+        serializer = ArchitectUpdatePreferencesSerializer(architect, data=data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        try:
+            many_to_many_fields = [
+                "project_categories",
+                "property_types",
+                "work_types",
+                "architectural_styles",
+            ]
+            for field in many_to_many_fields:
+                if field in validated_data:
+                    getattr(architect, field).set(validated_data.pop(field))
+
+            architect.save()
+            return Response(
+                {
+                    "message": "Architect preferences updated successfully",
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found", status=status.HTTP_404_NOT_FOUND)
+
+        except serializers.ValidationError as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error updating architect preferences")

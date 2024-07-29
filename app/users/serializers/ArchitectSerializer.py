@@ -18,6 +18,10 @@ from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
+from app.core.models.WorkType import WorkType
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
@@ -127,3 +131,41 @@ class ArchitectCompanyDetailsSerializer(serializers.ModelSerializer):
             "company_logo",
             "architect_identifier",
         )
+
+
+class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating Architect preferences.
+
+    This serializer handles nested serialization for many-to-many relationships
+    such as project categories, property types, work types, and architectural styles.
+
+    Fields:
+        project_categories: List of primary keys for associated project categories.
+        property_types: List of primary keys for associated property types.
+        work_types: List of primary keys for associated work types.
+        architectural_styles: List of primary keys for associated architectural styles.
+    """
+
+    project_categories = serializers.PrimaryKeyRelatedField(
+        queryset=ProjectCategory.objects.all(), many=True
+    )
+    property_types = serializers.PrimaryKeyRelatedField(
+        queryset=PropertyType.objects.all(), many=True
+    )
+    work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True)
+    architectural_styles = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitecturalStyle.objects.all(), many=True
+    )
+
+    class Meta:
+        """
+        Meta class for ArchitectUpdatePreferencesSerializer.
+
+        Attributes:
+            model: The model that this serializer is associated with (Architect).
+            fields: The fields to include in the serialized representation.
+        """
+
+        model = Architect
+        fields = ["project_categories", "property_types", "work_types", "architectural_styles"]
