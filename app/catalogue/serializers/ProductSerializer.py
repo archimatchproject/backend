@@ -33,6 +33,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "product_images",
             "collection",
             "collection_category",
+            "order",
+            "display",
         ]
         extra_kwargs = {
             "collection": {"write_only": True},

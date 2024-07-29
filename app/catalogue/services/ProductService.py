@@ -13,6 +13,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.catalogue.models.Product import Product
@@ -110,3 +111,39 @@ class ProductService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating product: {str(e)}")
+
+    @classmethod
+    def update_display_status(cls, request, pk, data):
+        """
+        Handles updating the display status of a product.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the product.
+            data
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        display_status = data.get("display")
+        try:
+            if display_status is None:
+                raise serializers.ValidationError(detail="Display status is required.")
+            product = Product.objects.get(pk=pk)
+            if product.collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this product."
+                )
+
+            product.display = display_status
+            product.save()
+
+            return Response(
+                "Product display status updated successfully.", status=status.HTTP_200_OK
+            )
+        except Product.DoesNotExist:
+            raise NotFound(detail="Product not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating product display status: {str(e)}")

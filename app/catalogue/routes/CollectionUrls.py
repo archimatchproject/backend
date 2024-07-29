@@ -36,4 +36,9 @@ collection_urlpatterns = [
         CollectionViewSet.as_view({"delete": "destroy"}),
         name="collection-delete",
     ),
+    path(
+        "collections/update-order/<int:pk>/",
+        CollectionViewSet.as_view({"post": "update_order"}),
+        name="collection-update-order",
+    ),
 ]

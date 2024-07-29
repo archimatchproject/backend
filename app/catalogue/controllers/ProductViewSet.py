@@ -3,6 +3,7 @@ ViewSet module for the Product model.
 """
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.parsers import FormParser
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -36,7 +37,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["list", "retrieve"]:
             return []
-        elif self.action in ["create", "update", "partial_update", "destroy"]:
+        elif self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+            "update_display_status",
+        ]:
             return [IsAuthenticated()]
         return super().get_permissions()
 
@@ -54,3 +61,17 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         return ProductService.update_product(instance, request, request.data)
+
+    @action(detail=True, methods=["PUT"])
+    def update_display_status(self, request, pk=None):
+        """
+        Update the display status of a product.
+
+        Args:
+            request (Request): The request object containing the display status.
+            pk (int): The primary key of the product.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return ProductService.update_display_status(request, pk, request.data)

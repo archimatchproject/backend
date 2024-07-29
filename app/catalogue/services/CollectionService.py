@@ -17,6 +17,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.catalogue.models.Collection import Collection
+from app.catalogue.models.Product import Product
 from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.users.models.Supplier import Supplier
 
@@ -64,3 +65,39 @@ class CollectionService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error creating collection: {str(e)}")
+
+    @classmethod
+    def update_product_order(cls, request, pk, data):
+        """
+        Handles updating the order of products within a collection.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the collection.
+            data
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        product_ids = request.data.get("product_ids")
+
+        try:
+            if not product_ids:
+                raise serializers.ValidationError(detail="Product IDs are required.")
+            collection = Collection.objects.get(pk=pk)
+            if collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this collection."
+                )
+
+            with transaction.atomic():
+                for index, product_id in enumerate(product_ids):
+                    Product.objects.filter(id=product_id, collection=collection).update(order=index)
+
+            return Response("Product order updated successfully.", status=status.HTTP_200_OK)
+        except Collection.DoesNotExist:
+            raise NotFound(detail="Collection not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating product order: {str(e)}")
