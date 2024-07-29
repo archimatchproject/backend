@@ -19,6 +19,8 @@ from rest_framework.response import Response
 
 from app.email_templates.signals import api_success_signal
 from app.users.models.Architect import Architect
+from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
+from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
@@ -101,6 +103,163 @@ class ArchitectService:
             )
         except Architect.DoesNotExist:
             raise NotFound(detail="Architect not found")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_get_profile(cls, request):
+        """
+        Retrieves architect information.
+
+        Args:
+            request (Request): Django request object containing user ID.
+
+        Returns:
+            Response: Response object containing architect data.
+
+        Raises:
+            APIException: If there are errors during the process.
+        """
+        user_id = request.user.id
+        try:
+            architect = Architect.objects.get(user__id=user_id)
+            architect_serializer = ArchitectSerializer(architect)
+            return Response(
+                architect_serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_update_base_details(cls, request):
+        """
+        Updates an architect's profile information
+
+        Args:
+            request (Request): Django request object containing architect's profile data.
+
+        Returns:
+            Response: Response object indicating success or failure of the profile update.
+
+        Raises:
+            APIException: If there are errors during architect profile update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            serializer = ArchitectBaseDetailsSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+
+            architect = Architect.objects.get(user__id=user_id)
+            user = architect.user
+
+            # update user information
+            user_fields = ["first_name", "last_name", "email", "phone_number"]
+            for field in user_fields:
+                if field in data:
+                    setattr(user, field, data.pop(field))
+            user.save()
+
+            # Update Architect data
+            for attr, value in data.items():
+                setattr(architect, attr, value)
+            architect.save()
+
+            response_data = {
+                "message": "Architect successfully updated",
+            }
+            return Response(
+                response_data,
+                status=status.HTTP_200_OK,
+            )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_update_company_details(cls, request):
+        """
+        Updates an architect's company profile information.
+
+        Args:
+            request (Request): Django request object containing architect's company profile data.
+
+        Returns:
+            Response: Response object indicating success or failure of the company profile update.
+
+        Raises:
+            APIException: If there are errors during architect company profile update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            serializer = ArchitectCompanyDetailsSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+
+            architect = Architect.objects.get(user__id=user_id)
+
+            for attr, value in data.items():
+                setattr(architect, attr, value)
+            architect.save()
+
+            response_data = {
+                "message": "Architect successfully updated",
+            }
+            return Response(
+                response_data,
+                status=status.HTTP_200_OK,
+            )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_update_needs(cls, request):
+        """
+        Updates an architect's needs.
+
+        Args:
+            request (Request): Django request object containing architect's needs data.
+
+        Returns:
+            Response: Response object indicating success or failure of the needs update.
+
+        Raises:
+            APIException: If there are errors during architect needs update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            needs = data.get("needs", [])
+            if not len(needs) > 0:
+                raise serializers.ValidationError(detail="needs are required")
+
+            architect = Architect.objects.get(user__id=user_id)
+            architect.needs.set(needs)
+            architect.save()
+
+            response_data = {
+                "message": "Architect successfully updated",
+            }
+            return Response(
+                response_data,
+                status=status.HTTP_200_OK,
+            )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.")
         except APIException as e:
             raise e
         except Exception as e:
