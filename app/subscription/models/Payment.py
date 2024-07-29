@@ -38,9 +38,9 @@ class Payment(BaseModel):
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     admin_responsable = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     payment_method = models.CharField(
-        max_length=20, choices=PAYMENT_METHOD_CHOICES, default="Carte bancaire"
+        max_length=20, choices=PAYMENT_METHOD_CHOICES, default=PAYMENT_METHOD_CHOICES[0][0]
     )
-    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
+    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_CHOICES[0][0])
     subscription_plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
     notes = GenericRelation(Note)
 
