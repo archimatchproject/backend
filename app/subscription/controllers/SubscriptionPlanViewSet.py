@@ -37,7 +37,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
             list: List of permission instances.
         """
         if self.action in ["list", "retrieve"]:
-            return []
+            return [IsAuthenticated()]
         elif self.action in ["create", "update", "partial_update", "destroy"]:
             return [IsAuthenticated(), ManageSubscriptionPermission()]
         return super().get_permissions()

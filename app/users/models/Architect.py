@@ -51,6 +51,7 @@ class Architect(BaseModel):
         the architect uses.
         budgets (ManyToManyField): Budget ranges the architect typically works
          within.
+        subscription_plan (ForeignKey): The subscription plan associated with the architect.
     """
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
@@ -88,6 +89,13 @@ class Architect(BaseModel):
         max_length=10,
         choices=YEARS_EXPERIENCE_CHOICES,
         default=YEARS_EXPERIENCE_CHOICES[0][0],
+    )
+    subscription_plan = models.ForeignKey(
+        "subscription.SubscriptionPlan",
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
