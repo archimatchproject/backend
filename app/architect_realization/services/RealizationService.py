@@ -25,6 +25,7 @@ from app.architect_realization.serializers.RealizationSerializer import Realizat
 from app.architect_realization.serializers.RealizationSerializer import RealizationPOSTSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.pagination import CustomPagination
 from app.users.models.Architect import Architect
 
 
@@ -33,6 +34,8 @@ class RealizationService:
     Service class for handling realization-related operations .
 
     """
+
+    pagination_class = CustomPagination
 
     @classmethod
     def realization_create(cls, request):
@@ -125,3 +128,61 @@ class RealizationService:
             raise NotFound(detail="No architect speciality found with the given ID")
         except Exception:
             raise APIException(detail="Error retrieving architect speciality needs")
+
+    @classmethod
+    def get_realizations_by_category(cls, request, id):
+        """
+        Retrieves realizations based on project category.
+
+        Args:
+            request (Request): The request object containing the input data.
+            id (int): ID of the project category.
+
+        Returns:
+            Response: Response containing list of realizations related to the project category.
+        """
+        try:
+            realizations = Realization.objects.filter(project_category__id=id)
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(realizations, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(realizations, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def get_realizations_by_architect(cls, request, id):
+        """
+        Retrieves realizations based on architect.
+
+        Args:
+            request (Request): The request object containing the input data.
+            id (int): ID of the architect.
+
+        Returns:
+            Response: Response containing list of realizations related to the architect.
+        """
+        try:
+            realizations = Realization.objects.filter(architect__id=id)
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(realizations, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(realizations, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))
