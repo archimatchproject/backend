@@ -10,6 +10,7 @@ Classes:
 
 from django.db import models
 
+from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
@@ -79,6 +80,7 @@ class Architect(BaseModel):
     property_types = models.ManyToManyField(PropertyType)
     work_types = models.ManyToManyField(WorkType)
     architectural_styles = models.ManyToManyField(ArchitecturalStyle)
+    needs = models.ManyToManyField(Need, related_name="needs_architect")
 
     project_complexity = models.CharField(
         max_length=10,
