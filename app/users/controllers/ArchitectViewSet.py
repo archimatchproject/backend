@@ -146,3 +146,23 @@ class ArchitectViewSet(viewsets.ModelViewSet):
             Response: Response object indicating the result of the needs update.
         """
         return ArchitectService.architect_update_needs(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-preferences",
+        url_name="update-preferences",
+    )
+    def architect_update_preferences(self, request):
+        """
+        Updates architect preferences.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response object indicating the result of the preferences update.
+        """
+        return ArchitectService.architect_update_preferences(request)
