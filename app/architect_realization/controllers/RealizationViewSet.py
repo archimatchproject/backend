@@ -131,14 +131,14 @@ class RealizationViewSet(viewsets.ModelViewSet):
     )
     def get_realizations_by_category(self, request, pk=None):
         """
-        Custom action to accept an Announcement.
+        Custom action to get realizations by category.
 
         Args:
             request (Request): The request object containing the input data.
-            pk (str): The primary key of the Announcement to be accepted.
+            pk (str): The primary key of the category to get realizations for.
 
         Returns:
-            Response: The response object containing the result of the acceptance operation.
+            Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_realizations_by_category(request, pk)
 
@@ -150,13 +150,13 @@ class RealizationViewSet(viewsets.ModelViewSet):
     )
     def get_realizations_by_architect(self, request, pk=None):
         """
-        Custom action to accept an Announcement.
+        Custom action to get realizations by architect.
 
         Args:
             request (Request): The request object containing the input data.
-            pk (str): The primary key of the Announcement to be accepted.
+            pk (str): The primary key of the architect to get realizations for.
 
         Returns:
-            Response: The response object containing the result of the acceptance operation.
+            Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)

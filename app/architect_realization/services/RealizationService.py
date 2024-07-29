@@ -132,13 +132,14 @@ class RealizationService:
     @classmethod
     def get_realizations_by_category(cls, request, id):
         """
-        Retrieves needs based on architect speciality.
+        Retrieves realizations based on project category.
 
         Args:
-            architect_speciality_id (int): ID of the architect speciality.
+            request (Request): The request object containing the input data.
+            id (int): ID of the project category.
 
         Returns:
-            Response: Response containing list of needs related to the architect speciality.
+            Response: Response containing list of realizations related to the project category.
         """
         try:
             realizations = Realization.objects.filter(project_category__id=id)
@@ -160,13 +161,14 @@ class RealizationService:
     @classmethod
     def get_realizations_by_architect(cls, request, id):
         """
-        Retrieves needs based on architect speciality.
+        Retrieves realizations based on architect.
 
         Args:
-            architect_speciality_id (int): ID of the architect speciality.
+            request (Request): The request object containing the input data.
+            id (int): ID of the architect.
 
         Returns:
-            Response: Response containing list of needs related to the architect speciality.
+            Response: Response containing list of realizations related to the architect.
         """
         try:
             realizations = Realization.objects.filter(architect__id=id)
