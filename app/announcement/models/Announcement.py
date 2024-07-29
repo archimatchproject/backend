@@ -23,7 +23,7 @@ from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
-from app.users.models import Client
+from app.users.models.Client import Client
 
 
 class Announcement(BaseModel):

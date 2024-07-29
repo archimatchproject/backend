@@ -13,6 +13,7 @@ from django.urls import path
 
 from rest_framework import routers
 
+from app.subscription.routes.PaymentUrls import payment_urlpatterns
 from app.subscription.routes.PlanServiceUrls import plan_service_urlpatterns
 from app.subscription.routes.SubscriptionPlanUrls import subscription_plan_urlpatterns
 from app.subscription.routes.TokenPackUrls import token_pack_urlpatterns
@@ -25,4 +26,5 @@ urlpatterns = [
     *plan_service_urlpatterns,
     *subscription_plan_urlpatterns,
     *token_pack_urlpatterns,
+    *payment_urlpatterns,
 ]

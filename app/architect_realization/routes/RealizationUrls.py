@@ -29,4 +29,19 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"get": "get_needs"}),
         name="needs",
     ),
+    path(
+        "get-realizations-by-category/<int:pk>/",
+        RealizationViewSet.as_view({"get": "get_realizations_by_category"}),
+        name="get-realizations-by-category",
+    ),
+    path(
+        "details/<int:pk>/",
+        RealizationViewSet.as_view({"get": "retrieve"}),
+        name="get",
+    ),
+    path(
+        "get-realizations-by-architect/<int:pk>/",
+        RealizationViewSet.as_view({"get": "get_realizations_by_architect"}),
+        name="get-realizations-by-architect",
+    ),
 ]

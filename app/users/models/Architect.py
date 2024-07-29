@@ -10,6 +10,7 @@ Classes:
 
 from django.db import models
 
+from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
@@ -51,6 +52,7 @@ class Architect(BaseModel):
         the architect uses.
         budgets (ManyToManyField): Budget ranges the architect typically works
          within.
+        subscription_plan (ForeignKey): The subscription plan associated with the architect.
     """
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
@@ -78,6 +80,7 @@ class Architect(BaseModel):
     property_types = models.ManyToManyField(PropertyType)
     work_types = models.ManyToManyField(WorkType)
     architectural_styles = models.ManyToManyField(ArchitecturalStyle)
+    needs = models.ManyToManyField(Need, related_name="needs_architect")
 
     project_complexity = models.CharField(
         max_length=10,
@@ -88,6 +91,13 @@ class Architect(BaseModel):
         max_length=10,
         choices=YEARS_EXPERIENCE_CHOICES,
         default=YEARS_EXPERIENCE_CHOICES[0][0],
+    )
+    subscription_plan = models.ForeignKey(
+        "subscription.SubscriptionPlan",
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):

@@ -86,6 +86,7 @@ class SubscriptionPlanService:
             with transaction.atomic():
                 for attr, value in validated_data.items():
                     setattr(instance, attr, value)
+                instance.clean()
                 instance.save()
                 instance.services.set(plan_services)
 

@@ -76,6 +76,15 @@ PERMISSION_CODENAMES = {
         ],
         "color": "#123BEC",
     },
+    "manage_payment": {
+        "permissions": [
+            "add_payment",
+            "change_payment",
+            "delete_payment",
+            "view_payment",
+        ],
+        "color": "#ABCBEC",
+    },
 }
 CODENAME_TO_RIGHTS = {
     codename: right
