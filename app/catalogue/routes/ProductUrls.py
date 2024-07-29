@@ -37,8 +37,8 @@ product_urlpatterns = [
         name="product-delete",
     ),
     path(
-        "products/update-display-status/<int:pk>/",
-        ProductViewSet.as_view({"post": "update_display_status"}),
+        "product/update-display-status/<int:pk>/",
+        ProductViewSet.as_view({"put": "update_display_status"}),
         name="product-update-display-status",
     ),
 ]
