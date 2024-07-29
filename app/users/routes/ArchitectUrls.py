@@ -39,4 +39,9 @@ architect_urlpatterns = [
         ArchitectViewSet.as_view({"put": "architect_update_needs"}),
         name="update-needs",
     ),
+    path(
+        "architect/details/<int:pk>/",
+        ArchitectViewSet.as_view({"get": "retrieve"}),
+        name="retrieve",
+    ),
 ]

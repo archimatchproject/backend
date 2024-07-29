@@ -105,7 +105,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the base details update.
         """
-        return ArchitectService.architect_update_base_information(request)
+        return ArchitectService.architect_update_base_details(request)
 
     @action(
         detail=False,

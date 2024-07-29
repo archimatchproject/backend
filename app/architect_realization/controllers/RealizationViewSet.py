@@ -32,6 +32,18 @@ class RealizationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
 
+    def get_permissions(self):
+        """
+        Override this method to specify custom permissions for different actions.
+        """
+        if self.action in [
+            "get_realizations_by_category",
+            "retrieve",
+            "get_realizations_by_architect",
+        ]:
+            self.permission_classes = []
+        return super().get_permissions()
+
     def get(self, request):
         """
         Handle GET request and return paginated Realization objects.
@@ -110,3 +122,41 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: Response containing list of architectural styles.
         """
         return RealizationService.get_architectural_styles()
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="get-realizations-by-category",
+        serializer_class=RealizationSerializer,
+    )
+    def get_realizations_by_category(self, request, pk=None):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        return RealizationService.get_realizations_by_category(request, pk)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="get-realizations-by-architect",
+        serializer_class=RealizationSerializer,
+    )
+    def get_realizations_by_architect(self, request, pk=None):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        return RealizationService.get_realizations_by_architect(request, pk)
