@@ -15,4 +15,3 @@ django-rosetta==0.9.9
 django4-background-tasks==1.2.10
 pyyaml==6.0.1
 itsdangerous==2.2.0
-supervisor==4.2.5

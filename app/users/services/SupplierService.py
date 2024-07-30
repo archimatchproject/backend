@@ -16,17 +16,17 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.models.SupplierSpeciality import SupplierSpeciality
+from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.email_templates.signals import api_success_signal
 from app.users import APPEARANCES
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Supplier import Supplier
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
-from app.users.models.SupplierSpeciality import SupplierSpeciality
 from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierPersonalInformationSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
-from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token

@@ -94,7 +94,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             list: The list of permission classes.
         """
-        if self.action in ["create_architect_request","get_time_slots"]:
+        if self.action in ["create_architect_request", "get_time_slots"]:
             self.permission_classes = []
         else:
             self.permission_classes = [IsAuthenticated, ManageArchitectRequestPermission]

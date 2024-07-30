@@ -40,7 +40,9 @@ class Payment(BaseModel):
     payment_method = models.CharField(
         max_length=20, choices=PAYMENT_METHOD_CHOICES, default=PAYMENT_METHOD_CHOICES[0][0]
     )
-    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_CHOICES[0][0])
+    status = models.CharField(
+        max_length=10, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_CHOICES[0][0]
+    )
     subscription_plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
     notes = GenericRelation(Note)
 
