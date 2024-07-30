@@ -7,12 +7,17 @@ related to GuideThematic instances via REST API endpoints.
 """
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import JSONParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageGuidePermission import ManageGuidePermission
 from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
+from app.cms.services.GuideThematicService import GuideThematicService
 
 
 class GuideThematicViewSet(viewsets.ModelViewSet):
@@ -25,6 +30,7 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
 
     queryset = GuideThematic.objects.all()
     serializer_class = GuideThematicSerializer
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_queryset(self):
         """
@@ -36,10 +42,13 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         Returns:
             QuerySet: The filtered queryset based on the `target_user_type` parameter.
         """
-        target_user_type = self.request.query_params.get("target_user_type")
-        if not target_user_type:
-            raise ValidationError("The 'target_user_type' query parameter is required.")
-        return GuideThematic.objects.filter(target_user_type=target_user_type)
+        if self.action == "list":
+            target_user_type = self.request.query_params.get("target_user_type")
+            if not target_user_type:
+                raise ValidationError("The 'target_user_type' query parameter is required.")
+            return GuideThematic.objects.filter(target_user_type=target_user_type)
+        else:
+            return self.queryset
 
     def get_permissions(self):
         """
@@ -58,3 +67,50 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         elif self.action in ["create", "update", "partial_update", "destroy"]:
             return [IsAuthenticated(), ManageGuidePermission()]
         return super().get_permissions()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new GuideThematic instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to create
+              GuideThematic instance.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: Serialized data of the created GuideThematic instance.
+        """
+        return GuideThematicService.create_guide_thematic(request)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update an existing GuideThematic instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to
+            update GuideThematic instance.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: Serialized data of the updated GuideThematic instance.
+        """
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        return GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
+
+    @action(detail=True, methods=["PUT"])
+    def change_visibility(self, request, pk=None):
+        """
+        Change the visibility of a Blog instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to change visibility.
+            pk (int): The primary key of the Blog instance to be updated.
+
+        Returns:
+            Response: Serialized data of the updated Blog instance.
+        """
+
+        return GuideThematicService.change_visibility(pk, request)
