@@ -27,6 +27,24 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
     queryset = FAQThematic.objects.all()
     serializer_class = FAQThematicSerializer
 
+    def get_queryset(self):
+        """
+        Get the queryset for the view.
+
+        Raises:
+            ValidationError: If the `target_user_type` query parameter is not provided.
+
+        Returns:
+            QuerySet: The filtered queryset based on the `target_user_type` parameter.
+        """
+        if self.action == "list":
+            target_user_type = self.request.query_params.get("target_user_type")
+            if not target_user_type:
+                raise ValidationError("The 'target_user_type' query parameter is required.")
+            return FAQThematic.objects.filter(target_user_type=target_user_type)
+        else:
+            return self.queryset
+
     def get_permissions(self):
         """
         Get the permissions that the view requires.
@@ -45,21 +63,6 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageFAQPermission()]
         return super().get_permissions()
 
-    def get_queryset(self):
-        """
-        Get the queryset for the view.
-
-        Raises:
-            ValidationError: If the `target_user_type` query parameter is not provided.
-
-        Returns:
-            QuerySet: The filtered queryset based on the `target_user_type` parameter.
-        """
-        target_user_type = self.request.query_params.get("target_user_type")
-        if not target_user_type:
-            raise ValidationError("The 'target_user_type' query parameter is required.")
-        return FAQThematic.objects.filter(target_user_type=target_user_type)
-
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new FAQThematic instance along with related FAQQuestion instances.
@@ -70,7 +73,7 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return FAQThematicService.create_thematic_article(request.data)
+        return FAQThematicService.create_faq_thematic(request)
 
     def update(self, request, *args, **kwargs):
         """
@@ -85,4 +88,4 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the updated instance data.
         """
-        return FAQThematicService.update_thematic_article(self.get_object(), request.data)
+        return FAQThematicService.update_faq_thematic(self.get_object(), request)
