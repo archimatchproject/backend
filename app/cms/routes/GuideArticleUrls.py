@@ -36,4 +36,14 @@ guide_article_urlpatterns = [
         GuideArticleViewSet.as_view({"delete": "destroy"}),
         name="guide-article-delete",
     ),
+    path(
+        "guide-article/change-visibility/<int:pk>/",
+        GuideArticleViewSet.as_view({"put": "change_visibility"}),
+        name="guide-article-change-visibility",
+    ),
+    path(
+        "guide-article/upload-media/",
+        GuideArticleViewSet.as_view({"post": "upload_media"}),
+        name="guide-article-upload-media",
+    ),
 ]

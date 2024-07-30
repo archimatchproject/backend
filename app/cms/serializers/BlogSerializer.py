@@ -47,7 +47,7 @@ class BlogSerializer(serializers.ModelSerializer):
             "popular",
             "updated_at",
         ]
-        read_only_fields = ["blog_sections", "last_update"]
+        read_only_fields = ["blog_sections", "updated_at"]
 
     def to_internal_value(self, data):
         """

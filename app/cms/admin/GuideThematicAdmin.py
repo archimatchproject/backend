@@ -15,8 +15,8 @@ class GuideThematicAdmin(admin.ModelAdmin):
     Admin interface for managing GuideThematic instances.
     """
 
-    list_display = ("label", "icon")
-    search_fields = ("label",)
+    list_display = ("title", "sub_title", "icon")
+    search_fields = ("title",)
 
 
 admin.site.register(GuideThematic, GuideThematicAdmin)

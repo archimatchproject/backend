@@ -26,6 +26,7 @@ class GuideSection(models.Model):
         ("title", "Title"),
         ("paragraph", "Paragraph"),
         ("image", "Image"),
+        ("slider", "Slider"),
         ("video", "Video"),
     ]
 
