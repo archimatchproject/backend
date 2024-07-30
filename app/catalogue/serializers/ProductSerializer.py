@@ -18,6 +18,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     collection_category = serializers.SerializerMethodField(read_only=True)
     product_images = ProductImageSerializer(many=True, read_only=True)
+    collection_title = serializers.CharField(source="collection.title", read_only=True)
 
     class Meta:
         """
@@ -32,6 +33,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "product_images",
             "collection",
+            "collection_title",
             "collection_category",
             "order",
             "display",
