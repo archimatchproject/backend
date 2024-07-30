@@ -91,16 +91,20 @@ class ProductService:
         try:
             with transaction.atomic():
                 # Update Product instance
-                instance.name = validated_data.get("name", instance.name)
-                instance.price = validated_data.get("price", instance.price)
-                instance.collection = validated_data.get("collection", instance.collection)
-                instance.description = validated_data.get("description", instance.description)
+                fields = ["name", "price", "collection", "description"]
+                for field in fields:
+                    setattr(instance, field, validated_data.get(field, getattr(instance, field)))
+
                 instance.save()
 
                 if images_data:
-                    instance.product_images.all().delete()
-                    for image_data in images_data:
-                        ProductImage.objects.create(product=instance, image=image_data)
+                    with transaction.atomic():
+                        instance.product_images.all().delete()
+                        new_images = [
+                            ProductImage(product=instance, image=image_data)
+                            for image_data in images_data
+                        ]
+                        ProductImage.objects.bulk_create(new_images)
 
                 return Response(
                     ProductSerializer(instance).data,
