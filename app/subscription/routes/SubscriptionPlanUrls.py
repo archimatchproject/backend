@@ -36,4 +36,9 @@ subscription_plan_urlpatterns = [
         SubscriptionPlanViewSet.as_view({"delete": "destroy"}),
         name="subscription-plan-delete",
     ),
+    path(
+        "subscription-plan/upgradable-plans/",
+        SubscriptionPlanViewSet.as_view({"get": "get_upgradable_plans"}),
+        name="upgradable-plans",
+    ),
 ]

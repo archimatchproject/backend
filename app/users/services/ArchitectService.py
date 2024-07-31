@@ -303,3 +303,74 @@ class ArchitectService:
             raise e
         except Exception:
             raise APIException(detail="Error updating architect preferences")
+
+    @classmethod
+    def architect_update_profile_image(cls, request):
+        """
+        Updates a architect's Profie Image such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing architect's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during architect settings update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            profile_image = data.get("profile_image", False)
+            if not profile_image:
+                raise serializers.ValidationError(detail="profile image is required")
+
+            architect = Architect.objects.get(user__id=user_id)
+            user = architect.user
+            user.image = profile_image
+            user.save()
+
+            response_data = {"message": "Architect profile image successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
+    def architect_update_presentation_video(cls, request):
+        """
+        Updates a architect's Presentaion VIdeo such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing architect's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during architect settings update.
+        """
+        try:
+            data = request.data
+            user_id = request.user.id
+            presentation_video = data.get("presentation_video", False)
+            if not presentation_video:
+                raise serializers.ValidationError(detail="presentation video is required")
+
+            architect = Architect.objects.get(user__id=user_id)
+            architect.presentation_video = presentation_video
+            architect.save()
+
+            response_data = {"message": "Architect presentation video successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
