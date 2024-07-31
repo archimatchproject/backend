@@ -7,6 +7,9 @@ Class: ArchitectViewSet
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import JSONParser
+from rest_framework.parsers import MultiPartParser
 
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
@@ -26,6 +29,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
 
     serializer_class = ArchitectSerializer
     queryset = Architect.objects.all()
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     @action(
         detail=False,
@@ -166,3 +170,43 @@ class ArchitectViewSet(viewsets.ModelViewSet):
             Response: Response object indicating the result of the preferences update.
         """
         return ArchitectService.architect_update_preferences(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-profile-image",
+        url_name="update-profile-image",
+    )
+    def architect_update_profile_image(self, request):
+        """
+        Updates architect profile image.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response object indicating the result of the profile image update.
+        """
+        return ArchitectService.architect_update_profile_image(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-presentation-video",
+        url_name="update-presentation-video",
+    )
+    def architect_update_presentation_video(self, request):
+        """
+        Updates architect presentation video.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response object indicating the result of the presentation video update.
+        """
+        return ArchitectService.architect_update_profile_image(request)

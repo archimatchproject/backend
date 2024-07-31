@@ -36,4 +36,9 @@ token_pack_urlpatterns = [
         TokenPackViewSet.as_view({"delete": "destroy"}),
         name="token-pack-delete",
     ),
+    path(
+        "token-pack/choose-pack/",
+        TokenPackViewSet.as_view({"post": "architect_choose_token_pack"}),
+        name="choose-pack",
+    ),
 ]
