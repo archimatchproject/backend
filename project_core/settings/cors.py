@@ -2,11 +2,13 @@
 Module-level constants for backend and frontend URLs, and CORS configuration.
 """
 
+import os
+
 import environ
 
 
 env = environ.Env()
-environ.Env.read_env()
+env.read_env(os.path.join(os.path.dirname(__file__), ".env"))
 
 BASE_BACKEND_URL = ""
 BASE_FRONTEND_URL = (
