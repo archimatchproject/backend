@@ -6,6 +6,7 @@ related to SubscriptionPlan instances via REST API endpoints.
 """
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.subscription.controllers.ManageSubscriptionPermission import ManageSubscriptionPermission
@@ -75,3 +76,16 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
         return SubscriptionPlanService.update_subscription_plan(
             instance, request.data, partial=partial
         )
+
+    @action(detail=False, methods=["get"], url_path="upgradable-plans", url_name="upgradable-plans")
+    def get_upgradable_plans(self, request):
+        """
+        Custom action to fetch upgradable subscription plans for an architect.
+
+        Args:
+            request (Request): The HTTP request object containing user data.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return SubscriptionPlanService.architect_get_upgradable_plans(request)
