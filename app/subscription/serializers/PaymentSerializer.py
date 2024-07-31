@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.subscription.models.Payment import Payment
-from app.subscription.models.SubscriptionPlan import SubscriptionPlan
+from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
 from app.subscription.serializers.SubscriptionPlanSerializer import SubscriptionPlanSerializer
 
 
@@ -21,7 +21,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         source="subscription_plan", read_only=True
     )
     subscription_plan = serializers.PrimaryKeyRelatedField(
-        queryset=SubscriptionPlan.objects.all(), write_only=True
+        queryset=SelectedSubscriptionPlan.objects.all(), write_only=True
     )
     notes = NoteSerializer(many=True, read_only=True)
 

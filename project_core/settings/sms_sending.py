@@ -6,6 +6,7 @@ import environ
 
 
 env = environ.Env()
+environ.Env.read_env()
 
 TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")
