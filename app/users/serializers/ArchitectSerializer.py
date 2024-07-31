@@ -22,6 +22,9 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
+    SelectedSubscriptionPlanSerializer,
+)
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
@@ -50,6 +53,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
     work_types = WorkTypeSerializer(many=True)
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
+    subscription_plan = SelectedSubscriptionPlanSerializer()
 
     class Meta:
         """

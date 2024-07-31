@@ -19,6 +19,7 @@ from project_core.settings.templates_icon import *
 
 
 env = environ.Env()
+environ.Env.read_env()
 
 """
 Third-party applications used in the project.

@@ -93,7 +93,7 @@ class Architect(BaseModel):
         default=YEARS_EXPERIENCE_CHOICES[0][0],
     )
     subscription_plan = models.ForeignKey(
-        "subscription.SubscriptionPlan",
+        "subscription.SelectedSubscriptionPlan",
         on_delete=models.SET_NULL,
         default=None,
         null=True,

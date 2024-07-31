@@ -8,6 +8,7 @@ import environ
 
 
 env = environ.Env()
+environ.Env.read_env()
 
 SECRET_KEY = env("SECRET_KEY")
 

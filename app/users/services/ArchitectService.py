@@ -168,7 +168,9 @@ class ArchitectService:
                     setattr(user, field, validated_data.get("user").pop(field))
             user.save()
 
-            architect.presentation_video = validated_data.get("presentation_video")
+            architect.presentation_video = serializer.validated_data.get(
+                "presentation_video", architect.presentation_video
+            )
             architect.save()
 
             response_data = {
