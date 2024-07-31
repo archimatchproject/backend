@@ -8,9 +8,11 @@ from datetime import timedelta
 
 import environ
 
+from project_core.env import BASE_DIR
+
 
 env = environ.Env()
-env.read_env(os.path.join(os.path.dirname(__file__), ".env"))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
