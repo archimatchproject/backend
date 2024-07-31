@@ -83,18 +83,17 @@ class AnnouncementService:
         Creating new announcement
         """
         data = request.data
+        password = request.data.get("client").get("user").get("password")
         user = request.user
         serializer = AnnouncementPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
         try:
             needs_data = validated_data.pop("needs")
             pieces_renovate_data = validated_data.pop("pieces_renovate", [])
             project_extensions_data = validated_data.pop("project_extensions")
             project_images_data = validated_data.pop("project_images", [])
             client_data = validated_data.pop("client", None)
-
             with transaction.atomic():
                 if client_data:
                     user_data = client_data.pop("user")
@@ -103,12 +102,10 @@ class AnnouncementService:
                     user_serializer = ArchimatchUserSerializer(data=user_data)
                     user_serializer.is_valid(raise_exception=True)
                     user_instance = ArchimatchUser.objects.create(**user_data)
-                    password = client_data.pop("password")
-                    client_instance = Client.objects.create(
-                        user=user_instance,
-                        **client_data,
-                    )
                     user_instance.set_password(password)
+                    user_instance.save()
+                    client_instance = Client.objects.create(user=user_instance, **client_data)
+
                     # TODO: Ghazi
                     # token = generate_password_reset_token(client_instance.user.id,
                     # expires_in=3600)
@@ -137,22 +134,17 @@ class AnnouncementService:
                             Please provide a valid authentication token."
                         )
                     client_instance = Client.objects.get(user=user)
-
                 announcement = Announcement.objects.create(client=client_instance, **validated_data)
                 announcement.needs.set(needs_data)
-
                 for piece_data in pieces_renovate_data:
                     for piece_renovate_id, number in piece_data.items():
                         piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
                         AnnouncementPieceRenovate.objects.create(
                             announcement=announcement, piece_renovate=piece_renovate, number=number
                         )
-
                 announcement.project_extensions.set(project_extensions_data)
-
                 for image in project_images_data:
                     ProjectImage.objects.create(announcement=announcement, image=image)
-
             return Response(
                 {
                     "message": "Announcement created successfully",
@@ -165,7 +157,7 @@ class AnnouncementService:
         except Client.DoesNotExist:
             raise NotFound(detail="Client not found")
         except Exception as e:
-            raise APIException(detail=f"Error creating announcement ${str(e)}")
+            raise APIException(detail=f"Error creating announcement {e}")
 
     @classmethod
     def update_announcement(cls, instance, data):
