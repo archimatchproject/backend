@@ -38,7 +38,8 @@ class ClientSerializer(serializers.ModelSerializer):
         """
 
         model = Client
-        fields = ["id", "user"]
+        fields = ["id", "user", "is_verified"]
+        read_only_fields = ["is_verified"]
 
     def create(self, validated_data):
         """

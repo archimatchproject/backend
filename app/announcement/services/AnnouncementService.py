@@ -10,7 +10,6 @@ Classes:
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
-from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
@@ -55,13 +54,19 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
-from app.email_templates.signals import api_success_signal
+
+# from app.email_templates.signals import api_success_signal
 from app.users import USER_TYPE_CHOICES
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.utils import generate_password_reset_token
-from project_core.django import base as settings
+
+
+# from django.utils.translation import get_language_from_request
+
+
+# from app.users.utils import generate_password_reset_token
+# from project_core.django import base as settings
 
 
 class AnnouncementService:
@@ -98,29 +103,33 @@ class AnnouncementService:
                     user_serializer = ArchimatchUserSerializer(data=user_data)
                     user_serializer.is_valid(raise_exception=True)
                     user_instance = ArchimatchUser.objects.create(**user_data)
+                    password = client_data.pop("password")
                     client_instance = Client.objects.create(
                         user=user_instance,
                         **client_data,
                     )
-                    token = generate_password_reset_token(client_instance.user.id, expires_in=3600)
-                    email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
-                    language_code = get_language_from_request(request)
-                    url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-                    reset_link = f"""{url}/client/first-login/{token}"""
-                    context = {
-                        "first_name": client_instance.user.first_name,
-                        "last_name": client_instance.user.last_name,
-                        "email": client_instance.user.email,
-                        "reset_link": reset_link,
-                    }
-                    signal_data = {
-                        "template_name": "client_first_connection.html",
-                        "context": context,
-                        "to_email": client_instance.user.email,
-                        "subject": "Client Account Creation",
-                        "images": email_images,
-                    }
-                    api_success_signal.send(sender=cls, data=signal_data)
+                    user_instance.set_password(password)
+                    # TODO: Ghazi
+                    # token = generate_password_reset_token(client_instance.user.id,
+                    # expires_in=3600)
+                    # email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
+                    # language_code = get_language_from_request(request)
+                    # url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+                    # reset_link = f"""{url}/client/first-login/{token}"""
+                    # context = {
+                    #     "first_name": client_instance.user.first_name,
+                    #     "last_name": client_instance.user.last_name,
+                    #     "email": client_instance.user.email,
+                    #     "reset_link": reset_link,
+                    # }
+                    # signal_data = {
+                    #     "template_name": "client_first_connection.html",
+                    #     "context": context,
+                    #     "to_email": client_instance.user.email,
+                    #     "subject": "Client Account Creation",
+                    #     "images": email_images,
+                    # }
+                    # api_success_signal.send(sender=cls, data=signal_data)
                 else:
                     if isinstance(user, AnonymousUser):
                         raise serializers.ValidationError(
