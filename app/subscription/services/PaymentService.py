@@ -61,22 +61,27 @@ class PaymentService:
             selected_plan_data = {
                 "plan_name": subscription_plan.plan_name,
                 "plan_price": subscription_plan.plan_price,
+                "number_tokens": subscription_plan.number_tokens + subscription_plan.free_tokens,
                 "remaining_tokens": subscription_plan.number_tokens + subscription_plan.free_tokens,
                 "active": subscription_plan.active,
                 "free_plan": subscription_plan.free_plan,
                 "start_date": subscription_plan.start_date,
                 "end_date": subscription_plan.end_date,
+                "discount": subscription_plan.discount,
+                "discount_percentage": subscription_plan.discount_percentage,
             }
             selected_plan = SelectedSubscriptionPlan.objects.create(**selected_plan_data)
 
             # Add services to the SelectedSubscriptionPlan
             selected_plan.services.set(subscription_plan.services.all())
 
-            architect.selected_subscription_plan = selected_plan
+            architect.subscription_plan = selected_plan
             architect.save()
 
             with transaction.atomic():
-                payment = Payment.objects.create(architect=architect, **validated_data)
+                payment = Payment.objects.create(
+                    architect=architect, subscription_plan=selected_plan, **validated_data
+                )
 
                 invoice = Invoice(
                     invoice_number=f"INV-{payment.id}",
