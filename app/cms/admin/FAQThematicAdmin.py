@@ -19,7 +19,7 @@ class FAQQuestionInline(admin.TabularInline):
 
     model = FAQQuestion
     extra = 3
-    fields = ("question", "response")
+    fields = ("question", "response", "guide_thematic", "guide_article", "admin")
 
 
 class FAQThematicAdmin(admin.ModelAdmin):

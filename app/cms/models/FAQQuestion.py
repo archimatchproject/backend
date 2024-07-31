@@ -8,7 +8,10 @@ a frequently asked question related to a specific thematic in the application.
 from django.db import models
 
 from app.cms.models.FAQThematic import FAQThematic
+from app.cms.models.GuideArticle import GuideArticle
+from app.cms.models.GuideThematic import GuideThematic
 from app.core.models.BaseModel import BaseModel
+from app.users.models.Admin import Admin
 
 
 class FAQQuestion(BaseModel):
@@ -26,6 +29,21 @@ class FAQQuestion(BaseModel):
     faq_thematic = models.ForeignKey(
         FAQThematic, on_delete=models.CASCADE, related_name="faq_thematic_questions"
     )
+    guide_thematic = models.ForeignKey(
+        GuideThematic,
+        on_delete=models.DO_NOTHING,
+        related_name="guide_thematic_questions",
+        null=True,
+        blank=True,
+    )
+    guide_article = models.ForeignKey(
+        GuideArticle,
+        on_delete=models.DO_NOTHING,
+        related_name="guide_article_questions",
+        null=True,
+        blank=True,
+    )
+    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
 
     class Meta:
         """
