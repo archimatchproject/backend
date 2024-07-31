@@ -34,7 +34,6 @@ class InvoiceService:
         """
         Export invoices to pdf format.
         """
-        print(settings.GLOBAL_PATH + "/architect_logo.png")
         invoice = Invoice.objects.get(pk=id)
         context = {
             "archimatch_img": settings.GLOBAL_PATH + "/architect_logo.png",
