@@ -42,4 +42,7 @@ class GuideThematicSerializer(serializers.ModelSerializer):
             "updated_at",
             "guide_thematic_articles",
         ]
-        read_only_fields = ["updated_at", "target_user_type"]
+        read_only_fields = ["updated_at"]
+        extra_kwargs = {
+            "target_user_type": {"required": False},
+        }

@@ -10,7 +10,6 @@ Classes:
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
-from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
@@ -55,13 +54,19 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
-from app.email_templates.signals import api_success_signal
+
+# from app.email_templates.signals import api_success_signal
 from app.users import USER_TYPE_CHOICES
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.utils import generate_password_reset_token
-from project_core.django import base as settings
+
+
+# from django.utils.translation import get_language_from_request
+
+
+# from app.users.utils import generate_password_reset_token
+# from project_core.django import base as settings
 
 
 class AnnouncementService:
@@ -78,18 +83,17 @@ class AnnouncementService:
         Creating new announcement
         """
         data = request.data
+        password = request.data.get("client").get("user").get("password")
         user = request.user
         serializer = AnnouncementPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
         try:
             needs_data = validated_data.pop("needs")
             pieces_renovate_data = validated_data.pop("pieces_renovate", [])
             project_extensions_data = validated_data.pop("project_extensions")
             project_images_data = validated_data.pop("project_images", [])
             client_data = validated_data.pop("client", None)
-
             with transaction.atomic():
                 if client_data:
                     user_data = client_data.pop("user")
@@ -98,29 +102,31 @@ class AnnouncementService:
                     user_serializer = ArchimatchUserSerializer(data=user_data)
                     user_serializer.is_valid(raise_exception=True)
                     user_instance = ArchimatchUser.objects.create(**user_data)
-                    client_instance = Client.objects.create(
-                        user=user_instance,
-                        **client_data,
-                    )
-                    token = generate_password_reset_token(client_instance.user.id, expires_in=3600)
-                    email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
-                    language_code = get_language_from_request(request)
-                    url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-                    reset_link = f"""{url}/client/first-login/{token}"""
-                    context = {
-                        "first_name": client_instance.user.first_name,
-                        "last_name": client_instance.user.last_name,
-                        "email": client_instance.user.email,
-                        "reset_link": reset_link,
-                    }
-                    signal_data = {
-                        "template_name": "client_first_connection.html",
-                        "context": context,
-                        "to_email": client_instance.user.email,
-                        "subject": "Client Account Creation",
-                        "images": email_images,
-                    }
-                    api_success_signal.send(sender=cls, data=signal_data)
+                    user_instance.set_password(password)
+                    user_instance.save()
+                    client_instance = Client.objects.create(user=user_instance, **client_data)
+
+                    # TODO: Ghazi
+                    # token = generate_password_reset_token(client_instance.user.id,
+                    # expires_in=3600)
+                    # email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
+                    # language_code = get_language_from_request(request)
+                    # url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+                    # reset_link = f"""{url}/client/first-login/{token}"""
+                    # context = {
+                    #     "first_name": client_instance.user.first_name,
+                    #     "last_name": client_instance.user.last_name,
+                    #     "email": client_instance.user.email,
+                    #     "reset_link": reset_link,
+                    # }
+                    # signal_data = {
+                    #     "template_name": "client_first_connection.html",
+                    #     "context": context,
+                    #     "to_email": client_instance.user.email,
+                    #     "subject": "Client Account Creation",
+                    #     "images": email_images,
+                    # }
+                    # api_success_signal.send(sender=cls, data=signal_data)
                 else:
                     if isinstance(user, AnonymousUser):
                         raise serializers.ValidationError(
@@ -128,22 +134,17 @@ class AnnouncementService:
                             Please provide a valid authentication token."
                         )
                     client_instance = Client.objects.get(user=user)
-
                 announcement = Announcement.objects.create(client=client_instance, **validated_data)
                 announcement.needs.set(needs_data)
-
                 for piece_data in pieces_renovate_data:
                     for piece_renovate_id, number in piece_data.items():
                         piece_renovate = PieceRenovate.objects.get(pk=piece_renovate_id)
                         AnnouncementPieceRenovate.objects.create(
                             announcement=announcement, piece_renovate=piece_renovate, number=number
                         )
-
                 announcement.project_extensions.set(project_extensions_data)
-
                 for image in project_images_data:
                     ProjectImage.objects.create(announcement=announcement, image=image)
-
             return Response(
                 {
                     "message": "Announcement created successfully",
@@ -156,7 +157,7 @@ class AnnouncementService:
         except Client.DoesNotExist:
             raise NotFound(detail="Client not found")
         except Exception as e:
-            raise APIException(detail=f"Error creating announcement ${str(e)}")
+            raise APIException(detail=f"Error creating announcement {e}")
 
     @classmethod
     def update_announcement(cls, instance, data):

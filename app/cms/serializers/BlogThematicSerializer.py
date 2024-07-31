@@ -31,7 +31,7 @@ class BlogThematicSerializer(serializers.ModelSerializer):
             "updated_at",
             "blog_thematic_blogs",
         ]
-        read_only_fields = [
-            "updated_at",
-            "target_user_type",
-        ]
+        read_only_fields = ["updated_at"]
+        extra_kwargs = {
+            "target_user_type": {"required": False},
+        }
