@@ -40,7 +40,7 @@ class FAQThematicSerializer(serializers.ModelSerializer):
             "questions",
             "updated_at",
         ]
-        read_only_fields = [
-            "updated_at",
-            "target_user_type",
-        ]
+        read_only_fields = ["updated_at"]
+        extra_kwargs = {
+            "target_user_type": {"required": False},
+        }
