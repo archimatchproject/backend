@@ -2,13 +2,15 @@
 Module-level constants for jwt configuration.
 """
 
+import os
+
 from datetime import timedelta
 
 import environ
 
 
 env = environ.Env()
-environ.Env.read_env()
+env.read_env(os.path.join(os.path.dirname(__file__), ".env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
