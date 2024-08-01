@@ -60,9 +60,9 @@ supplier_urlpatterns = [
         name="profile",
     ),
     path(
-        "supplier/get-profile-by-email/",
-        SupplierViewSet.as_view({"get": "get_profile_by_email"}),
-        name="get-profile-by-email",
+        "supplier/get-profile/<int:pk>/",
+        SupplierViewSet.as_view({"get": "get_profile_by_id"}),
+        name="get-profile-by-id",
     ),
     path(
         "supplier/send-reset-password-link/",
