@@ -31,36 +31,36 @@ URL_PREFIX = env("URL_PREFIX")
 
 urlpatterns = [
     path(f"{URL_PREFIX}admin/", admin.site.urls),
-    path(f"{URL_PREFIX}/users/", include("app.users.urls")),
-    path(f"{URL_PREFIX}/cms/", include("app.cms.urls")),
-    path(f"{URL_PREFIX}/email_templates/", include("app.email_templates.urls")),
+    path(f"{URL_PREFIX}users/", include("app.users.urls")),
+    path(f"{URL_PREFIX}cms/", include("app.cms.urls")),
+    path(f"{URL_PREFIX}email_templates/", include("app.email_templates.urls")),
     path(
-        f"{URL_PREFIX}/announcement/",
+        f"{URL_PREFIX}announcement/",
         include("app.announcement.urls"),
     ),
     path(
-        f"{URL_PREFIX}/architect-request/",
+        f"{URL_PREFIX}architect-request/",
         include("app.architect_request.urls"),
     ),
     path(
-        f"{URL_PREFIX}/architect-realization/",
+        f"{URL_PREFIX}architect-realization/",
         include("app.architect_realization.urls"),
     ),
     path(
-        f"{URL_PREFIX}/subscription/",
+        f"{URL_PREFIX}subscription/",
         include("app.subscription.urls"),
     ),
     path(
-        f"{URL_PREFIX}/catalogue/",
+        f"{URL_PREFIX}catalogue/",
         include("app.catalogue.urls"),
     ),
     path(
-        f"{URL_PREFIX}/swagger/",
+        f"{URL_PREFIX}swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
     path(
-        f"{URL_PREFIX}/redoc/",
+        f"{URL_PREFIX}redoc/",
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
