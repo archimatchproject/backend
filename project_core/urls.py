@@ -12,6 +12,8 @@ from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
+from project_core.env import env
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -24,42 +26,45 @@ schema_view = get_schema_view(
     ),
     public=True,
 )
+
+URL_PREFIX = env("URL_PREFIX")
+
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/users/", include("app.users.urls")),
-    path("api/cms/", include("app.cms.urls")),
-    path("api/email_templates/", include("app.email_templates.urls")),
+    path(f"{URL_PREFIX}admin/", admin.site.urls),
+    path(f"{URL_PREFIX}/users/", include("app.users.urls")),
+    path(f"{URL_PREFIX}/cms/", include("app.cms.urls")),
+    path(f"{URL_PREFIX}/email_templates/", include("app.email_templates.urls")),
     path(
-        "api/announcement/",
+        f"{URL_PREFIX}/announcement/",
         include("app.announcement.urls"),
     ),
     path(
-        "api/architect-request/",
+        f"{URL_PREFIX}/architect-request/",
         include("app.architect_request.urls"),
     ),
     path(
-        "api/architect-realization/",
+        f"{URL_PREFIX}/architect-realization/",
         include("app.architect_realization.urls"),
     ),
     path(
-        "api/subscription/",
+        f"{URL_PREFIX}/subscription/",
         include("app.subscription.urls"),
     ),
     path(
-        "api/catalogue/",
+        f"{URL_PREFIX}/catalogue/",
         include("app.catalogue.urls"),
     ),
     path(
-        "",
+        f"{URL_PREFIX}/swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
     path(
-        "redoc/",
+        f"{URL_PREFIX}/redoc/",
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
-    path("rosetta/", include("rosetta.urls")),
+    path(f"{URL_PREFIX}rosetta/", include("rosetta.urls")),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT,

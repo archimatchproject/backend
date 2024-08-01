@@ -3,8 +3,9 @@ Module-level constants for dev configuration.
 """
 
 from project_core.django.base import *
+from project_core.env import env
 
 
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CORS_ALLOW_ALL_ORIGINS = True

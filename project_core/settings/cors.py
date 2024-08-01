@@ -2,20 +2,14 @@
 Module-level constants for backend and frontend URLs, and CORS configuration.
 """
 
-import os
-
-import environ
-
-from project_core.env import BASE_DIR
+from project_core.env import env
 
 
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+DNS_ADDRESS = env("DNS_ADDRESS")
 
-BASE_BACKEND_URL = ""
-BASE_FRONTEND_URL = (
-    f"http://{env('DNS_ADDRESS')}:3000" if env("IS_LOCAL") else f"https://{env('DNS_ADDRESS')}"
-)
+BASE_FRONTEND_URL = f"http://{DNS_ADDRESS}:3000" if env("IS_LOCAL") else f"http://{DNS_ADDRESS}"
 
 # CORS_ALLOWED_ORIGINS = [BASE_FRONTEND_URL]
-CORS_ALLOW_ALL_ORIGINS = True
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"] if env("IS_LOCAL") else [f"{DNS_ADDRESS}"]
+CSRF_TRUSTED_ORIGINS = [] if env("IS_LOCAL") else [f"http://{DNS_ADDRESS}"]
