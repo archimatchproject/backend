@@ -549,6 +549,34 @@ class SupplierService:
             raise APIException(detail=str(e))
 
     @classmethod
+    def get_profile_by_email(cls, request):
+        """
+        Retrieves supplier information based on the provided email.
+
+        Args:
+            email (str): The email of the supplier to retrieve.
+
+        Returns:
+            Response: Response object containing supplier object.
+        """
+        try:
+            email = request.query_params.get("email")
+            if not email:
+                raise serializers.ValidationError(detail="Email parameter is required.")
+            supplier = Supplier.objects.get(user__email=email)
+            supplier_serializer = SupplierSerializer(supplier)
+            return Response(
+                supplier_serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
     def supplier_send_reset_password_link(cls, request):
         """
         send reset password link for suppliers.

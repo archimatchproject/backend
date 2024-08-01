@@ -11,6 +11,7 @@ Classes:
 
 from rest_framework import serializers
 
+from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.users.models.Supplier import Supplier
@@ -37,6 +38,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     user = ArchimatchUserSerializer(required=True)
     social_links = SupplierSocialMediaSerializer()
     speciality_type = SupplierSpecialitySerializer(many=True)
+    supplier_collections = CollectionSerializer(many=True)
 
     class Meta:
         """

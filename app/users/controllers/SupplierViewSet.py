@@ -224,6 +224,27 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile-by-email",
+        url_name="get-profile-by-email",
+    )
+    def get_profile_by_email(self, request):
+        """
+        Retrieves supplier details based on the provided email.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing email query parameter.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+
+        return SupplierService.get_profile_by_email(request)
+
+    @action(
+        detail=False,
         methods=["POST"],
         permission_classes=[],
         url_path="send-reset-password-link",
