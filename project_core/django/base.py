@@ -174,7 +174,7 @@ USE_I18N = True
 Static files (CSS, JavaScript, Images) serving configuration.
 """
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 """
 Static files storage configuration for production.

@@ -11,7 +11,9 @@ Classes:
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from app.users import USER_TYPE_CHOICES
 from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Client import Client
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
@@ -54,12 +56,19 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         access = refresh.access_token
 
         user_data = ArchimatchUserSerializer(self.user).data
-
-        return {
+        response_data = {
             "refresh": str(refresh),
             "access": str(access),
             "user": user_data,
         }
+        if self.user.user_type == USER_TYPE_CHOICES[1][0]:
+            is_verified = Client.objects.get(user=self.user).is_verified
+            if is_verified:
+                response_data["is_verified"] = is_verified
+            else:
+                response_data = {"is_verified": is_verified}
+
+        return response_data
 
 
 class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
