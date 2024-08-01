@@ -6,19 +6,14 @@ This module defines the base configuration constants and settings for the Django
 
 import os
 
-from pathlib import Path
-
-import environ
-
 from project_core.env import BASE_DIR
+from project_core.env import env
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
 from project_core.settings.jwt import *
 from project_core.settings.sms_sending import *
 from project_core.settings.templates_icon import *
 
-
-env = environ.Env()
 
 """
 Third-party applications used in the project.

@@ -44,4 +44,9 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"get": "get_realizations_by_architect"}),
         name="get-realizations-by-architect",
     ),
+    path(
+        "delete/<int:pk>/",
+        RealizationViewSet.as_view({"delete": "destroy"}),
+        name="delete",
+    ),
 ]

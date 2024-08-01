@@ -153,24 +153,24 @@ class ArchitectService:
             APIException: If there are errors during architect profile update.
         """
         try:
+
             data = request.data
             user_id = request.user.id
             serializer = ArchitectBaseDetailsSerializer(data=data)
             serializer.is_valid(raise_exception=True)
-
             architect = Architect.objects.get(user__id=user_id)
             user = architect.user
-
+            validated_data = serializer.validated_data
             # update user information
             user_fields = ["first_name", "last_name", "email", "phone_number"]
             for field in user_fields:
-                if field in data:
-                    setattr(user, field, data.pop(field))
+                if field in validated_data.get("user"):
+                    setattr(user, field, validated_data.get("user").pop(field))
             user.save()
 
-            # Update Architect data
-            for attr, value in data.items():
-                setattr(architect, attr, value)
+            architect.presentation_video = serializer.validated_data.get(
+                "presentation_video", architect.presentation_video
+            )
             architect.save()
 
             response_data = {

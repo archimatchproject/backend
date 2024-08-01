@@ -1,5 +1,6 @@
 from app.subscription.admin.InvoiceAdmin import InvoiceAdmin
 from app.subscription.admin.PaymentAdmin import PaymentAdmin
 from app.subscription.admin.PlanServiceAdmin import PlanServiceAdmin
+from app.subscription.admin.SelectedSubscriptionPlanAdmin import SelectedSubscriptionPlanAdmin
 from app.subscription.admin.SubscriptionPlanAdmin import SubscriptionPlanAdmin
 from app.subscription.admin.TokenPackAdmin import TokenPackAdmin
