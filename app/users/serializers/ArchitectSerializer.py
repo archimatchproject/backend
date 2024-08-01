@@ -63,7 +63,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
     terrain_surface = TerrainSurfaceSerializer(many=True)
     work_surface = WorkSurfaceSerializer(many=True)
     preferred_locations = PreferredLocationSerializer(many=True)
-    budget = BudgetSerializer(many=True)
+    budgets = BudgetSerializer(many=True)
 
     class Meta:
         """

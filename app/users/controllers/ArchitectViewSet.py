@@ -238,7 +238,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         url_path="property-types",
         url_name="property-types",
     )
-    def get_property_types(self):
+    def get_property_types(self, request):
         """
         Retrieves Architect details.
 
