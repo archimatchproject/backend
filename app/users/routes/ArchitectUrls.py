@@ -69,4 +69,24 @@ architect_urlpatterns = [
         ArchitectViewSet.as_view({"get": "get_property_types"}),
         name="property-types",
     ),
+    path(
+        "architect/terrain-surfaces/",
+        ArchitectViewSet.as_view({"get": "get_terrain_surfaces"}),
+        name="terrain-surfaces",
+    ),
+    path(
+        "architect/work-surfaces/",
+        ArchitectViewSet.as_view({"get": "get_work_surfaces"}),
+        name="work-surfaces",
+    ),
+    path(
+        "architect/budgets/",
+        ArchitectViewSet.as_view({"get": "get_budgets"}),
+        name="budgets",
+    ),
+    path(
+        "architect/locations/",
+        ArchitectViewSet.as_view({"get": "get_locations"}),
+        name="locations",
+    ),
 ]
