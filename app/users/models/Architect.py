@@ -14,8 +14,12 @@ from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.Budget import Budget
+from app.core.models.PreferredLocation import PreferredLocation
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
+from app.core.models.TerrainSurface import TerrainSurface
+from app.core.models.WorkSurface import WorkSurface
 from app.core.models.WorkType import WorkType
 from app.users import PROJECT_COMPLEXITY_CHOICES
 from app.users import YEARS_EXPERIENCE_CHOICES
@@ -99,6 +103,11 @@ class Architect(BaseModel):
         null=True,
         blank=True,
     )
+
+    terrain_surface = models.ManyToManyField(TerrainSurface)
+    work_surface = models.ManyToManyField(WorkSurface)
+    budgets = models.ManyToManyField(Budget)
+    preferred_locations = models.ManyToManyField(PreferredLocation)
 
     def __str__(self):
         """

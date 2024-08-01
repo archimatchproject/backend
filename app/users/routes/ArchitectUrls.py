@@ -59,4 +59,14 @@ architect_urlpatterns = [
         ArchitectViewSet.as_view({"put": "architect_update_presentation_video"}),
         name="update-presentation-video",
     ),
+    path(
+        "architect/work-types/",
+        ArchitectViewSet.as_view({"get": "get_architect_work_types"}),
+        name="work-types",
+    ),
+    path(
+        "architect/property-types/",
+        ArchitectViewSet.as_view({"get": "get_property_types"}),
+        name="property-types",
+    ),
 ]
