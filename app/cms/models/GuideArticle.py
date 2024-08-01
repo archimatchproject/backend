@@ -30,7 +30,7 @@ class GuideArticle(BaseModel):
     guide_thematic = models.ForeignKey(
         GuideThematic, on_delete=models.CASCADE, related_name="guide_thematic_articles"
     )
-    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     date = models.DateField()
     rating = models.FloatField()

@@ -24,7 +24,7 @@ class FAQThematic(BaseModel):
     target_user_type = models.CharField(
         max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
     )
-    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         """

@@ -8,4 +8,6 @@ from app.cms.models.GuideArticle import GuideArticle
 from app.cms.models.GuideSection import GuideSection
 from app.cms.models.GuideSliderImage import GuideSliderImage
 from app.cms.models.GuideThematic import GuideThematic
+from app.cms.models.PrivacyPolicy import PrivacyPolicy
 from app.cms.models.SliderImage import SliderImage
+from app.cms.models.TermsAndConditions import TermsAndConditions
