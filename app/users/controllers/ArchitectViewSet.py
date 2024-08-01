@@ -218,7 +218,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         url_path="wok-types",
         url_name="wok-types",
     )
-    def get_architect_work_types(self):
+    def get_architect_work_types(self, request):
         """
         Retrieves Architect details.
 
