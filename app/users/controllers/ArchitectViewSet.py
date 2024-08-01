@@ -250,3 +250,83 @@ class ArchitectViewSet(viewsets.ModelViewSet):
             Response: Response containing Architect details.
         """
         return ArchitectService.get_property_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="terrain-surfaces",
+        url_name="terrain-surfaces",
+    )
+    def get_terrain_surfaces(self, request):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_terrain_surfaces()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="work-surfaces",
+        url_name="work-surfaces",
+    )
+    def get_work_surfaces(self, request):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_work_surfaces()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="budgets",
+        url_name="budgets",
+    )
+    def get_budgets(self, request):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_budgets()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="locations",
+        url_name="locations",
+    )
+    def get_locations(self, request):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_locations()
