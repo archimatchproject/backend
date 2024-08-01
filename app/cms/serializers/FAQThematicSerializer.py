@@ -20,7 +20,8 @@ class FAQThematicSerializer(serializers.ModelSerializer):
     """
 
     faq_thematic_questions = FAQQuestionSerializer(many=True, read_only=True)
-    questions = FAQQuestionSerializer(many=True, write_only=True)
+    questions = FAQQuestionSerializer(many=True, write_only=True, required=False)
+    admin = serializers.EmailField(source="admin.user.email", read_only=True)
 
     class Meta:
         """
@@ -30,4 +31,16 @@ class FAQThematicSerializer(serializers.ModelSerializer):
         """
 
         model = FAQThematic
-        fields = ["id", "title", "target_user_type", "faq_thematic_questions", "questions"]
+        fields = [
+            "id",
+            "title",
+            "target_user_type",
+            "admin",
+            "faq_thematic_questions",
+            "questions",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "updated_at",
+            "target_user_type",
+        ]

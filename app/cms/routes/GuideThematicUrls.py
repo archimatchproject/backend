@@ -36,4 +36,9 @@ guide_thematic_urlpatterns = [
         GuideThematicViewSet.as_view({"delete": "destroy"}),
         name="guide-thematic-delete",
     ),
+    path(
+        "guide-thematic/change-visibility/<int:pk>/",
+        GuideThematicViewSet.as_view({"put": "change_visibility"}),
+        name="guide-thematic-change-visibility",
+    ),
 ]

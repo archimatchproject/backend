@@ -16,7 +16,6 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
-from app.cms.models.FAQQuestion import FAQQuestion
 from app.cms.models.FAQThematic import FAQThematic
 from app.cms.serializers.FAQThematicSerializer import FAQThematicSerializer
 
@@ -29,13 +28,13 @@ class FAQThematicService:
     along with their related FAQQuestion instances.
 
     Methods:
-        create_thematic_article(data): Handles validation and creation of a new FAQThematic.
-        update_thematic_article(instance, data): Handles validation and updating of an existing
+        create_faq_thematic(data): Handles validation and creation of a new FAQThematic.
+        update_faq_thematic(instance, data): Handles validation and updating of an existing
         FAQThematic.
     """
 
     @classmethod
-    def create_thematic_article(cls, data):
+    def create_faq_thematic(cls, request):
         """
         Handle the creation of a new FAQThematic instance along with related FAQQuestion instances.
 
@@ -45,14 +44,13 @@ class FAQThematicService:
         Returns:
             Response: The response object containing the created instance data.
         """
-        serializer = FAQThematicSerializer(data=data)
+        serializer = FAQThematicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
         try:
             with transaction.atomic():
-                thematic = FAQThematic.objects.create(title=serializer.validated_data["title"])
-                questions_data = data.get("questions", [])
-                for question_data in questions_data:
-                    FAQQuestion.objects.create(faq_thematic=thematic, **question_data)
+
+                thematic = FAQThematic.objects.create(**validated_data, admin=request.user.admin)
                 return Response(
                     FAQThematicSerializer(thematic).data, status=status.HTTP_201_CREATED
                 )
@@ -62,7 +60,7 @@ class FAQThematicService:
             raise APIException(detail=f"Error creating FAQ thematic: {e}")
 
     @classmethod
-    def update_thematic_article(cls, instance, data):
+    def update_faq_thematic(cls, instance, request):
         """
         Handle the update of an existing FAQThematic instance along with related
         FAQQuestion instances.
@@ -74,38 +72,13 @@ class FAQThematicService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        serializer = FAQThematicSerializer(instance, data=data)
+        serializer = FAQThematicSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
-
+        validated_data = serializer.validated_data
         try:
             with transaction.atomic():
-                instance.title = serializer.validated_data.get("title", instance.title)
+                instance.title = validated_data.get("title", instance.title)
                 instance.save()
-
-                # Handle questions update or create new questions
-                questions_data = data.get("questions", [])
-
-                updated_question_ids = []
-
-                for question_data in questions_data:
-                    question_id = question_data.get("id", None)
-
-                    if question_id:
-                        # Update existing question
-                        question = FAQQuestion.objects.get(id=question_id, faq_thematic=instance)
-                        question.question = question_data.get("question", question.question)
-                        question.response = question_data.get("response", question.response)
-                        question.save()
-                        updated_question_ids.append(question.id)
-                    else:
-                        # Create new question
-                        FAQQuestion.objects.create(faq_thematic=instance, **question_data)
-
-                # Delete questions not in updated_question_ids
-                FAQQuestion.objects.filter(faq_thematic=instance).exclude(
-                    id__in=updated_question_ids
-                ).delete()
-
                 return Response(FAQThematicSerializer(instance).data, status=status.HTTP_200_OK)
 
         except serializers.ValidationError as e:

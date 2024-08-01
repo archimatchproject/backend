@@ -13,10 +13,12 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.serializers.SubscriptionPlanSerializer import SubscriptionPlanSerializer
+from app.users.models.Architect import Architect
 
 
 class SubscriptionPlanService:
@@ -97,3 +99,36 @@ class SubscriptionPlanService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating subscription plan: {str(e)}")
+
+    @classmethod
+    def architect_get_upgradable_plans(cls, request):
+        """
+        Handles fetching upgradable SubscriptionPlans for an architect.
+
+        Args:
+            request (Request): The request object containing user data.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+
+        user_id = request.user.id
+
+        try:
+            with transaction.atomic():
+                architect = Architect.objects.get(user__id=user_id)
+                current_plan = architect.subscription_plan
+                subscription_plans = SubscriptionPlan.objects.filter(
+                    plan_price__gt=current_plan.plan_price
+                )
+
+                return Response(
+                    SubscriptionPlanSerializer(subscription_plans, many=True).data,
+                    status=status.HTTP_200_OK,
+                )
+        except Architect.DoesNotExist:
+            raise NotFound(detail="Architect not found")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error fetching upgradable plans: {str(e)}")

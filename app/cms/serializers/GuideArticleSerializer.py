@@ -9,6 +9,7 @@ including related GuideSection instances.
 from rest_framework import serializers
 
 from app.cms.models.GuideArticle import GuideArticle
+from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideSectionSerializer import GuideSectionSerializer
 
 
@@ -22,6 +23,11 @@ class GuideArticleSerializer(serializers.ModelSerializer):
 
     guide_article_sections = GuideSectionSerializer(many=True, read_only=True)
     sections = GuideSectionSerializer(many=True, write_only=True)
+    guide_thematic = serializers.SlugRelatedField(read_only=True, slug_field="title")
+    guide_thematic_id = serializers.PrimaryKeyRelatedField(
+        source="guide_thematic", queryset=GuideThematic.objects.all(), write_only=True
+    )
+    admin = serializers.EmailField(source="admin.user.email", read_only=True)
 
     class Meta:
         """
@@ -40,4 +46,10 @@ class GuideArticleSerializer(serializers.ModelSerializer):
             "rating",
             "guide_article_sections",
             "sections",
+            "guide_thematic",
+            "guide_thematic_id",
+            "admin",
+            "visible",
+            "updated_at",
         ]
+        read_only_fields = ["guide_article_sections", "updated_at"]

@@ -46,6 +46,10 @@ urlpatterns = [
         include("app.subscription.urls"),
     ),
     path(
+        "api/catalogue/",
+        include("app.catalogue.urls"),
+    ),
+    path(
         "",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",

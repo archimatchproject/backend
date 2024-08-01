@@ -47,7 +47,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             list: List of permission instances.
         """
-        if self.action in ["update_cover_photo", "upload_media"]:
+        if self.action in ["list", "retrieve"]:
             return []
         elif self.action in [
             "create",
@@ -56,6 +56,7 @@ class BlogViewSet(viewsets.ModelViewSet):
             "destroy",
             "update_cover_photo",
             "change_visibility",
+            "upload_media",
         ]:
             return [IsAuthenticated(), ManageBlogPermission()]
         return super().get_permissions()

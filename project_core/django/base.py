@@ -19,6 +19,7 @@ from project_core.settings.templates_icon import *
 
 
 env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 """
 Third-party applications used in the project.
@@ -45,6 +46,7 @@ LOCAL_APPS = [
     "app.email_templates",
     "app.architect_realization",
     "app.subscription",
+    "app.catalogue",
 ]
 
 

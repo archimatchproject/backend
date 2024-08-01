@@ -8,6 +8,7 @@ related to BlogThematic instances via REST API endpoints.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.serializers import ValidationError
 
 from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
 from app.cms.models.BlogThematic import BlogThematic
@@ -24,6 +25,24 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
 
     queryset = BlogThematic.objects.all()
     serializer_class = BlogThematicSerializer
+
+    def get_queryset(self):
+        """
+        Get the queryset for the view.
+
+        Raises:
+            ValidationError: If the `target_user_type` query parameter is not provided.
+
+        Returns:
+            QuerySet: The filtered queryset based on the `target_user_type` parameter.
+        """
+        if self.action == "list":
+            target_user_type = self.request.query_params.get("target_user_type")
+            if not target_user_type:
+                raise ValidationError("The 'target_user_type' query parameter is required.")
+            return BlogThematic.objects.filter(target_user_type=target_user_type)
+        else:
+            return self.queryset
 
     def get_permissions(self):
         """

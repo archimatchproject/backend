@@ -10,6 +10,7 @@ from django.db import models
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.core.models.BaseModel import BaseModel
+from app.users.models.Admin import Admin
 
 
 class GuideArticle(BaseModel):
@@ -29,6 +30,8 @@ class GuideArticle(BaseModel):
     guide_thematic = models.ForeignKey(
         GuideThematic, on_delete=models.CASCADE, related_name="guide_thematic_articles"
     )
+    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    visible = models.BooleanField(default=False)
     date = models.DateField()
     rating = models.FloatField()
 

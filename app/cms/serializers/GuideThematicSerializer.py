@@ -21,6 +21,7 @@ class GuideThematicSerializer(serializers.ModelSerializer):
     """
 
     guide_thematic_articles = GuideArticleSerializer(many=True, read_only=True)
+    admin = serializers.StringRelatedField()
 
     class Meta:
         """
@@ -30,4 +31,15 @@ class GuideThematicSerializer(serializers.ModelSerializer):
         """
 
         model = GuideThematic
-        fields = ["id", "label", "target_user_type", "icon", "guide_thematic_articles"]
+        fields = [
+            "id",
+            "title",
+            "sub_title",
+            "target_user_type",
+            "icon",
+            "admin",
+            "visible",
+            "updated_at",
+            "guide_thematic_articles",
+        ]
+        read_only_fields = ["updated_at", "target_user_type"]

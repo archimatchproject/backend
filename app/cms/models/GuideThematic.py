@@ -8,10 +8,11 @@ a thematic category for guide articles in the application.
 from django.db import models
 
 from app.cms import TARGET_USER_TYPE
-from app.core.models.LabeledIcon import LabeledIcon
+from app.core.models.BaseModel import BaseModel
+from app.users.models.Admin import Admin
 
 
-class GuideThematic(LabeledIcon):
+class GuideThematic(BaseModel):
     """
     Model representing a thematic category for guide articles.
 
@@ -22,8 +23,11 @@ class GuideThematic(LabeledIcon):
         icon (ImageField): Icon image associated with the guide thematic.
     """
 
+    title = models.CharField(max_length=255, unique=True)
+    sub_title = models.CharField(max_length=255)
     icon = models.ImageField(upload_to="icons/GuideThematicIcons/", blank=True, null=True)
-
+    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    visible = models.BooleanField(default=False)
     target_user_type = models.CharField(
         max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
     )
@@ -32,7 +36,7 @@ class GuideThematic(LabeledIcon):
         """
         String representation of the GuideThematic.
         """
-        return self.label
+        return self.title
 
     class Meta:
         """

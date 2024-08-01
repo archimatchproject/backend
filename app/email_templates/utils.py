@@ -9,8 +9,13 @@ It includes functionality to attach images inline within the HTML content of the
 import os
 
 from email.mime.image import MIMEImage
+from io import BytesIO
 
 from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponse
+from django.template.loader import get_template
+
+from xhtml2pdf import pisa
 
 from project_core.django import base as settings
 
@@ -46,3 +51,16 @@ def attach_email_icons(msg, images):
             # Optionally, handle the error, e.g., log it, or attach a default image
         except Exception as e:
             print(f"An error occurred while attaching the file {filename}: {e}")
+
+
+def render_to_pdf(template_src, context_dict):
+    """
+    render html_to_pdf function.
+    """
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type="application/pdf")
+    return None
