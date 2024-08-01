@@ -549,6 +549,29 @@ class SupplierService:
             raise APIException(detail=str(e))
 
     @classmethod
+    def get_profile_by_id(cls, supplier_id):
+        """
+        Retrieves supplier information based on the provided ID.
+
+        Args:
+            supplier_id (int): The ID of the supplier to retrieve.
+
+        Returns:
+            Response: Response object containing supplier object.
+        """
+        try:
+            supplier = Supplier.objects.get(id=supplier_id)
+            supplier_serializer = SupplierSerializer(supplier)
+            return Response(
+                supplier_serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            raise APIException(detail=str(e))
+
+    @classmethod
     def supplier_send_reset_password_link(cls, request):
         """
         send reset password link for suppliers.
