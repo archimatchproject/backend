@@ -210,3 +210,43 @@ class ArchitectViewSet(viewsets.ModelViewSet):
             Response: Response object indicating the result of the presentation video update.
         """
         return ArchitectService.architect_update_profile_image(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="wok-types",
+        url_name="wok-types",
+    )
+    def get_architect_work_types(self):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_architect_work_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="property-types",
+        url_name="property-types",
+    )
+    def get_property_types(self):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        return ArchitectService.get_property_types()

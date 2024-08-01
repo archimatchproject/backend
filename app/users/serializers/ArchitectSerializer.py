@@ -18,10 +18,16 @@ from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.core.models.ArchitecturalStyle import ArchitecturalStyle
-from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.Budget import Budget
+from app.core.models.PreferredLocation import PreferredLocation
 from app.core.models.PropertyType import PropertyType
+from app.core.models.TerrainSurface import TerrainSurface
+from app.core.models.WorkSurface import WorkSurface
 from app.core.models.WorkType import WorkType
+from app.core.serializers.BudgetSerializer import BudgetSerializer
+from app.core.serializers.PreferredLocationSerializer import PreferredLocationSerializer
+from app.core.serializers.TerrainSurfaceSerializer import TerrainSurfaceSerializer
+from app.core.serializers.WorkSurfaceSerializer import WorkSurfaceSerializer
 from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
     SelectedSubscriptionPlanSerializer,
 )
@@ -54,6 +60,10 @@ class ArchitectSerializer(serializers.ModelSerializer):
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
     subscription_plan = SelectedSubscriptionPlanSerializer()
+    terrain_surface = TerrainSurfaceSerializer(many=True)
+    work_surface = WorkSurfaceSerializer(many=True)
+    preferred_locations = PreferredLocationSerializer(many=True)
+    budget = BudgetSerializer(many=True)
 
     class Meta:
         """
@@ -151,16 +161,18 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
         architectural_styles: List of primary keys for associated architectural styles.
     """
 
-    project_categories = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectCategory.objects.all(), many=True
-    )
     property_types = serializers.PrimaryKeyRelatedField(
         queryset=PropertyType.objects.all(), many=True
     )
     work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True)
-    architectural_styles = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), many=True
+    terrain_surface = serializers.PrimaryKeyRelatedField(
+        queryset=TerrainSurface.objects.all(), many=True
     )
+    work_surface = serializers.PrimaryKeyRelatedField(queryset=WorkSurface.objects.all(), many=True)
+    preferred_locations = serializers.PrimaryKeyRelatedField(
+        queryset=PreferredLocation.objects.all(), many=True
+    )
+    budget = serializers.PrimaryKeyRelatedField(queryset=Budget.objects.all(), many=True)
 
     class Meta:
         """
@@ -172,4 +184,11 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
         """
 
         model = Architect
-        fields = ["project_categories", "property_types", "work_types", "architectural_styles"]
+        fields = [
+            "preferred_locations",
+            "property_types",
+            "work_types",
+            "terrain_surface",
+            "work_surface",
+            "budget",
+        ]
