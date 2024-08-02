@@ -54,7 +54,7 @@ class RealizationService:
                 raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
 
             architect = Architect.objects.get(user__id=user_id)
-            realization_images = request.FILES.getlist("realization_images", [])
+            realization_images = validated_data.pop("realization_images", [])
 
             with transaction.atomic():
                 realization = Realization.objects.create(

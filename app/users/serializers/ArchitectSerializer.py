@@ -61,10 +61,10 @@ class ArchitectSerializer(serializers.ModelSerializer):
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
     subscription_plan = SelectedSubscriptionPlanSerializer()
-    terrain_surfaces = TerrainSurfaceSerializer(many=True)
-    work_surfaces = WorkSurfaceSerializer(many=True)
-    preferred_locations = PreferredLocationSerializer(many=True)
-    budgets = BudgetSerializer(many=True)
+    terrain_surfaces = TerrainSurfaceSerializer(many=True,required=False)
+    work_surfaces = WorkSurfaceSerializer(many=True,required=False)
+    preferred_locations = PreferredLocationSerializer(many=True,required=False)
+    budgets = BudgetSerializer(many=True,required=False)
 
     class Meta:
         """
