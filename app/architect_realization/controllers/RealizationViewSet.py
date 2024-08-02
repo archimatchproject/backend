@@ -171,3 +171,16 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)
+
+
+    @action(
+        detail=True,
+        url_path="update-announcement-images",
+        methods=["PUT"],
+    )
+    def update_realization_images(self, request, pk=None):
+        """
+        Updating existing realization
+        """
+        instance = self.get_object()
+        return RealizationService.update_realization_images(instance, request)
