@@ -33,6 +33,7 @@ from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
 )
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
+from app.announcement.models.Need import Need
 
 
 class ArchitectSerializer(serializers.ModelSerializer):
@@ -60,8 +61,8 @@ class ArchitectSerializer(serializers.ModelSerializer):
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
     subscription_plan = SelectedSubscriptionPlanSerializer()
-    terrain_surface = TerrainSurfaceSerializer(many=True)
-    work_surface = WorkSurfaceSerializer(many=True)
+    terrain_surfaces = TerrainSurfaceSerializer(many=True)
+    work_surfaces = WorkSurfaceSerializer(many=True)
     preferred_locations = PreferredLocationSerializer(many=True)
     budgets = BudgetSerializer(many=True)
 
@@ -165,14 +166,15 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
         queryset=PropertyType.objects.all(), many=True
     )
     work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True)
-    terrain_surface = serializers.PrimaryKeyRelatedField(
+    terrain_surfaces = serializers.PrimaryKeyRelatedField(
         queryset=TerrainSurface.objects.all(), many=True
     )
-    work_surface = serializers.PrimaryKeyRelatedField(queryset=WorkSurface.objects.all(), many=True)
+    work_surfaces = serializers.PrimaryKeyRelatedField(queryset=WorkSurface.objects.all(), many=True)
     preferred_locations = serializers.PrimaryKeyRelatedField(
         queryset=PreferredLocation.objects.all(), many=True
     )
-    budget = serializers.PrimaryKeyRelatedField(queryset=Budget.objects.all(), many=True)
+    budgets = serializers.PrimaryKeyRelatedField(queryset=Budget.objects.all(), many=True)
+    needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
 
     class Meta:
         """
@@ -188,7 +190,8 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
             "preferred_locations",
             "property_types",
             "work_types",
-            "terrain_surface",
-            "work_surface",
-            "budget",
+            "terrain_surfaces",
+            "work_surfaces",
+            "budgets",
+            "needs"
         ]

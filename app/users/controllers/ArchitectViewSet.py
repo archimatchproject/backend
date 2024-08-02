@@ -29,7 +29,16 @@ class ArchitectViewSet(viewsets.ModelViewSet):
 
     serializer_class = ArchitectSerializer
     queryset = Architect.objects.all()
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def get_parser_classes(self):
+        """
+        Get the parsers that the view requires.
+        """
+        if self.action in ['architect_update_preferences']:
+            return (JSONParser)
+        else:
+            return (JSONParser, MultiPartParser, FormParser)
+
 
     @action(
         detail=False,
