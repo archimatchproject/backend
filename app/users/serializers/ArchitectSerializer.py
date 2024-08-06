@@ -12,6 +12,7 @@ Classes:
 
 from rest_framework import serializers
 
+from app.announcement.models.Need import Need
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
@@ -33,7 +34,6 @@ from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
 )
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.announcement.models.Need import Need
 
 
 class ArchitectSerializer(serializers.ModelSerializer):
@@ -169,7 +169,9 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
     terrain_surfaces = serializers.PrimaryKeyRelatedField(
         queryset=TerrainSurface.objects.all(), many=True
     )
-    work_surfaces = serializers.PrimaryKeyRelatedField(queryset=WorkSurface.objects.all(), many=True)
+    work_surfaces = serializers.PrimaryKeyRelatedField(
+        queryset=WorkSurface.objects.all(), many=True
+    )
     preferred_locations = serializers.PrimaryKeyRelatedField(
         queryset=PreferredLocation.objects.all(), many=True
     )
@@ -193,5 +195,5 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
             "terrain_surfaces",
             "work_surfaces",
             "budgets",
-            "needs"
+            "needs",
         ]

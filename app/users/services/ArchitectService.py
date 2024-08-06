@@ -298,7 +298,7 @@ class ArchitectService:
                 "terrain_surfaces",
                 "work_surfaces",
                 "budgets",
-                "needs"
+                "needs",
             ]
             for field in many_to_many_fields:
                 if field in validated_data:

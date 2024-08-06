@@ -41,6 +41,7 @@ LOCAL_APPS = [
     "app.architect_realization",
     "app.subscription",
     "app.catalogue",
+    "app.moderation",
 ]
 
 
