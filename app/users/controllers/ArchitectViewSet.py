@@ -34,11 +34,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         """
         Get the parsers that the view requires.
         """
-        if self.action in ['architect_update_preferences']:
-            return (JSONParser)
+        if self.action in ["architect_update_preferences"]:
+            return JSONParser
         else:
             return (JSONParser, MultiPartParser, FormParser)
-
 
     @action(
         detail=False,
