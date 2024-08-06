@@ -16,7 +16,9 @@ from app.architect_realization.serializers.RealizationSerializer import Realizat
 from app.architect_realization.serializers.RealizationSerializer import RealizationSerializer
 from app.architect_realization.services.RealizationService import RealizationService
 from app.core.pagination import CustomPagination
-
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import JSONParser
+from rest_framework.parsers import MultiPartParser
 
 class RealizationViewSet(viewsets.ModelViewSet):
     """
@@ -31,6 +33,15 @@ class RealizationViewSet(viewsets.ModelViewSet):
     serializer_class = RealizationSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
+
+    def get_parser_classes(self):
+        """
+        Get the parsers that the view requires.
+        """
+        if self.action not in ['realization_create']:
+            return (JSONParser)
+        else:
+            return (JSONParser, MultiPartParser, FormParser)
 
     def get_permissions(self):
         """
@@ -160,3 +171,16 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)
+
+
+    @action(
+        detail=True,
+        url_path="update-announcement-images",
+        methods=["PUT"],
+    )
+    def update_realization_images(self, request, pk=None):
+        """
+        Updating existing realization
+        """
+        instance = self.get_object()
+        return RealizationService.update_realization_images(instance, request)
