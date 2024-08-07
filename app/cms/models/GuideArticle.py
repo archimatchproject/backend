@@ -34,7 +34,7 @@ class GuideArticle(BaseModel):
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     date = models.DateField(default=timezone.now)
-    rating = models.FloatField()
+    rating = models.FloatField(default=0.0,null=True,blank=True)
 
     def clean(self):
         """
