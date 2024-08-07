@@ -75,7 +75,7 @@ class InvoiceService:
         try:
             architect = Architect.objects.get(user__id=user_id)
             invoices = Invoice.objects.filter(architect=architect)
-            invoices_seriliazer = InvoiceSerializer(invoices)
+            invoices_seriliazer = InvoiceSerializer(invoices, many=True)
             return Response(
                 invoices_seriliazer.data,
                 status=status.HTTP_200_OK,
