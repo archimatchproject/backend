@@ -7,6 +7,7 @@ an article providing guidance on a specific thematic in the application.
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.core.models.BaseModel import BaseModel
@@ -32,7 +33,7 @@ class GuideArticle(BaseModel):
     )
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
-    date = models.DateField()
+    date = models.DateField(default=timezone.now)
     rating = models.FloatField()
 
     def clean(self):

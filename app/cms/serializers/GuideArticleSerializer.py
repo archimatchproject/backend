@@ -52,4 +52,7 @@ class GuideArticleSerializer(serializers.ModelSerializer):
             "visible",
             "updated_at",
         ]
-        read_only_fields = ["guide_article_sections", "updated_at"]
+        read_only_fields = ["guide_article_sections", "updated_at", "rating"]
+        extra_kwargs = {
+            "date": {"required": False},
+        }

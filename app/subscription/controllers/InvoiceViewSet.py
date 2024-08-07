@@ -33,7 +33,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         return InvoiceService.export_invoice(request, pk)
 
     @action(detail=True, methods=["get"], url_path="get-invoices", url_name="get-invoices")
-    def architect_get_invoices(self, request, pk=None):
+    def architect_get_invoices(self, request):
         """
         Custom action to fetch invoices for a specific architect.
 
@@ -44,4 +44,4 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of invoices or an error message.
         """
-        return InvoiceService.architect_get_invoices(request, pk)
+        return InvoiceService.architect_get_invoices(request)
