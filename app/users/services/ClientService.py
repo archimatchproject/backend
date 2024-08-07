@@ -142,3 +142,34 @@ class ClientService:
             raise APIException(
                 detail=str(e),
             )
+
+    @classmethod
+    def client_validate_email_token(cls, request):
+        """
+        validate password token
+        """
+        try:
+            data = request.data
+            token = data.get("token", False)
+            if not token:
+                raise serializers.ValidationError(detail="token is required")
+
+            user_id, error = validate_password_reset_token(token)
+            if error:
+                raise APIException(detail=error)
+            client = Client.objects.get(user__id=user_id)
+            client.is_verified = True
+            client.save()
+            serializer = ClientSerializer(client)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Client.DoesNotExist:
+            raise NotFound(detail="Client not found")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(
+                detail=str(e),
+            )

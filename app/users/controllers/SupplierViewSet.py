@@ -223,6 +223,27 @@ class SupplierViewSet(viewsets.ModelViewSet):
         return SupplierService.supplier_get_profile(request)
 
     @action(
+        detail=True,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile-by-id",
+    )
+    def get_profile_by_id(self, request, pk=None):
+        """
+        Retrieves supplier details based on the provided ID.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+            pk (int): The primary key of the supplier.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.get_profile_by_id(pk)
+
+    @action(
         detail=False,
         methods=["POST"],
         permission_classes=[],

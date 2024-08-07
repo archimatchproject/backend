@@ -24,7 +24,9 @@ class Collection(models.Model):
 
     title = models.CharField(max_length=255)
     category = models.ForeignKey(SupplierSpeciality, on_delete=models.CASCADE)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.CASCADE, related_name="supplier_collections"
+    )
 
     def __str__(self):
         """

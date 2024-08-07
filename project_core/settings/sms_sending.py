@@ -2,15 +2,8 @@
 Module-level constants for Twilio configuration.
 """
 
-import os
+from project_core.env import env
 
-import environ
-
-from project_core.env import BASE_DIR
-
-
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")

@@ -43,7 +43,7 @@ class FAQQuestion(BaseModel):
         null=True,
         blank=True,
     )
-    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         """

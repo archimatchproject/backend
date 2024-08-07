@@ -49,4 +49,9 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"delete": "destroy"}),
         name="delete",
     ),
+    path(
+        "update-realization-images/<int:pk>/",
+        RealizationViewSet.as_view({"put": "update_realization_images"}),
+        name="update-realization-images",
+    ),
 ]

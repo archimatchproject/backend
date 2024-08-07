@@ -31,13 +31,26 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             list: List of permission instances.
         """
-        if self.action in ["list", "retrieve"]:
-            return []
-        elif self.action in ["create", "update", "partial_update", "destroy", "update_order"]:
+        if self.action in [
+            "list",
+            "retrieve",
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+            "update_order",
+        ]:
             return [
                 IsAuthenticated(),
             ]
         return super().get_permissions()
+
+    def get_queryset(self):
+        """
+        Filter the collections by the supplier related to the currently authenticated user.
+        """
+        user = self.request.user
+        return Collection.objects.filter(supplier__user=user)
 
     def create(self, request, *args, **kwargs):
         """

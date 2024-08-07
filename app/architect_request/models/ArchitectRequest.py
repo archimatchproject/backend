@@ -60,7 +60,7 @@ class ArchitectRequest(BaseModel):
     date = models.DateField()
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
 
-    meeting_responsable = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, blank=True)
+    meeting_responsable = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(
         max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
     )

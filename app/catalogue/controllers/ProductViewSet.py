@@ -36,9 +36,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         Returns:
             list: List of permission instances.
         """
-        if self.action in ["list", "retrieve"]:
-            return []
-        elif self.action in [
+        if self.action in [
+            "list",
+            "retrieve",
             "create",
             "update",
             "partial_update",
@@ -47,6 +47,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         ]:
             return [IsAuthenticated()]
         return super().get_permissions()
+
+    def get_queryset(self):
+        """
+        Filter the products by the supplier related to the currently authenticated user.
+        """
+        user = self.request.user
+        return Product.objects.filter(collection__supplier__user=user)
 
     def create(self, request, *args, **kwargs):
         """

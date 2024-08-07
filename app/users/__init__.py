@@ -85,6 +85,36 @@ PERMISSION_CODENAMES = {
         ],
         "color": "#ABCBEC",
     },
+    "manage_legal_policy": {
+        "permissions": [
+            "add_privacypolicy",
+            "change_privacypolicy",
+            "delete_privacypolicy",
+            "view_privacypolicy",
+            "add_termsandconditions",
+            "change_termsandconditions",
+            "delete_termsandconditions",
+            "view_termsandconditions",
+        ],
+        "color": "#ABCCCC",
+    },
+    "manage_reporting": {
+        "permissions": [
+            "add_architectreport",
+            "change_architectreport",
+            "delete_architectreport",
+            "view_architectreport",
+            "add_projectreport",
+            "change_projectreport",
+            "delete_projectreport",
+            "view_projectreport",
+            "add_reviewreport",
+            "change_reviewreport",
+            "delete_reviewreport",
+            "view_reviewreport",
+        ],
+        "color": "#ABCCCC",
+    },
 }
 CODENAME_TO_RIGHTS = {
     codename: right

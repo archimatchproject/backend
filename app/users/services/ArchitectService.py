@@ -17,6 +17,18 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
+from app.core.models.Budget import Budget
+from app.core.models.PreferredLocation import PreferredLocation
+from app.core.models.PropertyType import PropertyType
+from app.core.models.TerrainSurface import TerrainSurface
+from app.core.models.WorkSurface import WorkSurface
+from app.core.models.WorkType import WorkType
+from app.core.serializers.BudgetSerializer import BudgetSerializer
+from app.core.serializers.PreferredLocationSerializer import PreferredLocationSerializer
+from app.core.serializers.TerrainSurfaceSerializer import TerrainSurfaceSerializer
+from app.core.serializers.WorkSurfaceSerializer import WorkSurfaceSerializer
 from app.email_templates.signals import api_success_signal
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
@@ -167,7 +179,7 @@ class ArchitectService:
                 if field in validated_data.get("user"):
                     setattr(user, field, validated_data.get("user").pop(field))
             user.save()
-
+            architect.bio = validated_data.get("bio")
             architect.presentation_video = serializer.validated_data.get(
                 "presentation_video", architect.presentation_video
             )
@@ -280,10 +292,13 @@ class ArchitectService:
 
         try:
             many_to_many_fields = [
-                "project_categories",
+                "preferred_locations",
                 "property_types",
                 "work_types",
-                "architectural_styles",
+                "terrain_surfaces",
+                "work_surfaces",
+                "budgets",
+                "needs",
             ]
             for field in many_to_many_fields:
                 if field in validated_data:
@@ -374,3 +389,122 @@ class ArchitectService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+    @classmethod
+    def get_architect_work_types(cls):
+        """
+        Retrieves announcement work types optionally filtered by property type.
+
+        Args:
+            property_type_id (int, optional): ID of the property type to filter work types.
+            Defaults to None.
+
+        Returns:
+            Response: Response containing list of announcement work types.
+        """
+        try:
+
+            work_types = WorkType.objects.all()
+
+            serializer = WorkTypeSerializer(work_types, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error retrieving work types, ${str(e)}")
+
+    @classmethod
+    def get_property_types(cls):
+        """
+        Retrieves property types.
+        Returns:
+            Response: Response containing list of property types related to the project category.
+        """
+        try:
+            property_types = PropertyType.objects.all()
+            serializer = PropertyTypeSerializer(property_types, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving property types")
+
+    @classmethod
+    def get_terrain_surfaces(cls):
+        """
+        Retrieves terrain surfaces.
+        Returns:
+            Response: Response containing list of terrain surfaces related to the project category.
+        """
+        try:
+            terrain_surfaces = TerrainSurface.objects.all()
+            serializer = TerrainSurfaceSerializer(terrain_surfaces, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving terrain surfaces")
+
+    @classmethod
+    def get_work_surfaces(cls):
+        """
+        Retrieves work surfaces.
+        Returns:
+            Response: Response containing list of work surfaces related to the project category.
+        """
+        try:
+            work_surfaces = WorkSurface.objects.all()
+            serializer = WorkSurfaceSerializer(work_surfaces, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving work surfaces")
+
+    @classmethod
+    def get_budgets(cls):
+        """
+        Retrieves budgets.
+        Returns:
+            Response: Response containing list of budgets related to the project category.
+        """
+        try:
+            budgets = Budget.objects.all()
+            serializer = BudgetSerializer(budgets, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving budgets")
+
+    @classmethod
+    def get_locations(cls):
+        """
+        Retrieves locations.
+        Returns:
+            Response: Response containing list of budgets related to the project category.
+        """
+        try:
+            locations = PreferredLocation.objects.all()
+            serializer = PreferredLocationSerializer(locations, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving locations")

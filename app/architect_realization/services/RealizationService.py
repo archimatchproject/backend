@@ -54,7 +54,7 @@ class RealizationService:
                 raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
 
             architect = Architect.objects.get(user__id=user_id)
-            realization_images = request.FILES.getlist("realization_images", [])
+            realization_images = validated_data.pop("realization_images", [])
 
             with transaction.atomic():
                 realization = Realization.objects.create(
@@ -186,3 +186,30 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
+        
+
+    @classmethod
+    def update_realization_images(cls, instance, request):
+        """
+        Updating existing announcement images
+        """
+        try:
+            project_images_files = request.data.getlist("realization_images")
+            with transaction.atomic():
+                instance.realization_images.all().delete()
+                for image in project_images_files:
+                    RealizationImage.objects.create(
+                        realization=instance,
+                        image=image,
+                    )
+
+            return Response(
+                {
+                    "message": "Realization images updated successfully",
+                },
+                status=status.HTTP_200_OK,
+            )
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating realization images: {str(e)}")   

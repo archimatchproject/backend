@@ -39,7 +39,7 @@ class Blog(BaseModel):
         BlogThematic, on_delete=models.CASCADE, related_name="blog_thematic_blogs"
     )
     tags = models.ManyToManyField(BlogTag)
-    admin = models.ForeignKey(Admin, on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     popular = models.BooleanField(default=False)
 
