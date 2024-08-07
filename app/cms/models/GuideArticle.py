@@ -5,9 +5,10 @@ This module contains the GuideArticle class, which represents
 an article providing guidance on a specific thematic in the application.
 """
 
+from datetime import date
+
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.core.models.BaseModel import BaseModel
@@ -33,7 +34,7 @@ class GuideArticle(BaseModel):
     )
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
-    date = models.DateField(default=timezone.now().date, null=True, blank=True)
+    date = models.DateField(default=date.today, null=True, blank=True)
     rating = models.FloatField(default=0.0, null=True, blank=True)
 
     def clean(self):
