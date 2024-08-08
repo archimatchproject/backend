@@ -23,6 +23,8 @@ pyyaml = "==6.0.1"
 itsdangerous = "==2.2.0"
 supervisor = "==4.2.5"
 xhtml2pdf = "==0.2.16"
+fcm-django = "*"
+firebase-admin = "*"
 
 [dev-packages]
 black = "==24.4.0"
