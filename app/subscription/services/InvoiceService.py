@@ -54,7 +54,9 @@ class InvoiceService:
         template_name = "invoice.html"
         pdf = render_to_pdf(template_name, context)
         if pdf:
-            return HttpResponse(pdf, content_type="application/pdf")
+            response = HttpResponse(pdf, content_type="application/pdf")
+            response["Content-Disposition"] = f'attachment; filename="invoice_{id}.pdf"'
+            return response
         return HttpResponse("file or pdf not found!")
 
     @classmethod
@@ -75,6 +77,7 @@ class InvoiceService:
         try:
             architect = Architect.objects.get(user__id=user_id)
             invoices = Invoice.objects.filter(architect=architect)
+
             invoices_seriliazer = InvoiceSerializer(invoices, many=True)
             return Response(
                 invoices_seriliazer.data,

@@ -32,10 +32,10 @@ class ReviewReportSerializer(serializers.ModelSerializer):
     )
     reported_review = ClientReviewSerializer(read_only=True)
     reporting_architect = ArchitectSerializer(read_only=True)
-    reasons = serializers.PrimaryKeyRelatedField(
+    report_reasons = serializers.PrimaryKeyRelatedField(
         queryset=Reason.objects.all(), many=True, write_only=True
     )
-    report_reasons = ReasonSerializer(read_only=True, many=True)
+    reasons = ReasonSerializer(read_only=True, many=True)
     decision = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
     class Meta:

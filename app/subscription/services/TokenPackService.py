@@ -54,7 +54,6 @@ class TokenPackService:
                 token_pack = TokenPack.objects.get(id=token_pack_id)
                 architect = Architect.objects.get(user__id=user_id)
                 current_plan = architect.subscription_plan
-                current_plan.number_free_tokens += token_pack.number_free_tokens
                 current_plan.number_tokens += token_pack.number_tokens
                 current_plan.save()
                 architect.save()

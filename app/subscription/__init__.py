@@ -1,7 +1,7 @@
 PAYMENT_METHOD_CHOICES = [
-    ("Carte bancaire", "Carte bancaire"),
-    ("Carte e-dinar", "Carte e-dinar"),
-    ("Virement bancaire", "Virement bancaire"),
+    ("Credit-Card", "Credit Card"),
+    ("E-dinar-Card", "E-dinar Card"),
+    ("Bank-Transfer", "Bank Transfer"),
 ]
 
 PAYMENT_STATUS_CHOICES = [
