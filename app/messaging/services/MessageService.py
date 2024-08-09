@@ -92,7 +92,15 @@ class MessageService:
             Response: A response object containing the list of devices associated with the user.
         """
         user = request.user
-        devices = FCMDevice.objects.filter(user=user)
+
+        # Get devices where the user is either the sender or recipient
+        sender_devices = FCMDevice.objects.filter(sent_messages__recipient_device__user=user)
+        recipient_devices = FCMDevice.objects.filter(received_messages__sender_device__user=user)
+
+        # Combine the sender and recipient devices, removing duplicates
+        devices = sender_devices | recipient_devices
+        devices = devices.distinct()
+
         serialized_devices = DeviceSerializer(devices, many=True)
         return Response(serialized_devices.data)
 
