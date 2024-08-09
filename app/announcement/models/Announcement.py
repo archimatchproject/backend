@@ -5,10 +5,13 @@ This module contains the Announcement class, which represents an announcement
 for a construction or renovation project in the application.
 """
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
+from app.announcement import ANNOUNCEMENT_STATUS_CHOICES
 from app.announcement import BUDGETS
 from app.announcement import CITIES
+from app.announcement import PENDING
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
 from app.announcement.models.Need import Need
@@ -16,10 +19,11 @@ from app.announcement.models.ProjectExtension import ProjectExtension
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
-from app.users.models import Client
+from app.users.models.Client import Client
 
 
 class Announcement(BaseModel):
@@ -87,11 +91,15 @@ class Announcement(BaseModel):
         on_delete=models.SET_NULL,
         related_name="architectural_style",
         null=True,
+        blank=True,
     )
     project_extensions = models.ManyToManyField(
-        ProjectExtension,
-        related_name="project_extensions_announcements",
+        ProjectExtension, related_name="project_extensions_announcements"
     )
+    number_floors = models.PositiveIntegerField(default=0)
+    notes = GenericRelation(Note)
+    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
+    admin_note = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         """

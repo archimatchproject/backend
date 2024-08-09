@@ -1,0 +1,163 @@
+# Needs for Architecte de construction
+- model: announcement.Need
+  pk: 1
+  fields:
+    label: "Conception du plan 3D"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 2
+  fields:
+    label: "Conception du plan 2D"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 3
+  fields:
+    label: "Obtenir les autorisations nécessaires auprès des autorités locales"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 4
+  fields:
+    label: "Réaliser une étude de faisabilité et un budget préliminaire pour mon projet immobilier"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 5
+  fields:
+    label: "Gérer l'ensemble du processus de construction"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 6
+  fields:
+    label: "Optimiser l'espace et moderniser les installations"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 7
+  fields:
+    label: "Superviser et coordonner les travaux de construction de mon projet"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+- model: announcement.Need
+  pk: 8
+  fields:
+    label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+
+# Needs for Designer d'interieur
+- model: announcement.Need
+  pk: 9
+  fields:
+    label: "Conception du plan 3D"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 10
+  fields:
+    label: "Suivi des travaux"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 11
+  fields:
+    label: "Réaménager et optimiser mon espace de travail"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 12
+  fields:
+    label: "Réaménager et optimiser une pièce dans mon espace de vie"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 13
+  fields:
+    label: "Choisir le mobilier et les accessoires"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 14
+  fields:
+    label: "Choisir les couleurs et les matériaux"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 15
+  fields:
+    label: "Créer un design moderne et fonctionnel"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+- model: announcement.Need
+  pk: 16
+  fields:
+    label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+
+# Needs for Architecte paysagiste
+- model: announcement.Need
+  pk: 17
+  fields:
+    label: "Estimation des coûts des travaux"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 18
+  fields:
+    label: "Estimation de la durée des travaux"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 19
+  fields:
+    label: "Rénover mon espace intérieur"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 20
+  fields:
+    label: "Créer des aménagements extérieurs personnalisés"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 21
+  fields:
+    label: "Créer des détails architecturaux uniques et personnalisés"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 22
+  fields:
+    label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3
+
+- model: announcement.Need
+  pk: 23
+  fields:
+    label: "Concevoir une extension"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 3

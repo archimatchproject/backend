@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Facture</title>
+    <style>
+      body {
+        color: #344054;
+        background-color: #F2F2F2;
+      }
+      .logo{
+        text-align: left;
+      }
+      .title_invoice{
+        text-align: center;
+        color: #363B45;
+        font-weight: 700;
+        font-size: 28px;
+      }
+      h2{
+        color:#363B45;
+        font-weight:700;
+        font-size: 18px;
+      }
+      .div_fact{
+        margin-left:20px;
+        margin-right:20px;
+      }
+      .parag_title{
+        font-size: 13px;
+        color:#363B45;
+        font-weight:700;
+      }
+      .parag_text{
+        font-size: 12px;
+        color:#647680;
+        font-weight:600;
+      }
+      .bonjour{
+        font-size: 14px;
+        color:#363B45;
+        font-weight:700;
+      }
+      .row_light{
+        background-color: #F2F2F2;
+        height:32px;
+      }
+      .cmd_values_left{
+        font-weight: 400;
+        font-size:12px;
+        color:#363B45;
+        text-align:left;
+        padding-left: 10px;
+      }
+      .cmd_values_right{
+        font-weight: 400;
+        font-size:12px;
+        color:#363B45;
+        text-align:right;
+        padding-right:10px;
+      }
+      .fact_header{
+        background-color:#363B45;
+        height: 32px;
+        padding-left:3px;
+      }
+      .row_cell_header{
+        font-weight: 700;
+        font-size:12px;
+        color:#FFFFFF;
+        padding-top:4px;
+        text-align:center;
+      }
+      .fact-row{
+        height: 32px;
+      }
+      .row-cell{
+        font-weight: 400;
+        font-size:13px;
+        color:#363B45;
+        padding-top:4px;
+        text-align:center;
+      }
+      .reglement_title{
+        text-align: left;
+        font-size:16px;
+        font-weight:700;
+        color:#363B45;
+      }
+      .invoice_amount{
+        text-align: center;
+        font-size:14px;
+        font-weight:600;
+        color:#363B45;
+      }
+      .invoice_amounts{
+        padding-left:8px;
+        font-size:13px;
+        font-weight:600;
+        color:#363B45;
+        padding-top:4px;
+      }
+      .total{
+        text-align: center;
+        font-size:16px;
+        font-weight:700;
+        color:#11ABEC;
+        background-color:w;
+        padding-top:5px;
+      }
+      .days{
+        text-align: left;
+        font-size:12px;
+        font-weight:400;
+        color:#4E525B;
+      }
+      .small-p{
+        padding:0px;
+        margin:0px;
+      }
+      .small-h2{
+        padding:0px;
+        margin:0px;
+        font-weight:bold;
+        font-size:32px
+      }
+    </style>
+</head>
+<body>
+  <table style="width:100%;">
+    <td>
+      <img src={{archimatch_img}} alt="daxme logo" style="width:190px" class="logo">
+    </td>
+
+    <td colspan="2">
+
+    </td>
+    <td colspan="2" style="">
+
+      <div style="div_fact" >
+        <h2 style="" class="small-h2">Invoice</h2>
+        <p class="parag_title small-p">Order/Invoice ID:  <span class="parag_text">{{invoice_number}}</span></p>
+        <p class="parag_title small-p">Date <span class="parag_text">{{issue_date}}</span></p>
+      </div>
+    </td>
+    <tr style="">
+      <td style="width:400px;"><hr color=#888FA7 size=1px></td>
+
+      <td style="width:100px;"><hr color=#888FA7 size=1px></td>
+      <td style="width:100px;"><hr color=#888FA7 size=1px></td>
+      <td style="width:100px;"><hr color=#888FA7 size=1px></td>
+      <td style="width:100px;"><hr color=#888FA7 size=1px></td>
+    </tr>
+    <tr></tr>
+    <tr>
+      <td colspan="4" class="div_fact">
+
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="div_fact">
+          <h2 style="font-size:18px;font-weight:bold">To</h2>
+          <p class="parag_title">{{architect_email}}</p>
+        </div>
+      </td>
+      <td>
+      </td>
+
+      <td colspan="2" style="">
+
+        <div style="div_fact" >
+          {% comment %} <h1 style="font-size:24px;font-weight:bold;border:1px solid red; margin-top:100px ">Invoice</h1> {% endcomment %}
+          <p class="parag_title">FROM</p>
+          <p class="parag_title">Design Barn Inc</p>
+          <p class="parag_title">contact@Archimatch.com</p>
+          <p class="parag_title">407 California Avenue, Suite #2, Palo Alto, CA 94306, USA</p>
+        </div>
+      </td>
+    </tr>
+  </table>
+  {% comment %} <p class="bonjour" style="text-align:center;">Bonjour {{worker_first_name}},<br/>Merci d'avoir retenu nos services pour votre mission</p> {% endcomment %}
+  <table style="width:100%; margin-top:50px">
+    <tr class="row_light " style="font-size:14px; font-weight:bold;">
+      <td class="cmd_values_left " style="width:10%; padding:8px; padding-bottom:4px;">#</td>
+      <td class="parag_text" style="width:70%; padding:8px; padding-bottom:4px;">ITEM</td>
+      <td class="cmd_values_right" style="width:20%; padding:8px; padding-bottom:4px;">PRICE</td>
+    </tr>
+    <tr>
+      <td class="cmd_values_left" style="padding:8px; padding-bottom:4px;">1</td>
+      <td class="parag_text" style="padding:8px; padding-bottom:4px;">
+        <p style="margin:0; padding-bottom:4px; font-weight:bold; font-size:18px">{{plan_name}}</p>
+      </td>
+      <td class="cmd_values_right" style="padding:8px; padding-bottom:4px;">{{amount}}</td>
+    </tr>
+
+  </table>
+
+
+  <table style="width:100%;">
+    <tr style="height: 32px;">
+      <td class="row-cell" style="width:200px;"></td>
+        <td colspan="2" class="row-cell"></td>
+      <td class="invoice_amount">Subtotal</td>
+      <td class="invoice_amount">{{amount}}</td>
+    </tr>
+    <tr style="height: 32px;">
+      <td class="row-cell" style="width:200px;"></td>
+        <td colspan="2" class="row-cell"></td>
+      <td class="invoice_amount">Included Vat or Tax (0%)</td>
+      <td class="invoice_amount">0</td>
+    </tr>
+    <tr style="height: 40px;">
+      <td colspan="3" class="reglement_title"></td>
+      <td class="total">Total</td>
+      <td class="total">{{amount}}</td>
+    </tr>
+
+  </table>
+  <p class="bonjour" style="text-align:center; padding:8px;margin-top:50px">Paid via clictopay   •   Transaction ID: 175054</p>
+  <p class="bonjour" style="text-align:center; padding:8px; background:white">Thank you</p>
+  <p class="bonjour" style="text-align:center; padding:8px; background:white">For any payment related queries, contact us at <span style="color:#11ABEC">support@archimatch.com</span></p>
+</body>
+</html>

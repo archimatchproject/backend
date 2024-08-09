@@ -1,29 +1,29 @@
 """
-Module defining the SliderImage model for representing images within slider blocks of blog posts.
+Module defining the SliderImage model for representing images within slider sections of blog posts.
 """
 
 from django.db import models
 
-from app.cms.models.Block import Block
+from app.cms.models.BlogSection import BlogSection
 
 
 class SliderImage(models.Model):
     """
-    Model representing an image within a slider block of a blog post.
+    Model representing an image within a slider section of a blog post.
 
     Attributes:
-        image (ImageField): Image file for the slider image, stored in 'BlockSliderImages/'
+        image (ImageField): Image file for the slider image, stored in 'SectionSliderImages/'
          directory.
-        block (ForeignKey): Block to which the slider image belongs, related_name is
+        section (ForeignKey): BlogSection to which the slider image belongs, related_name is
         'slider_images'.
 
 
     """
 
-    image = models.ImageField(upload_to="BlockSliderImages/")
-    block = models.ForeignKey(
-        Block,
-        related_name="block_slider_images",
+    image = models.ImageField(upload_to="SectionSliderImages/")
+    section = models.ForeignKey(
+        BlogSection,
+        related_name="section_slider_images",
         on_delete=models.CASCADE,
         null=True,
     )

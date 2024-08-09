@@ -20,6 +20,15 @@ class SupplierSocialMediaSerializer(serializers.ModelSerializer):
         All fields of the SupplierSocialMedia model.
     """
 
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the serializer and make all fields required except 'created_at' and 'updated_at'.
+        """
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name not in ("created_at", "updated_at"):
+                field.required = True
+
     class Meta:
         """
         Meta class for SupplierSocialMediaSerializer.

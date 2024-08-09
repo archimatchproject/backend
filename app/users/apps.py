@@ -16,3 +16,9 @@ class UsersConfig(AppConfig):
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "app.users"
+
+    def ready(self):
+        """
+        importing app signals
+        """
+        import app.users.signals  # noqa

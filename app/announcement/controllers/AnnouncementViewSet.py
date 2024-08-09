@@ -7,11 +7,12 @@ for viewing and editing Announcement instances using Django REST Framework.
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
-from app.announcement.models import Announcement
-from app.announcement.serializers import AnnouncementSerializer
+from app.announcement.models.Announcement import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
@@ -20,7 +21,8 @@ from app.announcement.serializers.ProjectCategorySerializer import ProjectCatego
 from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.announcement.services import AnnouncementService
+from app.announcement.services.AnnouncementService import AnnouncementService
+from app.core.serializers.NoteSerializer import NoteSerializer
 
 
 class AnnouncementViewSet(viewsets.ModelViewSet):
@@ -33,6 +35,30 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
     queryset = Announcement.objects.all()
     serializer_class = AnnouncementSerializer
 
+    def get_permissions(self):
+        """
+        Return the list of permissions that this view requires.
+
+        Applies different permissions based on the action being executed.
+
+        Returns:
+            list: The list of permission classes.
+        """
+        if self.action in [
+            "list",
+        ]:
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = []
+        return super().get_permissions()
+
+    def get_queryset(self):
+        """
+        Filter the collections by the supplier related to the currently authenticated user.
+        """
+        user = self.request.user
+        return Announcement.objects.filter(client__user=user)
+
     @action(
         detail=False,
         url_path="create-announcement",
@@ -43,7 +69,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         Creating new announcement
         """
-        return AnnouncementService.create_announcement(request.data)
+        return AnnouncementService.create_announcement(request)
 
     @action(
         detail=True,
@@ -57,6 +83,18 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         return AnnouncementService.update_announcement(instance, request.data)
+
+    @action(
+        detail=True,
+        url_path="update-announcement-images",
+        methods=["PUT"],
+    )
+    def update_announcement_images(self, request, pk=None):
+        """
+        Updating existing announcement
+        """
+        instance = self.get_object()
+        return AnnouncementService.update_announcement_images(instance, request)
 
     @action(
         detail=False,
@@ -81,10 +119,10 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="architect-speciality-needs/(?P<architect_speciality_id>[^/.]+)",
+        url_path="architect-speciality-needs",
         serializer_class=NeedSerializer,
     )
-    def get_architect_speciality_needs(self, request, architect_speciality_id):
+    def get_architect_speciality_needs(self, request):
         """
         Retrieves needs based on architect speciality.
 
@@ -95,6 +133,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of needs related to the architect speciality.
         """
+        architect_speciality_id = request.query_params.get("architect_speciality_id")
         return AnnouncementService.get_architect_speciality_needs(architect_speciality_id)
 
     @action(
@@ -121,11 +160,11 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=["GET"],
         permission_classes=[],
-        url_path="property-types/(?P<project_category_id>[^/.]+)",
+        url_path="property-types",
         url_name="property-types",
         serializer_class=PropertyTypeSerializer,
     )
-    def get_property_types(self, request, project_category_id):
+    def get_property_types(self, request):
         """
         Retrieves property types based on project category.
 
@@ -136,6 +175,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of property types related to the project category.
         """
+        project_category_id = request.query_params.get("project_category_id")
         return AnnouncementService.get_property_types(project_category_id)
 
     @action(
@@ -156,7 +196,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of announcement work types.
         """
-        return AnnouncementService.get_announcement_work_types()
+        property_type_id = request.query_params.get("property_type_id")
+        return AnnouncementService.get_announcement_work_types(property_type_id)
 
     @action(
         detail=False,
@@ -176,7 +217,9 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of renovation pieces.
         """
-        return AnnouncementService.get_renovation_pieces()
+        property_type_id = request.query_params.get("property_type_id")
+        work_type_id = request.query_params.get("work_type_id")
+        return AnnouncementService.get_renovation_pieces(property_type_id, work_type_id)
 
     @action(
         detail=False,
@@ -272,7 +315,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of architectural styles.
         """
-        return AnnouncementService.get_architectural_styles()
+        property_type_id = request.query_params.get("property_type_id")
+        return AnnouncementService.get_architectural_styles(property_type_id)
 
     @action(
         detail=False,
@@ -292,4 +336,97 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of project extensions.
         """
-        return AnnouncementService.get_project_extensions()
+        property_type_id = request.query_params.get("property_type_id")
+        work_type_id = request.query_params.get("work_type_id")
+        return AnnouncementService.get_project_extensions(property_type_id, work_type_id)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="add-note",
+        serializer_class=NoteSerializer,
+    )
+    def add_note(self, request, pk=None):
+        """
+        Custom action to add a note to an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to which the note will be added.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return AnnouncementService.add_note_to_announcement(pk, request.data)
+
+    def get(self, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        return AnnouncementService.get_announcements(request)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="accept-announcement",
+        serializer_class=NoteSerializer,
+    )
+    def accept_announcement(self, request, pk=None):
+        """
+        Custom action to accept an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be accepted.
+
+        Returns:
+            Response: The response object containing the result of the acceptance operation.
+        """
+        return AnnouncementService.accept_announcement(pk)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="refuse-announcement",
+        serializer_class=NoteSerializer,
+    )
+    def refuse_announcement(self, request, pk=None):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.refuse_announcement(pk)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        url_path="get-details",
+    )
+    def get_announcement_details(self, request, pk=None):
+        """
+        Custom action to refuse an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be refused.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.get_announcement_details(pk)

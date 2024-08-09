@@ -10,6 +10,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.users.models.Supplier import Supplier
+from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.SupplierService import SupplierService
@@ -71,6 +72,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         methods=["POST"],
         permission_classes=[],
         url_path="first-connection",
+        serializer_class=UserAuthSerializer,
     )
     def supplier_first_cnx(self, request):
         """
@@ -90,6 +92,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         methods=["PUT"],
         permission_classes=[],
         url_path="update-profile",
+        serializer_class=SupplierInputSerializer,
     )
     def supplier_update_profile(self, request):
         """
@@ -198,3 +201,184 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing the appearances.
         """
         return SupplierService.get_appearances()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile",
+    )
+    def supplier_get_profile(self, request):
+        """
+        Retrieves supplier details.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.supplier_get_profile(request)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile-by-id",
+    )
+    def get_profile_by_id(self, request, pk=None):
+        """
+        Retrieves supplier details based on the provided ID.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+            pk (int): The primary key of the supplier.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.get_profile_by_id(pk)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="send-reset-password-link",
+        url_name="send-reset-password-link",
+    )
+    def supplier_send_reset_password_link(self, request):
+        """
+        Retrieves supplier details.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing supplier details.
+        """
+        return SupplierService.supplier_send_reset_password_link(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-profile-image",
+    )
+    def supplier_update_profile_image(self, request):
+        """
+        Allows a supplier to update their profile image using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_profile_image(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-cover-image",
+    )
+    def supplier_update_cover_image(self, request):
+        """
+        Allows a supplier to update their cover image using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_cover_image(request)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-visibility",
+    )
+    def supplier_update_visibility(self, request):
+        """
+        Allows a supplier to update their visibility using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_visibility(request)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="validate-password-token",
+        url_name="validate-password-token",
+    )
+    def supplier_validate_password_token(self, request):
+        """
+        sends Supplier reset password email.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object.
+        """
+        return SupplierService.supplier_validate_password_token(request)
+
+    def get(self, request):
+        """
+        Retrieve all suppliers.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `supplier_get_all` class method
+        of `SupplierService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        return SupplierService.supplier_get_all(request)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="resend-email",
+    )
+    def supplier_resend_email(self, request, pk=None):
+        """
+        Custom action to resend email to supplier
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the supplier object
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return SupplierService.supplier_resend_email(pk)
+
+    def delete(self, request, pk=None):
+        """
+        Deletes a supplier from the system.
+
+        Args:
+            request (Request): Django request object.
+            pk (int): ID of the supplier to be deleted.
+
+        Returns:
+            Response: Response object indicating success or failure of the supplier deletion.
+        """
+        return SupplierService.delete_supplier(pk)

@@ -15,10 +15,12 @@ from django.urls import path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from app.architect_realization.routes.RealizationUrls import architect_realization_urlpatterns
 from app.users.controllers.ArchimatchUserViewSet import ArchimatchUserObtainPairView
 from app.users.controllers.ArchimatchUserViewSet import PhoneTokenObtainPairView
 from app.users.routes.AdminUrls import admin_urlpatterns
 from app.users.routes.ArchimatchUserUrls import archimatch_user_urlpatterns
+from app.users.routes.ArchitectUrls import architect_urlpatterns
 from app.users.routes.ClientUrls import client_urlpatterns
 from app.users.routes.SupplierUrls import supplier_urlpatterns
 
@@ -32,6 +34,8 @@ urlpatterns = [
     *archimatch_user_urlpatterns,
     *client_urlpatterns,
     *supplier_urlpatterns,
+    *architect_realization_urlpatterns,
+    *architect_urlpatterns,
     path(
         "login-email/",
         ArchimatchUserObtainPairView.as_view(),
