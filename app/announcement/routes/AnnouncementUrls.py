@@ -10,6 +10,11 @@ from app.announcement.controllers.AnnouncementViewSet import AnnouncementViewSet
 
 announcement_urlpatterns = [
     path(
+        "client-announcement",
+        AnnouncementViewSet.as_view({"get": "list"}),
+        name="client-get-announcement",
+    ),
+    path(
         "create-announcement/",
         AnnouncementViewSet.as_view({"post": "create_announcement"}),
         name="create-announcement",

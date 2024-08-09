@@ -7,6 +7,7 @@ for viewing and editing Announcement instances using Django REST Framework.
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from app.announcement.models.Announcement import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
@@ -33,6 +34,30 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 
     queryset = Announcement.objects.all()
     serializer_class = AnnouncementSerializer
+
+    def get_permissions(self):
+        """
+        Return the list of permissions that this view requires.
+
+        Applies different permissions based on the action being executed.
+
+        Returns:
+            list: The list of permission classes.
+        """
+        if self.action in [
+            "list",
+        ]:
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = []
+        return super().get_permissions()
+
+    def get_queryset(self):
+        """
+        Filter the collections by the supplier related to the currently authenticated user.
+        """
+        user = self.request.user
+        return Announcement.objects.filter(client__user=user)
 
     @action(
         detail=False,

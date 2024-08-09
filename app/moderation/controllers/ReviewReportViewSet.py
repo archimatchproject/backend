@@ -36,6 +36,7 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
             "list",
             "retrieve",
             "get_decisions",
+            "change_status",
         ]:
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
@@ -60,3 +61,10 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         Retrieve all possible reasons for the corresponding type.
         """
         return ReviewReportService.get_reasons()
+
+    @action(detail=True, methods=["patch"], url_path="change-status")
+    def change_status(self, request, pk=None):
+        """
+        Change the status of an ReviewReport.
+        """
+        return ReviewReportService.change_architect_report_status(request, pk)

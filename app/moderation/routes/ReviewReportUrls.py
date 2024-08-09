@@ -46,4 +46,9 @@ review_report_urlpatterns = [
         ReviewReportViewSet.as_view({"get": "get_reasons"}),
         name="review-report-reasons",
     ),
+    path(
+        "review-report/<int:pk>/change-status/",
+        ReviewReportViewSet.as_view({"post": "change_status"}),
+        name="review-report-change-status",
+    ),
 ]
