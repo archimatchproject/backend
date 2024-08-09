@@ -36,6 +36,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
             "list",
             "retrieve",
             "get_decisions",
+            "change_status",
         ]:
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
@@ -66,3 +67,10 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         Retrieve all possible reasons for the corresponding type.
         """
         return ArchitectReportService.get_reasons()
+
+    @action(detail=True, methods=["patch"], url_path="change-status")
+    def change_status(self, request, pk=None):
+        """
+        Change the status of an ArchitectReport.
+        """
+        return ArchitectReportService.change_architect_report_status(request, pk)

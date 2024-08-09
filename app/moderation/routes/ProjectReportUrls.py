@@ -46,4 +46,9 @@ project_report_urlpatterns = [
         ProjectReportViewSet.as_view({"get": "get_reasons"}),
         name="project-report-reasons",
     ),
+    path(
+        "project-report/<int:pk>/change-status/",
+        ProjectReportViewSet.as_view({"post": "change_status"}),
+        name="project-report-change-status",
+    ),
 ]

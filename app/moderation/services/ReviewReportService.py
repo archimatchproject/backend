@@ -17,6 +17,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.moderation import STATUS_CHOICES
 from app.moderation.models.Decision import Decision
 from app.moderation.models.Reason import Reason
 from app.moderation.models.ReviewReport import ReviewReport
@@ -106,3 +107,31 @@ class ReviewReportService:
         reasons = Reason.objects.filter(report_type="Review")
         serialized_reasons = ReasonSerializer(reasons, many=True)
         return Response(serialized_reasons.data)
+
+    @classmethod
+    def change_architect_report_status(cls, request, pk):
+        """
+        Change the status of a specific ReviewReport.
+
+        Args:
+            request (Request): The request object containing the status.
+            pk (int): The primary key of the ReviewReport to update.
+
+        Returns:
+            Response: A response object containing the updated report or an error message.
+        """
+        try:
+            report = ReviewReport.objects.get(pk=pk)
+            new_status = request.data.get("status")
+            if new_status not in dict(STATUS_CHOICES):
+                raise serializers.ValidationError(detail="Invalid status choice.")
+
+            report.status = new_status
+            report.save()
+            return Response(ReviewReportSerializer(report).data)
+        except ReviewReport.DoesNotExist:
+            raise NotFound(detail="ReviewReport not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating report status: {str(e)}")

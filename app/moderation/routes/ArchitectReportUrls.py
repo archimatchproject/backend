@@ -46,4 +46,9 @@ architect_report_urlpatterns = [
         ArchitectReportViewSet.as_view({"get": "get_reasons"}),
         name="architect-report-reasons",
     ),
+    path(
+        "architect-report/<int:pk>/change-status/",
+        ArchitectReportViewSet.as_view({"post": "change_status"}),
+        name="architect-report-change-status",
+    ),
 ]
