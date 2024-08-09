@@ -63,9 +63,10 @@ class MessageService:
                 )
                 print(message)
                 fcm_message = FCMMessage(
+                    data={"device_id": sender_device.id},
                     notification=Notification(
                         title=f"New Message from {str(user)}", body=validated_data.get("content")
-                    )
+                    ),
                 )
                 recipient_device.send_message(fcm_message)
                 return Response(
