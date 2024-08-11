@@ -24,6 +24,7 @@ from app.moderation.models.Reason import Reason
 from app.moderation.serializers.DecisionSerializer import DecisionSerializer
 from app.moderation.serializers.ProjectReportSerializer import ProjectReportSerializer
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
+from app.moderation.services.ReportAction import PROJECT_DECISION_ACTION_MAP
 from app.users.models.Architect import Architect
 
 
@@ -135,3 +136,42 @@ class ProjectReportService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating report status: {str(e)}")
+
+    @classmethod
+    def execute_decision(cls, request, pk):
+        """
+        Executes the decision related to the given ProjectReport.
+
+        Parameters:
+        - request: The request object containing the decision data.
+        - pk: The primary key of the ProjectReport instance.
+
+        Returns:
+        - A Response object indicating the result of the operation.
+        """
+        try:
+            report = ProjectReport.objects.get(pk=pk)
+
+            decision_id = request.data.get("decision_id")
+            if not decision_id:
+                raise serializers.ValidationError(detail="Decision Id is required.")
+
+            decision = Decision.objects.get(id=decision_id)
+
+            action = PROJECT_DECISION_ACTION_MAP.get(decision.id)
+            if not action:
+                raise serializers.ValidationError(detail="No valid action found for the decision.")
+            report.decision = decision
+            report.save()
+            action.execute(report, request.user)
+
+            return Response(ProjectReportSerializer(report).data)
+
+        except ProjectReport.DoesNotExist:
+            raise NotFound(detail="ProjectReport not found.")
+        except Decision.DoesNotExist:
+            raise NotFound(detail="Decision not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error executing report decison: {str(e)}")

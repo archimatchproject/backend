@@ -46,10 +46,20 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
             "phone_number",
             "image",
             "user_type",
+            "is_deleted",
+            "is_suspended",
+            "suspension_start_date",
+            "suspension_end_date",
         ]
         extra_kwargs = {
             "username": {"read_only": True},
         }
+        read_only_fields = [
+            "is_deleted",
+            "is_suspended",
+            "suspension_start_date",
+            "suspension_end_date",
+        ]
 
 
 class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):

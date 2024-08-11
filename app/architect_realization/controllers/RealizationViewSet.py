@@ -8,6 +8,9 @@ related to Blog instances via REST API endpoints.
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser
+from rest_framework.parsers import JSONParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -16,9 +19,7 @@ from app.architect_realization.serializers.RealizationSerializer import Realizat
 from app.architect_realization.serializers.RealizationSerializer import RealizationSerializer
 from app.architect_realization.services.RealizationService import RealizationService
 from app.core.pagination import CustomPagination
-from rest_framework.parsers import FormParser
-from rest_framework.parsers import JSONParser
-from rest_framework.parsers import MultiPartParser
+
 
 class RealizationViewSet(viewsets.ModelViewSet):
     """
@@ -38,8 +39,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         """
         Get the parsers that the view requires.
         """
-        if self.action not in ['realization_create']:
-            return (JSONParser)
+        if self.action not in ["realization_create"]:
+            return JSONParser
         else:
             return (JSONParser, MultiPartParser, FormParser)
 
@@ -171,7 +172,6 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)
-
 
     @action(
         detail=True,
