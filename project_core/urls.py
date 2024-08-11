@@ -59,6 +59,10 @@ urlpatterns = [
         include("app.moderation.urls"),
     ),
     path(
+        f"{URL_PREFIX}messaging/",
+        include("app.messaging.urls"),
+    ),
+    path(
         f"{URL_PREFIX}swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
@@ -68,7 +72,6 @@ urlpatterns = [
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
-    path(f"{URL_PREFIX}rosetta/", include("rosetta.urls")),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT,
