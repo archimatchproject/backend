@@ -37,6 +37,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
             "retrieve",
             "get_decisions",
             "change_status",
+            "execute_decision",
         ]:
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
@@ -54,23 +55,30 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         return ArchitectReportService.create_architect_report(request)
 
-    @action(detail=False, methods=["get"], url_path="decisions")
+    @action(detail=False)
     def get_decisions(self, request):
         """
         Retrieve all possible decisions for the corresponding type.
         """
         return ArchitectReportService.get_decisions()
 
-    @action(detail=False, methods=["get"], url_path="reasons")
+    @action(detail=False)
     def get_reasons(self, request):
         """
         Retrieve all possible reasons for the corresponding type.
         """
         return ArchitectReportService.get_reasons()
 
-    @action(detail=True, methods=["patch"], url_path="change-status")
+    @action(detail=True)
     def change_status(self, request, pk=None):
         """
         Change the status of an ArchitectReport.
         """
         return ArchitectReportService.change_architect_report_status(request, pk)
+
+    @action(detail=True)
+    def execute_decision(self, request, pk=None):
+        """
+        Execute decision of an ArchitectReport.
+        """
+        return ArchitectReportService.execute_decision(request, pk)

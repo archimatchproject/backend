@@ -186,7 +186,6 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
-        
 
     @classmethod
     def update_realization_images(cls, instance, request):
@@ -212,4 +211,4 @@ class RealizationService:
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
-            raise APIException(detail=f"Error updating realization images: {str(e)}")   
+            raise APIException(detail=f"Error updating realization images: {str(e)}")

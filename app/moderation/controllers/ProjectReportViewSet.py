@@ -37,6 +37,7 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
             "retrieve",
             "get_decisions",
             "change_status",
+            "execute_decision",
         ]:
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
@@ -48,23 +49,30 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         return ProjectReportService.create_project_report(request)
 
-    @action(detail=False, methods=["get"], url_path="decisions")
+    @action(detail=False)
     def get_decisions(self, request):
         """
         Retrieve all possible decisions for the corresponding type.
         """
         return ProjectReportService.get_decisions()
 
-    @action(detail=False, methods=["get"], url_path="reasons")
+    @action(detail=False)
     def get_reasons(self, request):
         """
         Retrieve all possible reasons for the corresponding type.
         """
         return ProjectReportService.get_reasons()
 
-    @action(detail=True, methods=["patch"], url_path="change-status")
+    @action(detail=True)
     def change_status(self, request, pk=None):
         """
         Change the status of an ProjectReport.
         """
         return ProjectReportService.change_architect_report_status(request, pk)
+
+    @action(detail=True)
+    def execute_decision(self, request, pk=None):
+        """
+        Execute decision of an ProjectReport.
+        """
+        return ProjectReportService.execute_decision(request, pk)

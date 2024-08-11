@@ -26,6 +26,7 @@ from app.moderation.models.Reason import Reason
 from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
 from app.moderation.serializers.DecisionSerializer import DecisionSerializer
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
+from app.moderation.services.ReportAction import ARCHITECT_DECISION_ACTION_MAP
 from app.users.models.Client import Client
 
 
@@ -158,3 +159,42 @@ class ArchitectReportService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating report status: {str(e)}")
+
+    @classmethod
+    def execute_decision(cls, request, pk):
+        """
+        Executes the decision related to the given ArchitectReport.
+
+        Parameters:
+        - request: The request object containing the decision data.
+        - pk: The primary key of the ArchitectReport instance.
+
+        Returns:
+        - A Response object indicating the result of the operation.
+        """
+        try:
+            report = ArchitectReport.objects.get(pk=pk)
+
+            decision_id = request.data.get("decision_id")
+            if not decision_id:
+                raise serializers.ValidationError(detail="Decision Id is required.")
+
+            decision = Decision.objects.get(id=decision_id)
+
+            action = ARCHITECT_DECISION_ACTION_MAP.get(decision.id)
+            if not action:
+                raise serializers.ValidationError(detail="No valid action found for the decision.")
+            report.decision = decision
+            report.save()
+            action.execute(report, request.user)
+
+            return Response(ArchitectReportSerializer(report).data)
+
+        except ArchitectReport.DoesNotExist:
+            raise NotFound(detail="ArchitectReport not found.")
+        except Decision.DoesNotExist:
+            raise NotFound(detail="Decision not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error executing report decison: {str(e)}")

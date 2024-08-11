@@ -51,4 +51,9 @@ architect_report_urlpatterns = [
         ArchitectReportViewSet.as_view({"post": "change_status"}),
         name="architect-report-change-status",
     ),
+    path(
+        "architect-report/<int:pk>/execute-decision/",
+        ArchitectReportViewSet.as_view({"post": "execute_decision"}),
+        name="architect-report-execute-decision",
+    ),
 ]

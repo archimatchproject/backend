@@ -105,8 +105,8 @@ class Architect(BaseModel):
     )
 
     terrain_surfaces = models.ManyToManyField(TerrainSurface, blank=True)
-    work_surfaces = models.ManyToManyField(WorkSurface,blank=True)
-    budgets = models.ManyToManyField(Budget,blank=True)
+    work_surfaces = models.ManyToManyField(WorkSurface, blank=True)
+    budgets = models.ManyToManyField(Budget, blank=True)
     preferred_locations = models.ManyToManyField(PreferredLocation, blank=True)
 
     def __str__(self):
