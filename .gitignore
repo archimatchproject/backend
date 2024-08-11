@@ -8,7 +8,7 @@ media/*
 staticfiles/
 # Do not ignore the media/icons directory and its content
 !media/icons/
-archi-c9c33-firebase-adminsdk-iqbdp-2df4f19b7e.json
+archimatch-fcm-firebase-adminsdk-uhbhn-c9bdf27e7a.json
 # Backup files #
 *.bak
 
