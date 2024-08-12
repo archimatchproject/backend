@@ -22,7 +22,6 @@ from app.announcement import ACCEPTED
 from app.announcement import BUDGETS
 from app.announcement import CITIES
 from app.announcement import EXTERIOR_WORKTYPES
-from app.announcement import NEW_CONSTRUCTION_WORKTYPES
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP6
 from app.announcement import NOT_ELIMINATE_STEP_PROPERTIES_STEP10
 from app.announcement import PROPERTIES_NO_EXTERIOR
@@ -529,8 +528,7 @@ class AnnouncementService:
                     "data": serializer.data,
                     "eliminate_step": (
                         int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP10
-                    )
-                    and int(work_type_id) in NEW_CONSTRUCTION_WORKTYPES,
+                    ),
                 },
                 status=status.HTTP_200_OK,
             )

@@ -29,6 +29,7 @@ class Need(LabeledIcon):
         on_delete=models.CASCADE,
         null=True,
     )
+    description = models.CharField(max_length=255)
 
     class Meta:
         """

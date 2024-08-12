@@ -2,115 +2,171 @@
 - model: announcement.Need
   pk: 1
   fields:
-    label: "Conception du plan 3D"
+    label: "Étude de faisabilité"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Viabilité du projet (terrain, réglementations)."
 
 - model: announcement.Need
   pk: 2
   fields:
-    label: "Conception du plan 2D"
+    label: "Conception Architecturale 2D/3D"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Plans et modélisation du projet."
 
 - model: announcement.Need
   pk: 3
   fields:
-    label: "Obtenir les autorisations nécessaires auprès des autorités locales"
+    label: "Dépôt de Permis de Construire"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Préparation et soumission des documents nécessaires."
 
 - model: announcement.Need
   pk: 4
   fields:
-    label: "Réaliser une étude de faisabilité et un budget préliminaire pour mon projet immobilier"
+    label: "Cordination / Supervision des Travaux"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Gestion des phases du projet Suivi du chantier et contrôle qualité."
 
 - model: announcement.Need
   pk: 5
   fields:
-    label: "Gérer l'ensemble du processus de construction"
+    label: "Conseil en Matériaux et Technologies"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Sélection de matériaux innovants et écologiques."
 
 - model: announcement.Need
   pk: 6
   fields:
-    label: "Optimiser l'espace et moderniser les installations"
+    label: "Aménagement Extérieur"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Conception des jardins et espaces verts."
 
 - model: announcement.Need
   pk: 7
   fields:
-    label: "Superviser et coordonner les travaux de construction de mon projet"
+    label: "Consultation : RDV de Conseil et de Renseignement"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Conseils et réponses aux questions du client."
 
 - model: announcement.Need
   pk: 8
   fields:
-    label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
+    label: "Évaluation des Coûts"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 1
+    description: "Estimation des coûts de construction."
+
+- model: announcement.Need
+  pk: 24
+  fields:
+    label: "Études Structurelles"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 1
+    description: "Analyse et conception des structures."
 
 # Needs for Designer d'interieur
 - model: announcement.Need
   pk: 9
   fields:
-    label: "Conception du plan 3D"
+    label: "Étude de l'Espace"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Analyse des besoins et relevés."
 
 - model: announcement.Need
   pk: 10
   fields:
-    label: "Suivi des travaux"
+    label: "Conception Intérieure 3D / 2D"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Agencement des pièces et modélisation."
 
 - model: announcement.Need
   pk: 11
   fields:
-    label: "Réaménager et optimiser mon espace de travail"
+    label: "Choix des Mobilier et Décoration"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Sélection de meubles et accessoires."
 
 - model: announcement.Need
   pk: 12
   fields:
-    label: "Réaménager et optimiser une pièce dans mon espace de vie"
+    label: "Optimisation de l'Espace"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Amélioration de la circulation et du rangement."
 
 - model: announcement.Need
   pk: 13
   fields:
-    label: "Choisir le mobilier et les accessoires"
+    label: "Rénovation et Réaménagement"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Réagencement et coordination des rénovations."
 
 - model: announcement.Need
   pk: 14
   fields:
-    label: "Choisir les couleurs et les matériaux"
+    label: "Conception sur Mesure"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Création de mobilier unique."
 
 - model: announcement.Need
   pk: 15
   fields:
-    label: "Créer un design moderne et fonctionnel"
+    label: "Cordination / Supervision des Travaux"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Gestion des phases du projet Suivi du chantier et contrôle qualité."
 
 - model: announcement.Need
   pk: 16
   fields:
-    label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
+    label: "Consultation : RDV de Conseil et de Renseignement"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 2
+    description: "Conseils et réponses aux questions du client."
+
+- model: announcement.Need
+  pk: 25
+  fields:
+    label: "Design de l'Éclairage"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+    description: "Solutions d'éclairage pour les ambiances."
+
+- model: announcement.Need
+  pk: 26
+  fields:
+    label: "Sélection de Revêtements"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+    description: "Choix de revêtements de sol et mur."
+
+- model: announcement.Need
+  pk: 27
+  fields:
+    label: "Aménagement de Bureaux"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+    description: "Conception d'espaces de travail optimisés."
+
+- model: announcement.Need
+  pk: 28
+  fields:
+    label: "Conception 3D de l'Extérieur du Projet"
+    icon: "icons/NeedIcons/img.png"
+    architect_speciality: 2
+    description: "Modélisation 3D des espaces extérieurs."
 
 # Needs for Architecte paysagiste
 - model: announcement.Need
@@ -119,6 +175,7 @@
     label: "Estimation des coûts des travaux"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Évaluation des coûts de construction."
 
 - model: announcement.Need
   pk: 18
@@ -126,6 +183,7 @@
     label: "Estimation de la durée des travaux"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Évaluation du calendrier de construction."
 
 - model: announcement.Need
   pk: 19
@@ -133,6 +191,7 @@
     label: "Rénover mon espace intérieur"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Réagencement et coordination des rénovations."
 
 - model: announcement.Need
   pk: 20
@@ -140,6 +199,7 @@
     label: "Créer des aménagements extérieurs personnalisés"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Conception des jardins et espaces verts."
 
 - model: announcement.Need
   pk: 21
@@ -147,6 +207,7 @@
     label: "Créer des détails architecturaux uniques et personnalisés"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Création de détails architecturaux sur mesure."
 
 - model: announcement.Need
   pk: 22
@@ -154,6 +215,7 @@
     label: "Obtenir un rendez-vous pour avoir des conseils et des clarifications"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Conseils et réponses aux questions du client."
 
 - model: announcement.Need
   pk: 23
@@ -161,3 +223,4 @@
     label: "Concevoir une extension"
     icon: "icons/NeedIcons/img.png"
     architect_speciality: 3
+    description: "Conception d'extensions et d'agrandissements."
