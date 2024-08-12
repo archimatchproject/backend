@@ -22,6 +22,7 @@ from app.email_templates.signals import api_success_signal
 from app.users import APPEARANCES
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Supplier import Supplier
+from app.users.models.SupplierCoverImage import SupplierCoverImage
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierPersonalInformationSerializer
@@ -426,17 +427,21 @@ class SupplierService:
             APIException: If there are errors during supplier settings update.
         """
         try:
-            data = request.data
             user_id = request.user.id
-            cover_image = data.get("cover_image", None)
-            if cover_image is None:
-                raise serializers.ValidationError(detail="cover image is required")
-
+            cover_images = request.FILES.getlist("cover_images")
+            if cover_images is None:
+                raise serializers.ValidationError(detail="cover images is required")
+            if not 0 < len(cover_images) <= 3:
+                raise serializers.ValidationError(
+                    detail="number of cover images must be between 1 and 3"
+                )
             supplier = Supplier.objects.get(user__id=user_id)
-            supplier.cover_image = cover_image
+            SupplierCoverImage.objects.filter(supplier=supplier).delete()
+            for cover_image in cover_images:
+                SupplierCoverImage.objects.create(supplier=supplier, image=cover_image)
             supplier.save()
 
-            response_data = {"message": "Supplier cover image successfully updated"}
+            response_data = {"message": "Supplier cover images successfully updated"}
             return Response(response_data.get("message"), status=status.HTTP_200_OK)
 
         except Supplier.DoesNotExist:
