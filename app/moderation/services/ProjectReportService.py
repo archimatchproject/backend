@@ -10,6 +10,7 @@ Classes:
 
 from django.db import IntegrityError
 from django.db import transaction
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
@@ -138,34 +139,38 @@ class ProjectReportService:
             raise APIException(detail=f"Error updating report status: {str(e)}")
 
     @classmethod
-    def execute_decision(cls, request, pk):
+    def execute_decision(cls, request):
         """
         Executes the decision related to the given ProjectReport.
 
         Parameters:
         - request: The request object containing the decision data.
-        - pk: The primary key of the ProjectReport instance.
 
         Returns:
         - A Response object indicating the result of the operation.
         """
+
+        report_ids = request.data.get("report_ids", [])
+        decision_id = request.data.get("decision_id")
+        user = request.user
+
         try:
-            report = ProjectReport.objects.get(pk=pk)
+            if not report_ids or not decision_id:
+                raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
 
-            decision_id = request.data.get("decision_id")
-            if not decision_id:
-                raise serializers.ValidationError(detail="Decision Id is required.")
-
-            decision = Decision.objects.get(id=decision_id)
-
-            action = PROJECT_DECISION_ACTION_MAP.get(decision.id)
+            action = PROJECT_DECISION_ACTION_MAP.get(decision_id)
             if not action:
-                raise serializers.ValidationError(detail="No valid action found for the decision.")
-            report.decision = decision
-            report.save()
-            action.execute(report, request.user)
+                raise serializers.ValidationError("No valid action found for the decision.")
 
-            return Response(ProjectReportSerializer(report).data)
+            reports = ProjectReport.objects.filter(id__in=report_ids)
+            action.execute(reports[0].reported_project, user.admin)
+            reports.update(
+                status="Treated",
+                decision=Decision.objects.get(id=decision_id),
+                decision_date=timezone.now(),
+            )
+
+            return Response(data="Decision Executed Successfully.")
 
         except ProjectReport.DoesNotExist:
             raise NotFound(detail="ProjectReport not found.")
