@@ -95,11 +95,6 @@ supplier_urlpatterns = [
         name="get-all-suppliers",
     ),
     path(
-        "supplier/get-supplier/<int:pk>/",
-        SupplierViewSet.as_view({"get": "retrieve"}),
-        name="supplier-detail",
-    ),
-    path(
         "supplier/resend-email/<int:pk>/",
         SupplierViewSet.as_view({"post": "supplier_resend_email"}),
         name="resend-email",
