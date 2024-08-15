@@ -13,12 +13,13 @@ from app.announcement.serializers.ArchitecturalStyleSerializer import Architectu
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.architect_realization.models.Realization import Realization
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
-from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.core.models.PropertyType import PropertyType
-from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
+from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+
 
 class RealizationPOSTSerializer(serializers.ModelSerializer):
     """
@@ -58,7 +59,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
-            "property_type"
+            "property_type",
         ]
 
 
@@ -100,7 +101,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
-            "property_type"
+            "property_type",
         ]
 
 
@@ -139,7 +140,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
-            "property_type"
+            "property_type",
         ]
 
 
@@ -172,7 +173,7 @@ class RealizationSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
-            "property_type"
+            "property_type",
         ]
 
     def to_representation(self, instance):

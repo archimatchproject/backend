@@ -8,6 +8,7 @@ related to suppliers, including the title and category.
 
 from django.db import models
 
+from app.catalogue import APPEARANCES
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.users.models.Supplier import Supplier
 
@@ -20,6 +21,8 @@ class Collection(models.Model):
         title (CharField): The title of the collection.
         category (ForeignKey): The category of the collection, linked to a
         SupplierSpeciality instance.
+        appearance (CharField): Appearance attribute of the collection, choices defined by
+        APPEARANCES, maximum length of 10 characters.
     """
 
     title = models.CharField(max_length=255)
@@ -27,6 +30,12 @@ class Collection(models.Model):
     supplier = models.ForeignKey(
         Supplier, on_delete=models.CASCADE, related_name="supplier_collections"
     )
+    appearance = models.CharField(
+        max_length=10,
+        choices=APPEARANCES,
+        default="Petite",
+    )
+    display = models.BooleanField(default=False)
 
     def __str__(self):
         """

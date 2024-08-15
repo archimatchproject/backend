@@ -26,7 +26,16 @@ class CollectionSerializer(serializers.ModelSerializer):
         """
 
         model = Collection
-        fields = ["id", "title", "category", "category_label", "products", "supplier"]
+        fields = [
+            "id",
+            "title",
+            "category",
+            "category_label",
+            "products",
+            "supplier",
+            "appearance",
+            "display",
+        ]
         extra_kwargs = {
             "category": {"write_only": True},
         }
