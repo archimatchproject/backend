@@ -77,8 +77,10 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         return ArchitectReportService.change_architect_report_status(request, pk)
 
     @action(detail=True)
-    def execute_decision(self, request, pk=None):
+    def execute_decision(self, request):
         """
-        Execute decision of an ArchitectReport.
+        Execute a decision on multiple architect reports.
+
+        This method processes the decision for the provided report IDs.
         """
-        return ArchitectReportService.execute_decision(request, pk)
+        return ArchitectReportService.execute_decision(request)

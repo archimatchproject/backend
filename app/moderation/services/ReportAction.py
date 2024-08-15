@@ -36,7 +36,7 @@ class BaseAction(ABC):
         self.report = report
 
     @abstractmethod
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action associated with this decision.
         This method should be implemented by subclasses to define the specific
@@ -57,13 +57,11 @@ class AdresserAvertissementArchitect(BaseAction):
     This class implements the logic to issue a warning to an architect based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to address a warning to an architect.
         """
-        Warning.objects.create(issued_by=admin.admin, issued_for=report.reported_architect.user)
-        report.status = "Treated"
-        report.save()
+        Warning.objects.create(issued_by=admin, issued_for=reported.user)
 
 
 class SuspendreTemporairement(BaseAction):
@@ -73,11 +71,11 @@ class SuspendreTemporairement(BaseAction):
     This class implements the logic to temporarily suspend an architect based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to temporarily suspend an architect.
         """
-        architect = report.reported_architect.user
+        architect = reported.user
         architect.is_suspended = True
         architect.suspension_start_date = date.today()
         architect.suspension_end_date = date.today() + timedelta(
@@ -93,11 +91,11 @@ class SuspendreDefinitivement(BaseAction):
     This class implements the logic to permanently suspend an architect based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to permanently suspend an architect.
         """
-        architect = report.reported_architect.user
+        architect = reported.user
         architect.is_suspended = True
         architect.suspension_start_date = date.today
         architect.suspension_end_date = None
@@ -116,16 +114,14 @@ class ReviewAdresserAvertissementClient(BaseAction):
     This class implements the logic to issue a warning to a client based on a review report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to address a warning to a client.
         """
         """
         Execute the action to address a warning to an architect.
         """
-        Warning.objects.create(issued_by=admin.admin, issued_for=report.reported_review.client.user)
-        report.status = "Treated"
-        report.save()
+        Warning.objects.create(issued_by=admin, issued_for=reported.client.user)
 
 
 class SuppressionAvis(BaseAction):
@@ -135,14 +131,12 @@ class SuppressionAvis(BaseAction):
     This class implements the logic to delete a client review based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to delete a review.
         """
 
-        report.reported_review.delete()
-        report.status = "Treated"
-        report.save()
+        reported.delete()
 
 
 class ConservationAvis(BaseAction):
@@ -152,13 +146,10 @@ class ConservationAvis(BaseAction):
     This class implements the logic to keep a client review based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to keep a review.
         """
-
-        report.status = "Treated"
-        report.save()
 
 
 # -------------------------------------------------------------------------------------------------
@@ -171,18 +162,14 @@ class ProjectAdresserAvertissementClient(BaseAction):
     This class implements the logic to issue a warning to a client based on a review report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to address a warning to a client.
         """
         """
         Execute the action to address a warning to an architect.
         """
-        Warning.objects.create(
-            issued_by=admin.admin, issued_for=report.reported_project.client.user
-        )
-        report.status = "Treated"
-        report.save()
+        Warning.objects.create(issued_by=admin, issued_for=reported.client.user)
 
 
 class SuppressionProjet(BaseAction):
@@ -192,14 +179,12 @@ class SuppressionProjet(BaseAction):
     This class implements the logic to delete a project based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action to delete a project.
         """
 
-        report.reported_project.delete()
-        report.status = "Treated"
-        report.save()
+        reported.delete()
 
 
 class ConservationProjet(BaseAction):
@@ -214,9 +199,6 @@ class ConservationProjet(BaseAction):
         Execute the action to keep a project.
         """
 
-        report.status = "Treated"
-        report.save()
-
 
 # -------------------------------------------------------------------------------------------------
 # No Action
@@ -230,12 +212,10 @@ class NoAction(BaseAction):
     This class represents a decision where no action is required based on a report.
     """
 
-    def execute(report, admin):
+    def execute(reported, admin):
         """
         Execute the action for no action required.
         """
-        report.status = "Treated"
-        report.save()
 
 
 ARCHITECT_DECISION_ACTION_MAP = {

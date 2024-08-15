@@ -30,6 +30,7 @@ class ArchitectReport(BaseModel):
     reasons = models.ManyToManyField(Reason, related_name="reason_architect_reports")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
     decision = models.ForeignKey(Decision, on_delete=models.SET_NULL, null=True, blank=True)
+    decision_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         """

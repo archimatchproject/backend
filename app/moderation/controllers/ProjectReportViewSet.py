@@ -71,8 +71,10 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         return ProjectReportService.change_architect_report_status(request, pk)
 
     @action(detail=True)
-    def execute_decision(self, request, pk=None):
+    def execute_decision(self, request):
         """
-        Execute decision of an ProjectReport.
+        Execute decision of an ProjectReport on multiple project reports.
+
+        This method processes the decision for the provided report IDs.
         """
-        return ProjectReportService.execute_decision(request, pk)
+        return ProjectReportService.execute_decision(request)
