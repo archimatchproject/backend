@@ -16,10 +16,10 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.catalogue import APPEARANCES
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.email_templates.signals import api_success_signal
-from app.users import APPEARANCES
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Supplier import Supplier
 from app.users.models.SupplierCoverImage import SupplierCoverImage

@@ -13,8 +13,9 @@ from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
-from app.users.models.Architect import Architect
 from app.core.models.PropertyType import PropertyType
+from app.users.models.Architect import Architect
+
 
 class Realization(BaseModel):
     """

@@ -94,7 +94,6 @@ class SupplierInputSerializer(serializers.ModelSerializer):
             "speciality_type",
             "phone_number",
             "email",
-            "appearance",
         )
 
 
