@@ -12,6 +12,7 @@ from collections import defaultdict
 
 from django.db import IntegrityError
 from django.db import transaction
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
@@ -161,34 +162,38 @@ class ArchitectReportService:
             raise APIException(detail=f"Error updating report status: {str(e)}")
 
     @classmethod
-    def execute_decision(cls, request, pk):
+    def execute_decision(cls, request):
         """
         Executes the decision related to the given ArchitectReport.
 
         Parameters:
         - request: The request object containing the decision data.
-        - pk: The primary key of the ArchitectReport instance.
 
         Returns:
         - A Response object indicating the result of the operation.
         """
+        report_ids = request.data.get("report_ids", [])
+        decision_id = request.data.get("decision_id")
+        user = request.user
+
         try:
-            report = ArchitectReport.objects.get(pk=pk)
-
-            decision_id = request.data.get("decision_id")
-            if not decision_id:
-                raise serializers.ValidationError(detail="Decision Id is required.")
-
-            decision = Decision.objects.get(id=decision_id)
-
-            action = ARCHITECT_DECISION_ACTION_MAP.get(decision.id)
+            if not report_ids or not decision_id:
+                raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
+            action = ARCHITECT_DECISION_ACTION_MAP.get(decision_id)
             if not action:
-                raise serializers.ValidationError(detail="No valid action found for the decision.")
-            report.decision = decision
-            report.save()
-            action.execute(report, request.user)
+                raise serializers.ValidationError("No valid action found for the decision.")
 
-            return Response(ArchitectReportSerializer(report).data)
+            reports = ArchitectReport.objects.filter(id__in=report_ids)
+
+            action.execute(reports[0].reported_architect, user.admin)
+
+            reports.update(
+                status="Treated",
+                decision=Decision.objects.get(id=decision_id),
+                decision_date=timezone.now(),
+            )
+
+            return Response(data="Decision Executed Successfully.")
 
         except ArchitectReport.DoesNotExist:
             raise NotFound(detail="ArchitectReport not found.")

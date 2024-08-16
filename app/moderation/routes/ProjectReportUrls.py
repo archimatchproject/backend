@@ -52,7 +52,7 @@ project_report_urlpatterns = [
         name="project-report-change-status",
     ),
     path(
-        "project-report/<int:pk>/execute-decision/",
+        "project-report/execute-decision/",
         ProjectReportViewSet.as_view({"post": "execute_decision"}),
         name="project-report-execute-decision",
     ),

@@ -10,6 +10,7 @@ Classes:
 
 from django.db import IntegrityError
 from django.db import transaction
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
@@ -161,9 +162,12 @@ class ReviewReportService:
             action = REVIEW_DECISION_ACTION_MAP.get(decision.id)
             if not action:
                 raise serializers.ValidationError(detail="No valid action found for the decision.")
+            report.status = "Treated"
             report.decision = decision
+            report.decision_date = timezone.now()
             report.save()
-            action.execute(report, request.user)
+
+            action.execute(report.reported_review, request.user.admin)
 
             return Response(ReviewReportSerializer(report).data)
 

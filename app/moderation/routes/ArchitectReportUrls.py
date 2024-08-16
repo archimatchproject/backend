@@ -52,7 +52,7 @@ architect_report_urlpatterns = [
         name="architect-report-change-status",
     ),
     path(
-        "architect-report/<int:pk>/execute-decision/",
+        "architect-report/execute-decision/",
         ArchitectReportViewSet.as_view({"post": "execute_decision"}),
         name="architect-report-execute-decision",
     ),

@@ -13,9 +13,11 @@ from app.announcement.serializers.ArchitecturalStyleSerializer import Architectu
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
+from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.architect_realization.models.Realization import Realization
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 
 
@@ -33,6 +35,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
     )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
     realization_images = serializers.ListField(
         child=serializers.ImageField(required=False),
         required=False,
@@ -56,6 +59,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
+            "property_type",
         ]
 
 
@@ -73,7 +77,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
     )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
     realization_images = serializers.ListField(
         child=serializers.ImageField(required=False),
         required=False,
@@ -97,6 +101,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
+            "property_type",
         ]
 
 
@@ -113,6 +118,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
     project_category = ProjectCategorySerializer()
     needs = NeedSerializer(many=True)
     realization_images = ProjectImageSerializer(many=True, required=False)
+    property_type = PropertyTypeSerializer()
 
     class Meta:
         """
@@ -134,6 +140,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
+            "property_type",
         ]
 
 
@@ -166,6 +173,7 @@ class RealizationSerializer(serializers.ModelSerializer):
             "description",
             "architectural_style",
             "realization_images",
+            "property_type",
         ]
 
     def to_representation(self, instance):

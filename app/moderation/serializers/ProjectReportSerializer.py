@@ -53,4 +53,7 @@ class ProjectReportSerializer(serializers.ModelSerializer):
             "report_reasons",
             "status",
             "decision",
+            "decision_date",
+            "created_at",
         ]
+        read_only_fields = ["created_at", "decision_date"]
