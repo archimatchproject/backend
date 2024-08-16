@@ -32,6 +32,7 @@ from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
+from app.core.pagination import CustomPagination
 
 
 class SupplierService:
@@ -45,6 +46,7 @@ class SupplierService:
     """
 
     serializer_class = SupplierSerializer
+    pagination_class = CustomPagination
 
     @classmethod
     def supplier_signup(cls, request):
@@ -650,6 +652,7 @@ class SupplierService:
                 detail=str(e),
             )
 
+    
     @classmethod
     def supplier_get_all(cls, request):
         """
@@ -669,14 +672,20 @@ class SupplierService:
             Response: A paginated response containing serialized Supplier objects
                 or a 400 Bad Request response with an error message.
         """
-        try:
-            queryset = Supplier.objects.all()
-            serializer = SupplierSerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        
+        queryset = Supplier.objects.all()
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the queryset
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = SupplierSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        
+        serializer = SupplierSerializer(queryset, many=True)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def supplier_resend_email(cls, pk):

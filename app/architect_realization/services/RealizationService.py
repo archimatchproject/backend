@@ -43,6 +43,7 @@ class RealizationService:
         Creating new realization
         """
         data = request.data
+        print(data)
         serializer = RealizationPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
