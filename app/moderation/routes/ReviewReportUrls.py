@@ -51,4 +51,9 @@ review_report_urlpatterns = [
         ReviewReportViewSet.as_view({"post": "change_status"}),
         name="review-report-change-status",
     ),
+    path(
+        "review-report/<int:pk>/execute-decision/",
+        ReviewReportViewSet.as_view({"post": "execute_decision"}),
+        name="review-report-execute-decision",
+    ),
 ]

@@ -74,3 +74,17 @@ class CollectionViewSet(viewsets.ModelViewSet):
         """
 
         return CollectionService.update_product_order(request, pk)
+
+    @action(detail=True, methods=["PUT"])
+    def update_display_status(self, request, pk=None):
+        """
+        Update the display status of a collection.
+
+        Args:
+            request (Request): The request object containing the display status.
+            pk (int): The primary key of the collection.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return CollectionService.update_display_status(request, pk)

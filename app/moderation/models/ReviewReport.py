@@ -25,11 +25,12 @@ class ReviewReport(BaseModel):
         reasons (ManyToManyField): The reasons associated with the report.
     """
 
-    reported_review = models.ForeignKey(ClientReview, on_delete=models.CASCADE)
+    reported_review = models.ForeignKey(ClientReview, on_delete=models.SET_NULL, null=True)
     reporting_architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     reasons = models.ManyToManyField(Reason, related_name="reason_review_reports")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
     decision = models.ForeignKey(Decision, on_delete=models.SET_NULL, null=True, blank=True)
+    decision_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         """

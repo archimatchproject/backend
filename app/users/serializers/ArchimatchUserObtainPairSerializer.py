@@ -52,6 +52,8 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         super().validate(attrs)
         if self.user.is_deleted:
             raise serializers.ValidationError(detail="User has been deleted")
+        if self.user.is_suspended:
+            raise serializers.ValidationError(detail="User has been suspended")
         refresh = self.get_token(self.user)
         access = refresh.access_token
 
@@ -99,6 +101,8 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
         user = ArchimatchUser.objects.filter(phone_number=phone_number).first()
         if self.user.is_deleted:
             raise serializers.ValidationError(detail="User has been deleted")
+        if self.user.is_suspended:
+            raise serializers.ValidationError(detail="User has been suspended")
         if user and user.check_password(password):
             attrs["email"] = user.email
             attrs.pop("phone_number")

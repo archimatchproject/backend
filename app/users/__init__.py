@@ -121,10 +121,7 @@ CODENAME_TO_RIGHTS = {
     for right, data in PERMISSION_CODENAMES.items()
     for codename in data["permissions"]
 }
-APPEARANCES = [
-    ("Petite", "Petite"),
-    ("Grande", "Grande"),
-]
+
 
 PROJECT_COMPLEXITY_CHOICES = [
     ("Simple", "Simple"),

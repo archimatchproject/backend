@@ -53,7 +53,6 @@ class ClientReviewService:
             client = Client.objects.get(user=user)
             with transaction.atomic():
                 # Create ClientReview instance
-                print
                 client_review = ClientReview.objects.create(
                     client=client, architect=validated_data.pop("architect_id"), **validated_data
                 )

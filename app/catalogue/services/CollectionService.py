@@ -53,7 +53,7 @@ class CollectionService:
             with transaction.atomic():
                 # Create Collection instance
                 collection = Collection.objects.create(supplier=supplier, **validated_data)
-
+                supplier.speciality_type.add(validated_data.get("category"))
                 return Response(
                     CollectionSerializer(collection).data,
                     status=status.HTTP_201_CREATED,
@@ -99,3 +99,38 @@ class CollectionService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating product order: {str(e)}")
+
+    @classmethod
+    def update_display_status(cls, request, pk):
+        """
+        Handles updating the display status of a collection.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the collection.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        display_status = request.data.get("display")
+        try:
+            if display_status is None:
+                raise serializers.ValidationError(detail="Display status is required.")
+            collection = Collection.objects.get(pk=pk)
+            if collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this collection."
+                )
+
+            collection.display = display_status
+            collection.save()
+
+            return Response(
+                "Collection display status updated successfully.", status=status.HTTP_200_OK
+            )
+        except Collection.DoesNotExist:
+            raise NotFound(detail="Collection not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating collection display status: {str(e)}")

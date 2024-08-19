@@ -51,7 +51,7 @@ python manage.py migrate --settings=project_core.django.dev
 Apply the initial Model Instances:
 
 ```sh
-python manage.py loaddata  --format=yaml architect_specialities.yaml announcement_needs.yaml project_categories.yaml property_types.yaml work_types.yaml renovation_pieces.yaml architectural_styles.yaml project_extensions.yaml supplier_specialities.yaml preferred_locations.yaml work_surfaces.yaml budgets.yaml terrain_surfaces.yaml
+python manage.py loaddata  --format=yaml architect_specialities.yaml announcement_needs.yaml project_categories.yaml property_types.yaml work_types.yaml renovation_pieces.yaml architectural_styles.yaml project_extensions.yaml supplier_specialities.yaml preferred_locations.yaml work_surfaces.yaml budgets.yaml terrain_surfaces.yaml decisions.yaml
 ```
 
 ### Create Superuser (Optional)

@@ -12,6 +12,7 @@ from collections import defaultdict
 
 from django.db import IntegrityError
 from django.db import transaction
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
@@ -26,6 +27,7 @@ from app.moderation.models.Reason import Reason
 from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
 from app.moderation.serializers.DecisionSerializer import DecisionSerializer
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
+from app.moderation.services.ReportAction import ARCHITECT_DECISION_ACTION_MAP
 from app.users.models.Client import Client
 
 
@@ -158,3 +160,46 @@ class ArchitectReportService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating report status: {str(e)}")
+
+    @classmethod
+    def execute_decision(cls, request):
+        """
+        Executes the decision related to the given ArchitectReport.
+
+        Parameters:
+        - request: The request object containing the decision data.
+
+        Returns:
+        - A Response object indicating the result of the operation.
+        """
+        report_ids = request.data.get("report_ids", [])
+        decision_id = request.data.get("decision_id")
+        user = request.user
+
+        try:
+            if not report_ids or not decision_id:
+                raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
+            action = ARCHITECT_DECISION_ACTION_MAP.get(decision_id)
+            if not action:
+                raise serializers.ValidationError("No valid action found for the decision.")
+
+            reports = ArchitectReport.objects.filter(id__in=report_ids)
+
+            action.execute(reports[0].reported_architect, user.admin)
+
+            reports.update(
+                status="Treated",
+                decision=Decision.objects.get(id=decision_id),
+                decision_date=timezone.now(),
+            )
+
+            return Response(data="Decision Executed Successfully.")
+
+        except ArchitectReport.DoesNotExist:
+            raise NotFound(detail="ArchitectReport not found.")
+        except Decision.DoesNotExist:
+            raise NotFound(detail="Decision not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error executing report decison: {str(e)}")

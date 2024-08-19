@@ -11,7 +11,6 @@ from django.db import models
 
 from app.core.models import BaseModel
 from app.core.models.SupplierSpeciality import SupplierSpeciality
-from app.users import APPEARANCES
 from app.users.models import ArchimatchUser
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 
@@ -37,8 +36,6 @@ class Supplier(BaseModel):
         stored in 'SupplierVideos/' directory.
         speciality_type (ManyToManyField): Many-to-many relationship with SupplierSpeciality
         for the supplier's specialities.
-        appearance (CharField): Appearance attribute of the supplier, choices defined by
-        APPEARANCES, maximum length of 10 characters.
         social_links (OneToOneField): Associated SupplierSocialMedia instance for social media
         links, optional.
         user (OneToOneField): Associated ArchimatchUser instance for this supplier.
@@ -67,11 +64,6 @@ class Supplier(BaseModel):
     speciality_type = models.ManyToManyField(
         SupplierSpeciality,
         related_name="speciality_type_suppliers",
-    )
-    appearance = models.CharField(
-        max_length=10,
-        choices=APPEARANCES,
-        default="Petite",
     )
     social_links = models.OneToOneField(
         SupplierSocialMedia,

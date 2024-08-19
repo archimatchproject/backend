@@ -13,6 +13,7 @@ from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
+from app.core.models.PropertyType import PropertyType
 from app.users.models.Architect import Architect
 
 
@@ -40,6 +41,7 @@ class Realization(BaseModel):
     project_name = models.CharField(max_length=255)
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     project_category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
+    property_type = models.ForeignKey(PropertyType, on_delete=models.CASCADE)
     needs = models.ManyToManyField(Need, related_name="needs_architect_realization")
     address = models.CharField(max_length=255)
     city = models.CharField(

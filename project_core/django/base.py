@@ -10,6 +10,7 @@ from project_core.env import BASE_DIR
 from project_core.env import env
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
+from project_core.settings.firebase_cloud_messaging import *
 from project_core.settings.jwt import *
 from project_core.settings.sms_sending import *
 from project_core.settings.templates_icon import *
@@ -26,6 +27,7 @@ THIRD_PARTY_APPS = [
     "djangorestframework_camel_case",
     "drf_standardized_errors",
     "background_task",
+    "fcm_django",
 ]
 
 """
@@ -42,6 +44,7 @@ LOCAL_APPS = [
     "app.subscription",
     "app.catalogue",
     "app.moderation",
+    "app.messaging",
 ]
 
 

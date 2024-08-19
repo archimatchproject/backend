@@ -26,5 +26,6 @@ class NeedSerializer(serializers.ModelSerializer):
             "id",
             "label",
             "icon",
+            "description",
             "architect_speciality",
         ]
