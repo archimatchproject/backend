@@ -687,7 +687,7 @@ class SupplierService:
             return paginator.get_paginated_response(serializer.data)
 
         serializer = SupplierSerializer(filtered_queryset, many=True)
-        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @classmethod
     def supplier_resend_email(cls, pk):
