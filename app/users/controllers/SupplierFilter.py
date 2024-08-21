@@ -43,6 +43,9 @@ class SupplierFilter(django_filters.FilterSet):
     speciality_type = django_filters.CharFilter(
         field_name="speciality_type__label", lookup_expr="icontains"
     )
+    company_name = django_filters.CharFilter(
+        field_name="company_name", lookup_expr="icontains"
+    )
 
     class Meta:
         """
@@ -62,4 +65,4 @@ class SupplierFilter(django_filters.FilterSet):
         """
 
         model = Supplier
-        fields = ["first_name", "last_name", "email", "speciality_type"]
+        fields = ["first_name", "last_name", "email", "speciality_type","company_name"]
