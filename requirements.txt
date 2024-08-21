@@ -65,3 +65,4 @@ webencodings==0.5.1
 whitenoise==6.6.0
 xhtml2pdf==0.2.16
 yarl==1.9.4
+django-storages[azure]==1.14.4
