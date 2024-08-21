@@ -93,8 +93,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         Updating existing announcement
         """
-        instance = self.get_object()
-        return AnnouncementService.update_announcement_images(instance, request)
+        return AnnouncementService.update_announcement_images(pk, request)
 
     @action(
         detail=False,

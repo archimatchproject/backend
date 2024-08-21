@@ -96,6 +96,7 @@ class AnnouncementService:
                     user_serializer = ArchimatchUserSerializer(data=user_data)
                     user_serializer.is_valid(raise_exception=True)
                     user_instance = ArchimatchUser.objects.create(**user_data)
+                    print(user_instance)
                     user_instance.set_password(password)
                     user_instance.save()
                     client_instance = Client.objects.create(user=user_instance, **client_data)
@@ -217,12 +218,13 @@ class AnnouncementService:
             raise APIException(detail="Error updating announcement")
 
     @classmethod
-    def update_announcement_images(cls, instance, request):
+    def update_announcement_images(cls, pk, request):
         """
         Updating existing announcement images
         """
         try:
             project_images_files = request.data.getlist("projectImages")
+            instance = Announcement.objects.get(id=pk)
             with transaction.atomic():
                 # Clear existing images
                 instance.project_images.all().delete()
