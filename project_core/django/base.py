@@ -174,24 +174,13 @@ TIME_ZONE = "Africa/Tunis"
 USE_TZ = True
 USE_I18N = True
 
-"""
-Static files (CSS, JavaScript, Images) serving configuration.
-"""
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-"""
-Static files storage configuration for production.
-"""
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 
 """
 Default primary key field type configuration.
 """
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-"""
-Media files (uploads) configuration.
-"""
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
+
