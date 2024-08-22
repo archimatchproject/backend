@@ -41,10 +41,13 @@ class SupplierFilter(django_filters.FilterSet):
     last_name = django_filters.CharFilter(field_name="user__last_name", lookup_expr="icontains")
     email = django_filters.CharFilter(field_name="user__email", lookup_expr="icontains")
     speciality_type = django_filters.CharFilter(
-        field_name="speciality_type__label", lookup_expr="icontains"
+        field_name="speciality_type__id", lookup_expr="icontains"
     )
     company_name = django_filters.CharFilter(
         field_name="company_name", lookup_expr="icontains"
+    )
+    company_address = django_filters.CharFilter(
+        field_name="company_address", lookup_expr="icontains"
     )
 
     class Meta:
@@ -65,4 +68,4 @@ class SupplierFilter(django_filters.FilterSet):
         """
 
         model = Supplier
-        fields = ["first_name", "last_name", "email", "speciality_type","company_name"]
+        fields = ["first_name", "last_name", "email", "speciality_type","company_name","company_address"]
