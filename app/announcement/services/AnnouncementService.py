@@ -77,7 +77,7 @@ class AnnouncementService:
         Creating new announcement
         """
         data = request.data
-        password = request.data.get("client").get("user").get("password")
+        
         user = request.user
         serializer = AnnouncementPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -90,13 +90,13 @@ class AnnouncementService:
             client_data = validated_data.pop("client", None)
             with transaction.atomic():
                 if client_data:
+                    password = request.data.get("client").get("user").get("password")
                     user_data = client_data.pop("user")
                     user_data["username"] = user_data["email"]
                     user_data["user_type"] = USER_TYPE_CHOICES[1][0]
                     user_serializer = ArchimatchUserSerializer(data=user_data)
                     user_serializer.is_valid(raise_exception=True)
                     user_instance = ArchimatchUser.objects.create(**user_data)
-                    print(user_instance)
                     user_instance.set_password(password)
                     user_instance.save()
                     client_instance = Client.objects.create(user=user_instance, **client_data)
