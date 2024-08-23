@@ -52,6 +52,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
             "get_realizations_by_category",
             "retrieve",
             "get_realizations_by_architect",
+            "get_realizations"
         ]:
             self.permission_classes = []
         return super().get_permissions()
@@ -184,3 +185,23 @@ class RealizationViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         return RealizationService.update_realization_images(instance, request)
+
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="get-realizations-by-category",
+        serializer_class=RealizationSerializer,
+    )
+    def get_realizations(self, request, pk=None):
+        """
+        Custom action to get realizations by category.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the category to get realizations for.
+
+        Returns:
+            Response: The response object containing the realizations for the specified category.
+        """
+        return RealizationService.get_realizations(request, pk)

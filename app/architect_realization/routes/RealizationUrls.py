@@ -54,4 +54,9 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"put": "update_realization_images"}),
         name="update-realization-images",
     ),
+    path(
+        "get-realizations/",
+        RealizationViewSet.as_view({"get": "get_realizations"}),
+        name="get-realizations",
+    ),
 ]

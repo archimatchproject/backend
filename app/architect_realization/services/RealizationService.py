@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from app.announcement.models.Need import Need
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
+from app.architect_realization.filters.RealizationFilter import RealizationFilter
 from app.architect_realization.models.Realization import Realization
 from app.architect_realization.models.RealizationImage import RealizationImage
 from app.architect_realization.serializers.RealizationSerializer import RealizationOutputSerializer
@@ -144,12 +145,13 @@ class RealizationService:
         """
         try:
             realizations = Realization.objects.filter(project_category__id=id)
+            filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
             paginator = cls.pagination_class()
-            page = paginator.paginate_queryset(realizations, request)
+            page = paginator.paginate_queryset(filtered_queryset, request)
             if page is not None:
                 serializer = RealizationOutputSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)
-            serializer = RealizationOutputSerializer(realizations, many=True)
+            serializer = RealizationOutputSerializer(filtered_queryset, many=True)
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK,
@@ -213,3 +215,34 @@ class RealizationService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating realization images: {str(e)}")
+
+
+    @classmethod
+    def get_realizations(cls, request, id):
+        """
+        Retrieves realizations based on project category.
+
+        Args:
+            request (Request): The request object containing the input data.
+            id (int): ID of the project category.
+
+        Returns:
+            Response: Response containing list of realizations related to the project category.
+        """
+        try:
+            realizations = Realization.objects.all()
+            filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(filtered_queryset, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(filtered_queryset, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))
