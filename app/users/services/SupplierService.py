@@ -34,6 +34,7 @@ from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
+from app.core.pagination import CustomPagination
 
 
 class SupplierService:
@@ -653,21 +654,19 @@ class SupplierService:
                 detail=str(e),
             )
 
+    
     @classmethod
     def supplier_get_all(cls, request):
         """
         Handle GET request and return paginated Supplier objects.
-
         This method retrieves all Supplier objects from the database, applies
         pagination based on the parameters in the request, and returns the paginated
         results. If the pagination parameters are not provided correctly or if an
         error occurs during serialization or database access, it returns a 400 Bad
         Request response with an appropriate error message.
-
         Args:
             request (HttpRequest): The incoming HTTP request object containing
                 pagination parameters like page number, page size, etc.
-
         Returns:
             Response: A paginated response containing serialized Supplier objects
                 or a 400 Bad Request response with an error message.

@@ -26,6 +26,7 @@ xhtml2pdf = "==0.2.16"
 fcm-django = "==2.2.1"
 firebase-admin = "==6.5.0"
 django-filter = "==23.5"
+django-storages = {extras = ["azure"], version = "*"}
 
 [dev-packages]
 black = "==24.4.0"
