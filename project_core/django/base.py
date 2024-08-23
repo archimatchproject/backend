@@ -28,6 +28,7 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
     "background_task",
     "fcm_django",
+    "django_filters",
 ]
 
 """
@@ -79,6 +80,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.MultiPartParser",
     ),
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
