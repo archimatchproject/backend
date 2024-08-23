@@ -29,7 +29,7 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.users.serializers.ClientSerializer import ClientSerializer
-
+from app.users.models.Architect import Architect
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
@@ -65,6 +65,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         required=False,
     )
     number_floors = serializers.IntegerField(required=False)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(),required=False)
 
     class Meta:
         """
@@ -92,6 +93,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
             "number_floors",
+            "architect"
         ]
 
 

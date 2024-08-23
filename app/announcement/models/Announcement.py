@@ -25,7 +25,6 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.users.models.Client import Client
 
-
 class Announcement(BaseModel):
     """
     Model representing an announcement for a construction or renovation project.
@@ -100,7 +99,7 @@ class Announcement(BaseModel):
     notes = GenericRelation(Note)
     status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
     admin_note = models.CharField(max_length=500, null=True, blank=True)
-
+    architect = models.ForeignKey("users.Architect", on_delete=models.CASCADE,null=True, blank=True)
     def __str__(self):
         """
         Return a string representation of the announcement.
