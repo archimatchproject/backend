@@ -428,7 +428,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the refusal operation.
         """
-        return AnnouncementService.get_announcement_details(pk)
+        return AnnouncementService.get_announcement_details(request,pk)
     
     @action(
         detail=False,
@@ -475,5 +475,5 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The list of announcements by architects.
         """
-        return AnnouncementService.get_announcements_by_architect(request)
+        return AnnouncementService.get_announcements_by_client(request)
     

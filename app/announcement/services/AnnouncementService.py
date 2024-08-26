@@ -62,6 +62,7 @@ from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSeriali
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
 from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
+from django.db.models import Count, Q
 
 class AnnouncementService:
     """
@@ -642,7 +643,7 @@ class AnnouncementService:
             raise APIException(detail="Error accepting the announcement")
 
     @classmethod
-    def get_announcement_details(cls, pk):
+    def get_announcement_details(cls,request, pk):
         """
         Custom action to refuse an Announcement.
 
@@ -656,7 +657,7 @@ class AnnouncementService:
         try:
             announcement = Announcement.objects.get(pk=pk)
 
-            serializer = AnnouncementOutputSerializer(announcement, many=False)
+            serializer = AnnouncementOutputSerializer(announcement, many=False,context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Announcement.DoesNotExist:
             raise NotFound(detail="Announcement not found")
@@ -682,15 +683,17 @@ class AnnouncementService:
             Response: A paginated response containing Announcement objects or an error message.
         """
         user = request.user
-        queryset = Announcement.objects.filter(architect__user=user)
+        queryset = Announcement.objects.filter(architect__user=user).annotate(
+            interested_architects_count=Count('selections', filter=Q(selections__status='Interested'))
+        )
         filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
-            serializer = AnnouncementOutputSerializer(page, many=True)
+            serializer = AnnouncementOutputSerializer(page, many=True,context={'request': request})
             return paginator.get_paginated_response(serializer.data)
         
-        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True)
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True,context={'request': request})
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
@@ -720,3 +723,34 @@ class AnnouncementService:
             raise NotFound(detail=str(e))
         except Exception:
             raise APIException(detail="Error revoking the announcement")
+    
+
+    @classmethod
+    def get_announcements_by_client(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        user = request.user
+        queryset = Announcement.objects.filter(client__user=user)
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
