@@ -114,4 +114,19 @@ announcement_urlpatterns = [
         AnnouncementViewSet.as_view({"get": "get_announcement_details"}),
         name="get-details",
     ),
+    path(
+        "get-announcements-by-architect/",
+        AnnouncementViewSet.as_view({"get": "get_announcements_by_architect"}),
+        name="get-announcements-by-architect",
+    ),
+    path(
+        "revoke-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "revoke_announcement"}),
+        name="revoke-announcement",
+    ),
+    path(
+        "get-announcements-by-client/",
+        AnnouncementViewSet.as_view({"get": "get_announcements_by_client"}),
+        name="get-announcements-by-client",
+    ),
 ]

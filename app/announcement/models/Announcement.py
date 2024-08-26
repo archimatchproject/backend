@@ -24,7 +24,7 @@ from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.users.models.Client import Client
-
+from app.selection.models.Selection import Selection
 class Announcement(BaseModel):
     """
     Model representing an announcement for a construction or renovation project.
@@ -108,6 +108,24 @@ class Announcement(BaseModel):
             str: String representation of the announcement, including its ID and associated client.
         """
         return f"Announcement {self.id} for {self.client}"
+    
+
+    @property
+    def interested_architects(self):
+        return self.selections.filter(status='interested').select_related('architect')
+
+    @property
+    def accepted_architect(self):
+        """
+        Return the architect with status 'accepted' for this announcement.
+        
+        Returns:
+            Architect or None: The accepted architect if one exists, otherwise None.
+        """
+        try:
+            return self.selections.get(status='accepted').architect
+        except Selection.DoesNotExist:
+            return None
 
     class Meta:
         """

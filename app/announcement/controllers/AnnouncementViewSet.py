@@ -429,3 +429,51 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the refusal operation.
         """
         return AnnouncementService.get_announcement_details(pk)
+    
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-announcements-by-architect",
+    )
+    def get_announcements_by_architect(self, request):
+        """
+        Custom action to get annoucements by architect.
+
+        Returns:
+            Response: The list of announcements by architects.
+        """
+        return AnnouncementService.get_announcements_by_architect(request)
+    
+    
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="revoke-announcement",
+    )
+    def revoke_announcement(self, request, pk=None):
+        """
+        Custom action to revoke an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be revoked.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.revoke_announcement(pk)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-announcements-by-architect",
+    )
+    def get_announcements_by_client(self, request):
+        """
+        Custom action to get annoucements by architect.
+
+        Returns:
+            Response: The list of announcements by architects.
+        """
+        return AnnouncementService.get_announcements_by_architect(request)
+    

@@ -61,7 +61,7 @@ from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
-
+from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
 
 class AnnouncementService:
     """
@@ -664,3 +664,59 @@ class AnnouncementService:
             raise e
         except Exception:
             raise APIException(detail="Error retrieving the announcement")
+
+
+    @classmethod
+    def get_announcements_by_architect(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        user = request.user
+        queryset = Announcement.objects.filter(architect__user=user)
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+    
+
+    @classmethod
+    def revoke_announcement(cls, pk):
+        """
+        Custom action to revoke an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be revoked.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.architect = None
+            announcement.save()
+            return Response({"message": "announcement revoked from architect"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error revoking the announcement")
