@@ -477,3 +477,45 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         return AnnouncementService.get_announcements_by_client(request)
     
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="all-property-types",
+        url_name="all-property-type",
+        serializer_class=PropertyTypeSerializer,
+    )
+    def get_all_property_types(self, request):
+        """
+        Retrieves property types based on project category.
+
+        Args:
+            request (Request): HTTP request object.
+            project_category_id (int): ID of the project category.
+
+        Returns:
+            Response: Response containing list of property types related to the project category.
+        """
+        return AnnouncementService.get_all_property_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="work-types",
+        url_name="work-types",
+        serializer_class=WorkTypeSerializer,
+    )
+    def get_all_work_types(self, request):
+        """
+        Retrieves all announcement work types.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of announcement work types.
+        """
+    
+        return AnnouncementService.get_all_work_types()

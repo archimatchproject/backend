@@ -754,3 +754,43 @@ class AnnouncementService:
             serializer.data,
             status=status.HTTP_200_OK,
         )
+
+
+    @classmethod
+    def get_all_property_types(cls):
+        """
+        Retrieves property types.
+
+        Returns:
+            Response: Response containing list of property types.
+        """
+        try:
+            property_types = PropertyType.objects.all()
+            serializer = PropertyTypeSerializer(property_types, many=True)
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving property types")
+        
+    @classmethod
+    def get_all_work_types(cls):
+        """
+        Retrieves all work types
+
+        Returns:
+            Response: Response containing list of announcement work types.
+        """
+        try:
+            work_types = WorkType.objects.all()
+            serializer = WorkTypeSerializer(work_types, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error retrieving work types, ${str(e)}")
