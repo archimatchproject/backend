@@ -16,10 +16,10 @@ class AnnouncementFilter(django_filters.FilterSet):
         field_name="work_type__id", lookup_expr="icontains"
     )
     
-    address = django_filters.CharFilter(
-        field_name="address", lookup_expr="icontains"
+    city = django_filters.CharFilter(
+        field_name="city", lookup_expr="icontains"
     )
 
     class Meta:
         model = Announcement
-        fields = ["property_type", "work_type","address"]
+        fields = ["property_type", "work_type","city"]

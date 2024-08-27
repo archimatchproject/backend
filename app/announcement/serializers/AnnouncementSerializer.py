@@ -229,7 +229,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
         try:
             architect = Architect.objects.get(user=user)
         except Architect.DoesNotExist:
-            return False  # If the user is not an architect, return False immediately
+            return False
 
         return obj.selections.filter(architect=architect).exists()
 
