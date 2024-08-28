@@ -134,3 +134,38 @@ class CollectionService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating collection display status: {str(e)}")
+
+    @classmethod
+    def update_visibility(cls, request, pk):
+        """
+        Handles updating the display status of a collection.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the collection.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        visibility = request.data.get("visibility")
+        try:
+            if visibility is None:
+                raise serializers.ValidationError(detail="visibility is required.")
+            collection = Collection.objects.get(pk=pk)
+            if collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this collection."
+                )
+
+            collection.visibility = visibility
+            collection.save()
+
+            return Response(
+                "Collection visibility updated successfully.", status=status.HTTP_200_OK
+            )
+        except Collection.DoesNotExist:
+            raise NotFound(detail="Collection not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating visibility status: {str(e)}")

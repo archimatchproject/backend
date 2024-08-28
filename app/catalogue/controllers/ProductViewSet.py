@@ -83,3 +83,17 @@ class ProductViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return ProductService.update_display_status(request, pk)
+
+    @action(detail=True, methods=["PUT"])
+    def update_visibility(self, request, pk=None):
+        """
+        Update the visibility of a product.
+
+        Args:
+            request (Request): The request object containing the visibility.
+            pk (int): The primary key of the product.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return ProductService.update_visibility(request, pk)

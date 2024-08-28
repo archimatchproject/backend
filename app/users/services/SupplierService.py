@@ -761,3 +761,39 @@ class SupplierService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+
+
+    @classmethod
+    def supplier_update_catalog_visibility(cls, request):
+        """
+        Updates a catalog visibility.
+
+        Args:
+            request (Request): Django request object containing supplier's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during supplier settings update.
+        """
+        try:
+            data = request.data
+            user = request.user
+            catalog_visibility = data.get("catalog_visibility", None)
+            if catalog_visibility is None:
+                raise serializers.ValidationError(detail="catalog visibility is required")
+
+            supplier = Supplier.objects.get(user=user)
+            supplier.catalog_visibility = catalog_visibility
+            supplier.save()
+
+            response_data = {"message": "Catalog Visibility successfully updated"}
+            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found.")
+        except APIException as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=str(e))

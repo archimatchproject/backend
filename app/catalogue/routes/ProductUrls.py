@@ -41,4 +41,9 @@ product_urlpatterns = [
         ProductViewSet.as_view({"put": "update_display_status"}),
         name="product-update-display-status",
     ),
+    path(
+        "product/update-visibility/<int:pk>/",
+        ProductViewSet.as_view({"put": "update_visibility"}),
+        name="update-visibility",
+    ),
 ]

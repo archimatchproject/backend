@@ -109,4 +109,9 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"delete": "delete"}),
         name="delete-supplier",
     ),
+    path(
+        "supplier/update-catalog-visibility/",
+        SupplierViewSet.as_view({"put": "supplier_update_catalog_visibility"}),
+        name="update-catalog-visibility",
+    ),
 ]

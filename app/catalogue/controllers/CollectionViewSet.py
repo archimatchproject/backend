@@ -88,3 +88,17 @@ class CollectionViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return CollectionService.update_display_status(request, pk)
+    
+    @action(detail=True, methods=["PUT"])
+    def update_visibility(self, request, pk=None):
+        """
+        Update the visibility of a collection.
+
+        Args:
+            request (Request): The request object containing the visibility.
+            pk (int): The primary key of the collection.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return CollectionService.update_visibility(request, pk)

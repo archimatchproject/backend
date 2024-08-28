@@ -149,3 +149,38 @@ class ProductService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating product display status: {str(e)}")
+
+    @classmethod
+    def update_visibility(cls, request, pk):
+        """
+        Handles updating the visibility of a product.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the product.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        visibility = request.data.get("visibility")
+        try:
+            if visibility is None:
+                raise serializers.ValidationError(detail="visibility is required.")
+            product = Product.objects.get(pk=pk)
+            if product.collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this product."
+                )
+
+            product.visibility = visibility
+            product.save()
+
+            return Response(
+                "visibility updated successfully.", status=status.HTTP_200_OK
+            )
+        except Product.DoesNotExist:
+            raise NotFound(detail="Product not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating product visibility: {str(e)}")

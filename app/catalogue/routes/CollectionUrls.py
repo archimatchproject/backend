@@ -46,4 +46,9 @@ collection_urlpatterns = [
         CollectionViewSet.as_view({"put": "update_display_status"}),
         name="collection-update-display-status",
     ),
+    path(
+        "collection/update-visibility/<int:pk>/",
+        CollectionViewSet.as_view({"put": "update_visibility"}),
+        name="update-visibility",
+    ),
 ]
