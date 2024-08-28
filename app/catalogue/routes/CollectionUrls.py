@@ -13,7 +13,7 @@ from app.catalogue.controllers.CollectionViewSet import CollectionViewSet
 collection_urlpatterns = [
     path(
         "collection",
-        CollectionViewSet.as_view({"get": "list"}),
+        CollectionViewSet.as_view({"get": "get"}),
         name="collection-list",
     ),
     path(
@@ -45,5 +45,10 @@ collection_urlpatterns = [
         "collection/update-display-status/<int:pk>/",
         CollectionViewSet.as_view({"put": "update_display_status"}),
         name="collection-update-display-status",
+    ),
+    path(
+        "collection/update-visibility/<int:pk>/",
+        CollectionViewSet.as_view({"put": "update_visibility"}),
+        name="update-visibility",
     ),
 ]

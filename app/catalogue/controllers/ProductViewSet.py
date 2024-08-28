@@ -83,3 +83,35 @@ class ProductViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         return ProductService.update_display_status(request, pk)
+
+    @action(detail=True, methods=["PUT"])
+    def update_visibility(self, request, pk=None):
+        """
+        Update the visibility of a product.
+
+        Args:
+            request (Request): The request object containing the visibility.
+            pk (int): The primary key of the product.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        return ProductService.update_visibility(request, pk)
+
+    def get(self, request):
+        """
+        Retrieve all Products.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `get_Products` class method
+        of `ProductService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        return ProductService.get_products(request)

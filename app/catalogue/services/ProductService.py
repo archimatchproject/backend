@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from app.catalogue.models.Product import Product
 from app.catalogue.models.ProductImage import ProductImage
 from app.catalogue.serializers.ProductSerializer import ProductSerializer
+from app.core.pagination import CustomPagination
 
 
 class ProductService:
@@ -34,7 +35,8 @@ class ProductService:
         update_product(instance, request, data): Handles validation and updating
         of an existing Product.
     """
-
+    pagination_class = CustomPagination
+    
     @classmethod
     def create_product(cls, request):
         """
@@ -149,3 +151,68 @@ class ProductService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error updating product display status: {str(e)}")
+
+    @classmethod
+    def update_visibility(cls, request, pk):
+        """
+        Handles updating the visibility of a product.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+            pk (int): The primary key of the product.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        visibility = request.data.get("visibility")
+        try:
+            if visibility is None:
+                raise serializers.ValidationError(detail="visibility is required.")
+            product = Product.objects.get(pk=pk)
+            if product.collection.supplier.user != request.user:
+                raise serializers.ValidationError(
+                    detail="You do not have permission to modify this product."
+                )
+
+            product.visibility = visibility
+            product.save()
+
+            return Response(
+                "visibility updated successfully.", status=status.HTTP_200_OK
+            )
+        except Product.DoesNotExist:
+            raise NotFound(detail="Product not found.")
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error updating product visibility: {str(e)}")
+
+
+    @classmethod
+    def get_products(cls, request):
+        """
+        Handle GET request and return paginated Product objects.
+        This method retrieves all Product objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Product objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = Product.objects.filter(collection__supplier__user=request.user)
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ProductSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

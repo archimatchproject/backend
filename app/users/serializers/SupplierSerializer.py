@@ -16,6 +16,7 @@ from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.users.models.Supplier import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
+from app.users.serializers.ShowRoomSerializer import ShowRoomSerializer
 from app.users.serializers.SupplierCoverImageSerializer import SupplierCoverImageSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 
@@ -41,7 +42,8 @@ class SupplierSerializer(serializers.ModelSerializer):
     speciality_type = SupplierSpecialitySerializer(many=True)
     supplier_collections = CollectionSerializer(many=True)
     supplier_cover_images = SupplierCoverImageSerializer(many=True, read_only=True)
-
+    showrooms = ShowRoomSerializer(many=True)
+    
     class Meta:
         """
         Meta class for SupplierSerializer.
@@ -113,7 +115,7 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
     """
 
     phone_number = serializers.CharField(source="user.phone_number")
-
+    showrooms = ShowRoomSerializer(many=True,read_only=True)
     class Meta:
         """
         Meta class for SupplierSerializer.
@@ -124,4 +126,4 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
         """
 
         model = Supplier
-        fields = ("id", "company_address", "company_speciality", "phone_number", "company_name")
+        fields = ("id", "company_address", "company_speciality", "phone_number", "company_name","showrooms")
