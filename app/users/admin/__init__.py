@@ -7,3 +7,4 @@ from app.users.admin.SupplierSpecialityAdmin import SupplierSpecialityAdmin
 from app.users.admin.UnavailabilityAdmin import UnavailabilityAdmin
 from app.users.admin.TimeSlotAdmin import TimeSlotAdmin
 from app.users.admin.MeetingAdmin import MeetingAdmin
+from app.users.admin.ShowRoomAdmin import ShowRoomAdmin

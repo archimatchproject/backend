@@ -23,6 +23,7 @@ from app.core.serializers.SupplierSpecialitySerializer import SupplierSpeciality
 from app.email_templates.signals import api_success_signal
 from app.users.controllers.SupplierFilter import SupplierFilter
 from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.ShowRoom import ShowRoom
 from app.users.models.Supplier import Supplier
 from app.users.models.SupplierCoverImage import SupplierCoverImage
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
@@ -213,7 +214,7 @@ class SupplierService:
     @classmethod
     def supplier_update_profile(cls, request):
         """
-        Updates a supplier's profile information excluding general settings and social media links.
+        Updates a supplier's profile information, including general settings and showrooms.
 
         Args:
             request (Request): Django request object containing supplier's profile data.
@@ -226,8 +227,12 @@ class SupplierService:
         """
         try:
             data = request.data
+            showrooms_data = data.pop("showrooms", [])  
+
+            # Validate the incoming data with the serializer
             serializer = SupplierPersonalInformationSerializer(data=data)
             serializer.is_valid(raise_exception=True)
+
             user_id = request.user.id
             supplier = Supplier.objects.get(user__id=user_id)
 
@@ -243,8 +248,33 @@ class SupplierService:
                 setattr(supplier, attr, value)
             supplier.save()
 
+            # Collect showroom IDs from the request
+            incoming_showroom_ids = [sr.get("id") for sr in showrooms_data if sr.get("id")]
+
+            # Delete showrooms that are not in the incoming request
+            ShowRoom.objects.filter(supplier=supplier).exclude(id__in=incoming_showroom_ids).delete()
+
+            # Handle showrooms update or creation
+            for showroom_data in showrooms_data:
+                showroom_id = showroom_data.get("id")
+                address = showroom_data.get("address")
+                phone_number = showroom_data.get("phone_number")
+
+                if showroom_id:
+                    showroom = ShowRoom.objects.get(id=showroom_id, supplier=supplier)
+                    showroom.address = address
+                    showroom.phone_number = phone_number
+                    showroom.save()
+                else:
+                    # Create new showroom
+                    ShowRoom.objects.create(
+                        address=address,
+                        phone_number=phone_number,
+                        supplier=supplier
+                    )
+
             response_data = {
-                "message": "supplier successfully updated",
+                "message": "Supplier profile and showrooms successfully updated",
             }
             return Response(
                 response_data,
@@ -252,6 +282,8 @@ class SupplierService:
             )
         except Supplier.DoesNotExist:
             raise NotFound(detail="Supplier not found.")
+        except ShowRoom.DoesNotExist:
+            raise NotFound(detail="Showroom not found.")
         except APIException as e:
             raise e
         except Exception as e:
@@ -432,21 +464,28 @@ class SupplierService:
         """
         try:
             user_id = request.user.id
-            cover_images = request.FILES.getlist("cover_images")
-            if cover_images is None:
-                raise serializers.ValidationError(detail="cover images is required")
-            if not 0 < len(cover_images) <= 3:
-                raise serializers.ValidationError(
-                    detail="number of cover images must be between 1 and 3"
-                )
+            cover_images = request.FILES.getlist("cover_images", [])    
             supplier = Supplier.objects.get(user__id=user_id)
+
+            current_cover_image_count = SupplierCoverImage.objects.filter(supplier=supplier).count()
+
+            if current_cover_image_count + len(cover_images) > 3:
+                raise serializers.ValidationError(
+                    detail=f"Adding these cover images would exceed the maximum of 3 allowed."
+                )
+
+    
             SupplierCoverImage.objects.filter(supplier=supplier).delete()
-            for cover_image in cover_images:
-                SupplierCoverImage.objects.create(supplier=supplier, image=cover_image)
+
+            # Save new cover images
+            if len(cover_images)>0 :
+                for cover_image in cover_images:
+                    SupplierCoverImage.objects.create(supplier=supplier, image=cover_image)
+            
             supplier.save()
 
             response_data = {"message": "Supplier cover images successfully updated"}
-            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
 
         except Supplier.DoesNotExist:
             raise NotFound(detail="Supplier not found.")

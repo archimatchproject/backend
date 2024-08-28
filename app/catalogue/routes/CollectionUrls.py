@@ -13,7 +13,7 @@ from app.catalogue.controllers.CollectionViewSet import CollectionViewSet
 collection_urlpatterns = [
     path(
         "collection",
-        CollectionViewSet.as_view({"get": "list"}),
+        CollectionViewSet.as_view({"get": "get"}),
         name="collection-list",
     ),
     path(

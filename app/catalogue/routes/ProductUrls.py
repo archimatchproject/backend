@@ -13,7 +13,7 @@ from app.catalogue.controllers.ProductViewSet import ProductViewSet
 product_urlpatterns = [
     path(
         "product",
-        ProductViewSet.as_view({"get": "list"}),
+        ProductViewSet.as_view({"get": "get"}),
         name="product-list",
     ),
     path(
