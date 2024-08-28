@@ -61,7 +61,8 @@ from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
-
+from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
+from django.db.models import Count, Q
 
 class AnnouncementService:
     """
@@ -642,7 +643,7 @@ class AnnouncementService:
             raise APIException(detail="Error accepting the announcement")
 
     @classmethod
-    def get_announcement_details(cls, pk):
+    def get_announcement_details(cls,request, pk):
         """
         Custom action to refuse an Announcement.
 
@@ -656,7 +657,7 @@ class AnnouncementService:
         try:
             announcement = Announcement.objects.get(pk=pk)
 
-            serializer = AnnouncementOutputSerializer(announcement, many=False)
+            serializer = AnnouncementOutputSerializer(announcement, many=False,context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Announcement.DoesNotExist:
             raise NotFound(detail="Announcement not found")
@@ -664,3 +665,132 @@ class AnnouncementService:
             raise e
         except Exception:
             raise APIException(detail="Error retrieving the announcement")
+
+
+    @classmethod
+    def get_announcements_by_architect(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        user = request.user
+        queryset = Announcement.objects.filter(architect__user=user).annotate(
+            interested_architects_count=Count('selections', filter=Q(selections__status='Interested'))
+        )
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True,context={'request': request})
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True,context={'request': request})
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+    
+
+    @classmethod
+    def revoke_announcement(cls, pk):
+        """
+        Custom action to revoke an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be revoked.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        try:
+            announcement = Announcement.objects.get(pk=pk)
+            announcement.architect = None
+            announcement.save()
+            return Response({"message": "announcement revoked from architect"}, status=status.HTTP_200_OK)
+        except Announcement.DoesNotExist:
+            raise NotFound(detail="Announcement not found")
+        except APIException as e:
+            raise NotFound(detail=str(e))
+        except Exception:
+            raise APIException(detail="Error revoking the announcement")
+    
+
+    @classmethod
+    def get_announcements_by_client(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        user = request.user
+        queryset = Announcement.objects.filter(client__user=user)
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+
+    @classmethod
+    def get_all_property_types(cls):
+        """
+        Retrieves property types.
+
+        Returns:
+            Response: Response containing list of property types.
+        """
+        try:
+            property_types = PropertyType.objects.all()
+            serializer = PropertyTypeSerializer(property_types, many=True)
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except NotFound as e:
+            raise e
+        except Exception:
+            raise APIException(detail="Error retrieving property types")
+        
+    @classmethod
+    def get_all_work_types(cls):
+        """
+        Retrieves all work types
+
+        Returns:
+            Response: Response containing list of announcement work types.
+        """
+        try:
+            work_types = WorkType.objects.all()
+            serializer = WorkTypeSerializer(work_types, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error retrieving work types, ${str(e)}")

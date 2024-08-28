@@ -428,4 +428,94 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the refusal operation.
         """
-        return AnnouncementService.get_announcement_details(pk)
+        return AnnouncementService.get_announcement_details(request,pk)
+    
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-announcements-by-architect",
+    )
+    def get_announcements_by_architect(self, request):
+        """
+        Custom action to get annoucements by architect.
+
+        Returns:
+            Response: The list of announcements by architects.
+        """
+        return AnnouncementService.get_announcements_by_architect(request)
+    
+    
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="revoke-announcement",
+    )
+    def revoke_announcement(self, request, pk=None):
+        """
+        Custom action to revoke an Announcement.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the Announcement to be revoked.
+
+        Returns:
+            Response: The response object containing the result of the refusal operation.
+        """
+        return AnnouncementService.revoke_announcement(pk)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-announcements-by-architect",
+    )
+    def get_announcements_by_client(self, request):
+        """
+        Custom action to get annoucements by architect.
+
+        Returns:
+            Response: The list of announcements by architects.
+        """
+        return AnnouncementService.get_announcements_by_client(request)
+    
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="all-property-types",
+        url_name="all-property-type",
+        serializer_class=PropertyTypeSerializer,
+    )
+    def get_all_property_types(self, request):
+        """
+        Retrieves property types based on project category.
+
+        Args:
+            request (Request): HTTP request object.
+            project_category_id (int): ID of the project category.
+
+        Returns:
+            Response: Response containing list of property types related to the project category.
+        """
+        return AnnouncementService.get_all_property_types()
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="work-types",
+        url_name="work-types",
+        serializer_class=WorkTypeSerializer,
+    )
+    def get_all_work_types(self, request):
+        """
+        Retrieves all announcement work types.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of announcement work types.
+        """
+    
+        return AnnouncementService.get_all_work_types()

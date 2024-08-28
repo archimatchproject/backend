@@ -46,6 +46,7 @@ LOCAL_APPS = [
     "app.catalogue",
     "app.moderation",
     "app.messaging",
+    "app.selection"
 ]
 
 
