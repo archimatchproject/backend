@@ -18,8 +18,10 @@ from rest_framework.response import Response
 
 from app.catalogue import APPEARANCES
 from app.core.models.SupplierSpeciality import SupplierSpeciality
+from app.core.pagination import CustomPagination
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.email_templates.signals import api_success_signal
+from app.users.controllers.SupplierFilter import SupplierFilter
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Supplier import Supplier
 from app.users.models.SupplierCoverImage import SupplierCoverImage
@@ -32,6 +34,7 @@ from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
+from app.core.pagination import CustomPagination
 
 
 class SupplierService:
@@ -45,6 +48,7 @@ class SupplierService:
     """
 
     serializer_class = SupplierSerializer
+    pagination_class = CustomPagination
 
     @classmethod
     def supplier_signup(cls, request):
@@ -650,33 +654,39 @@ class SupplierService:
                 detail=str(e),
             )
 
+    
     @classmethod
     def supplier_get_all(cls, request):
         """
         Handle GET request and return paginated Supplier objects.
-
         This method retrieves all Supplier objects from the database, applies
         pagination based on the parameters in the request, and returns the paginated
         results. If the pagination parameters are not provided correctly or if an
         error occurs during serialization or database access, it returns a 400 Bad
         Request response with an appropriate error message.
-
         Args:
             request (HttpRequest): The incoming HTTP request object containing
                 pagination parameters like page number, page size, etc.
-
         Returns:
             Response: A paginated response containing serialized Supplier objects
                 or a 400 Bad Request response with an error message.
         """
-        try:
-            queryset = Supplier.objects.all()
-            serializer = SupplierSerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+
+        queryset = Supplier.objects.all()
+        # Apply filters using the SupplierFilter class
+        filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = SupplierSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = SupplierSerializer(filtered_queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @classmethod
     def supplier_resend_email(cls, pk):

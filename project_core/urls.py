@@ -63,6 +63,10 @@ urlpatterns = [
         include("app.messaging.urls"),
     ),
     path(
+        f"{URL_PREFIX}selection/",
+        include("app.selection.urls"),
+    ),
+    path(
         f"{URL_PREFIX}swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",

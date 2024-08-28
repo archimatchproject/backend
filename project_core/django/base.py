@@ -28,6 +28,7 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
     "background_task",
     "fcm_django",
+    "django_filters",
 ]
 
 """
@@ -45,6 +46,7 @@ LOCAL_APPS = [
     "app.catalogue",
     "app.moderation",
     "app.messaging",
+    "app.selection"
 ]
 
 
@@ -79,6 +81,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.MultiPartParser",
     ),
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
@@ -174,24 +177,13 @@ TIME_ZONE = "Africa/Tunis"
 USE_TZ = True
 USE_I18N = True
 
-"""
-Static files (CSS, JavaScript, Images) serving configuration.
-"""
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-"""
-Static files storage configuration for production.
-"""
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 
 """
 Default primary key field type configuration.
 """
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-"""
-Media files (uploads) configuration.
-"""
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
+

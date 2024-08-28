@@ -27,3 +27,6 @@ class SupplierSpeciality(LabeledIcon):
 
         verbose_name = "Supplier Speciality"
         verbose_name_plural = "Supplier Specialities"
+        indexes = [
+            models.Index(fields=["label"]),
+        ]

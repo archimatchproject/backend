@@ -107,3 +107,8 @@ class ArchimatchUser(AbstractUser):
 
         verbose_name = "Archimatch User"
         verbose_name_plural = "Archimatch Users"
+        indexes = [
+            models.Index(fields=["first_name"]),
+            models.Index(fields=["last_name"]),
+            models.Index(fields=["email"]),
+        ]

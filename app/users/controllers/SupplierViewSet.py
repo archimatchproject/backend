@@ -6,9 +6,11 @@ using Django REST Framework, including custom actions for signup, login,
 and profile management.
 """
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from app.users.controllers.SupplierFilter import SupplierFilter
 from app.users.models.Supplier import Supplier
 from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
@@ -26,6 +28,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
 
     serializer_class = SupplierSerializer
     queryset = Supplier.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SupplierFilter
 
     @action(
         detail=False,
