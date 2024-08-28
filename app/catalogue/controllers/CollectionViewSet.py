@@ -120,3 +120,19 @@ class CollectionViewSet(viewsets.ModelViewSet):
                 or an error response if there's a problem during retrieval.
         """
         return CollectionService.get_collections(request)
+    
+    @action(detail=True, methods=["POST"])
+    def create_saved_collections(self, request):
+        """
+        Update the order of products within a collection.
+
+        Args:
+            request (Request): The request object containing the list of product ids
+              in the new order.
+            pk (int): The primary key of the collection.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+
+        return CollectionService.create_saved_collections(request)

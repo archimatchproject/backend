@@ -204,3 +204,49 @@ class CollectionService:
 
         serializer = CollectionSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @classmethod
+    def create_saved_collections(cls, request):
+        """
+        Handles validation and creation of multiple Collections.
+
+        Args:
+            request (Request): The request object containing the authenticated user.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        user = request.user
+
+        # Ensure the authenticated user is a supplier
+        try:
+            supplier = Supplier.objects.get(user=user)
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Authenticated user is not a supplier.")
+
+        collections_data = request.data.get('collections', [])
+        if not isinstance(collections_data, list):
+            raise serializers.ValidationError({"collections": "This field must be a list of collections."})
+
+        created_collections = []
+
+        try:
+            with transaction.atomic():
+                for collection_data in collections_data:
+                    serializer = CollectionSerializer(data=collection_data)
+                    serializer.is_valid(raise_exception=True)
+                    validated_data = serializer.validated_data
+                    
+                    # Create Collection instance
+                    collection = Collection.objects.create(supplier=supplier, **validated_data)
+                    supplier.speciality_type.add(validated_data.get("category"))
+                    created_collections.append(CollectionSerializer(collection).data)
+
+            return Response(
+                created_collections,
+                status=status.HTTP_201_CREATED,
+            )
+        except serializers.ValidationError as e:
+            raise e
+        except Exception as e:
+            raise APIException(detail=f"Error creating collections: {str(e)}")

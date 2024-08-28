@@ -51,4 +51,9 @@ collection_urlpatterns = [
         CollectionViewSet.as_view({"put": "update_visibility"}),
         name="update-visibility",
     ),
+    path(
+        "collection/create-saved-collections/",
+        CollectionViewSet.as_view({"post": "create_saved_collections"}),
+        name="create-saved-collections",
+    ),
 ]
