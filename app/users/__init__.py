@@ -135,3 +135,13 @@ YEARS_EXPERIENCE_CHOICES = [
     ("5-8 years", "5-8 years"),
     ("8+ years", "8+ years"),
 ]
+
+FAILED = "Failed"
+PENDING = "Pending"
+SUCCESS = "SUCCESS"
+
+MEETING_STATUS_CHOICES = [
+    (FAILED, FAILED),
+    (PENDING, PENDING),
+    (SUCCESS, SUCCESS),
+]
