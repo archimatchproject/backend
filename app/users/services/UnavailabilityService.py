@@ -62,12 +62,10 @@ class UnavailabilityService:
                 else:
                     serializer = UnavailabilitySerializer(data=data)
                 
-                print("Serializer data:", data)
                 serializer.is_valid(raise_exception=True)
                 
                 unavailability = serializer.save()
                 created_unavailabilities.append(unavailability)
-                print("zzzzzzzzzzzzzzz",created_unavailabilities)
             return created_unavailabilities
 
         except Admin.DoesNotExist as e:
