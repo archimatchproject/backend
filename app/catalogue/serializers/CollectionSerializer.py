@@ -35,6 +35,7 @@ class CollectionSerializer(serializers.ModelSerializer):
             "supplier",
             "appearance",
             "display",
+            "visibility",
         ]
         extra_kwargs = {
             "category": {"write_only": True},

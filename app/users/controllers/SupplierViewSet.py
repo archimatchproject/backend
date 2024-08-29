@@ -386,3 +386,21 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response object indicating success or failure of the supplier deletion.
         """
         return SupplierService.delete_supplier(pk)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-visibility",
+    )
+    def supplier_update_catalog_visibility(self, request):
+        """
+        Allows a supplier to update their visibility using a custom action.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        return SupplierService.supplier_update_catalog_visibility(request)

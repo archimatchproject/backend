@@ -39,9 +39,7 @@ class UnavailabilityViewSet(viewsets.ModelViewSet):
         try:
             unavailability = UnavailabilityService.create_unavailability(request.data,request.user)
             return Response({
-                "message": "unavailability created successfully.", 
-                "selection": UnavailabilitySerializer(unavailability).data
-                },
+                "message": "unavailability created successfully."},
                 status=status.HTTP_201_CREATED
             )
         except APIException as e:

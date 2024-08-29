@@ -36,7 +36,7 @@ class Collection(models.Model):
         default="Petite",
     )
     display = models.BooleanField(default=False)
-
+    visibility = models.BooleanField(default=False)
     def __str__(self):
         """
         String representation of the Collection instance.

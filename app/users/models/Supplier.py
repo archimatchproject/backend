@@ -72,7 +72,7 @@ class Supplier(BaseModel):
         on_delete=models.CASCADE,
     )
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
-
+    catalog_visibility = models.BooleanField(default=False)
     def __str__(self):
         """
         Returns the email address of the associated user.
