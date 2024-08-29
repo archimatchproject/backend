@@ -3,17 +3,30 @@ from django.db.models import Q
 from app.architect_realization.models.Realization import Realization
 
 
+class MultipleValueFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+    """
+    Custom filter that can accept either a single value or a comma-separated list of values.
+    """
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        if isinstance(value, str):
+            value = value.split(',')
+        return super().filter(qs, value)
+
+
 class RealizationFilter(django_filters.FilterSet):
     """
     FilterSet class for filtering Realization instances based on related user fields,
     speciality type, and keywords.
     """
 
-    property_type = django_filters.CharFilter(
-        field_name="property_type__id", lookup_expr="icontains"
+    property_type = MultipleValueFilter(
+        field_name="property_type__id", lookup_expr="in"
     )
-    project_category = django_filters.CharFilter(
-        field_name="project_category__id", lookup_expr="icontains"
+    project_category = MultipleValueFilter(
+        field_name="project_category__id", lookup_expr="in"
     )
     keyword = django_filters.CharFilter(method='filter_by_keyword')
 
