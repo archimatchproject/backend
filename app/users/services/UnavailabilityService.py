@@ -23,35 +23,53 @@ class UnavailabilityService:
     """
 
     @classmethod
-    def create_unavailability(cls, data,user):
+    def create_unavailability(cls, data_list, user):
         """
-        Creates a unavailability for a given announcement and the architect.
+        Creates multiple unavailabilities for a given admin and date.
+
+        Args:
+            data_list: List of dictionaries containing unavailability data.
+            user: The user making the request.
+
         Returns:
-            unavailability: The created unavailability instance.
+            List of created or updated unavailability instances.
 
         Raises:
-            APIException: If there are issues creating the unavailability.
+            ValidationError: If validation fails.
+            NotFound: If the admin is not found.
         """
+        created_unavailabilities = []
+
         try:
             admin = Admin.objects.get(user=user)
-            
-            date = data.get('date')
-            if not date:
-                raise ValidationError("The 'date' field is required.")
-            
-            try:
-                datetime.strptime(date, '%Y-%m-%d')
-            except ValueError:
-                raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
 
-            data["admin"] = admin.id
-            existing_unavailability = Unavailability.objects.filter(admin=admin, date=date).first()
-            serializer = UnavailabilitySerializer(existing_unavailability, data=data, partial=True)
-            print("Serializer data:", data)
-            serializer.is_valid(raise_exception=True)
-            
-            unavailability = serializer.save()
-            return unavailability
+            for data in data_list:
+                date = data.get('date')
+                if not date:
+                    raise ValidationError("The 'date' field is required.")
+                
+                try:
+                    datetime.strptime(date, '%Y-%m-%d')
+                except ValueError:
+                    raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
+
+                data["admin"] = admin.id
+                existing_unavailability = Unavailability.objects.filter(admin=admin, date=date).first()
+                
+                # If an existing unavailability is found, update it, otherwise create a new one
+                if existing_unavailability:
+                    serializer = UnavailabilitySerializer(existing_unavailability, data=data, partial=True)
+                else:
+                    serializer = UnavailabilitySerializer(data=data)
+                
+                print("Serializer data:", data)
+                serializer.is_valid(raise_exception=True)
+                
+                unavailability = serializer.save()
+                created_unavailabilities.append(unavailability)
+                print("zzzzzzzzzzzzzzz",created_unavailabilities)
+            return created_unavailabilities
+
         except Admin.DoesNotExist as e:
             raise NotFound(detail=str(e))
         except serializers.ValidationError as e:
