@@ -531,11 +531,10 @@ class ArchitectService:
             bio = data.get("bio",None)
             if bio is None:
                 raise serializers.ValidationError(detail="biois required")
-            if presentation_video is None:
-                raise serializers.ValidationError(detail="presentation video is required")
 
             architect = Architect.objects.get(user__id=user_id)
-            architect.presentation_video = presentation_video
+            if presentation_video:
+                architect.presentation_video = presentation_video
             architect.bio = bio
             architect.save()
 
