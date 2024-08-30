@@ -19,4 +19,9 @@ meeting_urlpatterns = [
         MeetingViewSet.as_view({"get": "get_admin_meetings"}),
         name="admin-meetings",
     ),
+    path(
+        "meeting/daily-meetings/",
+        MeetingViewSet.as_view({"get": "get_daily_meetings"}),
+        name="daily-meetings",
+    ),
 ]

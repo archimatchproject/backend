@@ -80,3 +80,51 @@ class MeetingService:
             serializer.data,
             status=status.HTTP_200_OK,
         )
+    
+    
+    @classmethod
+    def get_daily_meetings(cls, request):
+        """
+        Handle GET request and return paginated Meetings objects.
+
+        This method retrieves all Meetings objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Meetings objects or an error message.
+        """
+        try:
+            user = request.user
+            dates_str = request.query_params.get('dates')
+            if not dates_str:
+                raise serializers.ValidationError(detail="dates is required")
+
+            dates = dates_str.split(',')
+            try:
+                dates = [datetime.strptime(date.strip(), "%Y-%m-%d").date() for date in dates]
+            except ValueError:
+                raise serializers.ValidationError(
+                    detail="Invalid date format. Use YYYY-MM-DD.",
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            queryset = Meeting.objects.filter(admin__user=user, date__in=dates)
+            
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = MeetingSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            
+            serializer = MeetingSerializer(queryset, many=True)
+        except Meeting.DoesNotExist as e:
+            raise NotFound(detail="Meeting not foun")
+        except serializers.ValidationError as e:
+            raise e
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
