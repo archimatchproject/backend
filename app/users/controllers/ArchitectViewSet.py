@@ -340,3 +340,23 @@ class ArchitectViewSet(viewsets.ModelViewSet):
             Response: Response containing Architect details.
         """
         return ArchitectService.get_locations()
+    
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="update-about",
+        url_name="update-about",
+    )
+    def architect_update_about(self, request):
+        """
+        Updates architect about.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response object indicating the result of the needs update.
+        """
+        return ArchitectService.architect_update_about(request)

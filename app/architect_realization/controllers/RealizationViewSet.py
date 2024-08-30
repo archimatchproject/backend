@@ -205,3 +205,25 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_realizations(request, pk)
+    
+    
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="get-architect-realizations",
+        serializer_class=RealizationSerializer,
+    )
+    def get_architect_realizations(self, request, pk=None):
+        """
+        Custom action to get realizations by category.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the category to get realizations for.
+
+        Returns:
+            Response: The response object containing the realizations for the specified category.
+        """
+        return RealizationService.get_architect_realizations(request, pk)
+    
+    

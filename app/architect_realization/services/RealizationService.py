@@ -246,3 +246,33 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
+        
+    @classmethod
+    def get_architect_realizations(cls, request, id):
+        """
+        Retrieves realizations based on project category.
+
+        Args:
+            request (Request): The request object containing the input data.
+            id (int): ID of the project category.
+
+        Returns:
+            Response: Response containing list of realizations related to the project category.
+        """
+        try:
+            realizations = Realization.objects.filter(architect__user=request.user)
+            filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(filtered_queryset, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(filtered_queryset, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))

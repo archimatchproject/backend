@@ -59,4 +59,9 @@ architect_realization_urlpatterns = [
         RealizationViewSet.as_view({"get": "get_realizations"}),
         name="get-realizations",
     ),
+        path(
+        "get-architect-realizations/",
+        RealizationViewSet.as_view({"get": "get_architect_realizations"}),
+        name="get-architect-realizations",
+    ),
 ]
