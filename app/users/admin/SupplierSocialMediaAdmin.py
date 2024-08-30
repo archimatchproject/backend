@@ -28,4 +28,4 @@ class SupplierSocialMediaAdmin(admin.ModelAdmin):
     model = SupplierSocialMedia
 
 
-admin.site.register(Supplier, SupplierSocialMediaAdmin)
+admin.site.register(SupplierSocialMedia, SupplierSocialMediaAdmin)
