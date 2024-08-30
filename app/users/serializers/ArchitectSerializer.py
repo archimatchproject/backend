@@ -19,6 +19,7 @@ from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
+from app.architect_realization.models.Realization import Realization
 from app.core.models.Budget import Budget
 from app.core.models.PreferredLocation import PreferredLocation
 from app.core.models.PropertyType import PropertyType
@@ -34,7 +35,7 @@ from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
 )
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-
+from app.users import GOLD,SILVER,EMPTY,BRONZE
 
 class ArchitectSerializer(serializers.ModelSerializer):
     """
@@ -65,7 +66,10 @@ class ArchitectSerializer(serializers.ModelSerializer):
     work_surfaces = WorkSurfaceSerializer(many=True, required=False)
     preferred_locations = PreferredLocationSerializer(many=True, required=False)
     budgets = BudgetSerializer(many=True, required=False)
-
+    profile_completion = serializers.SerializerMethodField()
+    badge = serializers.SerializerMethodField()
+    realization_count = serializers.SerializerMethodField()
+    
     class Meta:
         """
         Meta class for ArchitectSerializer.
@@ -77,7 +81,60 @@ class ArchitectSerializer(serializers.ModelSerializer):
 
         model = Architect
         fields = "__all__"
+    
+    def get_profile_completion(self, obj):
+        """
+        Calculate and return the profile completion percentage for the architect.
 
+        Args:
+            obj (Architect): The architect instance.
+
+        Returns:
+            int: The profile completion percentage.
+        """
+        fields = [
+            bool(obj.company_logo),
+            bool(obj.bio),
+            bool(obj.needs.exists()),
+            bool(obj.presentation_video),
+        ]
+        completion_percentage = (sum(fields) / 4) * 100
+        return int(completion_percentage)
+
+    def get_badge(self, obj):
+        """
+        Determine the badge level based on the profile completion percentage.
+
+        Args:
+            obj (Architect): The architect instance.
+
+        Returns:
+            str: The badge level as per BADGE_CHOICES.
+        """
+        percentage = self.get_profile_completion(obj)
+
+        badge_map = {
+            range(0, 26): EMPTY,
+            range(26, 51): BRONZE,
+            range(51, 76): SILVER,
+            range(76, 101): GOLD,
+        }
+
+        for badge_range, badge in badge_map.items():
+            if percentage in badge_range:
+                return badge
+    
+    def get_realization_count(self, obj):
+        """
+        Get the number of realizations associated with the architect.
+
+        Args:
+            obj (Architect): The architect instance.
+
+        Returns:
+            int: The count of realizations.
+        """
+        return Realization.objects.filter(architect=obj).count()
 
 class ArchitectBaseDetailsSerializer(serializers.ModelSerializer):
     """

@@ -145,3 +145,15 @@ MEETING_STATUS_CHOICES = [
     (PENDING, PENDING),
     (SUCCESS, SUCCESS),
 ]
+
+BRONZE = "Bronze"
+SILVER = "Silver"
+GOLD = "Gold"
+EMPTY = ""
+
+BADGE_CHOICES = [
+    (EMPTY, EMPTY),
+    (BRONZE, BRONZE),
+    (SILVER, SILVER),
+    (GOLD, GOLD),
+]

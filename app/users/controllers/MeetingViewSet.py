@@ -51,7 +51,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["GET"],
-        url_path="get-announcements-by-architect",
+        url_path="get-admin-meetings",
     )
     def get_admin_meetings(self, request):
         """
@@ -61,3 +61,17 @@ class MeetingViewSet(viewsets.ModelViewSet):
             Response: The list of meetings by architects.
         """
         return MeetingService.get_admin_meetings(request)
+    
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-daily-meetings",
+    )
+    def get_daily_meetings(self, request):
+        """
+        Custom action to get meetings by architect.
+
+        Returns:
+            Response: The list of meetings by architects.
+        """
+        return MeetingService.get_daily_meetings(request)
