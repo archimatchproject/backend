@@ -1,30 +1,23 @@
 """
-Module containing the SelectedSubscriptionPlan model.
+Module containing the SelectedSubscriptionPlan model and its derived models.
 """
 
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
 from rest_framework import serializers
-
 from app.core.models.BaseModel import BaseModel
 from app.subscription.models.PlanService import PlanService
 
 
 class SelectedSubscriptionPlan(BaseModel):
     """
-    Model representing a selected subscription plan.
+    Base model representing a selected subscription plan.
     """
 
     plan_name = models.CharField(max_length=255)
     plan_price = models.DecimalField(max_digits=10, decimal_places=2)
-    number_tokens = models.PositiveIntegerField()
-    remaining_tokens = models.PositiveIntegerField()
-
     active = models.BooleanField(default=True)
     free_plan = models.BooleanField(default=False)
-    services = models.ManyToManyField(PlanService)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     discount = models.BooleanField(default=False)
@@ -53,17 +46,14 @@ class SelectedSubscriptionPlan(BaseModel):
                 self.discount_percentage is None
                 or self.start_date is None
                 or self.end_date is None
-                or not self.discount_message
             ):
                 raise serializers.ValidationError(
-                    "the following fields are required: 'discount_percentage', 'start_date', \
-                        'end_date', and 'discount_message'."
+                    "The following fields are required: 'discount_percentage', 'start_date', and 'end_date'."
                 )
         else:
             self.discount_percentage = None
             self.start_date = None
             self.end_date = None
-            self.discount_message = None
 
     def __str__(self):
         """
@@ -75,6 +65,6 @@ class SelectedSubscriptionPlan(BaseModel):
         """
         Meta class for SelectedSubscriptionPlan model.
         """
-
+        abstract = True
         verbose_name = "Selected Subscription Plan"
         verbose_name_plural = "Selected Subscription Plans"

@@ -18,7 +18,7 @@ from app.subscription.routes.PaymentUrls import payment_urlpatterns
 from app.subscription.routes.PlanServiceUrls import plan_service_urlpatterns
 from app.subscription.routes.SubscriptionPlanUrls import subscription_plan_urlpatterns
 from app.subscription.routes.TokenPackUrls import token_pack_urlpatterns
-
+from app.subscription.routes.SupplierSubscriptionPlanUrls import supplier_subscription_plan_urlpatterns
 
 router = routers.DefaultRouter()
 
@@ -29,4 +29,5 @@ urlpatterns = [
     *token_pack_urlpatterns,
     *payment_urlpatterns,
     *invoice_urlpatterns,
+    *supplier_subscription_plan_urlpatterns
 ]

@@ -18,11 +18,12 @@ from rest_framework.response import Response
 
 from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer, SubscriptionPlanSerializer
-from app.users.models.Architect import Architect
+from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
+from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer, SubscriptionPlanSerializer, SupplierSubscriptionPlanSerializer
+from app.users.models.Supplier import Supplier
 
 
-class SubscriptionPlanService:
+class SupplierSubscriptionPlanService:
     """
     Service class for handling SubscriptionPlan operations.
 
@@ -45,19 +46,17 @@ class SubscriptionPlanService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = ArchitectSubscriptionPlanSerializer(data=data)
+        serializer = SupplierSubscriptionPlanSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        plan_services = validated_data.pop("plan_services", [])
 
         try:
             with transaction.atomic():
                 # Create SubscriptionPlan instance
-                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data)
-                subscription_plan.services.set(plan_services)
+                subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data)
 
                 return Response(
-                    ArchitectSubscriptionPlanSerializer(subscription_plan).data,
+                    SupplierSubscriptionPlanSerializer(subscription_plan).data,
                     status=status.HTTP_201_CREATED,
                 )
         except serializers.ValidationError as e:
@@ -80,10 +79,9 @@ class SubscriptionPlanService:
             Response: The response object containing the updated instance data.
         """
 
-        serializer = ArchitectSubscriptionPlanSerializer(instance, data=data, partial=partial)
+        serializer = SupplierSubscriptionPlanSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        plan_services = validated_data.pop("plan_services", [])
 
         try:
             with transaction.atomic():
@@ -91,10 +89,9 @@ class SubscriptionPlanService:
                     setattr(instance, attr, value)
                 instance.clean()
                 instance.save()
-                instance.services.set(plan_services)
 
                 return Response(
-                    ArchitectSubscriptionPlanSerializer(instance).data, status=status.HTTP_200_OK
+                    SupplierSubscriptionPlanSerializer(instance).data, status=status.HTTP_200_OK
                 )
         except serializers.ValidationError as e:
             raise e
@@ -102,7 +99,7 @@ class SubscriptionPlanService:
             raise APIException(detail=f"Error updating subscription plan: {str(e)}")
 
     @classmethod
-    def architect_get_upgradable_plans(cls, request):
+    def supplier_get_upgradable_plans(cls, request):
         """
         Handles fetching upgradable SubscriptionPlans for an architect.
 
@@ -117,18 +114,18 @@ class SubscriptionPlanService:
 
         try:
             with transaction.atomic():
-                architect = Architect.objects.get(user__id=user_id)
-                current_plan = architect.subscription_plan
-                subscription_plans = ArchitectSubscriptionPlan.objects.filter(
+                supplier = Supplier.objects.get(user__id=user_id)
+                current_plan = supplier.subscription_plan
+                subscription_plans = SupplierSubscriptionPlan.objects.filter(
                     plan_price__gt=current_plan.plan_price
                 )
 
                 return Response(
-                    ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data,
+                    SupplierSubscriptionPlanSerializer(subscription_plans, many=True).data,
                     status=status.HTTP_200_OK,
                 )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found")
+        except Supplier.DoesNotExist:
+            raise NotFound(detail="Supplier not found")
         except serializers.ValidationError as e:
             raise e
         except Exception as e:

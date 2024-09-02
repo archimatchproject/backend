@@ -10,20 +10,20 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.subscription.controllers.ManageSubscriptionPermission import ManageSubscriptionPermission
-from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer
-from app.subscription.services.SubscriptionPlanService import SubscriptionPlanService
+from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
+from app.subscription.serializers.SubscriptionPlanSerializer import SupplierSubscriptionPlanSerializer
+from app.subscription.services.SupplierSubscriptionPlanService import SupplierSubscriptionPlanService
 
 
-class SubscriptionPlanViewSet(viewsets.ModelViewSet):
+class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for handling SubscriptionPlan instances.
 
     This ViewSet provides endpoints for CRUD operations related to SubscriptionPlan instances.
     """
 
-    queryset = ArchitectSubscriptionPlan.objects.all()
-    serializer_class = ArchitectSubscriptionPlanSerializer
+    queryset = SupplierSubscriptionPlan.objects.all()
+    serializer_class = SupplierSubscriptionPlanSerializer
 
     def get_permissions(self):
         """
@@ -56,7 +56,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created SubscriptionPlan instance.
         """
-        return SubscriptionPlanService.create_subscription_plan(request.data)
+        return SupplierSubscriptionPlanService.create_subscription_plan(request.data)
 
     def update(self, request, *args, **kwargs):
         """
@@ -73,7 +73,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        return SubscriptionPlanService.update_subscription_plan(
+        return SupplierSubscriptionPlanService.update_subscription_plan(
             instance, request.data, partial=partial
         )
 
@@ -88,4 +88,4 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return SubscriptionPlanService.architect_get_upgradable_plans(request)
+        return SupplierSubscriptionPlanService.supplier_get_upgradable_plans(request)

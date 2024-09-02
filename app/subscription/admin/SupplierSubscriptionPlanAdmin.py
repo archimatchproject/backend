@@ -4,24 +4,17 @@ Admin registration module for the SubscriptionPlan model.
 
 from django.contrib import admin
 
-from app.subscription.models.SubscriptionPlan import SubscriptionPlan
+from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 
 
-class PlanServiceInline(admin.TabularInline):
-    """
-    Inline admin interface for PlanService.
-    """
-
-    model = SubscriptionPlan.services.through
-    extra = 1
 
 
-class SubscriptionPlanAdmin(admin.ModelAdmin):
+
+class SupplierSubscriptionPlanAdmin(admin.ModelAdmin):
     """
     Admin interface for SubscriptionPlan.
     """
 
-    inlines = [PlanServiceInline]
 
     list_display = (
         "plan_name",
@@ -38,4 +31,4 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
     list_filter = ("active", "free_plan")
 
 
-admin.site.register(SubscriptionPlan, SubscriptionPlanAdmin)
+admin.site.register(SupplierSubscriptionPlan, SupplierSubscriptionPlanAdmin)
