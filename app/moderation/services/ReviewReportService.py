@@ -57,7 +57,7 @@ class ReviewReportService:
         user = request.user
         try:
             architect = Architect.objects.get(user=user)
-            reasons = validated_data.pop("reasons")
+            reasons = validated_data.pop("report_reasons")
             with transaction.atomic():
                 # Create ReviewReport instance
                 review_report = ReviewReport.objects.create(
