@@ -24,7 +24,6 @@ class ClientReviewSerializer(serializers.ModelSerializer):
     architect_id = serializers.PrimaryKeyRelatedField(
         queryset=Architect.objects.all(), write_only=True
     )
-    architect = ArchitectSerializer(read_only=True)
     client = ClientSerializer(read_only=True)
 
     class Meta:
@@ -33,4 +32,4 @@ class ClientReviewSerializer(serializers.ModelSerializer):
         """
 
         model = ClientReview
-        fields = ["id", "architect_id", "architect", "client", "rating", "comment"]
+        fields = ["id", "architect_id","client", "rating", "comment","created_at"]
