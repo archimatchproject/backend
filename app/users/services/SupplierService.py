@@ -469,7 +469,7 @@ class SupplierService:
 
             current_cover_image_count = SupplierCoverImage.objects.filter(supplier=supplier).count()
 
-            if current_cover_image_count + len(cover_images) > 4:
+            if len(cover_images) > 3:
                 raise serializers.ValidationError(
                     detail=f"Adding these cover images would exceed the maximum of 3 allowed."
                 )
