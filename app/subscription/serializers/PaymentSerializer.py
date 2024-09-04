@@ -29,8 +29,6 @@ class PaymentSerializer(serializers.ModelSerializer):
             "admin_responsable",
             "payment_method",
             "status",
-            "payment_subscription_plan",
-            "subscription_plan",
             "notes",
         ]
 
