@@ -10,3 +10,6 @@ from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectS
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 from app.subscription.models.ArchitectPayment import ArchitectPayment
 from app.subscription.models.SupplierPayment import SupplierPayment
+from app.subscription.models.SupplierInvoice import SupplierInvoice
+from app.subscription.models.ArchitectInvoice import ArchitectInvoice
+from app.subscription.models.EventDiscount import EventDiscount

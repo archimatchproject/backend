@@ -122,7 +122,7 @@ class SubscriptionPlanService:
                 subscription_plans = ArchitectSubscriptionPlan.objects.filter(
                     plan_price__gt=current_plan.plan_price
                 )
-
+                
                 return Response(
                     ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data,
                     status=status.HTTP_200_OK,

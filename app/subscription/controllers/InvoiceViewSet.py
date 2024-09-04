@@ -5,8 +5,8 @@ ViewSet module for the Invoice model.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from app.subscription.models.Invoice import Invoice
-from app.subscription.serializers.InvoiceSerializer import InvoiceSerializer
+from app.subscription.models.ArchitectInvoice import ArchitectInvoice
+from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
 from app.subscription.services.InvoiceService import InvoiceService
 
 
@@ -15,8 +15,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     ViewSet for the Invoice model.
     """
 
-    queryset = Invoice.objects.all()
-    serializer_class = InvoiceSerializer
+    queryset = ArchitectInvoice.objects.all()
+    serializer_class = ArchitectInvoiceSerializer
 
     @action(detail=True, methods=["get"], url_path="export-invoice", url_name="export-invoice")
     def export_invoice(self, request, pk=None):

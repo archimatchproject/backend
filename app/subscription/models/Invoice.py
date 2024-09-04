@@ -33,7 +33,6 @@ class Invoice(BaseModel):
     """
 
     invoice_number = models.CharField(max_length=50, unique=True)
-    architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
     plan_name = models.CharField(max_length=255)
     plan_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.BooleanField(default=False)
@@ -50,7 +49,7 @@ class Invoice(BaseModel):
             str: A string representation of the invoice instance, typically
             using the invoice number and status.
         """
-        return f"Invoice {self.architect}"
+        return f"Invoice {self.amount}"
 
     class Meta:
         """
@@ -60,7 +59,7 @@ class Invoice(BaseModel):
             verbose_name (str): The name of the model in singular form.
             verbose_name_plural (str): The name of the model in plural form.
         """
-
+        abstract = True
         verbose_name = "Invoice"
         verbose_name_plural = "Invoices"
 

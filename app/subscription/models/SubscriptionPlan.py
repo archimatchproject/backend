@@ -6,8 +6,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework import serializers
 from app.core.models.BaseModel import BaseModel
+from app.subscription.models.EventDiscount import EventDiscount
 from app.subscription.models.PlanService import PlanService
-
+from datetime import date
 
 class SubscriptionPlan(BaseModel):
     """
@@ -58,6 +59,19 @@ class SubscriptionPlan(BaseModel):
             self.start_date = None
             self.end_date = None
             self.discount_message = None
+        
+    def get_effective_price(self):
+        """
+        Returns the effective price of the plan considering any active event discounts.
+        """
+        price = self.plan_price
+
+        # Apply event discount if applicable
+        active_event = EventDiscount.objects.filter(start_date__lte=date.today(), end_date__gte=date.today()).first()
+        if active_event:
+            price -= (price * active_event.discount_percentage / 100)
+
+        return price
 
     def __str__(self):
         """

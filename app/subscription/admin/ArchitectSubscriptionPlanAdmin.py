@@ -12,7 +12,7 @@ class PlanServiceInline(admin.TabularInline):
     Inline admin interface for PlanService.
     """
 
-    model = SubscriptionPlan.services.through
+    model = ArchitectSubscriptionPlan.services.through
     extra = 1
 
 

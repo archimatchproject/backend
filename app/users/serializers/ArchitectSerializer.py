@@ -31,6 +31,7 @@ from app.core.serializers.PreferredLocationSerializer import PreferredLocationSe
 from app.core.serializers.TerrainSurfaceSerializer import TerrainSurfaceSerializer
 from app.core.serializers.WorkSurfaceSerializer import WorkSurfaceSerializer
 from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
+    ArchitectSelectedSubscriptionPlanSerializer,
     SelectedSubscriptionPlanSerializer,
 )
 from app.users.models.Architect import Architect
@@ -61,7 +62,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
     work_types = WorkTypeSerializer(many=True)
     architect_speciality = ArchitectSpecialitySerializer()
     needs = NeedSerializer(many=True)
-    subscription_plan = SelectedSubscriptionPlanSerializer()
+    subscription_plan = ArchitectSelectedSubscriptionPlanSerializer()
     terrain_surfaces = TerrainSurfaceSerializer(many=True, required=False)
     work_surfaces = WorkSurfaceSerializer(many=True, required=False)
     preferred_locations = PreferredLocationSerializer(many=True, required=False)

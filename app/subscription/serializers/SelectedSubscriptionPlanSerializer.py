@@ -16,7 +16,7 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
-    services = ServiceSerializer(many=True, read_only=True)
+    
     plan_services = serializers.PrimaryKeyRelatedField(
         queryset=PlanService.objects.all(), write_only=True, many=True
     )
@@ -39,6 +39,8 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
         ]
+    
+
 
 
 class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -46,7 +48,7 @@ class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
-    services = ServiceSerializer(many=True, read_only=True)
+    services = serializers.SerializerMethodField()
     plan_services = serializers.PrimaryKeyRelatedField(
         queryset=PlanService.objects.all(), write_only=True, many=True
     )
@@ -69,7 +71,17 @@ class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
         ]
-        
+    
+    def get_services(self, obj):
+        all_services = PlanService.objects.all()
+        selected_services = obj.services.all()
+        return [
+            {
+                "service": ServiceSerializer(service).data,
+                "included": service in selected_services,
+            }
+            for service in all_services
+        ]
 
 
 class SupplierSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):

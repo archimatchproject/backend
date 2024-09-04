@@ -42,7 +42,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         """
         Override the create method to use PaymentService for handling the creation of a Payment.
         """
-        return PaymentService.create_payment(request, request.data)
+        return PaymentService.create_architect_payment(request, request.data)
 
     @action(detail=False, methods=["GET"])
     def get_payment_methods(self, request):

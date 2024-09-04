@@ -5,26 +5,19 @@ Serializer module for the Payment model.
 from rest_framework import serializers
 
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.subscription.models.ArchitectPayment import ArchitectPayment
 from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
+from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
 from app.subscription.models.Payment import Payment
-from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import SubscriptionPlanSerializer
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import ArchitectSelectedSubscriptionPlanSerializer
+from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer,SupplierSubscriptionPlanSerializer
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     """
     Serializer for the Payment model.
     """
-    admin_responsable = serializers.EmailField(read_only=True)
-    payment_subscription_plan = SubscriptionPlanSerializer(
-        source="subscription_plan", read_only=True
-    )
-    subscription_plan = serializers.PrimaryKeyRelatedField(
-        queryset=SelectedSubscriptionPlan.objects.all(), write_only=True
-    )
-    notes = NoteSerializer(many=True, read_only=True)
-
     class Meta:
         """
         Meta class for PaymentSerializer.
@@ -48,7 +41,7 @@ class ArchitectPaymentSerializer(serializers.ModelSerializer):
 
     architect = serializers.EmailField(read_only=True)
     admin_responsable = serializers.EmailField(read_only=True)
-    payment_subscription_plan = SubscriptionPlanSerializer(
+    payment_subscription_plan = ArchitectSelectedSubscriptionPlanSerializer(
         source="subscription_plan", read_only=True
     )
     subscription_plan = serializers.PrimaryKeyRelatedField(
@@ -61,7 +54,7 @@ class ArchitectPaymentSerializer(serializers.ModelSerializer):
         Meta class for PaymentSerializer.
         """
 
-        model = Payment
+        model = ArchitectPayment
         fields = [
             "id",
             "architect",
@@ -80,7 +73,7 @@ class SupplierPaymentSerializer(serializers.ModelSerializer):
 
     supplier = serializers.EmailField(read_only=True)
     admin_responsable = serializers.EmailField(read_only=True)
-    payment_subscription_plan = SubscriptionPlanSerializer(
+    payment_subscription_plan = SupplierSubscriptionPlanSerializer(
         source="subscription_plan", read_only=True
     )
     subscription_plan = serializers.PrimaryKeyRelatedField(
@@ -103,4 +96,26 @@ class SupplierPaymentSerializer(serializers.ModelSerializer):
             "payment_subscription_plan",
             "subscription_plan",
             "notes",
+        ]
+        
+        
+
+class ArchitectPaymentPOSTSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Payment model.
+    """
+
+    subscription_plan = serializers.PrimaryKeyRelatedField(
+        queryset=ArchitectSubscriptionPlan.objects.all(), write_only=True
+    )
+    
+    class Meta:
+        """
+        Meta class for PaymentSerializer.
+        """
+
+        model = Payment
+        fields = [
+            "payment_method",
+            "subscription_plan",
         ]

@@ -32,11 +32,11 @@ class Payment(BaseModel):
     status = models.CharField(
         max_length=10, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_CHOICES[0][0]
     )
-    subscription_plan = models.ForeignKey(SelectedSubscriptionPlan, on_delete=models.CASCADE)
+    
     notes = GenericRelation(Note)
 
     def __str__(self):
-        return f"{self.subscription_plan.plan_name}"
+        return f"{self.status}"
 
     class Meta:
         verbose_name = "Payment"

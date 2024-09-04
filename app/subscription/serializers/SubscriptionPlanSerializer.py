@@ -41,11 +41,11 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the ArchitectSubscriptionPlan model.
     """
 
-    services = ServiceSerializer(many=True, read_only=True)
+    services = serializers.SerializerMethodField(read_only=True)
     plan_services = serializers.PrimaryKeyRelatedField(
         queryset=PlanService.objects.all(), write_only=True, many=True
     )
-
+    effective_price = serializers.SerializerMethodField()
     class Meta:
         """
         Meta class for ArchitectSubscriptionPlanSerializer.
@@ -67,13 +67,28 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
+            "effective_price"
         ]
+        
+    def get_services(self, obj):
+        all_services = PlanService.objects.all()
+        selected_services = obj.services.all()
+        return [
+            {
+                "service": ServiceSerializer(service).data,
+                "included": service in selected_services,
+            }
+            for service in all_services
+        ]
+    
+    def get_effective_price(self, obj):
+        return obj.get_effective_price()
         
 class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
     Serializer for the SupplierSubscriptionPlan model.
     """
-
+    effective_price = serializers.SerializerMethodField()
     class Meta:
         """
         Meta class for SupplierSubscriptionPlanSerializer.
@@ -93,4 +108,8 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
+            "effective_price"
         ]
+    
+    def get_effective_price(self, obj):
+        return obj.get_effective_price()

@@ -8,6 +8,7 @@ Classes:
     PaymentService: Service class for Payment operations.
 """
 
+
 from django.db import transaction
 
 from rest_framework import serializers
@@ -17,17 +18,19 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.subscription import PAYMENT_METHOD_CHOICES
+from app.subscription.models import ArchitectPayment
+from app.subscription.models.ArchitectInvoice import ArchitectInvoice
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
+from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
+from app.subscription.models.SupplierInvoice import SupplierInvoice
 from app.subscription.models.SupplierPayment import SupplierPayment
-from app.subscription.models.Invoice import Invoice
-from app.subscription.models.Payment import Payment
-from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
-from app.subscription.serializers.InvoiceSerializer import InvoiceSerializer
-from app.subscription.serializers.PaymentSerializer import PaymentSerializer, SupplierPaymentSerializer
+from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer, SupplierInvoiceSerializer
+from app.subscription.serializers.PaymentSerializer import ArchitectPaymentPOSTSerializer, ArchitectPaymentSerializer, PaymentSerializer, SupplierPaymentSerializer
 from app.users.models.Architect import Architect
 from app.users.models.Supplier import Supplier
-
+from datetime import datetime, timedelta
 
 class PaymentService:
     """
@@ -51,10 +54,15 @@ class PaymentService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = PaymentSerializer(data=data)
+        serializer = ArchitectPaymentPOSTSerializer(data=data)
+        
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
+        
+        # Set start_date to today and end_date to 30 days from today
+        start_date = datetime.today().date()
+        end_date = start_date + timedelta(days=30)
+        
         user = request.user
         try:
             architect = Architect.objects.get(user=user)
@@ -64,16 +72,16 @@ class PaymentService:
             selected_plan_data = {
                 "plan_name": subscription_plan.plan_name,
                 "plan_price": subscription_plan.plan_price,
-                "number_tokens": subscription_plan.number_tokens + subscription_plan.free_tokens,
-                "remaining_tokens": subscription_plan.number_tokens + subscription_plan.free_tokens,
+                "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
+                "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
                 "active": subscription_plan.active,
                 "free_plan": subscription_plan.free_plan,
-                "start_date": subscription_plan.start_date,
-                "end_date": subscription_plan.end_date,
+                "start_date": start_date,
+                "end_date": end_date,
                 "discount": subscription_plan.discount,
                 "discount_percentage": subscription_plan.discount_percentage,
             }
-            selected_plan = SelectedSubscriptionPlan.objects.create(**selected_plan_data)
+            selected_plan = ArchitectSelectedSubscriptionPlan.objects.create(**selected_plan_data)
 
             # Add services to the SelectedSubscriptionPlan
             selected_plan.services.set(subscription_plan.services.all())
@@ -82,11 +90,11 @@ class PaymentService:
             architect.save()
 
             with transaction.atomic():
-                payment = Payment.objects.create(
-                    architect=architect, subscription_plan=selected_plan, **validated_data
+                payment = ArchitectPayment.objects.create(
+                    architect=architect,subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
                 )
 
-                invoice = Invoice(
+                invoice = ArchitectInvoice(
                     invoice_number=f"INV-{payment.id}",
                     architect=architect,
                     plan_name=selected_plan.plan_name,
@@ -103,14 +111,14 @@ class PaymentService:
 
                 return Response(
                     {
-                        "payment": PaymentSerializer(payment).data,
-                        "invoice": InvoiceSerializer(invoice).data,
+                        "payment": ArchitectPaymentSerializer(payment).data,
+                        "invoice": ArchitectInvoiceSerializer(invoice).data,
                     },
                     status=status.HTTP_201_CREATED,
                 )
         except Architect.DoesNotExist:
             raise NotFound(detail="Authenticated user is not an architect.")
-        except SubscriptionPlan.DoesNotExist:
+        except ArchitectSubscriptionPlan.DoesNotExist:
             raise NotFound(detail="Subscription plan does not exist.")
         except serializers.ValidationError as e:
             raise e
@@ -175,25 +183,25 @@ class PaymentService:
                     supplier=supplier, subscription_plan=selected_plan, **validated_data
                 )
 
-                # invoice = Invoice(
-                #     invoice_number=f"INV-{payment.id}",
-                #     architect=architect,
-                #     plan_name=selected_plan.plan_name,
-                #     plan_price=selected_plan.plan_price,
-                #     discount=selected_plan.discount,
-                #     discount_percentage=(
-                #         selected_plan.discount_percentage if selected_plan.discount else None
-                #     ),
-                #     discount_message=(
-                #         selected_plan.discount_message if selected_plan.discount else ""
-                #     ),
-                # )
-                # invoice.save()
+                invoice = SupplierInvoice(
+                    invoice_number=f"INV-{payment.id}",
+                    architect=architect,
+                    plan_name=selected_plan.plan_name,
+                    plan_price=selected_plan.plan_price,
+                    discount=selected_plan.discount,
+                    discount_percentage=(
+                        selected_plan.discount_percentage if selected_plan.discount else None
+                    ),
+                    discount_message=(
+                        selected_plan.discount_message if selected_plan.discount else ""
+                    ),
+                )
+                invoice.save()
 
                 return Response(
                     {
                         "payment": PaymentSerializer(payment).data,
-                        # "invoice": InvoiceSerializer(invoice).data,
+                        "invoice": SupplierInvoiceSerializer(invoice).data,
                     },
                     status=status.HTTP_201_CREATED,
                 )
@@ -205,3 +213,6 @@ class PaymentService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error creating payment: {str(e)}")
+        
+
+    
