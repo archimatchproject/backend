@@ -136,3 +136,22 @@ class CollectionViewSet(viewsets.ModelViewSet):
         """
 
         return CollectionService.create_saved_collections(request)
+    
+    @action(detail=True, methods=["GET"])
+    def get_all_collections(self, request):
+        """
+        Retrieve all Collections.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `get_collections` class method
+        of `CollectionService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        return CollectionService.get_all_collections(request)

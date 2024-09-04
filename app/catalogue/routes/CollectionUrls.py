@@ -56,4 +56,9 @@ collection_urlpatterns = [
         CollectionViewSet.as_view({"post": "create_saved_collections"}),
         name="create-saved-collections",
     ),
+    path(
+        "collection/all-collections",
+        CollectionViewSet.as_view({"get": "get_all_collections"}),
+        name="all-collections",
+    ),
 ]

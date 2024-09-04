@@ -250,3 +250,27 @@ class CollectionService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error creating collections: {str(e)}")
+        
+        
+
+    @classmethod
+    def get_all_collections(cls, request):
+        """
+        Handle GET request and return paginated collection objects.
+        This method retrieves all collection objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized collection objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = Collection.objects.filter(supplier__user=request.user)
+        
+        serializer = CollectionSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
