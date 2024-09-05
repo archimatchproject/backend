@@ -30,7 +30,7 @@ class SubscriptionPlan(BaseModel):
     discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    most_popular = models.BooleanField(default=True)
+    most_popular = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         """
