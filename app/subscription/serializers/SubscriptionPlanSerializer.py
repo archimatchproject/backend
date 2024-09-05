@@ -33,6 +33,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
+            "most_popular"
         ]
 
 
@@ -67,7 +68,8 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
-            "effective_price"
+            "effective_price",
+            "most_popular"
         ]
         
     def get_services(self, obj):
@@ -108,7 +110,8 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
-            "effective_price"
+            "effective_price",
+            "most_popular"
         ]
     
     def get_effective_price(self, obj):

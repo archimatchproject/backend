@@ -30,7 +30,8 @@ class SubscriptionPlan(BaseModel):
     discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-
+    most_popular = models.BooleanField(default=True)
+    
     def save(self, *args, **kwargs):
         """
         Custom save method to ensure the plan price is zero if the plan is free.
