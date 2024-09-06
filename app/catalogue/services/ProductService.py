@@ -93,7 +93,7 @@ class ProductService:
         try:
             with transaction.atomic():
                 # Update Product instance
-                fields = ["name", "price", "collection", "description"]
+                fields = ["name", "price", "collection", "description","visibility"]
                 for field in fields:
                     setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 

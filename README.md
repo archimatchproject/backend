@@ -54,6 +54,10 @@ Apply the initial Model Instances:
 python manage.py loaddata  --format=yaml architect_specialities.yaml announcement_needs.yaml project_categories.yaml property_types.yaml work_types.yaml renovation_pieces.yaml architectural_styles.yaml project_extensions.yaml supplier_specialities.yaml preferred_locations.yaml work_surfaces.yaml budgets.yaml terrain_surfaces.yaml decisions.yaml time_slots.yaml
 ```
 
+```sh
+python manage.py load_plan_services app/subscription/fixtures/plan_services.yaml
+```
+
 ### Create Superuser (Optional)
 
 If your project uses Django's admin interface, you can create a superuser account to access the admin panel:

@@ -836,3 +836,31 @@ class SupplierService:
             raise e
         except Exception as e:
             raise APIException(detail=str(e))
+        
+
+
+    @classmethod
+    def delete_showroom(cls, pk):
+        """
+        Registers a new supplier in the system.
+
+        Args:
+            request (Request): Django request object containing supplier's email.
+
+        Returns:
+            Response: Response object indicating success or failure of supplier registration.
+        """
+        try:
+
+            showroom = ShowRoom.objects.get(id=pk)
+            showroom.delete()
+            return Response(
+                {"message":"show room deleted"},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except ShowRoom.DoesNotExist:
+            raise NotFound(detail="ShowRoom does not exist")
+        except APIException as e:
+            raise e
+        except Exception:
+            raise APIException(detail="error resending email to supplier")
