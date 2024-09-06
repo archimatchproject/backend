@@ -71,7 +71,6 @@ class SubscriptionPlan(BaseModel):
         active_event = EventDiscount.objects.filter(start_date__lte=date.today(), end_date__gte=date.today()).first()
         if active_event:
             price -= (price * active_event.discount_percentage / 100)
-
         return price
 
     def __str__(self):

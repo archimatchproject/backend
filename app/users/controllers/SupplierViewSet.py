@@ -404,3 +404,20 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         return SupplierService.supplier_update_catalog_visibility(request)
+
+    @action(
+        detail=False,
+        methods=["DELETE"],
+        url_path="delete-showroom",
+    )
+    def delete_showroom(self, request, pk=None):
+        """
+        deletes a showroom by id 
+        Args:
+            
+            pk (int): The primary key of the showroom.
+
+        Returns:
+            Response: Response containing show room details.
+        """
+        return SupplierService.delete_showroom(pk)
