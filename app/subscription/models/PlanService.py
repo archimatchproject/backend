@@ -18,7 +18,6 @@ class PlanService(BaseModel):
     special_identifier = models.CharField(
         max_length=50, 
         choices=ARCHITECT_SUBSCRIPTION_IDENTIFIERS,
-        unique=True
     )
     permissions = models.ManyToManyField(Permission, blank=True)
     
