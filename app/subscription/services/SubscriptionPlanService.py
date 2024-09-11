@@ -50,12 +50,17 @@ class SubscriptionPlanService:
         validated_data = serializer.validated_data
         plan_services = validated_data.pop("plan_services", [])
         
-        event_discount = validated_data.pop("event_discount_id",None)
-        
+        event_discount = validated_data.pop("event_discount_id", None)
+        most_popular = validated_data.get("most_popular", False)
+
         try:
             with transaction.atomic():
+                # If the current subscription plan is marked as most popular, update all others
+                if most_popular:
+                    ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
+                
                 # Create SubscriptionPlan instance
-                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data,event_discount=event_discount)
+                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
                 subscription_plan.services.set(plan_services)
 
                 return Response(
@@ -87,10 +92,15 @@ class SubscriptionPlanService:
         validated_data = serializer.validated_data
         plan_services = validated_data.pop("plan_services", [])
         event_discount = validated_data.pop("event_discount_id",None)
+        most_popular = validated_data.get("most_popular", False)
         try:
             with transaction.atomic():
+                if most_popular:
+                    ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
+                
                 for attr, value in validated_data.items():
                     setattr(instance, attr, value)
+
                 instance.event_discount = event_discount
                 instance.clean()
                 instance.save()
