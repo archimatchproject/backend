@@ -124,8 +124,7 @@ class AnnouncementService:
                 else:
                     if isinstance(user, AnonymousUser):
                         raise serializers.ValidationError(
-                            detail="You must be logged in to create an announcement. \
-                            Please provide a valid authentication token."
+                            detail="You must be a valid client to create an announcement"
                         )
                     client_instance = Client.objects.get(user=user)
                 announcement = Announcement.objects.create(client=client_instance, **validated_data)
