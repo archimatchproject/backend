@@ -9,7 +9,7 @@ Classes:
 """
 
 from django.db import transaction
-
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -62,4 +62,22 @@ class EventDiscountService:
             return paginator.get_paginated_response(serializer.data)
 
         serializer = EventDiscountSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    @classmethod
+    def get_active_event_discount(cls):
+        """
+        Retrieve EventDiscount objects with a start date greater than or equal to today.
+
+        This method retrieves all EventDiscount objects from the database
+        where the start date is greater than or equal to today's date.
+
+        Returns:
+            Response: A response containing serialized EventDiscount objects.
+        """
+        today = timezone.now().date()
+        queryset = EventDiscount.objects.filter(start_date__gte=today)
+        serializer = EventDiscountSerializer(queryset, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -31,6 +31,7 @@ class SubscriptionPlan(BaseModel):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     most_popular = models.BooleanField(default=False)
+    event_discount = models.ForeignKey(EventDiscount, on_delete=models.SET_NULL, blank=True, null=True)
     
     def save(self, *args, **kwargs):
         """
@@ -68,9 +69,8 @@ class SubscriptionPlan(BaseModel):
         price = self.plan_price
 
         # Apply event discount if applicable
-        active_event = EventDiscount.objects.filter(start_date__lte=date.today(), end_date__gte=date.today()).first()
-        if active_event:
-            price -= (price * active_event.discount_percentage / 100)
+        if self.event_discount:
+            price -= (price * self.event_discount.discount_percentage / 100)
         return price
 
     def __str__(self):

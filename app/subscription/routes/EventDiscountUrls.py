@@ -36,4 +36,9 @@ event_discount_urlpatterns = [
         EventDiscountViewSet.as_view({"delete": "destroy"}),
         name="event-discount-delete",
     ),
+    path(
+        "event-discount/get-active-discount/",
+        EventDiscountViewSet.as_view({"get": "get_active_event_discount"}),
+        name="get-active-discount",
+    ),
 ]

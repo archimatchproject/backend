@@ -5,9 +5,11 @@ Serializer module for the SubscriptionPlan model.
 from rest_framework import serializers
 
 from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
+from app.subscription.models.EventDiscount import EventDiscount
 from app.subscription.models.PlanService import PlanService
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
+from app.subscription.serializers.EventDiscountSerializer import EventDiscountSerializer
 from app.subscription.serializers.ServiceSerializer import ServiceSerializer
 
 
@@ -33,7 +35,8 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "discount_message",
-            "most_popular"
+            "most_popular",
+            "event_discount"
         ]
 
 
@@ -47,6 +50,11 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
         queryset=PlanService.objects.all(), write_only=True, many=True
     )
     effective_price = serializers.SerializerMethodField()
+    event_discount_id = serializers.PrimaryKeyRelatedField(
+        queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
+    )
+    event_discount = EventDiscountSerializer(read_only=True)
+
     class Meta:
         """
         Meta class for ArchitectSubscriptionPlanSerializer.
@@ -69,7 +77,9 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             "end_date",
             "discount_message",
             "effective_price",
-            "most_popular"
+            "most_popular",
+            "event_discount",
+            "event_discount_id"
         ]
         
     def get_services(self, obj):
@@ -91,6 +101,10 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SupplierSubscriptionPlan model.
     """
     effective_price = serializers.SerializerMethodField()
+    event_discount_id = serializers.PrimaryKeyRelatedField(
+        queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
+    )
+    event_discount = EventDiscountSerializer(read_only=True)
     class Meta:
         """
         Meta class for SupplierSubscriptionPlanSerializer.
@@ -111,7 +125,9 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "end_date",
             "discount_message",
             "effective_price",
-            "most_popular"
+            "most_popular",
+            "event_discount"
+            "event_discount_id"
         ]
     
     def get_effective_price(self, obj):

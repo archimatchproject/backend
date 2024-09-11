@@ -71,7 +71,7 @@ class PaymentService:
             # Create the SelectedSubscriptionPlan
             selected_plan_data = {
                 "plan_name": subscription_plan.plan_name,
-                "plan_price": subscription_plan.plan_price,
+                "plan_price": subscription_plan.get_effective_price(),
                 "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
                 "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
                 "active": subscription_plan.active,
@@ -163,7 +163,7 @@ class PaymentService:
             # Create the SelectedSubscriptionPlan
             selected_plan_data = {
                 "plan_name": subscription_plan.plan_name,
-                "plan_price": subscription_plan.plan_price,
+                "plan_price": subscription_plan.get_effective_price(),
                 "collection_number": subscription_plan.collection_number,
                 "product_number_per_collection": subscription_plan.product_number_per_collection,
                 "active": subscription_plan.active,
@@ -185,7 +185,7 @@ class PaymentService:
 
                 invoice = SupplierInvoice(
                     invoice_number=f"INV-{payment.id}",
-                    architect=architect,
+                    supplier=supplier,
                     plan_name=selected_plan.plan_name,
                     plan_price=selected_plan.plan_price,
                     discount=selected_plan.discount,

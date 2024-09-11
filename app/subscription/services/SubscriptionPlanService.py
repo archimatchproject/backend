@@ -49,11 +49,13 @@ class SubscriptionPlanService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         plan_services = validated_data.pop("plan_services", [])
-
+        
+        event_discount = validated_data.pop("event_discount_id",None)
+        
         try:
             with transaction.atomic():
                 # Create SubscriptionPlan instance
-                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data)
+                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data,event_discount=event_discount)
                 subscription_plan.services.set(plan_services)
 
                 return Response(
@@ -84,11 +86,12 @@ class SubscriptionPlanService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         plan_services = validated_data.pop("plan_services", [])
-
+        event_discount = validated_data.pop("event_discount_id",None)
         try:
             with transaction.atomic():
                 for attr, value in validated_data.items():
                     setattr(instance, attr, value)
+                instance.event_discount = event_discount
                 instance.clean()
                 instance.save()
                 instance.services.set(plan_services)
