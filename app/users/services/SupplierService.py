@@ -62,54 +62,44 @@ class SupplierService:
         Returns:
             Response: Response object indicating success or failure of supplier registration.
         """
-        try:
-            data = request.data
-            email = data.get("email")
 
-            if email is None:
-                raise serializers.ValidationError(detail="Email is required")
+        data = request.data
+        email = data.get("email")
 
-            if ArchimatchUser.objects.filter(email=email).exists():
-                raise serializers.ValidationError(detail="User with this email already exists")
+        if not email:
+            raise APIException(detail="Email is required", code="validation_error")
+        
+        # if ArchimatchUser.objects.filter(email=email).exists():
+        #     raise APIException(detail="User with this email already exists", code="validation_error")
+        user = ArchimatchUser.objects.create(
+            email=email,
+            username=email,
+            user_type="Supplier",
+        )
+        Supplier.objects.create(user=user)
 
-            user = ArchimatchUser.objects.create(
-                email=email,
-                username=email,
-                user_type="Supplier",
-            )
-            Supplier.objects.create(user=user)
-            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
-            language_code = get_language_from_request(request)
-            token = generate_password_reset_token(user.id)
-            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
-            signal_data = {
-                "template_name": "supplier_invite.html",
-                "context": {
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "email": email,
-                    "reset_link": reset_link,
-                },
-                "to_email": email,
-                "subject": "Archimatch Invite Supplier",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
-            response_data = {
-                "message": "Supplier successfully created",
-                "status_code": status.HTTP_201_CREATED,
-            }
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        language_code = get_language_from_request(request)
+        token = generate_password_reset_token(user.id)
+        url = f"{settings.BASE_FRONTEND_URL}/{language_code}"
+        reset_link = f"{url}/supplier/login/first-login-password/{token}"
 
-            return Response(
-                response_data,
-                status=response_data["status_code"],
-            )
+        signal_data = {
+            "template_name": "supplier_invite.html",
+            "context": {
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": email,
+                "reset_link": reset_link,
+            },
+            "to_email": email,
+            "subject": "Archimatch Invite Supplier",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
 
-        except APIException as e:
-            raise e
-        except Exception:
-            raise APIException(detail="error singing up supplier")
+        return True, "Supplier successfully created"
+
 
     @classmethod
     def supplier_login(cls, request):

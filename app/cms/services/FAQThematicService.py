@@ -47,10 +47,13 @@ class FAQThematicService:
         serializer = FAQThematicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
+        target_user_type = request.data.get("targetUserType",False)
+        if not target_user_type:
+            raise serializers.ValidationError(detail="target user type is required")
         try:
             with transaction.atomic():
 
-                thematic = FAQThematic.objects.create(**validated_data, admin=request.user.admin)
+                thematic = FAQThematic.objects.create(**validated_data,target_user_type=target_user_type, admin=request.user.admin)
                 return Response(
                     FAQThematicSerializer(thematic).data, status=status.HTTP_201_CREATED
                 )

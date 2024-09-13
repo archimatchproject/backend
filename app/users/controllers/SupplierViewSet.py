@@ -10,13 +10,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.users.controllers.SupplierFilter import SupplierFilter
 from app.users.models.Supplier import Supplier
 from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.SupplierService import SupplierService
-
+from rest_framework import status
 
 class SupplierViewSet(viewsets.ModelViewSet):
     """
@@ -38,6 +40,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="signup",
         serializer_class=UserAuthSerializer,
     )
+    @handle_service_exceptions
     def supplier_signup(self, request):
         """
         Allows a supplier to sign up using a custom action.
@@ -49,7 +52,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the signup attempt.
         """
-        return SupplierService.supplier_signup(request)
+        success,message = SupplierService.supplier_signup(request)
+        return build_response(success=success, message=message, status=status.HTTP_201_CREATED)
 
     @action(
         detail=False,
