@@ -21,8 +21,8 @@ from app.cms.routes.GuideArticleUrls import guide_article_urlpatterns
 from app.cms.routes.GuideThematicUrls import guide_thematic_urlpatterns
 from app.cms.routes.PrivacyPolicyUrls import privacy_policy_urlpatterns
 from app.cms.routes.TermsAndConditionsUrls import terms_and_conditions_urlpatterns
-
-
+from app.cms.routes.CookiesPolicyUrls import cookies_policy_urlpatterns
+from app.cms.routes.CGVCGUPolicyUrls import cgu_cgv_urlpatterns
 router = routers.DefaultRouter()
 
 urlpatterns = [
@@ -35,4 +35,6 @@ urlpatterns = [
     *faq_question_urlpatterns,
     *privacy_policy_urlpatterns,
     *terms_and_conditions_urlpatterns,
+    *cookies_policy_urlpatterns,
+    *cgu_cgv_urlpatterns
 ]
