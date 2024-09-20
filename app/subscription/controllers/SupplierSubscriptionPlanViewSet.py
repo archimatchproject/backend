@@ -13,7 +13,9 @@ from app.subscription.controllers.ManageSubscriptionPermission import ManageSubs
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 from app.subscription.serializers.SubscriptionPlanSerializer import SupplierSubscriptionPlanSerializer
 from app.subscription.services.SupplierSubscriptionPlanService import SupplierSubscriptionPlanService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
     """
@@ -43,6 +45,7 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageSubscriptionPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Create a new SubscriptionPlan instance.
@@ -56,8 +59,11 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created SubscriptionPlan instance.
         """
-        return SupplierSubscriptionPlanService.create_subscription_plan(request.data)
+        success,data = SupplierSubscriptionPlanService.create_subscription_plan(request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
+
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Update an existing SubscriptionPlan instance.
@@ -73,11 +79,14 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        return SupplierSubscriptionPlanService.update_subscription_plan(
+        success,data = SupplierSubscriptionPlanService.update_subscription_plan(
             instance, request.data, partial=partial
         )
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["get"], url_path="upgradable-plans", url_name="upgradable-plans")
+    @handle_service_exceptions
     def get_upgradable_plans(self, request):
         """
         Custom action to fetch upgradable subscription plans for an architect.
@@ -88,4 +97,5 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return SupplierSubscriptionPlanService.supplier_get_upgradable_plans(request)
+        success,data = SupplierSubscriptionPlanService.supplier_get_upgradable_plans(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

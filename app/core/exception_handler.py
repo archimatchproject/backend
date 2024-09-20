@@ -11,10 +11,9 @@ from rest_framework.exceptions import (
 import logging
 from rest_framework import status
 import re
-# Set up a logger
+from django.core.exceptions import ObjectDoesNotExist
+
 logger = logging.getLogger(__name__)
-
-
 
 class CustomAPIException(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -31,7 +30,7 @@ class CustomAPIException(APIException):
         if status_code is not None:
             self.status_code = status_code
 
-# Exception mappings including IntegrityError and APIException, with status codes
+
 EXCEPTION_MAPPINGS = {
     ValidationError: {"code": "validation_error", "message": "Validation Error: {error}", "status": status.HTTP_400_BAD_REQUEST},
     PermissionDenied: {"code": "permission_denied", "message": "Permission Denied: {error}", "status": status.HTTP_403_FORBIDDEN},
@@ -41,19 +40,44 @@ EXCEPTION_MAPPINGS = {
     Throttled: {"code": "throttled", "message": "Request Limit Exceeded: {error}", "status": status.HTTP_429_TOO_MANY_REQUESTS},
     IntegrityError: {"code": "integrity_error", "message": "{error}", "status": status.HTTP_400_BAD_REQUEST},
     APIException: {"code": "api_error", "message": "{error}", "status": status.HTTP_400_BAD_REQUEST}
+    
 }
 
 def extract_integrity_error_details(error_message):
     """
     Extracts and formats details from an IntegrityError message.
     """
-    # Example: psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "users_archimatchuser_username_key"
-    # DETAIL:  Key (username)=(ghazichaftar@gmail.com) already exists.
     match = re.search(r'DETAIL:  Key \((\w+)\)=\(([^)]+)\) already exists\.', error_message)
     if match:
         field_name, field_value = match.groups()
         return f"Conflict with field '{field_name}' having value '{field_value}'"
     return error_message
+
+def get_resource_name_from_exception(exception):
+    """
+    Extract the resource name from a DoesNotExist exception or its message.
+    
+    Args:
+        exception (ObjectDoesNotExist): The exception instance.
+    
+    Returns:
+        str: A human-readable resource name.
+    """
+    # Try to extract resource name from the exception message
+    match = re.search(r'(\w+) matching query does not exist', str(exception))
+    
+    if match:
+        # If the exception message contains the resource name, return it
+        return match.group(1)
+    
+    # Fallback to extracting the resource name from the exception class name
+    model_name = exception.__class__.__name__.replace('DoesNotExist', '')
+    
+    # Format the model name for better readability if needed (e.g., converting CamelCase to spaced words)
+    formatted_model_name = re.sub(r'(?<!^)(?=[A-Z])', ' ', model_name)
+    
+    return formatted_model_name
+
 
 def handle_service_exceptions(func):
     def wrapper(*args, **kwargs):
@@ -74,10 +98,12 @@ def handle_service_exceptions(func):
             
             # Raise custom API exception with status_code
             raise CustomAPIException(detail=formatted_message, code=error_info['code'], status_code=error_info['status'])
+        except ObjectDoesNotExist as ex:
+            resource_name = get_resource_name_from_exception(ex)
+            detail = f"{resource_name} not found."
+            logger.error(f"{detail} - Details: {str(ex)}", exc_info=True)  
+            raise CustomAPIException(detail=detail,code="not_found", status_code=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
-            # Log the full error details for internal debugging
             logger.error("Unhandled Exception: %s", str(ex), exc_info=True)
-            
-            # Return a generic error message to the client with a 500 status
             raise CustomAPIException(detail="An internal error occurred. Please contact support.", code="internal_error", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return wrapper

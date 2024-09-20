@@ -49,23 +49,13 @@ class TokenPackService:
         token_pack_id = request.data.get("token_pack_id", False)
         if not token_pack_id:
             raise NotFound(detail="Token pack is required")
-        try:
-            with transaction.atomic():
-                token_pack = TokenPack.objects.get(id=token_pack_id)
-                architect = Architect.objects.get(user__id=user_id)
-                current_plan = architect.subscription_plan
-                current_plan.remaining_tokens += token_pack.number_tokens + token_pack.number_free_tokens
-                current_plan.save()
-                architect.save()
-                return Response(
-                    {"message": "Token pack is successfully chosen"},
-                    status=status.HTTP_200_OK,
-                )
-        except TokenPack.DoesNotExist:
-            raise NotFound(detail="Token pack with this ID is not found")
-        except NotFound as e:
-            raise e
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating subscription plan: {str(e)}")
+
+        with transaction.atomic():
+            token_pack = TokenPack.objects.get(id=token_pack_id)
+            architect = Architect.objects.get(user__id=user_id)
+            current_plan = architect.subscription_plan
+            current_plan.remaining_tokens += token_pack.number_tokens + token_pack.number_free_tokens
+            current_plan.save()
+            architect.save()
+            return True,"Token pack is successfully chosen"
+    

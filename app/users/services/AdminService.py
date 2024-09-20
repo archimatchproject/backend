@@ -84,10 +84,7 @@ class AdminService:
                 "images": email_images,
             }
             api_success_signal.send(sender=cls, data=signal_data)
-            return Response(
-                AdminSerializer(admin).data,
-                status=status.HTTP_201_CREATED,
-            )
+            return True, AdminSerializer(admin).data,
 
     @classmethod
     def update_admin(cls, instance, data):
@@ -137,10 +134,7 @@ class AdminService:
         # Update permissions
         instance.set_permissions(rights)
 
-        return Response(
-            AdminSerializer(instance).data,
-            status=status.HTTP_200_OK,
-        )
+        return True, AdminSerializer(instance).data,
 
     @classmethod
     def get_all_permissions(cls):
@@ -153,77 +147,57 @@ class AdminService:
         permissions_with_colors = [
             {"right": right, "color": data["color"]} for right, data in PERMISSION_CODENAMES.items()
         ]
-        return Response(permissions_with_colors, status=status.HTTP_200_OK)
-
+        return True, permissions_with_colors
+    
     @classmethod
     def admin_send_reset_password_link(cls, request):
         """
         send reset password link for admin.
-
-
         """
-        try:
-            data = request.data
-            serializer = UserAuthSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            email = serializer.validated_data.get("email")
+        data = request.data
+        serializer = UserAuthSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
 
-            admin = Admin.objects.get(user__email=email)
-            email_images = settings.ARCHITECT_PASSWORD_IMAGES
-            token = generate_password_reset_token(admin.user.id)
-            language_code = get_language_from_request(request)
-            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/admin/reset-password/{token}"""
-            context = {
-                "first_name": admin.user.first_name,
-                "last_name": admin.user.last_name,
-                "email": email,
-                "reset_link": reset_link,
-            }
-            signal_data = {
-                "template_name": "architect_reset_password.html",
-                "context": context,
-                "to_email": email,
-                "subject": "Admin Reset Password",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
-            return Response(
-                {"message": "email sent successfully"},
-                status=status.HTTP_200_OK,
-            )
-        except Admin.DoesNotExist:
-            raise NotFound(detail="Admin not found")
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        admin = Admin.objects.get(user__email=email)
+        email_images = settings.ARCHITECT_PASSWORD_IMAGES
+        token = generate_password_reset_token(admin.user.id)
+        language_code = get_language_from_request(request)
+        url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+        reset_link = f"""{url}/admin/reset-password/{token}"""
+        context = {
+            "first_name": admin.user.first_name,
+            "last_name": admin.user.last_name,
+            "email": email,
+            "reset_link": reset_link,
+        }
+        signal_data = {
+            "template_name": "architect_reset_password.html",
+            "context": context,
+            "to_email": email,
+            "subject": "Admin Reset Password",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        
+        return True,"email sent successfully"
 
     @classmethod
     def admin_validate_password_token(cls, request):
         """
         validate password token
         """
-        try:
-            data = request.data
-            token = data.get("token", False)
-            if not token:
-                raise serializers.ValidationError(detail="token is required")
 
-            user_id, error = validate_password_reset_token(token)
-            if error:
-                raise APIException(detail=error)
-            admin = Admin.objects.get(user__id=user_id)
-            serializer = AdminSerializer(admin)
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Admin.DoesNotExist:
-            raise NotFound(detail="Admin not found")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        data = request.data
+        token = data.get("token", False)
+        if not token:
+            raise serializers.ValidationError(detail="token is required")
+
+        user_id, error = validate_password_reset_token(token)
+        if error:
+            raise APIException(detail=error)
+        admin = Admin.objects.get(user__id=user_id)
+        serializer = AdminSerializer(admin)
+        return True,serializer.data
+
+

@@ -51,22 +51,14 @@ class CollectionService:
         validated_data = serializer.validated_data
 
         user = request.user
-        try:
-            supplier = Supplier.objects.get(user=user)
-            with transaction.atomic():
-                # Create Collection instance
-                collection = Collection.objects.create(supplier=supplier, **validated_data)
-                supplier.speciality_type.add(validated_data.get("category"))
-                return Response(
-                    CollectionSerializer(collection).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not a supplier.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating collection: {str(e)}")
+        supplier = Supplier.objects.get(user=user)
+        with transaction.atomic():
+            # Create Collection instance
+            collection = Collection.objects.create(supplier=supplier, **validated_data)
+            supplier.speciality_type.add(validated_data.get("category"))
+            
+            return True,CollectionSerializer(collection).data
+        
 
     @classmethod
     def update_product_order(cls, request, pk):
@@ -82,27 +74,21 @@ class CollectionService:
         """
         product_ids = request.data.get("product_ids")
 
-        try:
-            if not product_ids:
-                raise serializers.ValidationError(detail="Product IDs are required.")
-            collection = Collection.objects.get(pk=pk)
-            if collection.supplier.user != request.user:
-                raise serializers.ValidationError(
-                    detail="You do not have permission to modify this collection."
-                )
 
-            with transaction.atomic():
-                for index, product_id in enumerate(product_ids):
-                    Product.objects.filter(id=product_id, collection=collection).update(order=index)
+        if not product_ids:
+            raise serializers.ValidationError(detail="Product IDs are required.")
+        collection = Collection.objects.get(pk=pk)
+        if collection.supplier.user != request.user:
+            raise serializers.ValidationError(
+                detail="You do not have permission to modify this collection."
+            )
 
-            return Response("Product order updated successfully.", status=status.HTTP_200_OK)
-        except Collection.DoesNotExist:
-            raise NotFound(detail="Collection not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating product order: {str(e)}")
+        with transaction.atomic():
+            for index, product_id in enumerate(product_ids):
+                Product.objects.filter(id=product_id, collection=collection).update(order=index)
 
+        return True,"Product order updated successfully."
+    
     @classmethod
     def update_display_status(cls, request, pk):
         """
@@ -116,28 +102,20 @@ class CollectionService:
             Response: The response object containing the result of the operation.
         """
         display_status = request.data.get("display")
-        try:
-            if display_status is None:
-                raise serializers.ValidationError(detail="Display status is required.")
-            collection = Collection.objects.get(pk=pk)
-            if collection.supplier.user != request.user:
-                raise serializers.ValidationError(
-                    detail="You do not have permission to modify this collection."
-                )
 
-            collection.display = display_status
-            collection.save()
-
-            return Response(
-                "Collection display status updated successfully.", status=status.HTTP_200_OK
+        if display_status is None:
+            raise serializers.ValidationError(detail="Display status is required.")
+        collection = Collection.objects.get(pk=pk)
+        if collection.supplier.user != request.user:
+            raise serializers.ValidationError(
+                detail="You do not have permission to modify this collection."
             )
-        except Collection.DoesNotExist:
-            raise NotFound(detail="Collection not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating collection display status: {str(e)}")
 
+        collection.display = display_status
+        collection.save()
+
+        return True,"Collection display status updated successfully."
+    
     @classmethod
     def update_visibility(cls, request, pk):
         """
@@ -151,28 +129,20 @@ class CollectionService:
             Response: The response object containing the result of the operation.
         """
         visibility = request.data.get("visibility")
-        try:
-            if visibility is None:
-                raise serializers.ValidationError(detail="visibility is required.")
-            collection = Collection.objects.get(pk=pk)
-            if collection.supplier.user != request.user:
-                raise serializers.ValidationError(
-                    detail="You do not have permission to modify this collection."
-                )
 
-            collection.visibility = visibility
-            collection.save()
-
-            return Response(
-                "Collection visibility updated successfully.", status=status.HTTP_200_OK
+        if visibility is None:
+            raise serializers.ValidationError(detail="visibility is required.")
+        collection = Collection.objects.get(pk=pk)
+        if collection.supplier.user != request.user:
+            raise serializers.ValidationError(
+                detail="You do not have permission to modify this collection."
             )
-        except Collection.DoesNotExist:
-            raise NotFound(detail="Collection not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating visibility status: {str(e)}")
-        
+
+        collection.visibility = visibility
+        collection.save()
+
+        return True,"Collection visibility updated successfully."
+    
     
     @classmethod
     def get_collections(cls, request):
@@ -230,26 +200,20 @@ class CollectionService:
 
         created_collections = []
 
-        try:
-            with transaction.atomic():
-                for collection_data in collections_data:
-                    serializer = CollectionSerializer(data=collection_data)
-                    serializer.is_valid(raise_exception=True)
-                    validated_data = serializer.validated_data
-                    
-                    # Create Collection instance
-                    collection = Collection.objects.create(supplier=supplier, **validated_data)
-                    supplier.speciality_type.add(validated_data.get("category"))
-                    created_collections.append(CollectionSerializer(collection).data)
 
-            return Response(
-                created_collections,
-                status=status.HTTP_201_CREATED,
-            )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating collections: {str(e)}")
+        with transaction.atomic():
+            for collection_data in collections_data:
+                serializer = CollectionSerializer(data=collection_data)
+                serializer.is_valid(raise_exception=True)
+                validated_data = serializer.validated_data
+                
+                # Create Collection instance
+                collection = Collection.objects.create(supplier=supplier, **validated_data)
+                supplier.speciality_type.add(validated_data.get("category"))
+                created_collections.append(CollectionSerializer(collection).data)
+
+        return True,created_collections
+ 
         
         
 
@@ -273,4 +237,4 @@ class CollectionService:
         queryset = Collection.objects.filter(supplier__user=request.user)
         
         serializer = CollectionSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data

@@ -12,7 +12,9 @@ from app.cms.controllers.ManageLegalAndPolicyPermission import ManageLegalAndPol
 from app.cms.models.PrivacyPolicy import PrivacyPolicy
 from app.cms.serializers.PrivacyPolicySerializer import PrivacyPolicySerializer
 from app.cms.services.PrivacyPolicyService import PrivacyPolicyService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class PrivacyPolicyViewSet(viewsets.ModelViewSet):
     """
@@ -42,6 +44,7 @@ class PrivacyPolicyViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageLegalAndPolicyPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new PrivacyPolicy instance.
@@ -52,4 +55,6 @@ class PrivacyPolicyViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return PrivacyPolicyService.create_privacy_policy(request)
+        success,data = PrivacyPolicyService.create_privacy_policy(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+

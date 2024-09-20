@@ -79,5 +79,4 @@ class EventDiscountService:
         today = timezone.now().date()
         queryset = EventDiscount.objects.filter(start_date__lte=today,end_date__gte=today)
         serializer = EventDiscountSerializer(queryset, many=True)
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data

@@ -37,14 +37,8 @@ class PrivacyPolicyService:
         serializer = PrivacyPolicySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                policy = PrivacyPolicy.objects.create(**validated_data, admin=request.user.admin)
-                return Response(
-                    PrivacyPolicySerializer(policy).data, status=status.HTTP_201_CREATED
-                )
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating Privacy Policy: {e}")
+        with transaction.atomic():
+            policy = PrivacyPolicy.objects.create(**validated_data, admin=request.user.admin)
+            return True,PrivacyPolicySerializer(policy).data
+        

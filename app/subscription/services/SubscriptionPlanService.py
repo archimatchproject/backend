@@ -53,25 +53,19 @@ class SubscriptionPlanService:
         event_discount = validated_data.pop("event_discount_id", None)
         most_popular = validated_data.get("most_popular", False)
 
-        try:
-            with transaction.atomic():
-                # If the current subscription plan is marked as most popular, update all others
-                if most_popular:
-                    ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
-                
-                # Create SubscriptionPlan instance
-                subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
-                subscription_plan.services.set(plan_services)
 
-                return Response(
-                    ArchitectSubscriptionPlanSerializer(subscription_plan).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating subscription plan: {str(e)}")
+        with transaction.atomic():
+            # If the current subscription plan is marked as most popular, update all others
+            if most_popular:
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
+            
+            # Create SubscriptionPlan instance
+            subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
+            subscription_plan.services.set(plan_services)
 
+            return True,ArchitectSubscriptionPlanSerializer(subscription_plan).data,
+               
+        
     @classmethod
     def update_subscription_plan(cls, instance, data, partial=False):
         """
@@ -93,27 +87,22 @@ class SubscriptionPlanService:
         plan_services = validated_data.pop("plan_services", [])
         event_discount = validated_data.pop("event_discount_id",None)
         most_popular = validated_data.get("most_popular", False)
-        try:
-            with transaction.atomic():
-                if most_popular:
-                    ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
-                
-                for attr, value in validated_data.items():
-                    setattr(instance, attr, value)
 
-                instance.event_discount = event_discount
-                instance.clean()
-                instance.save()
-                instance.services.set(plan_services)
+        with transaction.atomic():
+            if most_popular:
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
+            
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
 
-                return Response(
-                    ArchitectSubscriptionPlanSerializer(instance).data, status=status.HTTP_200_OK
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating subscription plan: {str(e)}")
+            instance.event_discount = event_discount
+            instance.clean()
+            instance.save()
+            instance.services.set(plan_services)
 
+            return True,ArchitectSubscriptionPlanSerializer(instance).data
+
+        
     @classmethod
     def architect_get_upgradable_plans(cls, request):
         """
@@ -127,22 +116,13 @@ class SubscriptionPlanService:
         """
 
         user_id = request.user.id
-
-        try:
-            with transaction.atomic():
-                architect = Architect.objects.get(user__id=user_id)
-                current_plan = architect.subscription_plan
-                subscription_plans = ArchitectSubscriptionPlan.objects.filter(
-                    plan_price__gt=current_plan.plan_price
-                )
-                
-                return Response(
-                    ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data,
-                    status=status.HTTP_200_OK,
-                )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error fetching upgradable plans: {str(e)}")
+        
+        with transaction.atomic():
+            architect = Architect.objects.get(user__id=user_id)
+            current_plan = architect.subscription_plan
+            subscription_plans = ArchitectSubscriptionPlan.objects.filter(
+                plan_price__gt=current_plan.plan_price
+            )
+            
+            return True,ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data
+        

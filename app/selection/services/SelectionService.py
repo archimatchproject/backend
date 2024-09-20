@@ -38,38 +38,32 @@ class SelectionService:
         Raises:
             APIException: If there are issues creating the selection.
         """
-        try:
-            
-            
-            architect = Architect.objects.get(user=user)
-            data["architect"] = architect.id
-            serializer = SelectionPostSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            validated_data = serializer.validated_data
-            announcement = validated_data.get('announcement')
-            architect = validated_data.get("architect")
+        architect = Architect.objects.get(user=user)
+        data["architect"] = architect.id
+        serializer = SelectionPostSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+        announcement = validated_data.get('announcement')
+        architect = validated_data.get("architect")
 
-            # Ensure no more than 4 selections for the announcement
-            if Selection.objects.filter(announcement=announcement).count() >= 4:
-                raise APIException("Maximum of 4 selections reached for this announcement.")
+        # Ensure no more than 4 selections for the announcement
+        if Selection.objects.filter(announcement=announcement).count() >= 4:
+            raise APIException("Maximum of 4 selections reached for this announcement.")
 
-            # Ensure only one accepted selection if status is 'accepted'
-            if Selection.objects.filter(announcement=announcement, status='accepted').exists():
-                raise APIException("Another architect has already been accepted for this announcement.")
+        # Ensure only one accepted selection if status is 'accepted'
+        if Selection.objects.filter(announcement=announcement, status='accepted').exists():
+            raise APIException("Another architect has already been accepted for this announcement.")
 
-            if architect.subscription_plan.remaining_tokens < 5 :
-                raise APIException("you don't have the required token for this announcement")
-            
-            # Create and save the new selection
-            selection = Selection.objects.create(
-                announcement=announcement,
-                architect=architect,
-            )
-            subscription_plan = architect.subscription_plan
-            subscription_plan.remaining_tokens -= 5
-            subscription_plan.save()
-
-            return selection
+        if architect.subscription_plan.remaining_tokens < 5 :
+            raise APIException("you don't have the required token for this announcement")
         
-        except serializers.ValidationError as e:
-            raise e
+        # Create and save the new selection
+        selection = Selection.objects.create(
+            announcement=announcement,
+            architect=architect,
+        )
+        subscription_plan = architect.subscription_plan
+        subscription_plan.remaining_tokens -= 5
+        subscription_plan.save()
+
+        return True,SelectionSerializer(selection).data

@@ -12,7 +12,9 @@ from app.cms.controllers.ManageLegalAndPolicyPermission import ManageLegalAndPol
 from app.cms.models.TermsAndConditions import TermsAndConditions
 from app.cms.serializers.TermsAndConditionsSerializer import TermsAndConditionsSerializer
 from app.cms.services.TermsAndConditionsService import TermsAndConditionsService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class TermsAndConditionsViewSet(viewsets.ModelViewSet):
     """
@@ -42,6 +44,7 @@ class TermsAndConditionsViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageLegalAndPolicyPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new TermsAndConditions instance.
@@ -52,4 +55,5 @@ class TermsAndConditionsViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return TermsAndConditionsService.create_terms_and_conditions(request)
+        success,data = TermsAndConditionsService.create_terms_and_conditions(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)

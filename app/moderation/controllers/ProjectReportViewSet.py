@@ -10,7 +10,9 @@ from app.moderation.controllers.ManageReportingPermission import ManageReporting
 from app.moderation.models.ProjectReport import ProjectReport
 from app.moderation.serializers.ProjectReportSerializer import ProjectReportSerializer
 from app.moderation.services.ProjectReportService import ProjectReportService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ProjectReportViewSet(viewsets.ModelViewSet):
     """
@@ -42,39 +44,53 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use ProjectReportService for handling the creation
         of a ProjectReport.
         """
-        return ProjectReportService.create_project_report(request)
+        success,data = ProjectReportService.create_project_report(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_decisions(self, request):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        return ProjectReportService.get_decisions()
+        success,data = ProjectReportService.get_decisions()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_reasons(self, request):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        return ProjectReportService.get_reasons()
+        success,data = ProjectReportService.get_reasons()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True)
+    @handle_service_exceptions
     def change_status(self, request, pk=None):
         """
         Change the status of an ProjectReport.
         """
-        return ProjectReportService.change_architect_report_status(request, pk)
+        success,data = ProjectReportService.change_architect_report_status(request, pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True)
+    @handle_service_exceptions
     def execute_decision(self, request):
         """
         Execute decision of an ProjectReport on multiple project reports.
 
         This method processes the decision for the provided report IDs.
         """
-        return ProjectReportService.execute_decision(request)
+        success,message = ProjectReportService.execute_decision(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

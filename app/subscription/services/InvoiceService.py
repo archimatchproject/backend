@@ -76,21 +76,14 @@ class InvoiceService:
             APIException: If there are errors during the process.
         """
         user_id = request.user.id
-        try:
-            architect = Architect.objects.get(user__id=user_id)
-            invoices = ArchitectInvoice.objects.filter(architect=architect)
 
-            invoices_seriliazer = ArchitectInvoiceSerializer(invoices, many=True)
-            return Response(
-                invoices_seriliazer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        architect = Architect.objects.get(user__id=user_id)
+        invoices = ArchitectInvoice.objects.filter(architect=architect)
+
+        invoices_seriliazer = ArchitectInvoiceSerializer(invoices, many=True)
+
+        return True, invoices_seriliazer.data
+
 
     
     @classmethod
@@ -138,18 +131,10 @@ class InvoiceService:
             APIException: If there are errors during the process.
         """
         user_id = request.user.id
-        try:
-            supplier = Supplier.objects.get(user__id=user_id)
-            invoices = SupplierInvoice.objects.filter(supplier=supplier)
 
-            invoices_seriliazer = SupplierInvoiceSerializer(invoices, many=True)
-            return Response(
-                invoices_seriliazer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        supplier = Supplier.objects.get(user__id=user_id)
+        invoices = SupplierInvoice.objects.filter(supplier=supplier)
+
+        invoices_seriliazer = SupplierInvoiceSerializer(invoices, many=True)
+        return True, invoices_seriliazer.data
+

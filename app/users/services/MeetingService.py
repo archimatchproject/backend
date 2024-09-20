@@ -36,15 +36,12 @@ class MeetingService:
         Raises:
             APIException: If there are issues creating the create_meeting.
         """
-        try:
-            serializer = MeetingSerializer(data=data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            meeting = Meeting.objects.create(**serializer.validated_data)
-            return meeting
-        except Admin.DoesNotExist as e:
-            raise NotFound(detail="There is no admin for this user")
-        except serializers.ValidationError as e:
-            raise e
+        
+        serializer = MeetingSerializer(data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        meeting = Meeting.objects.create(**serializer.validated_data)
+        return True,meeting
+        
 
     @classmethod
     def get_admin_meetings(cls, request):
@@ -61,21 +58,17 @@ class MeetingService:
         Returns:
             Response: A paginated response containing Meetings objects or an error message.
         """
-        try:
-            user = request.user
-            queryset = Meeting.objects.filter(admin__user=user)
-            
-            paginator = cls.pagination_class()
-            page = paginator.paginate_queryset(queryset, request)
-            if page is not None:
-                serializer = MeetingSerializer(page, many=True)
-                return paginator.get_paginated_response(serializer.data)
-            
-            serializer = MeetingSerializer(queryset, many=True)
-        except Meeting.DoesNotExist as e:
-            raise NotFound(detail="Meeting not foun")
-        except serializers.ValidationError as e:
-            raise e
+        
+        user = request.user
+        queryset = Meeting.objects.filter(admin__user=user)
+        
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = MeetingSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = MeetingSerializer(queryset, many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
@@ -97,34 +90,28 @@ class MeetingService:
         Returns:
             Response: A paginated response containing Meetings objects or an error message.
         """
-        try:
-            user = request.user
-            dates_str = request.query_params.get('dates')
-            if not dates_str:
-                raise serializers.ValidationError(detail="dates is required")
+        
+        user = request.user
+        dates_str = request.query_params.get('dates')
+        if not dates_str:
+            raise serializers.ValidationError(detail="dates is required")
 
-            dates = dates_str.split(',')
-            try:
-                dates = [datetime.strptime(date.strip(), "%Y-%m-%d").date() for date in dates]
-            except ValueError:
-                raise serializers.ValidationError(
-                    detail="Invalid date format. Use YYYY-MM-DD.",
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            queryset = Meeting.objects.filter(admin__user=user, date__in=dates)
-            
-            paginator = cls.pagination_class()
-            page = paginator.paginate_queryset(queryset, request)
-            if page is not None:
-                serializer = MeetingSerializer(page, many=True)
-                return paginator.get_paginated_response(serializer.data)
-            
-            serializer = MeetingSerializer(queryset, many=True)
-        except Meeting.DoesNotExist as e:
-            raise NotFound(detail="Meeting not foun")
-        except serializers.ValidationError as e:
-            raise e
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
+        dates = dates_str.split(',')
+        try:
+            dates = [datetime.strptime(date.strip(), "%Y-%m-%d").date() for date in dates]
+        except ValueError:
+            raise serializers.ValidationError(
+                detail="Invalid date format. Use YYYY-MM-DD.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        queryset = Meeting.objects.filter(admin__user=user, date__in=dates)
+        
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = MeetingSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        serializer = MeetingSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

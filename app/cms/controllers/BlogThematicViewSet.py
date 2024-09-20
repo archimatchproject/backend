@@ -14,7 +14,9 @@ from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
 from app.cms.models.BlogThematic import BlogThematic
 from app.cms.serializers.BlogThematicSerializer import BlogThematicSerializer
 from app.cms.services.BlogThematicService import BlogThematicService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class BlogThematicViewSet(viewsets.ModelViewSet):
     """
@@ -59,6 +61,7 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageBlogPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Create a new BlogThematic instance.
@@ -72,8 +75,10 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created BlogThematic instance.
         """
-        return BlogThematicService.create_blog_thematic(request.data, request.user)
+        success,data = BlogThematicService.create_blog_thematic(request.data, request.user)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Update an existing BlogThematic instance.
@@ -89,9 +94,11 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        return BlogThematicService.update_blog_thematic(instance, request.data, partial=partial)
+        success,data = BlogThematicService.update_blog_thematic(instance, request.data, partial=partial)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def change_visibility(self, request, pk=None):
         """
         Change the visibility of a Blog instance.
@@ -103,5 +110,6 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
+        success,data = BlogThematicService.change_visibility(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
-        return BlogThematicService.change_visibility(pk, request)

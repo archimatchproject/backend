@@ -10,7 +10,9 @@ from app.moderation.controllers.ManageReportingPermission import ManageReporting
 from app.moderation.models.ClientReview import ClientReview
 from app.moderation.serializers.ClientReviewSerializer import ClientReviewSerializer
 from app.moderation.services.ClientReviewService import ClientReviewService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ClientReviewViewSet(viewsets.ModelViewSet):
     """
@@ -33,14 +35,18 @@ class ClientReviewViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use ClientReviewService for handling the creation
         of a ProjectReport.
         """
-        return ClientReviewService.create_client_review(request)
+        success,data = ClientReviewService.create_client_review(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True, methods=["GET"], url_path="architect-reviews")
+    @handle_service_exceptions
     def architect_reviews(self, request):
         """
         Retrieve all reviews for a specific architect.
@@ -51,4 +57,6 @@ class ClientReviewViewSet(viewsets.ModelViewSet):
         Returns:
             Response: A serialized response containing the list of reviews.
         """
-        return ClientReviewService.get_architect_reviews(request)
+        success,data = ClientReviewService.get_architect_reviews(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+

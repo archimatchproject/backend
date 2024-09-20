@@ -75,56 +75,49 @@ class ArchitectRequestService:
         """
         serializer = ArchitectRequestInputSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        try:
-            with transaction.atomic():
-                architect_speciality_id = data.get("architect_speciality")
-                architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
+        with transaction.atomic():
+            architect_speciality_id = data.get("architect_speciality")
+            architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
 
-                field_names = [
-                    "first_name",
-                    "last_name",
-                    "phone_number",
-                    "address",
-                    "architect_identifier",
-                    "email",
-                    "date",
-                    "time_slot",
-                    "city",
-                ]
+            field_names = [
+                "first_name",
+                "last_name",
+                "phone_number",
+                "address",
+                "architect_identifier",
+                "email",
+                "date",
+                "time_slot",
+                "city",
+            ]
 
-                architect_request = ArchitectRequest()
-                for field in field_names:
-                    setattr(architect_request, field, data.get(field))
+            architect_request = ArchitectRequest()
+            for field in field_names:
+                setattr(architect_request, field, data.get(field))
 
-                architect_request.architect_speciality = architect_speciality
+            architect_request.architect_speciality = architect_speciality
 
-                architect_request.clean()
-                architect_request.save()
-                email_images = settings.ARCHITECT_REQUEST_IMAGES
+            architect_request.clean()
+            architect_request.save()
+            email_images = settings.ARCHITECT_REQUEST_IMAGES
 
-                signal_data = {
-                    "template_name": "architect_request.html",
-                    "context": {
-                        "first_name": data.get("first_name"),
-                        "last_name": data.get("last_name"),
-                        "date": data.get("date"),
-                        "time_slot": data.get("time_slot"),
-                        "email": data.get("email"),
-                    },
-                    "to_email": data.get("email"),
-                    "subject": "Architect Account Creation",
-                    "images": email_images,
-                }
-                api_success_signal.send(sender=cls, data=signal_data)
+            signal_data = {
+                "template_name": "architect_request.html",
+                "context": {
+                    "first_name": data.get("first_name"),
+                    "last_name": data.get("last_name"),
+                    "date": data.get("date"),
+                    "time_slot": data.get("time_slot"),
+                    "email": data.get("email"),
+                },
+                "to_email": data.get("email"),
+                "subject": "Architect Account Creation",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
 
-                return Response(
-                    ArchitectRequestSerializer(architect_request).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+            return True,ArchitectRequestSerializer(architect_request).data
+
 
     @classmethod
     def admin_accept_architect_request(cls, architect_request_id, request):
@@ -139,11 +132,8 @@ class ArchitectRequestService:
             Response: The response object containing the result of the operation.
         """
         data = request.data
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
-
+        architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
+        
         serializer = ArchitectAcceptSerializer(data=data)
 
         serializer.is_valid(raise_exception=True)
@@ -157,59 +147,52 @@ class ArchitectRequestService:
             "last_name": architect_request.last_name,
         }
 
-        try:
-            with transaction.atomic():
-                user = ArchimatchUser.objects.create(**user_data)
-                user.save()
-                architect = Architect.objects.create(
-                    user=user,
-                    address=architect_request.address,
-                    architect_identifier=architect_request.architect_identifier,
-                    architect_speciality=architect_request.architect_speciality,
-                    project_complexity=validated_data["project_complexity"],
-                    years_experience=validated_data["years_experience"],
-                )
+        with transaction.atomic():
+            user = ArchimatchUser.objects.create(**user_data)
+            user.save()
+            architect = Architect.objects.create(
+                user=user,
+                address=architect_request.address,
+                architect_identifier=architect_request.architect_identifier,
+                architect_speciality=architect_request.architect_speciality,
+                project_complexity=validated_data["project_complexity"],
+                years_experience=validated_data["years_experience"],
+            )
 
-                for field in [
-                    "project_categories",
-                    "property_types",
-                    "work_types",
-                    "architectural_styles",
-                ]:
-                    items = validated_data.get(field, [])
-                    if items:
-                        getattr(architect, field).set(items)
+            for field in [
+                "project_categories",
+                "property_types",
+                "work_types",
+                "architectural_styles",
+            ]:
+                items = validated_data.get(field, [])
+                if items:
+                    getattr(architect, field).set(items)
 
-                architect_request.status = "Accepted"
-                architect_request.save()
+            architect_request.status = "Accepted"
+            architect_request.save()
 
-                email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
-                language_code = get_language_from_request(request)
-                token = generate_password_reset_token(user.id)
-                url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-                reset_link = f"""{url}/architect/first-login/{token}"""
-                signal_data = {
-                    "template_name": "accept_architect_request.html",
-                    "context": {
-                        "first_name": user_data.get("first_name"),
-                        "last_name": user_data.get("last_name"),
-                        "email": user_data.get("email"),
-                        "reset_link": reset_link,
-                    },
-                    "to_email": user_data.get("email"),
-                    "subject": "Accepting Architect Request",
-                    "images": email_images,
-                }
-                api_success_signal.send(sender=cls, data=signal_data)
+            email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
+            language_code = get_language_from_request(request)
+            token = generate_password_reset_token(user.id)
+            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+            reset_link = f"""{url}/architect/first-login/{token}"""
+            signal_data = {
+                "template_name": "accept_architect_request.html",
+                "context": {
+                    "first_name": user_data.get("first_name"),
+                    "last_name": user_data.get("last_name"),
+                    "email": user_data.get("email"),
+                    "reset_link": reset_link,
+                },
+                "to_email": user_data.get("email"),
+                "subject": "Accepting Architect Request",
+                "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
 
-                return Response(
-                    ArchitectSerializer(architect).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error accepting architect request ${e}")
+            return True,ArchitectSerializer(architect).data,
+                
 
     @classmethod
     def admin_refuse_architect_request(cls, pk):
@@ -222,33 +205,26 @@ class ArchitectRequestService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=pk)
-            architect_request.status = "Refused"
-            architect_request.save()
-            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
-            signal_data = {
-                "template_name": "refuse_architect_request.html",
-                "context": {
-                    "first_name": architect_request.first_name,
-                    "last_name": architect_request.last_name,
-                    "email": architect_request.email,
-                },
-                "to_email": architect_request.email,
-                "subject": "Refusing Architect Request",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
 
-            return Response(
-                ArchitectRequestSerializer(architect_request).data,
-                status=status.HTTP_200_OK,
-            )
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
-        except Exception:
-            raise APIException(detail="Error refusing architect request")
+        architect_request = ArchitectRequest.objects.get(pk=pk)
+        architect_request.status = "Refused"
+        architect_request.save()
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        signal_data = {
+            "template_name": "refuse_architect_request.html",
+            "context": {
+                "first_name": architect_request.first_name,
+                "last_name": architect_request.last_name,
+                "email": architect_request.email,
+            },
+            "to_email": architect_request.email,
+            "subject": "Refusing Architect Request",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
 
+        return True,ArchitectRequestSerializer(architect_request).data
+        
     @classmethod
     def admin_assign_responsable(cls, pk, admin_id):
         """
@@ -261,23 +237,15 @@ class ArchitectRequestService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=pk)
-            admin = Admin.objects.get(pk=admin_id)
-            architect_request.meeting_responsable = admin
-            architect_request.save()
 
-            return Response(
-                ArchitectRequestSerializer(architect_request).data,
-                status=status.HTTP_200_OK,
-            )
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
-        except Admin.DoesNotExist:
-            raise NotFound(detail="No admin found with the given ID")
-        except Exception:
-            raise APIException(detail="Error assinging admin to architect request")
+        architect_request = ArchitectRequest.objects.get(pk=pk)
+        admin = Admin.objects.get(pk=admin_id)
+        architect_request.meeting_responsable = admin
+        architect_request.save()
 
+        return True,ArchitectRequestSerializer(architect_request).data,
+            
+        
     @classmethod
     def add_note_to_architect_request(cls, architect_request_id, data):
         """
@@ -291,23 +259,19 @@ class ArchitectRequestService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
 
-            serializer = NoteSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
+        architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
 
-            note = Note.objects.create(
-                message=serializer.validated_data["message"],
-                content_object=architect_request,
-            )
+        serializer = NoteSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
 
-            return Response(NoteSerializer(note).data, status=status.HTTP_201_CREATED)
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
-        except Exception as e:
-            raise APIException(detail=f"Error adding not to architect request ${e}")
+        note = Note.objects.create(
+            message=serializer.validated_data["message"],
+            content_object=architect_request,
+        )
 
+        return True,NoteSerializer(note).data
+        
     @classmethod
     def architect_request_paginated(cls, request):
         """
@@ -352,7 +316,7 @@ class ArchitectRequestService:
         """
         categories = ProjectCategory.objects.all()
         serializer = ProjectCategorySerializer(categories, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data
 
     @classmethod
     def get_all_property_types(cls):
@@ -368,7 +332,7 @@ class ArchitectRequestService:
         """
         property_types = PropertyType.objects.all()
         serializer = PropertyTypeSerializer(property_types, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data
 
     @classmethod
     def get_all_work_types(cls):
@@ -384,7 +348,7 @@ class ArchitectRequestService:
         """
         work_types = WorkType.objects.all()
         serializer = WorkTypeSerializer(work_types, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data
 
     @classmethod
     def get_all_architectural_styles(cls):
@@ -400,8 +364,8 @@ class ArchitectRequestService:
         """
         styles = ArchitecturalStyle.objects.all()
         serializer = ArchitecturalStyleSerializer(styles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        return True,serializer.data
+    
     @classmethod
     def reschedule_architect_request(cls, architect_request_id, data):
         """
@@ -418,25 +382,16 @@ class ArchitectRequestService:
         serializer = ArchitectRequestRescheduleSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
-            with transaction.atomic():
-                architect_request.date = serializer.validated_data.get("date")
-                architect_request.time_slot = serializer.validated_data.get("time_slot")
-                architect_request.clean()
-                architect_request.save()
 
-                return Response(
-                    ArchitectRequestSerializer(architect_request).data,
-                    status=status.HTTP_200_OK,
-                )
-        except ArchitectRequest.DoesNotExist:
-            raise NotFound(detail="No architect request found with the given ID")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error rescheduling architect request: {str(e)}")
+        architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
+        with transaction.atomic():
+            architect_request.date = serializer.validated_data.get("date")
+            architect_request.time_slot = serializer.validated_data.get("time_slot")
+            architect_request.clean()
+            architect_request.save()
 
+            return True, ArchitectRequestSerializer(architect_request).data
+        
     @classmethod
     def get_all_time_slots(cls):
         """
@@ -448,7 +403,7 @@ class ArchitectRequestService:
         time_slots = [
             {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
         ]
-        return Response(time_slots, status=status.HTTP_200_OK)
+        return True,time_slots
 
     @classmethod
     def get_all_project_complexities(cls):
@@ -462,7 +417,7 @@ class ArchitectRequestService:
             {"value": complexity[0], "label": complexity[1]}
             for complexity in PROJECT_COMPLEXITY_CHOICES
         ]
-        return Response(project_complexities, status=status.HTTP_200_OK)
+        return True,project_complexities
 
     @classmethod
     def get_all_years_experience(cls):
@@ -476,4 +431,4 @@ class ArchitectRequestService:
             {"value": year_experience[0], "label": year_experience[1]}
             for year_experience in YEARS_EXPERIENCE_CHOICES
         ]
-        return Response(years_experience, status=status.HTTP_200_OK)
+        return True,years_experience

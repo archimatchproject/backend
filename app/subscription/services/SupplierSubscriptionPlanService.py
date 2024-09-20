@@ -50,20 +50,13 @@ class SupplierSubscriptionPlanService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        try:
-            with transaction.atomic():
-                # Create SubscriptionPlan instance
-                subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data)
 
-                return Response(
-                    SupplierSubscriptionPlanSerializer(subscription_plan).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating subscription plan: {str(e)}")
+        with transaction.atomic():
+            # Create SubscriptionPlan instance
+            subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data)
 
+            return True,SupplierSubscriptionPlanSerializer(subscription_plan).data
+        
     @classmethod
     def update_subscription_plan(cls, instance, data, partial=False):
         """
@@ -83,21 +76,15 @@ class SupplierSubscriptionPlanService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        try:
-            with transaction.atomic():
-                for attr, value in validated_data.items():
-                    setattr(instance, attr, value)
-                instance.clean()
-                instance.save()
 
-                return Response(
-                    SupplierSubscriptionPlanSerializer(instance).data, status=status.HTTP_200_OK
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating subscription plan: {str(e)}")
+        with transaction.atomic():
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.clean()
+            instance.save()
 
+            return True,SupplierSubscriptionPlanSerializer(instance).data
+        
     @classmethod
     def supplier_get_upgradable_plans(cls, request):
         """
@@ -112,21 +99,12 @@ class SupplierSubscriptionPlanService:
 
         user_id = request.user.id
 
-        try:
-            with transaction.atomic():
-                supplier = Supplier.objects.get(user__id=user_id)
-                current_plan = supplier.subscription_plan
-                subscription_plans = SupplierSubscriptionPlan.objects.filter(
-                    plan_price__gt=current_plan.plan_price
-                )
+        with transaction.atomic():
+            supplier = Supplier.objects.get(user__id=user_id)
+            current_plan = supplier.subscription_plan
+            subscription_plans = SupplierSubscriptionPlan.objects.filter(
+                plan_price__gt=current_plan.plan_price
+            )
 
-                return Response(
-                    SupplierSubscriptionPlanSerializer(subscription_plans, many=True).data,
-                    status=status.HTTP_200_OK,
-                )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error fetching upgradable plans: {str(e)}")
+            return True,SupplierSubscriptionPlanSerializer(subscription_plans, many=True).data
+        

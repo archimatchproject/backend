@@ -27,7 +27,9 @@ from app.architect_request.serializers.ArchitectRequestSerializer import Archite
 from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
 from app.core.pagination import CustomPagination
 from app.core.serializers.NoteSerializer import NoteSerializer
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ArchitectRequestViewSet(viewsets.ModelViewSet):
     """
@@ -101,6 +103,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @action(detail=False, methods=["POST"], url_path="create-architect-request")
+    @handle_service_exceptions
     def create_architect_request(self, request):
         """
         Custom action to create an ArchitectRequest.
@@ -114,7 +117,8 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.add_architect_request(request.data)
+        success,data = ArchitectRequestService.add_architect_request(request.data)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
@@ -122,6 +126,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         url_path="admin-accept",
         serializer_class=ArchitectAcceptSerializer,
     )
+    @handle_service_exceptions
     def admin_accept(self, request, pk=None):
         """
         Custom action to accept an ArchitectRequest and create an Architect instance.
@@ -133,13 +138,15 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.admin_accept_architect_request(pk, request)
+        success,data = ArchitectRequestService.admin_accept_architect_request(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
         methods=["POST"],
         url_path="admin-refuse",
     )
+    @handle_service_exceptions
     def admin_refuse(self, request, pk=None):
         """
         Custom action to refuse an ArchitectRequest.
@@ -151,13 +158,14 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.admin_refuse_architect_request(pk)
-
+        success,data = ArchitectRequestService.admin_refuse_architect_request(pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
     @action(
         detail=True,
         methods=["POST"],
         url_path="admin-assign-responsable",
     )
+    @handle_service_exceptions
     def admin_assign_responsable(self, request, pk=None):
         """
         Custom action to assign a responsible admin for an ArchitectRequest.
@@ -170,7 +178,8 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         admin_id = request.data.get("admin_id")
-        return ArchitectRequestService.admin_assign_responsable(pk, admin_id)
+        success,data = ArchitectRequestService.admin_assign_responsable(pk, admin_id)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -178,6 +187,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         url_path="add-note",
         serializer_class=NoteSerializer,
     )
+    @handle_service_exceptions
     def add_note(self, request, pk=None):
         """
         Custom action to add a note to an ArchitectRequest.
@@ -189,9 +199,12 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.add_note_to_architect_request(pk, request.data)
+        success,data = ArchitectRequestService.add_note_to_architect_request(pk, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+        
 
     @action(detail=False, methods=["GET"], url_path="project-categories")
+    @handle_service_exceptions
     def get_project_categories(self, request):
         """
         Retrieve all project categories.
@@ -202,9 +215,11 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of project categories.
         """
-        return ArchitectRequestService.get_all_project_categories()
+        success,data = ArchitectRequestService.get_all_project_categories()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="property-types")
+    @handle_service_exceptions
     def get_property_types(self, request):
         """
         Retrieve all property types.
@@ -215,9 +230,12 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of property types.
         """
-        return ArchitectRequestService.get_all_property_types()
+        success,data = ArchitectRequestService.get_all_property_types()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["GET"], url_path="work-types")
+    @handle_service_exceptions
     def get_work_types(self, request):
         """
         Retrieve all work types.
@@ -228,9 +246,11 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of work types.
         """
-        return ArchitectRequestService.get_all_work_types()
+        success,data = ArchitectRequestService.get_all_work_types()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="architectural-styles")
+    @handle_service_exceptions
     def get_architectural_styles(self, request):
         """
         Retrieve all architectural styles.
@@ -241,7 +261,9 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of architectural styles.
         """
-        return ArchitectRequestService.get_all_architectural_styles()
+        success,data = ArchitectRequestService.get_all_architectural_styles()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
 
     @action(
         detail=True,
@@ -249,6 +271,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         url_path="reschedule-meeting",
         serializer_class=ArchitectRequestRescheduleSerializer,
     )
+    @handle_service_exceptions
     def reschedule(self, request, pk=None):
         """
         Custom action to reschedule an ArchitectRequest.
@@ -260,9 +283,12 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.reschedule_architect_request(pk, request.data)
+        success,data =ArchitectRequestService.reschedule_architect_request(pk, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["GET"], url_path="time-slots")
+    @handle_service_exceptions
     def get_time_slots(self, request):
         """
         Retrieve all available time slots.
@@ -273,9 +299,11 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of time slots.
         """
-        return ArchitectRequestService.get_all_time_slots()
+        success,data = ArchitectRequestService.get_all_time_slots()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["GET"], url_path="project-complexities")
+    @handle_service_exceptions
     def get_project_complexities(self, request):
         """
         Retrieve all available project complexities.
@@ -286,9 +314,12 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of project complexities.
         """
-        return ArchitectRequestService.get_all_project_complexities()
+        success,data = ArchitectRequestService.get_all_project_complexities()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+        
 
     @action(detail=False, methods=["GET"], url_path="years-experience")
+    @handle_service_exceptions
     def get_years_experience(self, request):
         """
         Retrieve all available time slots.
@@ -299,4 +330,6 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of time slots.
         """
-        return ArchitectRequestService.get_all_years_experience()
+        success,data = ArchitectRequestService.get_all_years_experience()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+

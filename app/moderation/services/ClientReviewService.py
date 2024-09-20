@@ -57,10 +57,8 @@ class ClientReviewService:
                     client=client, architect=validated_data.pop("architect_id"), **validated_data
                 )
 
-                return Response(
-                    ClientReviewSerializer(client_review).data,
-                    status=status.HTTP_201_CREATED,
-                )
+                return True,ClientReviewSerializer(client_review)
+                    
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -87,12 +85,9 @@ class ClientReviewService:
         """
         user = request.user
 
-        try:
-            architect = Architect.objects.get(user=user)
-            reviews = ClientReview.objects.filter(architect=architect)
-            serialized_reviews = ClientReviewSerializer(reviews, many=True)
-            return Response(serialized_reviews.data)
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except Exception as e:
-            raise APIException(detail=f"Error retrieving architect reviews: {str(e)}")
+
+        architect = Architect.objects.get(user=user)
+        reviews = ClientReview.objects.filter(architect=architect)
+        serialized_reviews = ClientReviewSerializer(reviews, many=True)
+        return True,serialized_reviews.data
+        

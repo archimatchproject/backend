@@ -69,8 +69,8 @@ class SupplierService:
         if not email:
             raise APIException(detail="Email is required", code="validation_error")
         
-        # if ArchimatchUser.objects.filter(email=email).exists():
-        #     raise APIException(detail="User with this email already exists", code="validation_error")
+        if ArchimatchUser.objects.filter(email=email).exists():
+            raise APIException(detail="User with this email already exists", code="validation_error")
         user = ArchimatchUser.objects.create(
             email=email,
             username=email,
@@ -115,38 +115,20 @@ class SupplierService:
         Raises:
             serializers.ValidationError: If there are errors during supplier authentication.
         """
-        try:
-            data = request.data
-            serializer = UserAuthSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            email = serializer.validated_data.get("email")
+       
+        data = request.data
+        serializer = UserAuthSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
 
-            if not Supplier.objects.filter(user__email=email).exists():
-                raise NotFound(detail="Supplier not found.")
+        if not Supplier.objects.filter(user__email=email).exists():
+            raise NotFound(detail="Supplier not found.")
 
-            user = ArchimatchUser.objects.get(email=email)
-            has_password = user.password != ""
+        user = ArchimatchUser.objects.get(email=email)
+        has_password = user.password != ""
 
-            response_data = {
-                "message": {
-                    "has_password": has_password,
-                    "email": user.email,
-                },
-                "status_code": status.HTTP_200_OK,
-            }
-
-            return Response(
-                response_data,
-                status=response_data["status_code"],
-            )
-
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
-
+        return True, {"has_password": has_password,"email": user.email}
+        
     @classmethod
     def supplier_first_connection(cls, request):
         """
@@ -161,45 +143,33 @@ class SupplierService:
         Raises:
             serializers.ValidationError: If there are errors during supplier profile update.
         """
-        try:
-            data = request.data
-            supplier_serializer = SupplierInputSerializer(data=data)
-            supplier_serializer.is_valid(raise_exception=True)
 
-            email = data.pop("email")
-            if not Supplier.objects.filter(user__email=email).exists():
-                raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
+        data = request.data
+        supplier_serializer = SupplierInputSerializer(data=data)
+        supplier_serializer.is_valid(raise_exception=True)
 
-            supplier = Supplier.objects.get(user__email=email)
-            phone_number = data.pop("phone_number")
+        email = data.pop("email")
+        if not Supplier.objects.filter(user__email=email).exists():
+            raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
 
-            # Update user data
-            user = supplier.user
-            user.phone_number = phone_number
-            user.save()
+        supplier = Supplier.objects.get(user__email=email)
+        phone_number = data.pop("phone_number")
 
-            # Update supplier data
-            speciality_type_ids = data.pop("speciality_type")
-            supplier.speciality_type.set(speciality_type_ids)
+        # Update user data
+        user = supplier.user
+        user.phone_number = phone_number
+        user.save()
 
-            # Update supplier model fields
-            Supplier.objects.filter(user__email=email).update(**data)
+        # Update supplier data
+        speciality_type_ids = data.pop("speciality_type")
+        supplier.speciality_type.set(speciality_type_ids)
 
-            response_data = {
-                "message": {"message": "Supplier successfully updated."},
-                "status_code": status.HTTP_200_OK,
-            }
-            return Response(
-                response_data,
-                status=response_data.get("status_code"),
-            )
+        # Update supplier model fields
+        Supplier.objects.filter(user__email=email).update(**data)
+        
+        return True,"Supplier successfully updated."
 
-        except serializers.ValidationError as e:
-            raise e
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+
 
     @classmethod
     def supplier_update_profile(cls, request):
@@ -215,69 +185,58 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier profile update.
         """
-        try:
-            data = request.data
-            showrooms_data = data.pop("showrooms", [])  
+        
+        data = request.data
+        showrooms_data = data.pop("showrooms", [])  
 
-            # Validate the incoming data with the serializer
-            serializer = SupplierPersonalInformationSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
+        # Validate the incoming data with the serializer
+        serializer = SupplierPersonalInformationSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
 
-            user_id = request.user.id
-            supplier = Supplier.objects.get(user__id=user_id)
+        user_id = request.user.id
+        supplier = Supplier.objects.get(user__id=user_id)
 
-            phone_number = data.pop("phone_number")
+        phone_number = data.pop("phone_number")
 
-            # Update user data
-            user = supplier.user
-            user.phone_number = phone_number
-            user.save()
+        # Update user data
+        user = supplier.user
+        user.phone_number = phone_number
+        user.save()
 
-            # Update supplier data
-            for attr, value in data.items():
-                setattr(supplier, attr, value)
-            supplier.save()
+        # Update supplier data
+        for attr, value in data.items():
+            setattr(supplier, attr, value)
+        supplier.save()
 
-            # Collect showroom IDs from the request
-            incoming_showroom_ids = [sr.get("id") for sr in showrooms_data if sr.get("id")]
+        # Collect showroom IDs from the request
+        incoming_showroom_ids = [sr.get("id") for sr in showrooms_data if sr.get("id")]
 
-            # Delete showrooms that are not in the incoming request
-            ShowRoom.objects.filter(supplier=supplier).exclude(id__in=incoming_showroom_ids).delete()
+        # Delete showrooms that are not in the incoming request
+        ShowRoom.objects.filter(supplier=supplier).exclude(id__in=incoming_showroom_ids).delete()
 
-            # Handle showrooms update or creation
-            for showroom_data in showrooms_data:
-                showroom_id = showroom_data.get("id")
-                address = showroom_data.get("address")
-                phone_number = showroom_data.get("phone_number")
+        # Handle showrooms update or creation
+        for showroom_data in showrooms_data:
+            showroom_id = showroom_data.get("id")
+            address = showroom_data.get("address")
+            phone_number = showroom_data.get("phone_number")
 
-                if showroom_id:
-                    showroom = ShowRoom.objects.get(id=showroom_id, supplier=supplier)
-                    showroom.address = address
-                    showroom.phone_number = phone_number
-                    showroom.save()
-                else:
-                    # Create new showroom
-                    ShowRoom.objects.create(
-                        address=address,
-                        phone_number=phone_number,
-                        supplier=supplier
-                    )
+            if showroom_id:
+                showroom = ShowRoom.objects.get(id=showroom_id, supplier=supplier)
+                showroom.address = address
+                showroom.phone_number = phone_number
+                showroom.save()
+            else:
+                # Create new showroom
+                ShowRoom.objects.create(
+                    address=address,
+                    phone_number=phone_number,
+                    supplier=supplier
+                )
 
-            response_data = {
-                "message": "Supplier profile and showrooms successfully updated",
-            }
-            return Response(
-                response_data,
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except ShowRoom.DoesNotExist:
-            raise NotFound(detail="Showroom not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        
+        return True,"Supplier profile and showrooms successfully updated"
+        
+
 
     @classmethod
     def supplier_update_bio(cls, request):
@@ -293,31 +252,21 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            data = request.data
-            user_id = request.user.id
-            bio = data.get("bio", None)
+        
+        data = request.data
+        user_id = request.user.id
+        bio = data.get("bio", None)
 
-            if bio is None:
-                raise serializers.ValidationError(detail="Bio is required")
+        if bio is None:
+            raise serializers.ValidationError(detail="Bio is required")
 
-            supplier = Supplier.objects.get(user__id=user_id)
-            supplier.bio = bio
-            supplier.save()
+        supplier = Supplier.objects.get(user__id=user_id)
+        supplier.bio = bio
+        supplier.save()
 
-            response_data = {
-                "message": "Supplier bio successfully updated",
-            }
-            return Response(
-                response_data,
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+       
+        return True,"Supplier bio successfully updated"
+        
 
     @classmethod
     def supplier_update_presentation_video(cls, request):
@@ -333,26 +282,19 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            data = request.data
-            user_id = request.user.id
-            presentation_video = data.get("presentation_video", None)
-            if presentation_video is None:
-                raise serializers.ValidationError(detail="presentation video is required")
+        data = request.data
+        user_id = request.user.id
+        presentation_video = data.get("presentation_video", None)
+        if presentation_video is None:
+            raise serializers.ValidationError(detail="presentation video is required")
 
-            supplier = Supplier.objects.get(user__id=user_id)
-            supplier.presentation_video = presentation_video
-            supplier.save()
+        supplier = Supplier.objects.get(user__id=user_id)
+        supplier.presentation_video = presentation_video
+        supplier.save()
 
-            response_data = {"message": "Supplier presentation video successfully updated"}
-            return Response(response_data.get("message"), status=status.HTTP_200_OK)
-
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        
+        return True,"Supplier presentation video successfully updated"
+        
 
     @classmethod
     def supplier_update_links(cls, request):
@@ -369,39 +311,28 @@ class SupplierService:
         Raises:
             APIException: If there are errors during social media links update.
         """
-        try:
-            data = request.data
-            user_id = request.user.id
+        
+        data = request.data
+        user_id = request.user.id
 
-            social_media_serializer = SupplierSocialMediaSerializer(data=data)
-            social_media_serializer.is_valid(raise_exception=True)
+        social_media_serializer = SupplierSocialMediaSerializer(data=data)
+        social_media_serializer.is_valid(raise_exception=True)
 
-            validated_data = social_media_serializer.validated_data
+        validated_data = social_media_serializer.validated_data
 
-            supplier = Supplier.objects.get(user__id=user_id)
+        supplier = Supplier.objects.get(user__id=user_id)
 
-            if not supplier.social_links:
-                social_links, created = SupplierSocialMedia.objects.update_or_create(
-                    **validated_data
-                )
-                supplier.social_links = social_links
-                supplier.save()
-            else:
-                social_links = supplier.social_links
-                SupplierSocialMedia.objects.filter(id=social_links.id).update(**validated_data)
-
-            response_data = {"message": "Supplier social links successfully updated"}
-            return Response(
-                response_data.get("message"),
-                status=status.HTTP_200_OK,
+        if not supplier.social_links:
+            social_links, created = SupplierSocialMedia.objects.update_or_create(
+                **validated_data
             )
+            supplier.social_links = social_links
+            supplier.save()
+        else:
+            social_links = supplier.social_links
+            SupplierSocialMedia.objects.filter(id=social_links.id).update(**validated_data)
 
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        return True,"Supplier social links successfully updated"
 
     @classmethod
     def supplier_update_profile_image(cls, request):
@@ -417,26 +348,20 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            data = request.data
-            user_id = request.user.id
-            profile_image = data.get("profile_image", None)
-            if profile_image is None:
-                raise serializers.ValidationError(detail="profile image is required")
+        
+        data = request.data
+        user_id = request.user.id
+        profile_image = data.get("profile_image", None)
+        if profile_image is None:
+            raise serializers.ValidationError(detail="profile image is required")
 
-            supplier = Supplier.objects.get(user__id=user_id)
-            supplier.profile_image = profile_image
-            supplier.save()
+        supplier = Supplier.objects.get(user__id=user_id)
+        supplier.profile_image = profile_image
+        supplier.save()
 
-            response_data = {"message": "Supplier profile image successfully updated"}
-            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+        response_data = {"message": "Supplier profile image successfully updated"}
+        return True,"Supplier profile image successfully updated"
 
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
 
     @classmethod
     def supplier_update_cover_image(cls, request):
@@ -452,37 +377,31 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            user_id = request.user.id
-            cover_images = request.FILES.getlist("cover_images", [])    
-            supplier = Supplier.objects.get(user__id=user_id)
+        
+        user_id = request.user.id
+        cover_images = request.FILES.getlist("cover_images", [])    
+        supplier = Supplier.objects.get(user__id=user_id)
 
-            current_cover_image_count = SupplierCoverImage.objects.filter(supplier=supplier).count()
+        current_cover_image_count = SupplierCoverImage.objects.filter(supplier=supplier).count()
 
-            if len(cover_images) > 3:
-                raise serializers.ValidationError(
-                    detail=f"Adding these cover images would exceed the maximum of 3 allowed."
-                )
+        if len(cover_images) > 3:
+            raise serializers.ValidationError(
+                detail=f"Adding these cover images would exceed the maximum of 3 allowed."
+            )
 
-    
-            SupplierCoverImage.objects.filter(supplier=supplier).delete()
 
-            # Save new cover images
-            if len(cover_images)>0 :
-                for cover_image in cover_images:
-                    SupplierCoverImage.objects.create(supplier=supplier, image=cover_image)
-            
-            supplier.save()
+        SupplierCoverImage.objects.filter(supplier=supplier).delete()
 
-            response_data = {"message": "Supplier cover images successfully updated"}
-            return Response(response_data, status=status.HTTP_200_OK)
+        # Save new cover images
+        if len(cover_images)>0 :
+            for cover_image in cover_images:
+                SupplierCoverImage.objects.create(supplier=supplier, image=cover_image)
+        
+        supplier.save()
 
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        return True,"Supplier cover images successfully updated"
+
+
 
     @classmethod
     def supplier_update_visibility(cls, request):
@@ -498,26 +417,19 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            data = request.data
-            user_id = request.user.id
-            is_public = data.get("is_public", None)
-            if is_public is None:
-                raise serializers.ValidationError(detail="is_public is required")
+        
+        data = request.data
+        user_id = request.user.id
+        is_public = data.get("is_public", None)
+        if is_public is None:
+            raise serializers.ValidationError(detail="is_public is required")
 
-            supplier = Supplier.objects.get(user__id=user_id)
-            supplier.is_public = is_public
-            supplier.save()
+        supplier = Supplier.objects.get(user__id=user_id)
+        supplier.is_public = is_public
+        supplier.save()
 
-            response_data = {"message": "Supplier Visibility successfully updated"}
-            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+        return True,"Supplier Visibility successfully updated"
 
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
 
     @classmethod
     def get_speciality_types(cls):
@@ -527,20 +439,13 @@ class SupplierService:
         Returns:
             Response: Response object containing the speciality types.
         """
-        try:
-            speciality_types = SupplierSpeciality.objects.all()
-            speciality_types_data = SupplierSpecialitySerializer(speciality_types, many=True).data
+        
+        speciality_types = SupplierSpeciality.objects.all()
+        speciality_types_data = SupplierSpecialitySerializer(speciality_types, many=True).data
 
-            return Response(
-                speciality_types_data,
-                status=status.HTTP_200_OK,
-            )
+        return True,speciality_types_data
 
-        except Exception:
-            raise APIException(
-                detail="Error retrieving speciality types",
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        
 
     @classmethod
     def get_appearances(cls):
@@ -550,18 +455,10 @@ class SupplierService:
         Returns:
             Response: Response object containing the appearances.
         """
-        try:
-            appearances_data = APPEARANCES
-            return Response(
-                appearances_data,
-                status=status.HTTP_200_OK,
-            )
+        
+        appearances_data = APPEARANCES
+        return True,appearances_data
 
-        except Exception:
-            raise APIException(
-                detail="Error retrieving appearances",
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
 
     @classmethod
     def supplier_get_profile(cls, request):
@@ -572,19 +469,12 @@ class SupplierService:
             Response: Response object containing supplier object.
         """
         user_id = request.user.id
-        try:
-            if not Supplier.objects.filter(user__id=user_id).exists():
-                raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
-            supplier = Supplier.objects.get(user__id=user_id)
-            supplier_serializer = SupplierSerializer(supplier)
-            return Response(
-                supplier_serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        if not Supplier.objects.filter(user__id=user_id).exists():
+            raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
+        supplier = Supplier.objects.get(user__id=user_id)
+        supplier_serializer = SupplierSerializer(supplier)
+        return True,supplier_serializer.data
+
 
     @classmethod
     def get_profile_by_id(cls, supplier_id):
@@ -597,17 +487,11 @@ class SupplierService:
         Returns:
             Response: Response object containing supplier object.
         """
-        try:
-            supplier = Supplier.objects.get(id=supplier_id)
-            supplier_serializer = SupplierSerializer(supplier)
-            return Response(
-                supplier_serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.", code=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            raise APIException(detail=str(e))
+        
+        supplier = Supplier.objects.get(id=supplier_id)
+        supplier_serializer = SupplierSerializer(supplier)
+        return True,supplier_serializer.data
+
 
     @classmethod
     def supplier_send_reset_password_link(cls, request):
@@ -616,72 +500,54 @@ class SupplierService:
 
 
         """
-        try:
-            data = request.data
-            serializer = UserAuthSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            email = serializer.validated_data.get("email")
+        
+        data = request.data
+        serializer = UserAuthSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
 
-            supplier = Supplier.objects.get(user__email=email)
-            email_images = settings.ARCHITECT_PASSWORD_IMAGES
-            token = generate_password_reset_token(supplier.user.id)
-            language_code = get_language_from_request(request)
-            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
+        supplier = Supplier.objects.get(user__email=email)
+        email_images = settings.ARCHITECT_PASSWORD_IMAGES
+        token = generate_password_reset_token(supplier.user.id)
+        language_code = get_language_from_request(request)
+        url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+        reset_link = f"""{url}/supplier/login/first-login-password/{token}"""
 
-            context = {
-                "first_name": supplier.user.first_name,
-                "last_name": supplier.user.last_name,
-                "email": email,
-                "reset_link": reset_link,
-            }
-            signal_data = {
-                "template_name": "architect_reset_password.html",
-                "context": context,
-                "to_email": email,
-                "subject": "Supplier Reset Password",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
-            return Response(
-                {"message": "email sent successfully"},
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found")
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        context = {
+            "first_name": supplier.user.first_name,
+            "last_name": supplier.user.last_name,
+            "email": email,
+            "reset_link": reset_link,
+        }
+        signal_data = {
+            "template_name": "architect_reset_password.html",
+            "context": context,
+            "to_email": email,
+            "subject": "Supplier Reset Password",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        
+        return True,"email sent successfully"
 
     @classmethod
     def supplier_validate_password_token(cls, request):
         """
         validate password token
         """
-        try:
-            data = request.data
-            token = data.get("token", False)
-            if not token:
-                raise serializers.ValidationError(detail="token is required")
 
-            user_id, error = validate_password_reset_token(token)
-            if error:
-                raise APIException(detail=error)
-            supplier = Supplier.objects.get(user__id=user_id)
-            serializer = SupplierSerializer(supplier)
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        data = request.data
+        token = data.get("token", False)
+        if not token:
+            raise serializers.ValidationError(detail="token is required")
+
+        user_id, error = validate_password_reset_token(token)
+        if error:
+            raise APIException(detail=error)
+        supplier = Supplier.objects.get(user__id=user_id)
+        serializer = SupplierSerializer(supplier)
+        return True,serializer.data
+
 
     
     @classmethod
@@ -728,36 +594,26 @@ class SupplierService:
         Returns:
             Response: Response object indicating success or failure of supplier registration.
         """
-        try:
+        
 
-            supplier = Supplier.objects.get(id=pk)
-            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
-            signal_data = {
-                "template_name": "supplier_invite.html",
-                "context": {
-                    "first_name": supplier.user.first_name,
-                    "last_name": supplier.user.last_name,
-                    "email": supplier.user.email,
-                },
-                "to_email": supplier.user.email,
-                "subject": "Archimatch Invite Supplier",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
-            response_data = {
-                "message": "Email resent successfully",
-            }
-
-            return Response(
-                response_data,
-                status=status.HTTP_200_OK,
-            )
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier does not exist")
-        except APIException as e:
-            raise e
-        except Exception:
-            raise APIException(detail="error resending email to supplier")
+        supplier = Supplier.objects.get(id=pk)
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        signal_data = {
+            "template_name": "supplier_invite.html",
+            "context": {
+                "first_name": supplier.user.first_name,
+                "last_name": supplier.user.last_name,
+                "email": supplier.user.email,
+            },
+            "to_email": supplier.user.email,
+            "subject": "Archimatch Invite Supplier",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        
+        return True, "Email resent successfully"
+        
+        
 
     @classmethod
     def delete_supplier(cls, pk):
@@ -771,25 +627,13 @@ class SupplierService:
         Returns:
             Response: Response object indicating success or failure of the supplier deletion.
         """
-        try:
-            supplier = Supplier.objects.get(id=pk)
-            supplier.delete()
+ 
+        supplier = Supplier.objects.get(id=pk)
+        supplier.delete()
+        return True,  "Supplier successfully deleted"
+        
 
-            response_data = {
-                "message": "Supplier successfully deleted",
-            }
 
-            return Response(
-                response_data,
-                status=status.HTTP_204_NO_CONTENT,
-            )
-
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
 
 
     @classmethod
@@ -806,27 +650,19 @@ class SupplierService:
         Raises:
             APIException: If there are errors during supplier settings update.
         """
-        try:
-            data = request.data
-            user = request.user
-            catalog_visibility = data.get("catalog_visibility", None)
-            if catalog_visibility is None:
-                raise serializers.ValidationError(detail="catalog visibility is required")
 
-            supplier = Supplier.objects.get(user=user)
-            supplier.catalog_visibility = catalog_visibility
-            supplier.save()
+        data = request.data
+        user = request.user
+        catalog_visibility = data.get("catalog_visibility", None)
+        if catalog_visibility is None:
+            raise serializers.ValidationError(detail="catalog visibility is required")
 
-            response_data = {"message": "Catalog Visibility successfully updated"}
-            return Response(response_data.get("message"), status=status.HTTP_200_OK)
+        supplier = Supplier.objects.get(user=user)
+        supplier.catalog_visibility = catalog_visibility
+        supplier.save()
 
-        except Supplier.DoesNotExist:
-            raise NotFound(detail="Supplier not found.")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
-        
+        return True, "Catalog Visibility successfully updated"
+    
 
 
     @classmethod
@@ -840,17 +676,7 @@ class SupplierService:
         Returns:
             Response: Response object indicating success or failure of supplier registration.
         """
-        try:
-
-            showroom = ShowRoom.objects.get(id=pk)
-            showroom.delete()
-            return Response(
-                {"message":"show room deleted"},
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        except ShowRoom.DoesNotExist:
-            raise NotFound(detail="ShowRoom does not exist")
-        except APIException as e:
-            raise e
-        except Exception:
-            raise APIException(detail="error resending email to supplier")
+       
+        showroom = ShowRoom.objects.get(id=pk)
+        showroom.delete()
+        return True, "show room deleted"
