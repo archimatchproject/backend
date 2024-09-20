@@ -9,6 +9,7 @@ from django.db import transaction
 
 from app.cms.models.CookiesPolicy import CookiesPolicy
 from app.cms.serializers.CookiesPolicySerializer import CookiesPolicySerializer
+from app.users.models.Admin import Admin
 
 
 class CookiesPolicyService:
@@ -36,3 +37,24 @@ class CookiesPolicyService:
         with transaction.atomic():
             policy = CookiesPolicy.objects.create(**validated_data, admin=request.user.admin)
             return True, CookiesPolicySerializer(policy).data
+
+    @classmethod
+    def get_policy_by_admin(cls, request):
+        """
+        Retrieve the CookiesPolicy instance associated with the given admin.
+
+        Args:
+            admin (Admin): The admin instance.
+
+        Returns:
+            dict: The serialized data of the CookiesPolicy instance.
+
+        Raises:
+            NotFound: If no policy is found for the admin.
+        """
+        user = request.user
+
+        admin = Admin.objects.get(user=user)
+        policy = CookiesPolicy.objects.get(admin=admin)
+        return True,CookiesPolicySerializer(policy).data
+        

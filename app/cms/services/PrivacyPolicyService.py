@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from app.cms.models.PrivacyPolicy import PrivacyPolicy
 from app.cms.serializers.PrivacyPolicySerializer import PrivacyPolicySerializer
+from app.users.models.Admin import Admin
 
 
 class PrivacyPolicyService:
@@ -48,3 +49,24 @@ class PrivacyPolicyService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error creating Privacy Policy: {e}")
+
+    
+    @classmethod
+    def get_policy_by_admin(cls, request):
+        """
+        Retrieve the PrivacyPolicy instance associated with the given admin.
+
+        Args:
+            admin (Admin): The admin instance.
+
+        Returns:
+            dict: The serialized data of the PrivacyPolicy instance.
+
+        Raises:
+            NotFound: If no policy is found for the admin.
+        """
+        user = request.user
+
+        admin = Admin.objects.get(user=user)
+        policy = PrivacyPolicy.objects.get(admin=admin)
+        return True,PrivacyPolicySerializer(policy).data

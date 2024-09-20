@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError
 
 from app.cms.models.CGUCGVPolicy import CGUCGVPolicy
 from app.cms.serializers.CGUCGVPolicySerializer import CGUCGVPolicySerializer
+from app.users.models.Admin import Admin
 
 
 class CGUCGVPolicyService:
@@ -38,3 +39,23 @@ class CGUCGVPolicyService:
         with transaction.atomic():
             policy = CGUCGVPolicy.objects.create(**validated_data, admin=request.user.admin)
             return True,CGUCGVPolicySerializer(policy).data
+
+    @classmethod
+    def get_policy_by_admin(cls, request):
+        """
+        Retrieve the CGUCGVPolicy instance associated with the given admin.
+
+        Args:
+            admin (Admin): The admin instance.
+
+        Returns:
+            dict: The serialized data of the CGUCGVPolicy instance.
+
+        Raises:
+            NotFound: If no policy is found for the admin.
+        """
+        user = request.user
+
+        admin = Admin.objects.get(user=user)
+        policy = CGUCGVPolicy.objects.get(admin=admin)
+        return True,CGUCGVPolicySerializer(policy).data

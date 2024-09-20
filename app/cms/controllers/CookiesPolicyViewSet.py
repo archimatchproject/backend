@@ -15,6 +15,7 @@ from app.cms.services.CookiesPolicyService import CookiesPolicyService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
+from rest_framework.decorators import action
 
 class CookiesPolicyViewSet(viewsets.ModelViewSet):
     """
@@ -57,3 +58,22 @@ class CookiesPolicyViewSet(viewsets.ModelViewSet):
         """
         success, data = CookiesPolicyService.create_cookies_policy(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
+    
+    @action(detail=True, methods=["PUT"])
+    def get_policy_by_admin(self, request, pk=None):
+        """
+        Retrieve the CookiesPolicy instance associated with the given admin.
+
+        Args:
+            admin (Admin): The admin instance.
+
+        Returns:
+            dict: The serialized data of the CookiesPolicy instance.
+
+        Raises:
+            NotFound: If no policy is found for the admin.
+        """
+
+        success, data = CookiesPolicyService.get_policy_by_admin(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

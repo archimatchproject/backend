@@ -36,4 +36,9 @@ cookies_policy_urlpatterns = [
         CookiesPolicyViewSet.as_view({"delete": "destroy"}),
         name="cookies-policy-delete",
     ),
+    path(
+        "cookies-policy/get-by-admin",
+        CookiesPolicyViewSet.as_view({"get": "get_policy_by_admin"}),
+        name="cgu-cgv-policy-by-admin",
+    ),
 ]

@@ -35,4 +35,9 @@ cgu_cgv_urlpatterns = [
         CGUCGVPolicyViewSet.as_view({"delete": "destroy"}),
         name="cgu-cgv-policy-delete",
     ),
+    path(
+        "cgu-cgv-policy/get-by-admin",
+        CGUCGVPolicyViewSet.as_view({"get": "get_policy_by_admin"}),
+        name="cgu-cgv-policy-by-admin",
+    ),
 ]
