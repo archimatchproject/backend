@@ -59,6 +59,7 @@ class BlogService:
                     blog_thematic=validated_data.get("blog_thematic"),
                     admin=user.admin,
                     visible=validated_data.get("visible", False),
+                    target_user_type= validated_data.get("target_user_type")
                 )
 
                 # Create related sections if provided
