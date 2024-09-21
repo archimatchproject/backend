@@ -9,3 +9,5 @@ from app.cms.admin.GuideSectionAdmin import GuideSectionAdmin
 from app.cms.admin.GuideThematicAdmin import GuideThematicAdmin
 from app.cms.admin.PrivacyPolicyAdmin import PrivacyPolicyAdmin
 from app.cms.admin.TermsAndConditionsAdmin import TermsAndConditionsAdmin
+from app.cms.admin.CGUCGVPolicyAdmin import CGUCGVPolicyAdmin
+from app.cms.admin.CookiesPolicyAdmin import CookiesPolicyAdmin
