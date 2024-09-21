@@ -15,8 +15,8 @@ from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
 from app.cms.models.Blog import Blog
 from app.cms.serializers.BlogSerializer import BlogSerializer
 from app.cms.services.BlogService import BlogService
-
-
+from rest_framework.exceptions import ValidationError
+from app.core.exception_handler import handle_service_exceptions
 class BlogViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for handling Blog instances.
@@ -61,6 +61,25 @@ class BlogViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageBlogPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
+    def get_queryset(self):
+        """
+        Get the queryset for the view.
+
+        Raises:
+            ValidationError: If the `target_user_type` query parameter is not provided.
+
+        Returns:
+            QuerySet: The filtered queryset based on the `target_user_type` parameter.
+        """
+        if self.action == "list":
+            target_user_type = self.request.query_params.get("target_user_type")
+            if not target_user_type:
+                raise ValidationError("The 'target_user_type' query parameter is required.")
+            return Blog.objects.filter(target_user_type=target_user_type)
+        else:
+            return self.queryset
+    
     def create(self, request, *args, **kwargs):
         """
         Create a new Blog instance.
