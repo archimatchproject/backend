@@ -8,3 +8,4 @@ from app.subscription.admin.SupplierSubscriptionPlanAdmin import SupplierSubscri
 from app.subscription.admin.SupplierPaymentAdmin import SupplierPaymentAdmin
 from app.subscription.admin.SupplierInvoiceAdmin import SupplierInvoiceAdmin
 from app.subscription.admin.EventDiscountAdmin import EventDiscountAdmin
+from app.subscription.admin.SupplierSelectedSubscriptionPlanAdmin import SupplierSelectedSubscriptionPlanAdmin
