@@ -15,6 +15,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.email_templates.utils import render_to_pdf
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
@@ -30,6 +31,8 @@ class InvoiceService:
 
     Handles business logic and exception handling for TokenPack creation and management.
     """
+    
+    pagination_class = CustomPagination
 
     @classmethod
     def export_invoice(cls, request, id):
@@ -78,11 +81,17 @@ class InvoiceService:
         user_id = request.user.id
 
         architect = Architect.objects.get(user__id=user_id)
-        invoices = ArchitectInvoice.objects.filter(architect=architect)
+        queryset = ArchitectInvoice.objects.filter(architect=architect)
+        
+        paginator = cls.pagination_class()
 
-        invoices_seriliazer = ArchitectInvoiceSerializer(invoices, many=True)
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ArchitectInvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
-        return True, invoices_seriliazer.data
+        serializer = ArchitectInvoiceSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     

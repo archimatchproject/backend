@@ -122,16 +122,23 @@ class RealizationService:
         Returns:
             Response: Response containing list of realizations related to the project category.
         """
-
-        realizations = Realization.objects.filter(project_category__id=id)
-        filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
-        paginator = cls.pagination_class()
-        page = paginator.paginate_queryset(filtered_queryset, request)
-        if page is not None:
-            serializer = RealizationOutputSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-        serializer = RealizationOutputSerializer(filtered_queryset, many=True)
-        return True,serializer.data
+        try:
+            realizations = Realization.objects.filter(project_category__id=id)
+            filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(filtered_queryset, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(filtered_queryset, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))
             
 
 
@@ -147,16 +154,22 @@ class RealizationService:
         Returns:
             Response: Response containing list of realizations related to the architect.
         """
-
-        realizations = Realization.objects.filter(architect__id=id)
-        paginator = cls.pagination_class()
-        page = paginator.paginate_queryset(realizations, request)
-        if page is not None:
-            serializer = RealizationOutputSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-        serializer = RealizationOutputSerializer(realizations, many=True)
-        return True,serializer.data
-
+        try:
+            realizations = Realization.objects.filter(architect__id=id)
+            paginator = cls.pagination_class()
+            page = paginator.paginate_queryset(realizations, request)
+            if page is not None:
+                serializer = RealizationOutputSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+            serializer = RealizationOutputSerializer(realizations, many=True)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except Realization.DoesNotExist:
+            raise NotFound(detail="Realizations not found.")
+        except Exception as e:
+            raise APIException(detail=str(e))
 
     @classmethod
     def update_realization_images(cls, instance, request):

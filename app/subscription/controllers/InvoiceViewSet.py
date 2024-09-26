@@ -48,6 +48,6 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the list of invoices or an error message.
         """
-        success,data = InvoiceService.architect_get_invoices(request)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return InvoiceService.architect_get_invoices(request)
+        
 

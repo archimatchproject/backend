@@ -165,8 +165,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the realizations for the specified category.
         """
-        success,data = RealizationService.get_realizations_by_category(request, pk)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return RealizationService.get_realizations_by_category(request, pk)
+        
 
 
     @action(
@@ -187,8 +187,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the realizations for the specified architect.
         """
-        success,data = RealizationService.get_realizations_by_architect(request, pk)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return RealizationService.get_realizations_by_architect(request, pk)
+        
 
     @action(
         detail=True,
