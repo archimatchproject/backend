@@ -126,7 +126,7 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "discount_message",
             "effective_price",
             "most_popular",
-            "event_discount"
+            "event_discount",
             "event_discount_id"
         ]
     

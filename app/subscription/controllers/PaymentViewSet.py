@@ -50,3 +50,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
         Return the payment methods from the choices.
         """
         return PaymentService.get_payment_methods()
+    
+    @action(detail=False, methods=["POST"])
+    def create_supplier_payment(self, request):
+        """
+        Return the payment methods from the choices.
+        """
+        return PaymentService.create_supplier_payment(request=request,data=request.data)

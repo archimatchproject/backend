@@ -18,7 +18,8 @@ from rest_framework.response import Response
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
-
+from app.core.pagination import CustomPagination
+from rest_framework.exceptions import ValidationError
 
 class GuideThematicService:
     """
@@ -32,6 +33,7 @@ class GuideThematicService:
         existing GuideThematic.
     """
 
+    pagination_class = CustomPagination
     @classmethod
     def create_guide_thematic(cls, request):
         """
@@ -119,3 +121,30 @@ class GuideThematicService:
             raise NotFound(detail="Guide not found.")
         except Exception as e:
             raise APIException(detail=f"Error changing visibility: {str(e)}")
+
+    def get_thematic_guides_paginated(cls, request):
+        """
+        Handle GET request and return paginated Supplier objects.
+        This method retrieves all Supplier objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or a 400 Bad Request response with an error message.
+        """
+        target_user_type = request.query_params.get("target_user_type")
+        if not target_user_type:
+            raise ValidationError("The 'target_user_type' query parameter is required.")
+        queryset = GuideThematic.objects.filter(target_user_type=target_user_type)
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = GuideThematicSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        serializer = GuideThematicSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

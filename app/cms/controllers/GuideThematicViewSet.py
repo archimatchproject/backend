@@ -114,3 +114,6 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         """
 
         return GuideThematicService.change_visibility(pk, request)
+
+    def list(self, request, *args, **kwargs):
+        return GuideThematicService.get_thematic_guides_paginated(request)

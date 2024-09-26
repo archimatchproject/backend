@@ -12,32 +12,32 @@ from app.subscription.controllers.SupplierSubscriptionPlanViewSet import Supplie
 
 supplier_subscription_plan_urlpatterns = [
     path(
-        "subscription-plan",
+        "supplier-subscription-plan",
         SupplierSubscriptionPlanViewSet.as_view({"get": "list"}),
         name="subscription-plan-list",
     ),
     path(
-        "subscription-plan/create/",
+        "supplier-subscription-plan/create/",
         SupplierSubscriptionPlanViewSet.as_view({"post": "create"}),
         name="subscription-plan-create",
     ),
     path(
-        "subscription-plan/<int:pk>",
+        "supplier-subscription-plan/<int:pk>",
         SupplierSubscriptionPlanViewSet.as_view({"get": "retrieve"}),
         name="subscription-plan-detail",
     ),
     path(
-        "subscription-plan/update/<int:pk>/",
+        "supplier-subscription-plan/update/<int:pk>/",
         SupplierSubscriptionPlanViewSet.as_view({"put": "update"}),
         name="subscription-plan-update",
     ),
     path(
-        "subscription-plan/delete/<int:pk>/",
+        "supplier-subscription-plan/delete/<int:pk>/",
         SupplierSubscriptionPlanViewSet.as_view({"delete": "destroy"}),
         name="subscription-plan-delete",
     ),
     path(
-        "subscription-plan/upgradable-plans/",
+        "supplier-subscription-plan/upgradable-plans/",
         SupplierSubscriptionPlanViewSet.as_view({"get": "get_upgradable_plans"}),
         name="upgradable-plans",
     ),
