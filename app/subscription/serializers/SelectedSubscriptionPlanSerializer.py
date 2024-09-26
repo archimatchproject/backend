@@ -34,7 +34,6 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "remaining_tokens",
             "active",
             "free_plan",
-            "services",
             "plan_services",
             "start_date",
             "end_date",
