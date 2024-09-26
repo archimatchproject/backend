@@ -22,9 +22,10 @@ class SupplierSelectedSubscriptionPlanAdmin(admin.ModelAdmin):
         "free_plan",
         "start_date",
         "end_date",
-        "number_tokens",
         "discount",
         "discount_percentage",
+        "collection_number",
+        "product_number_per_collection"
     )
     search_fields = ("plan_name",)
     list_filter = ("active", "free_plan")
