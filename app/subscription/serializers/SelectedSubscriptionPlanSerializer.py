@@ -16,10 +16,6 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
-    
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
 
     class Meta:
         """
