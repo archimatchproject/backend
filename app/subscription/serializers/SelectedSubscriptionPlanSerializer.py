@@ -16,6 +16,10 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
+    
+    plan_services = serializers.PrimaryKeyRelatedField(
+        queryset=PlanService.objects.all(), write_only=True, many=True
+    )
 
     class Meta:
         """
@@ -30,6 +34,7 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "remaining_tokens",
             "active",
             "free_plan",
+            "services",
             "plan_services",
             "start_date",
             "end_date",
@@ -98,8 +103,6 @@ class SupplierSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "product_number_per_collection",
             "active",
             "free_plan",
-            "services",
-            "plan_services",
             "start_date",
             "end_date",
         ]
