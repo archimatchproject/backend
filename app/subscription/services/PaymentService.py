@@ -26,6 +26,7 @@ from app.subscription.models.SupplierInvoice import SupplierInvoice
 from app.subscription.models.SupplierPayment import SupplierPayment
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
+from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer, SupplierInvoiceSerializer
 from app.subscription.serializers.PaymentSerializer import ArchitectPaymentPOSTSerializer, ArchitectPaymentSerializer, PaymentSerializer, SupplierPaymentPOSTSerializer, SupplierPaymentSerializer
 from app.users.models.Architect import Architect
@@ -207,7 +208,7 @@ class PaymentService:
                 )
         except Architect.DoesNotExist:
             raise NotFound(detail="Authenticated user is not an architect.")
-        except SubscriptionPlan.DoesNotExist:
+        except SupplierSubscriptionPlan.DoesNotExist:
             raise NotFound(detail="Subscription plan does not exist.")
         except serializers.ValidationError as e:
             raise e
