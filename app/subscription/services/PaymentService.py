@@ -27,7 +27,7 @@ from app.subscription.models.SupplierPayment import SupplierPayment
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer, SupplierInvoiceSerializer
-from app.subscription.serializers.PaymentSerializer import ArchitectPaymentPOSTSerializer, ArchitectPaymentSerializer, PaymentSerializer, SupplierPaymentSerializer
+from app.subscription.serializers.PaymentSerializer import ArchitectPaymentPOSTSerializer, ArchitectPaymentSerializer, PaymentSerializer, SupplierPaymentPOSTSerializer, SupplierPaymentSerializer
 from app.users.models.Architect import Architect
 from app.users.models.Supplier import Supplier
 from datetime import datetime, timedelta
@@ -151,7 +151,7 @@ class PaymentService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        serializer = SupplierPaymentSerializer(data=data)
+        serializer = SupplierPaymentPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 

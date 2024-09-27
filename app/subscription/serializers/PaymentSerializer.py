@@ -10,6 +10,7 @@ from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectS
 from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
 from app.subscription.models.Payment import Payment
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
+from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 from app.subscription.serializers.SelectedSubscriptionPlanSerializer import ArchitectSelectedSubscriptionPlanSerializer
 from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer,SupplierSubscriptionPlanSerializer
 
@@ -105,6 +106,27 @@ class ArchitectPaymentPOSTSerializer(serializers.ModelSerializer):
 
     subscription_plan = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSubscriptionPlan.objects.all(), write_only=True
+    )
+    
+    class Meta:
+        """
+        Meta class for PaymentSerializer.
+        """
+
+        model = Payment
+        fields = [
+            "payment_method",
+            "subscription_plan",
+        ]
+
+
+class SupplierPaymentPOSTSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Payment model.
+    """
+
+    subscription_plan = serializers.PrimaryKeyRelatedField(
+        queryset=SupplierSubscriptionPlan.objects.all(), write_only=True
     )
     
     class Meta:
