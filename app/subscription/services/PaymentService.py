@@ -159,7 +159,7 @@ class PaymentService:
         user = request.user
         try:
             supplier = Supplier.objects.get(user=user)
-            subscription_plan = validated_data.get("subscription_plan")
+            subscription_plan = validated_data.pop("subscription_plan")
 
             # Create the SelectedSubscriptionPlan
             selected_plan_data = {
@@ -178,12 +178,11 @@ class PaymentService:
 
             supplier.subscription_plan = selected_plan
             supplier.save()
-
+            
             with transaction.atomic():
                 payment = SupplierPayment.objects.create(
-                    supplier=supplier, subscription_plan=selected_plan, **validated_data
+                    supplier=supplier, subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
                 )
-
                 invoice = SupplierInvoice(
                     invoice_number=f"INV-{payment.id}",
                     supplier=supplier,
@@ -198,10 +197,10 @@ class PaymentService:
                     ),
                 )
                 invoice.save()
-
+ 
                 return Response(
                     {
-                        "payment": PaymentSerializer(payment).data,
+                        "payment": SupplierPaymentSerializer(payment).data,
                         "invoice": SupplierInvoiceSerializer(invoice).data,
                     },
                     status=status.HTTP_201_CREATED,
