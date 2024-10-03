@@ -143,7 +143,15 @@ class InvoiceService:
 
         supplier = Supplier.objects.get(user__id=user_id)
         invoices = SupplierInvoice.objects.filter(supplier=supplier)
+        
+        paginator = cls.pagination_class()
 
-        invoices_seriliazer = SupplierInvoiceSerializer(invoices, many=True)
-        return True, invoices_seriliazer.data
+        page = paginator.paginate_queryset(invoices, request)
+        if page is not None:
+            serializer = SupplierInvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = SupplierInvoiceSerializer(invoices, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
 

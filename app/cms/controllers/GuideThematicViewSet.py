@@ -123,3 +123,6 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         success,data = GuideThematicService.change_visibility(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
+    @handle_service_exceptions
+    def list(self, request, *args, **kwargs):
+        return GuideThematicService.get_thematic_guides_paginated(request)
