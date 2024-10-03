@@ -87,8 +87,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         Updating existing announcement
         """
-        instance = self.get_object()
-        success,data,message = AnnouncementService.update_announcement(instance, request.data)
+        instance = Announcement.objects.get(id=pk)
+        success,data,message = AnnouncementService.update_announcement(instance=instance, data=request.data)
         return build_response(success=success, data=data,message=message, status=status.HTTP_200_OK)
 
     @action(

@@ -90,3 +90,7 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         """
         success,data = ReviewReportService.execute_decision(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @handle_service_exceptions
+    def list(self,request):
+        return ReviewReportService.review_reports_get_all(request)

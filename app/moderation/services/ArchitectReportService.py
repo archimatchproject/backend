@@ -20,6 +20,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.ArchitectReport import ArchitectReport
 from app.moderation.models.Decision import Decision
@@ -40,7 +41,7 @@ class ArchitectReportService:
     Methods:
         create_architect_report(request): Handles validation and creation of a new ArchitectReport.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_architect_report(cls, request):
         """
@@ -85,16 +86,20 @@ class ArchitectReportService:
             raise APIException(detail=f"Error creating architect report: {str(e)}")
 
     @classmethod
-    def get_grouped_architect_reports(cls):
+    def get_grouped_architect_reports(cls, request):
         """
-        Groups ArchitectReport objects by the architect's email and returns them as a list.
+        Groups ArchitectReport objects by the architect's email and returns them as a paginated list.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing pagination parameters.
 
         Returns:
-            Response: A response object containing the grouped architect reports.
+            Response: A paginated response containing grouped architect reports.
         """
         queryset = ArchitectReport.objects.all()
         architect_reports = defaultdict(list)
 
+        # Grouping reports by architect email
         for report in queryset:
             architect_email = report.reported_architect.user.email
             architect_reports[architect_email].append(ArchitectReportSerializer(report).data)
@@ -103,7 +108,19 @@ class ArchitectReportService:
         grouped_reports = [
             {architect_email: reports} for architect_email, reports in architect_reports.items()
         ]
-        return True,grouped_reports
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the serialized grouped reports
+        page = paginator.paginate_queryset(grouped_reports, request)
+        print(page)
+        if page is not None:
+            # Get paginated response with serialized data
+            return paginator.get_paginated_response(page)
+
+        # If no pagination is applied, return all data
+        return Response(grouped_reports, status=status.HTTP_200_OK) 
 
     @classmethod
     def get_decisions(cls):

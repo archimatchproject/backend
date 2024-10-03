@@ -17,6 +17,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation.models.ClientReview import ClientReview
 from app.moderation.serializers.ClientReviewSerializer import ClientReviewSerializer
 from app.users.models.Architect import Architect
@@ -32,7 +33,7 @@ class ClientReviewService:
     Methods:
         create_client_review(request): Handles validation and creation of a new ClientReview.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_client_review(cls, request):
         """

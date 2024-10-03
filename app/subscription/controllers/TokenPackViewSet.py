@@ -55,3 +55,19 @@ class TokenPackViewSet(viewsets.ModelViewSet):
         success,message = TokenPackService.architect_choose_token_pack(request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
+    @handle_service_exceptions
+    def list(self, request, *args, **kwargs):
+        """
+        Create a new SubscriptionPlan instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to create
+            SubscriptionPlan instance.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: Serialized data of the created SubscriptionPlan instance.
+        """
+        success,data = TokenPackService.get_all_token_packs()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

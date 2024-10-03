@@ -94,3 +94,7 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         success,message = ProjectReportService.execute_decision(request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @handle_service_exceptions
+    def list(self,request):
+        return ProjectReportService.project_reports_get_all(request)

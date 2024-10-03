@@ -50,8 +50,8 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         Override the list method to return grouped ArchitectReport objects.
         """
-        success,data = ArchitectReportService.get_grouped_architect_reports()
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return ArchitectReportService.get_grouped_architect_reports(request)
+       
 
 
     @handle_service_exceptions

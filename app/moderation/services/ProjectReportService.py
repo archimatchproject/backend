@@ -18,6 +18,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.Decision import Decision
 from app.moderation.models.ProjectReport import ProjectReport
@@ -38,7 +39,7 @@ class ProjectReportService:
     Methods:
         create_project_report(request): Handles validation and creation of a new ProjectReport.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_project_report(cls, request):
         """
@@ -163,4 +164,33 @@ class ProjectReportService:
 
         return True,"Decision Executed Successfully."
 
-    
+    @classmethod
+    def project_reports_get_all(cls, request):
+        """
+        Handle GET request and return paginated ProjectReport objects.
+        This method retrieves all ProjectReport objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized ProjectReport objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = ProjectReport.objects.all()
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ProjectReportSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = ProjectReportSerializer(page, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

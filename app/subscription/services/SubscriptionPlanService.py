@@ -63,7 +63,7 @@ class SubscriptionPlanService:
             subscription_plan = ArchitectSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
             subscription_plan.services.set(plan_services)
 
-            return True,ArchitectSubscriptionPlanSerializer(subscription_plan).data,
+            return True,ArchitectSubscriptionPlanSerializer(subscription_plan).data
                
         
     @classmethod
@@ -125,4 +125,11 @@ class SubscriptionPlanService:
             )
             
             return True,ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data
-        
+    
+    @classmethod
+    def get_all_architect_subscription_plan(cls):
+        """
+        gets all the architect subscription plans
+        """
+        subscription_plans = ArchitectSubscriptionPlan.objects.all()
+        return True,ArchitectSubscriptionPlanSerializer(subscription_plans,many=True).data

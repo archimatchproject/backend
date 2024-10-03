@@ -130,3 +130,14 @@ class AdminViewSet(viewsets.ModelViewSet):
         """
         success,admin_data = AdminService.admin_validate_password_token(request)
         return build_response(success=success, data=admin_data, status=status.HTTP_200_OK) 
+    
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="admins-paginated",
+        url_name="admins-paginated",
+    )
+    @handle_service_exceptions
+    def get_admins_paginated(self,request):
+        return AdminService.admins_get_all(request)
