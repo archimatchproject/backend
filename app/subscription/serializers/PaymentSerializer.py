@@ -119,7 +119,6 @@ class ArchitectPaymentPOSTSerializer(serializers.ModelSerializer):
             "subscription_plan",
         ]
 
-
 class SupplierPaymentPOSTSerializer(serializers.ModelSerializer):
     """
     Serializer for the Payment model.

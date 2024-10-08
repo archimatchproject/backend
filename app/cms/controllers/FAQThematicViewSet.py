@@ -13,7 +13,9 @@ from app.cms.controllers.ManageFAQPermission import ManageFAQPermission
 from app.cms.models.FAQThematic import FAQThematic
 from app.cms.serializers.FAQThematicSerializer import FAQThematicSerializer
 from app.cms.services.FAQThematicService import FAQThematicService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class FAQThematicViewSet(viewsets.ModelViewSet):
     """
@@ -63,6 +65,7 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageFAQPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new FAQThematic instance along with related FAQQuestion instances.
@@ -73,8 +76,11 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return FAQThematicService.create_faq_thematic(request)
+        success,data = FAQThematicService.create_faq_thematic(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
+
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Handle the update of an existing FAQThematic instance along with related
@@ -88,4 +94,6 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the updated instance data.
         """
-        return FAQThematicService.update_faq_thematic(self.get_object(), request)
+        success,data =  FAQThematicService.update_faq_thematic(self.get_object(), request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+

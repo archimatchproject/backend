@@ -10,6 +10,9 @@ from app.moderation.controllers.ManageReportingPermission import ManageReporting
 from app.moderation.models.ArchitectReport import ArchitectReport
 from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
 from app.moderation.services.ArchitectReportService import ArchitectReportService
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 
 class ArchitectReportViewSet(viewsets.ModelViewSet):
@@ -42,45 +45,63 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def list(self, request, *args, **kwargs):
         """
         Override the list method to return grouped ArchitectReport objects.
         """
-        return ArchitectReportService.get_grouped_architect_reports()
+        return ArchitectReportService.get_grouped_architect_reports(request)
+       
 
+
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use ArchitectReportService for handling the creation
         of an ArchitectReport.
         """
-        return ArchitectReportService.create_architect_report(request)
+        success,data = ArchitectReportService.create_architect_report(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_decisions(self, request):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        return ArchitectReportService.get_decisions()
+        success,data = ArchitectReportService.get_decisions()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_reasons(self, request):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        return ArchitectReportService.get_reasons()
+        success,data = ArchitectReportService.get_reasons()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True)
+    @handle_service_exceptions
     def change_status(self, request, pk=None):
         """
         Change the status of an ArchitectReport.
         """
-        return ArchitectReportService.change_architect_report_status(request, pk)
+        success,data = ArchitectReportService.change_architect_report_status(request, pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True)
+    @handle_service_exceptions
     def execute_decision(self, request):
         """
         Execute a decision on multiple architect reports.
 
         This method processes the decision for the provided report IDs.
         """
-        return ArchitectReportService.execute_decision(request)
+        success,message = ArchitectReportService.execute_decision(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+

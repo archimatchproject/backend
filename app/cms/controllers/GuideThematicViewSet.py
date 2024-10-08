@@ -18,7 +18,9 @@ from app.cms.controllers.ManageGuidePermission import ManageGuidePermission
 from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
 from app.cms.services.GuideThematicService import GuideThematicService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class GuideThematicViewSet(viewsets.ModelViewSet):
     """
@@ -68,6 +70,7 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageGuidePermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Create a new GuideThematic instance.
@@ -81,8 +84,10 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created GuideThematic instance.
         """
-        return GuideThematicService.create_guide_thematic(request)
+        success,data = GuideThematicService.create_guide_thematic(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Update an existing GuideThematic instance.
@@ -98,9 +103,12 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        return GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
+        success,data = GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def change_visibility(self, request, pk=None):
         """
         Change the visibility of a Blog instance.
@@ -112,8 +120,9 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
+        success,data = GuideThematicService.change_visibility(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
-        return GuideThematicService.change_visibility(pk, request)
-
+    @handle_service_exceptions
     def list(self, request, *args, **kwargs):
         return GuideThematicService.get_thematic_guides_paginated(request)

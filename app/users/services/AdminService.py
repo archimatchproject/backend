@@ -18,6 +18,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.email_templates.signals import api_success_signal
 from app.users import PERMISSION_CODENAMES
 from app.users.models.Admin import Admin
@@ -38,7 +39,8 @@ class AdminService:
     creating admin users, updating admin user data, decoding tokens, retrieving
     admin users by various criteria, handling user data validation, and admin login.
     """
-
+    pagination_class = CustomPagination
+    
     @classmethod
     def create_admin(cls, request):
         """
@@ -84,10 +86,7 @@ class AdminService:
                 "images": email_images,
             }
             api_success_signal.send(sender=cls, data=signal_data)
-            return Response(
-                AdminSerializer(admin).data,
-                status=status.HTTP_201_CREATED,
-            )
+            return True, AdminSerializer(admin).data,
 
     @classmethod
     def update_admin(cls, instance, data):
@@ -137,10 +136,7 @@ class AdminService:
         # Update permissions
         instance.set_permissions(rights)
 
-        return Response(
-            AdminSerializer(instance).data,
-            status=status.HTTP_200_OK,
-        )
+        return True, AdminSerializer(instance).data,
 
     @classmethod
     def get_all_permissions(cls):
@@ -153,77 +149,85 @@ class AdminService:
         permissions_with_colors = [
             {"right": right, "color": data["color"]} for right, data in PERMISSION_CODENAMES.items()
         ]
-        return Response(permissions_with_colors, status=status.HTTP_200_OK)
-
+        return True, permissions_with_colors
+    
     @classmethod
     def admin_send_reset_password_link(cls, request):
         """
         send reset password link for admin.
-
-
         """
-        try:
-            data = request.data
-            serializer = UserAuthSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            email = serializer.validated_data.get("email")
+        data = request.data
+        serializer = UserAuthSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
 
-            admin = Admin.objects.get(user__email=email)
-            email_images = settings.ARCHITECT_PASSWORD_IMAGES
-            token = generate_password_reset_token(admin.user.id)
-            language_code = get_language_from_request(request)
-            url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
-            reset_link = f"""{url}/admin/reset-password/{token}"""
-            context = {
-                "first_name": admin.user.first_name,
-                "last_name": admin.user.last_name,
-                "email": email,
-                "reset_link": reset_link,
-            }
-            signal_data = {
-                "template_name": "architect_reset_password.html",
-                "context": context,
-                "to_email": email,
-                "subject": "Admin Reset Password",
-                "images": email_images,
-            }
-            api_success_signal.send(sender=cls, data=signal_data)
-            return Response(
-                {"message": "email sent successfully"},
-                status=status.HTTP_200_OK,
-            )
-        except Admin.DoesNotExist:
-            raise NotFound(detail="Admin not found")
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        admin = Admin.objects.get(user__email=email)
+        email_images = settings.ARCHITECT_PASSWORD_IMAGES
+        token = generate_password_reset_token(admin.user.id)
+        language_code = get_language_from_request(request)
+        url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+        reset_link = f"""{url}/admin/reset-password/{token}"""
+        context = {
+            "first_name": admin.user.first_name,
+            "last_name": admin.user.last_name,
+            "email": email,
+            "reset_link": reset_link,
+        }
+        signal_data = {
+            "template_name": "architect_reset_password.html",
+            "context": context,
+            "to_email": email,
+            "subject": "Admin Reset Password",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        
+        return True,"email sent successfully"
 
     @classmethod
     def admin_validate_password_token(cls, request):
         """
         validate password token
         """
-        try:
-            data = request.data
-            token = data.get("token", False)
-            if not token:
-                raise serializers.ValidationError(detail="token is required")
 
-            user_id, error = validate_password_reset_token(token)
-            if error:
-                raise APIException(detail=error)
-            admin = Admin.objects.get(user__id=user_id)
-            serializer = AdminSerializer(admin)
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Admin.DoesNotExist:
-            raise NotFound(detail="Admin not found")
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(
-                detail=str(e),
-            )
+        data = request.data
+        token = data.get("token", False)
+        if not token:
+            raise serializers.ValidationError(detail="token is required")
+
+        user_id, error = validate_password_reset_token(token)
+        if error:
+            raise APIException(detail=error)
+        admin = Admin.objects.get(user__id=user_id)
+        serializer = AdminSerializer(admin)
+        return True,serializer.data
+
+    @classmethod
+    def admins_get_all(cls, request):
+        """
+        Handle GET request and return paginated Admin objects.
+        This method retrieves all Admin objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Admin objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = Admin.objects.all()
+
+        paginator = cls.pagination_class()
+
+
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = AdminSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = AdminSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

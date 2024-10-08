@@ -15,6 +15,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.email_templates.utils import render_to_pdf
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
@@ -30,6 +31,8 @@ class InvoiceService:
 
     Handles business logic and exception handling for TokenPack creation and management.
     """
+    
+    pagination_class = CustomPagination
 
     @classmethod
     def export_invoice(cls, request, id):
@@ -76,21 +79,20 @@ class InvoiceService:
             APIException: If there are errors during the process.
         """
         user_id = request.user.id
-        try:
-            architect = Architect.objects.get(user__id=user_id)
-            invoices = ArchitectInvoice.objects.filter(architect=architect)
 
-            invoices_seriliazer = ArchitectInvoiceSerializer(invoices, many=True)
-            return Response(
-                invoices_seriliazer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        architect = Architect.objects.get(user__id=user_id)
+        queryset = ArchitectInvoice.objects.filter(architect=architect)
+        
+        paginator = cls.pagination_class()
+
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ArchitectInvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = ArchitectInvoiceSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     
     @classmethod
@@ -138,18 +140,18 @@ class InvoiceService:
             APIException: If there are errors during the process.
         """
         user_id = request.user.id
-        try:
-            supplier = Supplier.objects.get(user__id=user_id)
-            invoices = SupplierInvoice.objects.filter(supplier=supplier)
 
-            invoices_seriliazer = SupplierInvoiceSerializer(invoices, many=True)
-            return Response(
-                invoices_seriliazer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
-        except APIException as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+        supplier = Supplier.objects.get(user__id=user_id)
+        invoices = SupplierInvoice.objects.filter(supplier=supplier)
+        
+        paginator = cls.pagination_class()
+
+        page = paginator.paginate_queryset(invoices, request)
+        if page is not None:
+            serializer = SupplierInvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = SupplierInvoiceSerializer(invoices, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+

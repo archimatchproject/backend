@@ -13,7 +13,7 @@ class SupplierSubscriptionPlan(SubscriptionPlan):
 
     collection_number = models.PositiveIntegerField()
     product_number_per_collection = models.PositiveIntegerField()
-
+    
     class Meta:
         """
         Meta class for SupplierSubscriptionPlan model.

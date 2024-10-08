@@ -62,6 +62,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="login",
         serializer_class=UserAuthSerializer,
     )
+    @handle_service_exceptions
     def supplier_login(self, request):
         """
         Allows a supplier to login using a custom action.
@@ -73,7 +74,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the login attempt.
         """
-        return SupplierService.supplier_login(request)
+        success,supplier_data = SupplierService.supplier_login(request)
+        return build_response(success=success, data=supplier_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -82,6 +84,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="first-connection",
         serializer_class=UserAuthSerializer,
     )
+    @handle_service_exceptions
     def supplier_first_cnx(self, request):
         """
         Handles the first connection setup for a supplier using a custom action.
@@ -93,7 +96,9 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the first connection attempt.
         """
-        return SupplierService.supplier_first_connection(request)
+        success,message = SupplierService.supplier_first_connection(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
 
     @action(
         detail=False,
@@ -102,6 +107,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="update-profile",
         serializer_class=SupplierInputSerializer,
     )
+    @handle_service_exceptions
     def supplier_update_profile(self, request):
         """
         Allows a supplier to update their profile information using a custom action.
@@ -113,13 +119,15 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the profile update attempt.
         """
-        return SupplierService.supplier_update_profile(request)
+        success,message = SupplierService.supplier_update_profile(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-bio",
     )
+    @handle_service_exceptions
     def supplier_update_bio(self, request):
         """
         Allows a supplier to update their bio settings using a custom action.
@@ -131,13 +139,15 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_bio(request)
+        success,message = SupplierService.supplier_update_bio(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-presentation-video",
     )
+    @handle_service_exceptions
     def supplier_update_presentation_video(self, request):
         """
         Allows a supplier to update their bio settings using a custom action.
@@ -149,7 +159,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_presentation_video(request)
+        success,message = SupplierService.supplier_update_presentation_video(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -157,6 +168,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="update-links",
     )
+    @handle_service_exceptions
     def supplier_update_links(self, request):
         """
         Allows a supplier to update their social media links using a custom action.
@@ -170,7 +182,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the social media links
             update attempt.
         """
-        return SupplierService.supplier_update_links(request)
+        success,message = SupplierService.supplier_update_links(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -178,6 +191,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="speciality-types",
     )
+    @handle_service_exceptions
     def get_speciality_types(self, request):
         """
         Retrieves all speciality types.
@@ -189,7 +203,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing the speciality types.
         """
-        return SupplierService.get_speciality_types()
+        success,speciality_types_data = SupplierService.get_speciality_types()
+        return build_response(success=success, data=speciality_types_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -197,6 +212,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="appearances",
     )
+    @handle_service_exceptions
     def get_appearances(self, request):
         """
         Retrieves all appearances.
@@ -208,7 +224,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing the appearances.
         """
-        return SupplierService.get_appearances()
+        success,appearances_data = SupplierService.get_appearances()
+        return build_response(success=success, data=appearances_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -217,6 +234,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="get-profile",
         url_name="get-profile",
     )
+    @handle_service_exceptions
     def supplier_get_profile(self, request):
         """
         Retrieves supplier details.
@@ -228,7 +246,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing supplier details.
         """
-        return SupplierService.supplier_get_profile(request)
+        success,profile_data = SupplierService.supplier_get_profile(request)
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -237,6 +256,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="get-profile",
         url_name="get-profile-by-id",
     )
+    @handle_service_exceptions
     def get_profile_by_id(self, request, pk=None):
         """
         Retrieves supplier details based on the provided ID.
@@ -249,7 +269,9 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing supplier details.
         """
-        return SupplierService.get_profile_by_id(pk)
+        success,profile_data = SupplierService.get_profile_by_id(pk)
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
+
 
     @action(
         detail=False,
@@ -258,6 +280,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="send-reset-password-link",
         url_name="send-reset-password-link",
     )
+    @handle_service_exceptions
     def supplier_send_reset_password_link(self, request):
         """
         Retrieves supplier details.
@@ -269,13 +292,16 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing supplier details.
         """
-        return SupplierService.supplier_send_reset_password_link(request)
+        success,message = SupplierService.supplier_send_reset_password_link(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
 
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-profile-image",
     )
+    @handle_service_exceptions
     def supplier_update_profile_image(self, request):
         """
         Allows a supplier to update their profile image using a custom action.
@@ -287,13 +313,15 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_profile_image(request)
-
+        success,message = SupplierService.supplier_update_profile_image(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-cover-image",
     )
+    @handle_service_exceptions
     def supplier_update_cover_image(self, request):
         """
         Allows a supplier to update their cover image using a custom action.
@@ -305,13 +333,15 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_cover_image(request)
+        success,message = SupplierService.supplier_update_cover_image(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-visibility",
     )
+    @handle_service_exceptions
     def supplier_update_visibility(self, request):
         """
         Allows a supplier to update their visibility using a custom action.
@@ -323,7 +353,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_visibility(request)
+        success,message = SupplierService.supplier_update_visibility(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -332,6 +363,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         url_path="validate-password-token",
         url_name="validate-password-token",
     )
+    @handle_service_exceptions
     def supplier_validate_password_token(self, request):
         """
         sends Supplier reset password email.
@@ -340,8 +372,10 @@ class SupplierViewSet(viewsets.ModelViewSet):
             self (SupplierViewSet): Instance of the SupplierViewSet class.
             request (Request): HTTP request object.
         """
-        return SupplierService.supplier_validate_password_token(request)
-
+        success,profile_data = SupplierService.supplier_validate_password_token(request)
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
+        
+    
     def get(self, request):
         """
         Retrieve all suppliers.
@@ -365,6 +399,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
         methods=["POST"],
         url_path="resend-email",
     )
+    @handle_service_exceptions
     def supplier_resend_email(self, request, pk=None):
         """
         Custom action to resend email to supplier
@@ -376,8 +411,10 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return SupplierService.supplier_resend_email(pk)
+        success,message = SupplierService.supplier_resend_email(pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
+    @handle_service_exceptions
     def delete(self, request, pk=None):
         """
         Deletes a supplier from the system.
@@ -389,13 +426,16 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating success or failure of the supplier deletion.
         """
-        return SupplierService.delete_supplier(pk)
+        success,message = SupplierService.delete_supplier(pk)
+        return build_response(success=success, message=message, status=status.HTTP_204_NO_CONTENT)
+
 
     @action(
         detail=False,
         methods=["PUT"],
         url_path="update-visibility",
     )
+    @handle_service_exceptions
     def supplier_update_catalog_visibility(self, request):
         """
         Allows a supplier to update their visibility using a custom action.
@@ -407,7 +447,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the bio settings update attempt.
         """
-        return SupplierService.supplier_update_catalog_visibility(request)
+        success,message = SupplierService.supplier_update_catalog_visibility(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -424,4 +465,5 @@ class SupplierViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing show room details.
         """
-        return SupplierService.delete_showroom(pk)
+        success,message = SupplierService.delete_showroom(pk)
+        return build_response(success=success, message=message, status=status.HTTP_204_NO_CONTENT)

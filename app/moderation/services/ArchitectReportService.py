@@ -20,6 +20,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.ArchitectReport import ArchitectReport
 from app.moderation.models.Decision import Decision
@@ -40,7 +41,7 @@ class ArchitectReportService:
     Methods:
         create_architect_report(request): Handles validation and creation of a new ArchitectReport.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_architect_report(cls, request):
         """
@@ -69,10 +70,8 @@ class ArchitectReportService:
                 )
                 architect_report.reasons.set(reasons)
                 architect_report.save()
-                return Response(
-                    ArchitectReportSerializer(architect_report).data,
-                    status=status.HTTP_201_CREATED,
-                )
+                return True,ArchitectReportSerializer(architect_report).data
+
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -87,16 +86,20 @@ class ArchitectReportService:
             raise APIException(detail=f"Error creating architect report: {str(e)}")
 
     @classmethod
-    def get_grouped_architect_reports(cls):
+    def get_grouped_architect_reports(cls, request):
         """
-        Groups ArchitectReport objects by the architect's email and returns them as a list.
+        Groups ArchitectReport objects by the architect's email and returns them as a paginated list.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing pagination parameters.
 
         Returns:
-            Response: A response object containing the grouped architect reports.
+            Response: A paginated response containing grouped architect reports.
         """
         queryset = ArchitectReport.objects.all()
         architect_reports = defaultdict(list)
 
+        # Grouping reports by architect email
         for report in queryset:
             architect_email = report.reported_architect.user.email
             architect_reports[architect_email].append(ArchitectReportSerializer(report).data)
@@ -105,7 +108,19 @@ class ArchitectReportService:
         grouped_reports = [
             {architect_email: reports} for architect_email, reports in architect_reports.items()
         ]
-        return Response(grouped_reports)
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the serialized grouped reports
+        page = paginator.paginate_queryset(grouped_reports, request)
+        print(page)
+        if page is not None:
+            # Get paginated response with serialized data
+            return paginator.get_paginated_response(page)
+
+        # If no pagination is applied, return all data
+        return Response(grouped_reports, status=status.HTTP_200_OK) 
 
     @classmethod
     def get_decisions(cls):
@@ -118,7 +133,7 @@ class ArchitectReportService:
         """
         decisions = Decision.objects.filter(report_type="Architect")
         serialized_decisions = DecisionSerializer(decisions, many=True)
-        return Response(serialized_decisions.data)
+        return True,serialized_decisions.data
 
     @classmethod
     def get_reasons(cls):
@@ -131,7 +146,7 @@ class ArchitectReportService:
         """
         reasons = Reason.objects.filter(report_type="Architect")
         serialized_reasons = ReasonSerializer(reasons, many=True)
-        return Response(serialized_reasons.data)
+        return True,serialized_reasons.data
 
     @classmethod
     def change_architect_report_status(cls, request, pk):
@@ -145,21 +160,16 @@ class ArchitectReportService:
         Returns:
             Response: A response object containing the updated report or an error message.
         """
-        try:
-            report = ArchitectReport.objects.get(pk=pk)
-            new_status = request.data.get("status")
-            if new_status not in dict(STATUS_CHOICES):
-                raise serializers.ValidationError(detail="Invalid status choice.")
 
-            report.status = new_status
-            report.save()
-            return Response(ArchitectReportSerializer(report).data)
-        except ArchitectReport.DoesNotExist:
-            raise NotFound(detail="ArchitectReport not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating report status: {str(e)}")
+        report = ArchitectReport.objects.get(pk=pk)
+        new_status = request.data.get("status")
+        if new_status not in dict(STATUS_CHOICES):
+            raise serializers.ValidationError(detail="Invalid status choice.")
+
+        report.status = new_status
+        report.save()
+        return True,ArchitectReportSerializer(report).data
+        
 
     @classmethod
     def execute_decision(cls, request):
@@ -176,30 +186,23 @@ class ArchitectReportService:
         decision_id = request.data.get("decision_id")
         user = request.user
 
-        try:
-            if not report_ids or not decision_id:
-                raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
-            action = ARCHITECT_DECISION_ACTION_MAP.get(decision_id)
-            if not action:
-                raise serializers.ValidationError("No valid action found for the decision.")
 
-            reports = ArchitectReport.objects.filter(id__in=report_ids)
+        if not report_ids or not decision_id:
+            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
+        action = ARCHITECT_DECISION_ACTION_MAP.get(decision_id)
+        if not action:
+            raise serializers.ValidationError("No valid action found for the decision.")
 
-            action.execute(reports[0].reported_architect, user.admin)
+        reports = ArchitectReport.objects.filter(id__in=report_ids)
 
-            reports.update(
-                status="Treated",
-                decision=Decision.objects.get(id=decision_id),
-                decision_date=timezone.now(),
-            )
+        action.execute(reports[0].reported_architect, user.admin)
 
-            return Response(data="Decision Executed Successfully.")
+        reports.update(
+            status="Treated",
+            decision=Decision.objects.get(id=decision_id),
+            decision_date=timezone.now(),
+        )
 
-        except ArchitectReport.DoesNotExist:
-            raise NotFound(detail="ArchitectReport not found.")
-        except Decision.DoesNotExist:
-            raise NotFound(detail="Decision not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error executing report decison: {str(e)}")
+        return True,"Decision Executed Successfully."
+
+        

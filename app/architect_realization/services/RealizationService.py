@@ -49,37 +49,28 @@ class RealizationService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        try:
-            needs_data = validated_data.pop("needs")
-            user_id = request.user.id
-            if not Architect.objects.filter(user__id=user_id).exists():
-                raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
 
-            architect = Architect.objects.get(user__id=user_id)
-            realization_images = validated_data.pop("realization_images", [])
+        needs_data = validated_data.pop("needs")
+        user_id = request.user.id
+        if not Architect.objects.filter(user__id=user_id).exists():
+            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
 
-            with transaction.atomic():
-                realization = Realization.objects.create(
-                    architect=architect,
-                    **validated_data,
-                )
-                realization.needs.set(needs_data)
-                for image in realization_images:
-                    RealizationImage.objects.create(
-                        realization=realization,
-                        image=image,
-                    )
-            return Response(
-                {
-                    "message": "Realization created successfully",
-                    "data": RealizationOutputSerializer(realization).data,
-                },
-                status=status.HTTP_201_CREATED,
+        architect = Architect.objects.get(user__id=user_id)
+        realization_images = validated_data.pop("realization_images", [])
+
+        with transaction.atomic():
+            realization = Realization.objects.create(
+                architect=architect,
+                **validated_data,
             )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=str(e))
+            realization.needs.set(needs_data)
+            for image in realization_images:
+                RealizationImage.objects.create(
+                    realization=realization,
+                    image=image,
+                )
+        return True,RealizationOutputSerializer(realization).data,
+
 
     @classmethod
     def get_architectural_styles(cls):
@@ -89,18 +80,15 @@ class RealizationService:
         Returns:
             Response: Response containing list of architectural styles.
         """
-        try:
-            architectural_styles = ArchitecturalStyle.objects.all()
-            serializer = ArchitecturalStyleSerializer(
-                architectural_styles,
-                many=True,
-            )
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Exception:
-            return APIException(detail="Error retrieving architectural styles")
+
+        architectural_styles = ArchitecturalStyle.objects.all()
+        serializer = ArchitecturalStyleSerializer(
+            architectural_styles,
+            many=True,
+        )
+        return True,serializer.data,
+
+        
 
     @classmethod
     def get_architect_speciality_needs(cls, request):
@@ -113,24 +101,15 @@ class RealizationService:
         Returns:
             Response: Response containing list of needs related to the architect speciality.
         """
-        try:
-            user_id = request.user.id
-            architect = Architect.objects.get(user__id=user_id)
+        user_id = request.user.id
+        architect = Architect.objects.get(user__id=user_id)
 
-            needs = Need.objects.filter(architect_speciality_id=architect.architect_speciality.id)
-            serializer = NeedSerializer(needs, many=True)
+        needs = Need.objects.filter(architect_speciality_id=architect.architect_speciality.id)
+        serializer = NeedSerializer(needs, many=True)
 
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Architect not found.")
-        except ArchitectSpeciality.DoesNotExist:
-            raise NotFound(detail="No architect speciality found with the given ID")
-        except Exception:
-            raise APIException(detail="Error retrieving architect speciality needs")
-
+        return True,serializer.data
+            
+        
     @classmethod
     def get_realizations_by_category(cls, request, id):
         """
@@ -160,6 +139,8 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
+            
+
 
     @classmethod
     def get_realizations_by_architect(cls, request, id):
@@ -195,27 +176,18 @@ class RealizationService:
         """
         Updating existing announcement images
         """
-        try:
-            project_images_files = request.data.getlist("realization_images")
-            with transaction.atomic():
-                instance.realization_images.all().delete()
-                for image in project_images_files:
-                    RealizationImage.objects.create(
-                        realization=instance,
-                        image=image,
-                    )
 
-            return Response(
-                {
-                    "message": "Realization images updated successfully",
-                },
-                status=status.HTTP_200_OK,
-            )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating realization images: {str(e)}")
+        project_images_files = request.data.getlist("realization_images")
+        with transaction.atomic():
+            instance.realization_images.all().delete()
+            for image in project_images_files:
+                RealizationImage.objects.create(
+                    realization=instance,
+                    image=image,
+                )
 
+        return True, "Realization images updated successfully"
+        
 
     @classmethod
     def get_realizations(cls, request, id):

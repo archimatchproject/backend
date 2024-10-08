@@ -7,6 +7,9 @@ from app.subscription.models.EventDiscount import EventDiscount
 from app.subscription.serializers.EventDiscountSerializer import EventDiscountSerializer
 from app.subscription.services.EventDiscountService import EventDiscountService
 from rest_framework.decorators import action
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 class EventDiscountViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing EventDiscount instances.
@@ -54,6 +57,7 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
     
     
     @action(detail=True, methods=["get"], url_path="get-active-discount", url_name="get-active-discount")
+    @handle_service_exceptions
     def get_active_event_discount(self, request):
         """
         Retrieve EventDiscount objects with a start date greater than or equal to today.
@@ -64,4 +68,5 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         Returns:
             Response: A response containing serialized EventDiscount objects.
         """
-        return EventDiscountService.get_active_event_discount()
+        success,data = EventDiscountService.get_active_event_discount()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

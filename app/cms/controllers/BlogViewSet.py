@@ -15,8 +15,10 @@ from app.cms.controllers.ManageBlogPermission import ManageBlogPermission
 from app.cms.models.Blog import Blog
 from app.cms.serializers.BlogSerializer import BlogSerializer
 from app.cms.services.BlogService import BlogService
-from rest_framework.exceptions import ValidationError
 from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
+
 class BlogViewSet(viewsets.ModelViewSet):
     """
     A ViewSet for handling Blog instances.
@@ -62,24 +64,6 @@ class BlogViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @handle_service_exceptions
-    def get_queryset(self):
-        """
-        Get the queryset for the view.
-
-        Raises:
-            ValidationError: If the `target_user_type` query parameter is not provided.
-
-        Returns:
-            QuerySet: The filtered queryset based on the `target_user_type` parameter.
-        """
-        if self.action == "list":
-            target_user_type = self.request.query_params.get("target_user_type")
-            if not target_user_type:
-                raise ValidationError("The 'target_user_type' query parameter is required.")
-            return Blog.objects.filter(target_user_type=target_user_type)
-        else:
-            return self.queryset
-    
     def create(self, request, *args, **kwargs):
         """
         Create a new Blog instance.
@@ -92,8 +76,11 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created Blog instance.
         """
-        return BlogService.create_blog(request.data, request.user)
+        success,data = BlogService.create_blog(request.data, request.user)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
+
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Update an existing Blog instance.
@@ -108,9 +95,11 @@ class BlogViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        return BlogService.update_blog(instance, request.data, partial=partial)
+        success,data = BlogService.update_blog(instance, request.data, partial=partial)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def update_cover_photo(self, request, pk=None):
         """
         Update an existing Blog cover_photo.
@@ -122,9 +111,12 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
-        return BlogService.update_cover_photo(pk, request)
+        success,data = BlogService.update_cover_photo(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def change_visibility(self, request, pk=None):
         """
         Change the visibility of a Blog instance.
@@ -136,10 +128,12 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
+        success,data = BlogService.change_visibility(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
-        return BlogService.change_visibility(pk, request)
 
     @action(detail=False, methods=["POST"])
+    @handle_service_exceptions
     def upload_media(self, request, *args, **kwargs):
         """
         Upload media for blog sections.
@@ -150,11 +144,15 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog sections.
         """
-        return BlogService.upload_media(request)
+        success,data = BlogService.upload_media(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["GET"])
+    @handle_service_exceptions
     def list_tags(self, request):
         """
         Retrieve all tags.
         """
-        return BlogService.list_tags()
+        success,data = BlogService.list_tags()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

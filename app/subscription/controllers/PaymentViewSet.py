@@ -10,7 +10,9 @@ from app.subscription.controllers.ManagePaymentPermission import ManagePaymentPe
 from app.subscription.models.Payment import Payment
 from app.subscription.serializers.PaymentSerializer import PaymentSerializer
 from app.subscription.services.PaymentService import PaymentService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class PaymentViewSet(viewsets.ModelViewSet):
     """
@@ -38,22 +40,29 @@ class PaymentViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use PaymentService for handling the creation of a Payment.
         """
-        return PaymentService.create_architect_payment(request, request.data)
+        success,data = PaymentService.create_architect_payment(request, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return 
 
     @action(detail=False, methods=["GET"])
+    @handle_service_exceptions
     def get_payment_methods(self, request):
         """
         Return the payment methods from the choices.
         """
-        return PaymentService.get_payment_methods()
-    
+        success,data = PaymentService.get_payment_methods()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
     @action(detail=True, methods=["POST"],url_name="supplier-payment-create",url_path="supplier-payment-create")
+    @handle_service_exceptions
     def create_supplier_payment(self, request):
         """
         Return the payment methods from the choices.
         """
-        return PaymentService.create_supplier_payment(request,request.data)
+        success,data = PaymentService.create_supplier_payment(request,request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

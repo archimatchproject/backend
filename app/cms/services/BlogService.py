@@ -49,34 +49,30 @@ class BlogService:
         serializer = BlogSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                # Create Blog instance
-                blog = Blog.objects.create(
-                    title=validated_data.get("title"),
-                    cover_photo=validated_data.get("cover_photo"),
-                    sub_title=validated_data.get("sub_title"),
-                    blog_thematic=validated_data.get("blog_thematic"),
-                    admin=user.admin,
-                    visible=validated_data.get("visible", False),
-                    target_user_type= validated_data.get("target_user_type")
-                )
 
-                # Create related sections if provided
-                sections_data = validated_data.get("sections", [])
-                for section_data in sections_data:
-                    BlogSection.objects.create(blog=blog, **section_data)
+        with transaction.atomic():
+            # Create Blog instance
+            blog = Blog.objects.create(
+                title=validated_data.get("title"),
+                cover_photo=validated_data.get("cover_photo"),
+                sub_title=validated_data.get("sub_title"),
+                blog_thematic=validated_data.get("blog_thematic"),
+                admin=user.admin,
+                visible=validated_data.get("visible", False),
+            )
 
-                # Add tags if provided
-                tags = validated_data.get("tags", [])
-                blog.tags.set(tags)
+            # Create related sections if provided
+            sections_data = validated_data.get("sections", [])
+            for section_data in sections_data:
+                BlogSection.objects.create(blog=blog, **section_data)
 
-                return Response(BlogSerializer(blog).data, status=status.HTTP_201_CREATED)
+            # Add tags if provided
+            tags = validated_data.get("tags", [])
+            blog.tags.set(tags)
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating blog: {str(e)}")
+            return True,BlogSerializer(blog).data
+
+        
 
     @classmethod
     def update_blog(cls, instance, data, partial=False):
@@ -94,58 +90,55 @@ class BlogService:
         serializer = BlogSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            with transaction.atomic():
-                instance.title = serializer.validated_data.get("title", instance.title)
-                instance.cover_photo = serializer.validated_data.get(
-                    "cover_photo", instance.cover_photo
-                )
-                instance.sub_title = serializer.validated_data.get("sub_title", instance.sub_title)
-                instance.blog_thematic = serializer.validated_data.get(
-                    "blog_thematic", instance.blog_thematic
-                )
-                instance.visible = serializer.validated_data.get("visible", instance.visible)
-                instance.save()
 
-                # Handle sections update or create new sections
-                sections_data = data.get("sections", [])
-                updated_section_ids = []
+        with transaction.atomic():
+            instance.title = serializer.validated_data.get("title", instance.title)
+            instance.cover_photo = serializer.validated_data.get(
+                "cover_photo", instance.cover_photo
+            )
+            instance.sub_title = serializer.validated_data.get("sub_title", instance.sub_title)
+            instance.blog_thematic = serializer.validated_data.get(
+                "blog_thematic", instance.blog_thematic
+            )
+            instance.visible = serializer.validated_data.get("visible", instance.visible)
+            instance.save()
 
-                for section_data in sections_data:
-                    section_id = section_data.get("id", None)
+            # Handle sections update or create new sections
+            sections_data = data.get("sections", [])
+            updated_section_ids = []
 
-                    if section_id:
-                        # Update existing section
-                        section = BlogSection.objects.get(id=section_id, blog=instance)
-                        section.section_type = section_data.get(
-                            "section_type", section.section_type
-                        )
-                        section.content = section_data.get("content", section.content)
-                        section.image = section_data.get("image", section.image)
-                        section.save()
-                        updated_section_ids.append(section.id)
-                    else:
-                        # Create new section
+            for section_data in sections_data:
+                section_id = section_data.get("id", None)
 
-                        section_created = BlogSection.objects.create(blog=instance, **section_data)
-                        updated_section_ids.append(section_created.id)
+                if section_id:
+                    # Update existing section
+                    section = BlogSection.objects.get(id=section_id, blog=instance)
+                    section.section_type = section_data.get(
+                        "section_type", section.section_type
+                    )
+                    section.content = section_data.get("content", section.content)
+                    section.image = section_data.get("image", section.image)
+                    section.save()
+                    updated_section_ids.append(section.id)
+                else:
+                    # Create new section
 
-                # Delete sections not in updated_section_ids
+                    section_created = BlogSection.objects.create(blog=instance, **section_data)
+                    updated_section_ids.append(section_created.id)
 
-                BlogSection.objects.filter(blog=instance).exclude(
-                    id__in=updated_section_ids
-                ).delete()
+            # Delete sections not in updated_section_ids
 
-                # Update tags
-                tags = serializer.validated_data.get("tags", [])
-                instance.tags.set(tags)
+            BlogSection.objects.filter(blog=instance).exclude(
+                id__in=updated_section_ids
+            ).delete()
 
-                return Response(BlogSerializer(instance).data, status=status.HTTP_200_OK)
+            # Update tags
+            tags = serializer.validated_data.get("tags", [])
+            instance.tags.set(tags)
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating blog: {str(e)}")
+            return True,BlogSerializer(instance).data
+
+        
 
     @classmethod
     def update_cover_photo(cls, pk, request):
@@ -159,22 +152,17 @@ class BlogService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        try:
-            blog = Blog.objects.get(pk=pk)
-            cover_photo = request.data.get("cover_photo")
-            if not cover_photo:
-                raise serializers.ValidationError(detail="Cover photo is required.")
 
-            blog.cover_photo = cover_photo
-            blog.save()
-            return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+        blog = Blog.objects.get(pk=pk)
+        cover_photo = request.data.get("cover_photo")
+        if not cover_photo:
+            raise serializers.ValidationError(detail="Cover photo is required.")
 
-        except Blog.DoesNotExist:
-            raise NotFound(detail="Blog not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating cover photo: {str(e)}")
+        blog.cover_photo = cover_photo
+        blog.save()
+        return True,BlogSerializer(blog).data
+
+    
 
     @classmethod
     def change_visibility(cls, blog_id, request):
@@ -188,21 +176,15 @@ class BlogService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        try:
-            visibility = request.data.get("visible")
-            if visibility is None:
-                raise serializers.ValidationError(detail="Visible field is required.")
-            blog = Blog.objects.get(pk=blog_id)
-            blog.visible = visibility
-            blog.save()
-            return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
-        except serializers.ValidationError as e:
-            raise e
-        except Blog.DoesNotExist:
-            raise NotFound(detail="Blog not found.")
-        except Exception as e:
-            raise APIException(detail=f"Error changing visibility: {str(e)}")
 
+        visibility = request.data.get("visible")
+        if visibility is None:
+            raise serializers.ValidationError(detail="Visible field is required.")
+        blog = Blog.objects.get(pk=blog_id)
+        blog.visible = visibility
+        blog.save()
+        return True,BlogSerializer(blog).data
+        
     @classmethod
     def upload_media(cls, request):
         """
@@ -214,48 +196,43 @@ class BlogService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            section_id = request.data.get("section_id")
-            image = request.FILES.get("image")
-            slider_images = request.FILES.getlist("slider_images")
-            section = BlogSection.objects.get(id=section_id)
 
-            # Handle image section type
-            if section.section_type == "image":
-                if not image:
-                    raise serializers.ValidationError(
-                        detail="Image file is required for image section type."
-                    )
-                section.image = image
-                section.save()
-                blog = section.blog
-                return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
+        section_id = request.data.get("section_id")
+        image = request.FILES.get("image")
+        slider_images = request.FILES.getlist("slider_images")
+        section = BlogSection.objects.get(id=section_id)
 
-            # Handle slider section type
-            elif section.section_type == "slider":
-                if not slider_images:
-                    raise serializers.ValidationError(
-                        "At least one slider image file is required for slider section type."
-                    )
-
-                # Create multiple SliderImage instances for the slider section
-                SliderImage.objects.filter(section=section).delete()  # Clear existing slider images
-                for img in slider_images:
-                    SliderImage.objects.create(section=section, image=img)
-
-                blog = section.blog
-                return Response(BlogSerializer(blog).data, status=status.HTTP_200_OK)
-
-            else:
+        # Handle image section type
+        if section.section_type == "image":
+            if not image:
                 raise serializers.ValidationError(
-                    detail="Invalid section type. Must be either image or slider."
+                    detail="Image file is required for image section type."
                 )
-        except BlogSection.DoesNotExist:
-            raise NotFound(detail="Section not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error uploading media: {str(e)}")
+            section.image = image
+            section.save()
+            blog = section.blog
+            return True,BlogSerializer(blog).data
+
+        # Handle slider section type
+        elif section.section_type == "slider":
+            if not slider_images:
+                raise serializers.ValidationError(
+                    "At least one slider image file is required for slider section type."
+                )
+
+            # Create multiple SliderImage instances for the slider section
+            SliderImage.objects.filter(section=section).delete()  # Clear existing slider images
+            for img in slider_images:
+                SliderImage.objects.create(section=section, image=img)
+
+            blog = section.blog
+            return True,BlogSerializer(blog).data
+
+        else:
+            raise serializers.ValidationError(
+                detail="Invalid section type. Must be either image or slider."
+            )
+        
 
     @classmethod
     def list_tags(cls):
@@ -264,4 +241,4 @@ class BlogService:
         """
         tags = BlogTag.objects.all()
         serializer = BlogTagSerializer(tags, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return True,serializer.data

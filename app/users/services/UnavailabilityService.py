@@ -41,38 +41,34 @@ class UnavailabilityService:
         """
         created_unavailabilities = []
 
-        try:
-            admin = Admin.objects.get(user=user)
+        
+        admin = Admin.objects.get(user=user)
 
-            for data in data_list:
-                date = data.get('date')
-                if not date:
-                    raise ValidationError("The 'date' field is required.")
-                
-                try:
-                    datetime.strptime(date, '%Y-%m-%d')
-                except ValueError:
-                    raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
+        for data in data_list:
+            date = data.get('date')
+            if not date:
+                raise ValidationError("The 'date' field is required.")
+            
+            try:
+                datetime.strptime(date, '%Y-%m-%d')
+            except ValueError:
+                raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
 
-                data["admin"] = admin.id
-                existing_unavailability = Unavailability.objects.filter(admin=admin, date=date).first()
-                
-                # If an existing unavailability is found, update it, otherwise create a new one
-                if existing_unavailability:
-                    serializer = UnavailabilitySerializer(existing_unavailability, data=data, partial=True)
-                else:
-                    serializer = UnavailabilitySerializer(data=data)
-                
-                serializer.is_valid(raise_exception=True)
-                
-                unavailability = serializer.save()
-                created_unavailabilities.append(unavailability)
-            return created_unavailabilities
+            data["admin"] = admin.id
+            existing_unavailability = Unavailability.objects.filter(admin=admin, date=date).first()
+            
+            # If an existing unavailability is found, update it, otherwise create a new one
+            if existing_unavailability:
+                serializer = UnavailabilitySerializer(existing_unavailability, data=data, partial=True)
+            else:
+                serializer = UnavailabilitySerializer(data=data)
+            
+            serializer.is_valid(raise_exception=True)
+            
+            unavailability = serializer.save()
+            created_unavailabilities.append(unavailability)
+        return True,"unavailability created successfully."
 
-        except Admin.DoesNotExist as e:
-            raise NotFound(detail=str(e))
-        except serializers.ValidationError as e:
-            raise e
         
     @classmethod
     def get_available_time_slots(cls, request):
@@ -97,45 +93,42 @@ class UnavailabilityService:
             ValidationError: If the 'date' field is missing or the date format is invalid.
             NotFound: If there are issues retrieving required data.
         """
+        
+        date = request.query_params.get('date')
+
+        if not date:
+            raise ValidationError("The 'date' field is required.")
+
         try:
-            date = request.query_params.get('date')
+            datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
 
-            if not date:
-                raise ValidationError("The 'date' field is required.")
+        all_time_slots = TimeSlot.objects.all()
+        unavailability_records = Unavailability.objects.filter(date=date)
+        unavailable_time_slots = set()
+        whole_day_unavailable_admins = set()
 
-            try:
-                datetime.strptime(date, '%Y-%m-%d')
-            except ValueError:
-                raise ValidationError("Invalid date format. Use 'YYYY-MM-DD'.")
+        for record in unavailability_records:
+            if record.whole_day:
+                whole_day_unavailable_admins.add(record.admin.id)
+            else:
+                unavailable_time_slots.update(record.time_slots.values_list('time', flat=True))
 
-            all_time_slots = TimeSlot.objects.all()
-            unavailability_records = Unavailability.objects.filter(date=date)
-            unavailable_time_slots = set()
-            whole_day_unavailable_admins = set()
+        # If all admins marked the day as unavailable, return an empty list
+        if len(whole_day_unavailable_admins) == Admin.objects.count():
+            return []
 
-            for record in unavailability_records:
-                if record.whole_day:
-                    whole_day_unavailable_admins.add(record.admin.id)
-                else:
-                    unavailable_time_slots.update(record.time_slots.values_list('time', flat=True))
+        # Exclude time slots that have scheduled meetings on the same date
+        booked_time_slots = Meeting.objects.filter(date=date).values_list('time__time', flat=True)
+        unavailable_time_slots.update(booked_time_slots)
 
-            # If all admins marked the day as unavailable, return an empty list
-            if len(whole_day_unavailable_admins) == Admin.objects.count():
-                return []
+        unavailable_time_slots_str = {slot.strftime('%H:%M') for slot in unavailable_time_slots}
+        available_time_slots = [
+            slot.time.strftime('%H:%M')
+            for slot in all_time_slots
+            if slot.time.strftime('%H:%M') not in unavailable_time_slots_str
+        ]
 
-            # Exclude time slots that have scheduled meetings on the same date
-            booked_time_slots = Meeting.objects.filter(date=date).values_list('time__time', flat=True)
-            unavailable_time_slots.update(booked_time_slots)
-
-            unavailable_time_slots_str = {slot.strftime('%H:%M') for slot in unavailable_time_slots}
-            available_time_slots = [
-                slot.time.strftime('%H:%M')
-                for slot in all_time_slots
-                if slot.time.strftime('%H:%M') not in unavailable_time_slots_str
-            ]
-
-            return available_time_slots
-        except Admin.DoesNotExist as e:
-            raise NotFound(detail=str(e))
-        except ValidationError as e:
-            raise e
+        return True,available_time_slots
+        

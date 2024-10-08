@@ -18,6 +18,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.Decision import Decision
 from app.moderation.models.ProjectReport import ProjectReport
@@ -38,7 +39,7 @@ class ProjectReportService:
     Methods:
         create_project_report(request): Handles validation and creation of a new ProjectReport.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_project_report(cls, request):
         """
@@ -67,10 +68,7 @@ class ProjectReportService:
                 )
                 project_report.reasons.set(reasons)
                 project_report.save()
-                return Response(
-                    ProjectReportSerializer(project_report).data,
-                    status=status.HTTP_201_CREATED,
-                )
+                return True,ProjectReportSerializer(project_report).data
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -95,7 +93,7 @@ class ProjectReportService:
         """
         decisions = Decision.objects.filter(report_type="Project")
         serialized_decisions = DecisionSerializer(decisions, many=True)
-        return Response(serialized_decisions.data)
+        return True,serialized_decisions.data
 
     @classmethod
     def get_reasons(cls):
@@ -108,7 +106,7 @@ class ProjectReportService:
         """
         reasons = Reason.objects.filter(report_type="Project")
         serialized_reasons = ReasonSerializer(reasons, many=True)
-        return Response(serialized_reasons.data)
+        return True,serialized_reasons.data
 
     @classmethod
     def change_architect_report_status(cls, request, pk):
@@ -122,22 +120,16 @@ class ProjectReportService:
         Returns:
             Response: A response object containing the updated report or an error message.
         """
-        try:
-            report = ProjectReport.objects.get(pk=pk)
-            new_status = request.data.get("status")
-            if new_status not in dict(STATUS_CHOICES):
-                raise serializers.ValidationError(detail="Invalid status choice.")
 
-            report.status = new_status
-            report.save()
-            return Response(ProjectReportSerializer(report).data)
-        except ProjectReport.DoesNotExist:
-            raise NotFound(detail="ProjectReport not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating report status: {str(e)}")
+        report = ProjectReport.objects.get(pk=pk)
+        new_status = request.data.get("status")
+        if new_status not in dict(STATUS_CHOICES):
+            raise serializers.ValidationError(detail="Invalid status choice.")
 
+        report.status = new_status
+        report.save()
+        return True,ProjectReportSerializer(report).data
+    
     @classmethod
     def execute_decision(cls, request):
         """
@@ -154,29 +146,51 @@ class ProjectReportService:
         decision_id = request.data.get("decision_id")
         user = request.user
 
-        try:
-            if not report_ids or not decision_id:
-                raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
 
-            action = PROJECT_DECISION_ACTION_MAP.get(decision_id)
-            if not action:
-                raise serializers.ValidationError("No valid action found for the decision.")
+        if not report_ids or not decision_id:
+            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
 
-            reports = ProjectReport.objects.filter(id__in=report_ids)
-            action.execute(reports[0].reported_project, user.admin)
-            reports.update(
-                status="Treated",
-                decision=Decision.objects.get(id=decision_id),
-                decision_date=timezone.now(),
-            )
+        action = PROJECT_DECISION_ACTION_MAP.get(decision_id)
+        if not action:
+            raise serializers.ValidationError("No valid action found for the decision.")
 
-            return Response(data="Decision Executed Successfully.")
+        reports = ProjectReport.objects.filter(id__in=report_ids)
+        action.execute(reports[0].reported_project, user.admin)
+        reports.update(
+            status="Treated",
+            decision=Decision.objects.get(id=decision_id),
+            decision_date=timezone.now(),
+        )
 
-        except ProjectReport.DoesNotExist:
-            raise NotFound(detail="ProjectReport not found.")
-        except Decision.DoesNotExist:
-            raise NotFound(detail="Decision not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error executing report decison: {str(e)}")
+        return True,"Decision Executed Successfully."
+
+    @classmethod
+    def project_reports_get_all(cls, request):
+        """
+        Handle GET request and return paginated ProjectReport objects.
+        This method retrieves all ProjectReport objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized ProjectReport objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = ProjectReport.objects.all()
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = ProjectReportSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = ProjectReportSerializer(page, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

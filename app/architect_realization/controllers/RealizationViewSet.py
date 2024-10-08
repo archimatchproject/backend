@@ -19,6 +19,9 @@ from app.architect_realization.serializers.RealizationSerializer import Realizat
 from app.architect_realization.serializers.RealizationSerializer import RealizationSerializer
 from app.architect_realization.services.RealizationService import RealizationService
 from app.core.pagination import CustomPagination
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 
 class RealizationViewSet(viewsets.ModelViewSet):
@@ -92,11 +95,13 @@ class RealizationViewSet(viewsets.ModelViewSet):
         methods=["POST"],
         serializer_class=RealizationPOSTSerializer,
     )
+    @handle_service_exceptions
     def realization_create(self, request):
         """
         Creating new realization
         """
-        return RealizationService.realization_create(request)
+        success,data = RealizationService.realization_create(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED) 
 
     @action(
         detail=False,
@@ -105,6 +110,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="needs",
         url_name="needs",
     )
+    @handle_service_exceptions
     def get_needs(self, request):
         """
         Retrieves all  work types.
@@ -115,7 +121,9 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of work types.
         """
-        return RealizationService.get_architect_speciality_needs(request)
+        success,data = RealizationService.get_architect_speciality_needs(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+    
 
     @action(
         detail=False,
@@ -124,6 +132,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="architectural-styles",
         url_name="architectural-styles",
     )
+    @handle_service_exceptions
     def get_architectural_styles(self, request):
         """
         Retrieves all architectural styles.
@@ -134,7 +143,9 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of architectural styles.
         """
-        return RealizationService.get_architectural_styles()
+        success,data = RealizationService.get_architectural_styles()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(
         detail=True,
@@ -142,6 +153,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="get-realizations-by-category",
         serializer_class=RealizationSerializer,
     )
+    @handle_service_exceptions
     def get_realizations_by_category(self, request, pk=None):
         """
         Custom action to get realizations by category.
@@ -154,6 +166,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_realizations_by_category(request, pk)
+        
+
 
     @action(
         detail=True,
@@ -161,6 +175,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="get-realizations-by-architect",
         serializer_class=RealizationSerializer,
     )
+    @handle_service_exceptions
     def get_realizations_by_architect(self, request, pk=None):
         """
         Custom action to get realizations by architect.
@@ -173,18 +188,21 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)
+        
 
     @action(
         detail=True,
         url_path="update-announcement-images",
         methods=["PUT"],
     )
+    @handle_service_exceptions
     def update_realization_images(self, request, pk=None):
         """
         Updating existing realization
         """
         instance = self.get_object()
-        return RealizationService.update_realization_images(instance, request)
+        success,data = RealizationService.update_realization_images(instance, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
 
     @action(
@@ -193,6 +211,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="get-realizations-by-category",
         serializer_class=RealizationSerializer,
     )
+    @handle_service_exceptions
     def get_realizations(self, request, pk=None):
         """
         Custom action to get realizations by category.
@@ -213,6 +232,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         url_path="get-architect-realizations",
         serializer_class=RealizationSerializer,
     )
+    @handle_service_exceptions
     def get_architect_realizations(self, request, pk=None):
         """
         Custom action to get realizations by category.

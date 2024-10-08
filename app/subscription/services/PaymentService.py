@@ -55,6 +55,7 @@ class PaymentService:
         Returns:
             Response: The response object containing the result of the operation.
         """
+        annual = data.pop("annual_payment",False)
         serializer = ArchitectPaymentPOSTSerializer(data=data)
         
         serializer.is_valid(raise_exception=True)
@@ -65,66 +66,56 @@ class PaymentService:
         end_date = start_date + timedelta(days=30)
         
         user = request.user
-        try:
-            architect = Architect.objects.get(user=user)
-            subscription_plan = validated_data.get("subscription_plan")
 
-            # Create the SelectedSubscriptionPlan
-            selected_plan_data = {
-                "plan_name": subscription_plan.plan_name,
-                "plan_price": subscription_plan.get_effective_price(),
-                "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
-                "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
-                "active": subscription_plan.active,
-                "free_plan": subscription_plan.free_plan,
-                "start_date": start_date,
-                "end_date": end_date,
-                "discount": subscription_plan.discount,
-                "discount_percentage": subscription_plan.discount_percentage,
-            }
-            selected_plan = ArchitectSelectedSubscriptionPlan.objects.create(**selected_plan_data)
+        architect = Architect.objects.get(user=user)
+        subscription_plan = validated_data.get("subscription_plan")
 
-            # Add services to the SelectedSubscriptionPlan
-            selected_plan.services.set(subscription_plan.services.all())
+        # Create the SelectedSubscriptionPlan
+        selected_plan_data = {
+            "plan_name": subscription_plan.plan_name,
+            "plan_price": subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price(),
+            "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
+            "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
+            "active": subscription_plan.active,
+            "free_plan": subscription_plan.free_plan,
+            "start_date": start_date,
+            "end_date": end_date,
+            "discount": subscription_plan.discount,
+            "discount_percentage": subscription_plan.discount_percentage,
+        }
+        selected_plan = ArchitectSelectedSubscriptionPlan.objects.create(**selected_plan_data)
 
-            architect.subscription_plan = selected_plan
-            architect.save()
+        # Add services to the SelectedSubscriptionPlan
+        selected_plan.services.set(subscription_plan.services.all())
 
-            with transaction.atomic():
-                payment = ArchitectPayment.objects.create(
-                    architect=architect,subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
-                )
+        architect.subscription_plan = selected_plan
+        architect.save()
 
-                invoice = ArchitectInvoice(
-                    invoice_number=f"INV-{payment.id}",
-                    architect=architect,
-                    plan_name=selected_plan.plan_name,
-                    plan_price=selected_plan.plan_price,
-                    discount=selected_plan.discount,
-                    discount_percentage=(
-                        selected_plan.discount_percentage if selected_plan.discount else None
-                    ),
-                    discount_message=(
-                        selected_plan.discount_message if selected_plan.discount else ""
-                    ),
-                )
-                invoice.save()
+        with transaction.atomic():
+            payment = ArchitectPayment.objects.create(
+                architect=architect,subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
+            )
 
-                return Response(
-                    {
-                        "payment": ArchitectPaymentSerializer(payment).data,
-                        "invoice": ArchitectInvoiceSerializer(invoice).data,
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except ArchitectSubscriptionPlan.DoesNotExist:
-            raise NotFound(detail="Subscription plan does not exist.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating payment: {str(e)}")
+            invoice = ArchitectInvoice(
+                invoice_number=f"INV-{payment.id}",
+                architect=architect,
+                plan_name=selected_plan.plan_name,
+                plan_price=selected_plan.plan_price,
+                discount=selected_plan.discount,
+                discount_percentage=(
+                    selected_plan.discount_percentage if selected_plan.discount else None
+                ),
+                discount_message=(
+                    selected_plan.discount_message if selected_plan.discount else ""
+                ),
+            )
+            invoice.save()
+
+            return True ,{
+                    "payment": ArchitectPaymentSerializer(payment).data,
+                    "invoice": ArchitectInvoiceSerializer(invoice).data,
+                },
+
 
     @classmethod
     def get_payment_methods(cls):
@@ -137,7 +128,7 @@ class PaymentService:
         payment_methods = [
             {"label": label, "value": value} for value, label in PAYMENT_METHOD_CHOICES
         ]
-        return Response(payment_methods, status=status.HTTP_200_OK)
+        return True, payment_methods
 
     
     @classmethod
@@ -157,62 +148,50 @@ class PaymentService:
         validated_data = serializer.validated_data
 
         user = request.user
-        try:
-            supplier = Supplier.objects.get(user=user)
-            subscription_plan = validated_data.pop("subscription_plan")
 
-            # Create the SelectedSubscriptionPlan
-            selected_plan_data = {
-                "plan_name": subscription_plan.plan_name,
-                "plan_price": subscription_plan.get_effective_price(),
-                "collection_number": subscription_plan.collection_number,
-                "product_number_per_collection": subscription_plan.product_number_per_collection,
-                "active": subscription_plan.active,
-                "free_plan": subscription_plan.free_plan,
-                "start_date": subscription_plan.start_date,
-                "end_date": subscription_plan.end_date,
-                "discount": subscription_plan.discount,
-                "discount_percentage": subscription_plan.discount_percentage,
-            }
-            selected_plan = SupplierSelectedSubscriptionPlan.objects.create(**selected_plan_data)
+        supplier = Supplier.objects.get(user=user)
+        subscription_plan = validated_data.pop("subscription_plan")
 
-            supplier.subscription_plan = selected_plan
-            supplier.save()
-            
-            with transaction.atomic():
-                payment = SupplierPayment.objects.create(
-                    supplier=supplier, subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
-                )
-                invoice = SupplierInvoice(
-                    invoice_number=f"INV-{payment.id}",
-                    supplier=supplier,
-                    plan_name=selected_plan.plan_name,
-                    plan_price=selected_plan.plan_price,
-                    discount=selected_plan.discount,
-                    discount_percentage=(
-                        selected_plan.discount_percentage if selected_plan.discount else None
-                    ),
-                    discount_message=(
-                        selected_plan.discount_message if selected_plan.discount else ""
-                    ),
-                )
-                invoice.save()
- 
-                return Response(
-                    {
-                        "payment": SupplierPaymentSerializer(payment).data,
-                        "invoice": SupplierInvoiceSerializer(invoice).data,
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except SupplierSubscriptionPlan.DoesNotExist:
-            raise NotFound(detail="Subscription plan does not exist.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating payment: {str(e)}")
+        # Create the SelectedSubscriptionPlan
+        selected_plan_data = {
+            "plan_name": subscription_plan.plan_name,
+            "plan_price": subscription_plan.get_effective_price(),
+            "collection_number": subscription_plan.collection_number,
+            "product_number_per_collection": subscription_plan.product_number_per_collection,
+            "active": subscription_plan.active,
+            "free_plan": subscription_plan.free_plan,
+            "start_date": subscription_plan.start_date,
+            "end_date": subscription_plan.end_date,
+            "discount": subscription_plan.discount,
+            "discount_percentage": subscription_plan.discount_percentage,
+        }
+        selected_plan = SupplierSelectedSubscriptionPlan.objects.create(**selected_plan_data)
+
+        supplier.subscription_plan = selected_plan
+        supplier.save()
         
+        with transaction.atomic():
+            payment = SupplierPayment.objects.create(
+                supplier=supplier, subscription_plan=selected_plan,payment_method = validated_data.get("payment_method"),status="Paid"
+            )
+            invoice = SupplierInvoice(
+                invoice_number=f"INV-{payment.id}",
+                supplier=supplier,
+                plan_name=selected_plan.plan_name,
+                plan_price=selected_plan.plan_price,
+                discount=selected_plan.discount,
+                discount_percentage=(
+                    selected_plan.discount_percentage if selected_plan.discount else None
+                ),
+                discount_message=(
+                    selected_plan.discount_message if selected_plan.discount else ""
+                ),
+            )
+            invoice.save()
 
-    
+            return True,{
+                    "payment": SupplierPaymentSerializer(payment).data,
+                    "invoice": SupplierInvoiceSerializer(invoice).data,
+                }
+                
+        

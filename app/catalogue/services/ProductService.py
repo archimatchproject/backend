@@ -55,23 +55,16 @@ class ProductService:
 
         images_data = request.FILES.getlist("product_images")
 
-        try:
-            with transaction.atomic():
-                # Create Product instance
-                product = Product.objects.create(**validated_data)
 
-                for image_data in images_data:
-                    ProductImage.objects.create(product=product, image=image_data)
+        with transaction.atomic():
+            # Create Product instance
+            product = Product.objects.create(**validated_data)
 
-                return Response(
-                    ProductSerializer(product).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating product: {str(e)}")
+            for image_data in images_data:
+                ProductImage.objects.create(product=product, image=image_data)
 
+            return True,ProductSerializer(product).data
+                
     @classmethod
     def update_product(cls, instance, request):
         """
@@ -90,33 +83,28 @@ class ProductService:
 
         images_data = request.FILES.getlist("product_images")
 
-        try:
-            with transaction.atomic():
-                # Update Product instance
-                fields = ["name", "price", "collection", "description","visibility"]
-                for field in fields:
-                    setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
-                instance.save()
+        with transaction.atomic():
+            # Update Product instance
+            fields = ["name", "price", "collection", "description","visibility"]
+            for field in fields:
+                setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
-                if images_data:
-                    with transaction.atomic():
-                        instance.product_images.all().delete()
-                        new_images = [
-                            ProductImage(product=instance, image=image_data)
-                            for image_data in images_data
-                        ]
-                        ProductImage.objects.bulk_create(new_images)
+            instance.save()
 
-                return Response(
-                    ProductSerializer(instance).data,
-                    status=status.HTTP_200_OK,
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating product: {str(e)}")
+            if images_data:
+                with transaction.atomic():
+                    instance.product_images.all().delete()
+                    new_images = [
+                        ProductImage(product=instance, image=image_data)
+                        for image_data in images_data
+                    ]
+                    ProductImage.objects.bulk_create(new_images)
 
+            return True,ProductSerializer(instance).data
+                
+
+        
     @classmethod
     def update_display_status(cls, request, pk):
         """
@@ -130,27 +118,19 @@ class ProductService:
             Response: The response object containing the result of the operation.
         """
         display_status = request.data.get("display")
-        try:
-            if display_status is None:
-                raise serializers.ValidationError(detail="Display status is required.")
-            product = Product.objects.get(pk=pk)
-            if product.collection.supplier.user != request.user:
-                raise serializers.ValidationError(
-                    detail="You do not have permission to modify this product."
-                )
-
-            product.display = display_status
-            product.save()
-
-            return Response(
-                "Product display status updated successfully.", status=status.HTTP_200_OK
+        if display_status is None:
+            raise serializers.ValidationError(detail="Display status is required.")
+        product = Product.objects.get(pk=pk)
+        if product.collection.supplier.user != request.user:
+            raise serializers.ValidationError(
+                detail="You do not have permission to modify this product."
             )
-        except Product.DoesNotExist:
-            raise NotFound(detail="Product not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating product display status: {str(e)}")
+
+        product.display = display_status
+        product.save()
+
+        return True,"Product display status updated successfully."
+        
 
     @classmethod
     def update_visibility(cls, request, pk):
@@ -165,28 +145,20 @@ class ProductService:
             Response: The response object containing the result of the operation.
         """
         visibility = request.data.get("visibility")
-        try:
-            if visibility is None:
-                raise serializers.ValidationError(detail="visibility is required.")
-            product = Product.objects.get(pk=pk)
-            if product.collection.supplier.user != request.user:
-                raise serializers.ValidationError(
-                    detail="You do not have permission to modify this product."
-                )
 
-            product.visibility = visibility
-            product.save()
-
-            return Response(
-                "visibility updated successfully.", status=status.HTTP_200_OK
+        if visibility is None:
+            raise serializers.ValidationError(detail="visibility is required.")
+        product = Product.objects.get(pk=pk)
+        if product.collection.supplier.user != request.user:
+            raise serializers.ValidationError(
+                detail="You do not have permission to modify this product."
             )
-        except Product.DoesNotExist:
-            raise NotFound(detail="Product not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating product visibility: {str(e)}")
 
+        product.visibility = visibility
+        product.save()
+
+        return True,"visibility updated successfully."
+        
 
     @classmethod
     def get_products(cls, request):

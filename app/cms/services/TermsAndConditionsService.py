@@ -37,16 +37,11 @@ class TermsAndConditionsService:
         serializer = TermsAndConditionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                terms = TermsAndConditions.objects.create(
-                    **validated_data, admin=request.user.admin
-                )
-                return Response(
-                    TermsAndConditionsSerializer(terms).data, status=status.HTTP_201_CREATED
-                )
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating Terms and Conditions: {e}")
+        with transaction.atomic():
+            terms = TermsAndConditions.objects.create(
+                **validated_data, admin=request.user.admin
+            )
+            return True,TermsAndConditionsSerializer(terms).data
+
+        

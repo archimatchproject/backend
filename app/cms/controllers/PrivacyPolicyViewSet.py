@@ -15,7 +15,6 @@ from app.cms.services.PrivacyPolicyService import PrivacyPolicyService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
-from rest_framework.decorators import action
 
 class PrivacyPolicyViewSet(viewsets.ModelViewSet):
     """
@@ -45,6 +44,7 @@ class PrivacyPolicyViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageLegalAndPolicyPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new PrivacyPolicy instance.
@@ -55,22 +55,6 @@ class PrivacyPolicyViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return PrivacyPolicyService.create_privacy_policy(request)
+        success,data = PrivacyPolicyService.create_privacy_policy(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=["PUT"])
-    def get_policy_by_admin(self, request, pk=None):
-        """
-        Retrieve the PrivacyPolicy instance associated with the given admin.
-
-        Args:
-            admin (Admin): The admin instance.
-
-        Returns:
-            dict: The serialized data of the PrivacyPolicy instance.
-
-        Raises:
-            NotFound: If no policy is found for the admin.
-        """
-
-        success, data = PrivacyPolicyService.get_policy_by_admin(request)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)

@@ -24,7 +24,9 @@ from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleS
 from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services.ArchimatchUserService import ArchimatchUserService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ArchimatchUserObtainPairView(TokenObtainPairView):
     """
@@ -90,6 +92,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @action(detail=False, methods=["POST"], url_path="create-password")
+    @handle_service_exceptions
     def archimatch_user_create_password(self, request):
         """
         Action to create a password for an ArchimatchUser.
@@ -100,9 +103,12 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of password creation.
         """
-        return ArchimatchUserService.archimatch_user_create_password(request)
+        success,token,message = ArchimatchUserService.archimatch_user_create_password(request)
+        return build_response(success=success,message=message ,data=token, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["POST"], url_path="reset-password")
+    @handle_service_exceptions
     def archimatch_user_reset_password(self, request):
         """
         Action to reset a password for an ArchimatchUser.
@@ -113,9 +119,12 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of password reset.
         """
-        return ArchimatchUserService.archimatch_user_reset_password(request)
+        success,message = ArchimatchUserService.archimatch_user_reset_password(request)
+        return build_response(success=success,message=message, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["PUT"], url_path="update-data")
+    @handle_service_exceptions
     def archimatch_user_update_data(self, request):
         """
         Action to update data for an ArchimatchUser.
@@ -126,9 +135,13 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of updating data.
         """
-        return ArchimatchUserService.archimatch_user_update_data(request)
+        success,user_data,message = ArchimatchUserService.archimatch_user_update_data(request)
+        return build_response(success=success,message=message ,data=user_data, status=status.HTTP_200_OK)
+
+        
 
     @action(detail=False, methods=["GET"], url_path="get-user-data")
+    @handle_service_exceptions
     def archimatch_user_get_user_data(self, request):
         """
         Action to get data for the authenticated ArchimatchUser.
@@ -139,7 +152,9 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object with the user data.
         """
-        return ArchimatchUserService.archimatch_user_get_user_data(request)
+        success,data = ArchimatchUserService.archimatch_user_get_user_data(request)
+        return build_response(success=success,data=data, status=status.HTTP_200_OK)
+        
 
     @action(
         detail=False,
@@ -148,6 +163,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         url_path="send-code",
         serializer_class=UserAuthPhoneSerializer,
     )
+    @handle_service_exceptions
     def send_verification_code(self, request):
         """
         Sends a verification code to the client's phone number.
@@ -158,7 +174,9 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating whether the verification code was sent successfully.
         """
-        return ArchimatchUserService.send_verification_code(request)
+        success,message = ArchimatchUserService.send_verification_code(request)
+        return build_response(success=success,message=message, status=status.HTTP_200_OK)
+
 
     @action(
         detail=False,
@@ -167,6 +185,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         url_path="verify-code",
         serializer_class=VerifyCodeSerializer,
     )
+    @handle_service_exceptions
     def verify_verification_code(self, request):
         """
         Verifies the client's phone number using the verification code.
@@ -178,7 +197,8 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the verification.
         """
-        return ArchimatchUserService.verify_verification_code(request)
+        success,message = ArchimatchUserService.verify_verification_code(request)
+        return build_response(success=success,message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -186,6 +206,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         permission_classes=[],
         url_path="verify-credentials",
     )
+    @handle_service_exceptions
     def archimatch_user_is_found(self, request):
         """
         Verifies the client's phone number using the verification code.
@@ -197,4 +218,6 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the verification.
         """
-        return ArchimatchUserService.archimatch_user_is_found(request)
+        success,message = ArchimatchUserService.archimatch_user_is_found(request)
+        return build_response(success=success,message=message, status=status.HTTP_200_OK)
+

@@ -10,7 +10,9 @@ from app.moderation.controllers.ManageReportingPermission import ManageReporting
 from app.moderation.models.ReviewReport import ReviewReport
 from app.moderation.serializers.ReviewReportSerializer import ReviewReportSerializer
 from app.moderation.services.ReviewReportService import ReviewReportService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ReviewReportViewSet(viewsets.ModelViewSet):
     """
@@ -42,37 +44,53 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageReportingPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use ReviewReportService for handling the creation
         of a ReviewReport.
         """
-        return ReviewReportService.create_review_report(request)
+        success,data = ReviewReportService.create_review_report(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_decisions(self, request):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        return ReviewReportService.get_decisions()
+        success,data = ReviewReportService.get_decisions()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False)
+    @handle_service_exceptions
     def get_reasons(self, request):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        return ReviewReportService.get_reasons()
+        success,data = ReviewReportService.get_reasons()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True)
+    @handle_service_exceptions
     def change_status(self, request, pk=None):
         """
         Change the status of an ReviewReport.
         """
-        return ReviewReportService.change_architect_report_status(request, pk)
+        success,data = ReviewReportService.change_architect_report_status(request, pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
 
     @action(detail=True)
+    @handle_service_exceptions
     def execute_decision(self, request, pk=None):
         """
         Execute decision of an ReviewReport.
         """
-        return ReviewReportService.execute_decision(request, pk)
+        success,data = ReviewReportService.execute_decision(request, pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @handle_service_exceptions
+    def list(self,request):
+        return ReviewReportService.review_reports_get_all(request)

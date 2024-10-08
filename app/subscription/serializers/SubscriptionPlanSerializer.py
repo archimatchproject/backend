@@ -54,7 +54,7 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
         queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
     )
     event_discount = EventDiscountSerializer(read_only=True)
-
+    annual_price = serializers.SerializerMethodField()
     class Meta:
         """
         Meta class for ArchitectSubscriptionPlanSerializer.
@@ -79,7 +79,8 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             "effective_price",
             "most_popular",
             "event_discount",
-            "event_discount_id"
+            "event_discount_id",
+            "annual_price"
         ]
         
     def get_services(self, obj):
@@ -95,6 +96,8 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
     
     def get_effective_price(self, obj):
         return obj.get_effective_price()
+    def get_annual_price(self, obj):
+        return obj.get_annual_price()
         
 class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
@@ -105,6 +108,7 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
         queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
     )
     event_discount = EventDiscountSerializer(read_only=True)
+    annual_price = serializers.SerializerMethodField()
     class Meta:
         """
         Meta class for SupplierSubscriptionPlanSerializer.
@@ -128,7 +132,11 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "most_popular",
             "event_discount",
             "event_discount_id"
+            "annual_price"
         ]
     
     def get_effective_price(self, obj):
         return obj.get_effective_price()
+    
+    def get_annual_price(self, obj):
+        return obj.get_annual_price()
