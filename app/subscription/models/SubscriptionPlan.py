@@ -73,6 +73,22 @@ class SubscriptionPlan(BaseModel):
             price -= (price * self.event_discount.discount_percentage / 100)
         return price
 
+    def get_annual_price(self):
+        """
+        Returns the annual price of the plan, considering the global annual discount percentage.
+        """
+        # Effective monthly price considering discounts
+        effective_price = self.get_effective_price()
+
+        # Get the annual discount percentage from settings
+        annual_discount_percentage = 5
+
+        # Calculate annual price (12 months) and apply annual discount
+        annual_price = effective_price * 12
+        annual_price -= (annual_price * annual_discount_percentage / 100)
+
+        return annual_price
+    
     def __str__(self):
         """
         String representation of the SubscriptionPlan instance.

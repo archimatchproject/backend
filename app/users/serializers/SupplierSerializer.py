@@ -14,6 +14,7 @@ from rest_framework import serializers
 from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import SupplierSelectedSubscriptionPlanSerializer
 from app.users.models.Supplier import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ShowRoomSerializer import ShowRoomSerializer
@@ -43,6 +44,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     supplier_collections = CollectionSerializer(many=True)
     supplier_cover_images = SupplierCoverImageSerializer(many=True, read_only=True)
     showrooms = ShowRoomSerializer(many=True)
+    subscription_plan = SupplierSelectedSubscriptionPlanSerializer()
     
     class Meta:
         """

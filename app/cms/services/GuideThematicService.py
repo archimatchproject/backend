@@ -33,6 +33,7 @@ class GuideThematicService:
         existing GuideThematic.
     """
 
+    pagination_class = CustomPagination
     @classmethod
     def create_guide_thematic(cls, request):
         """

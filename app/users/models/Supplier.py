@@ -73,6 +73,13 @@ class Supplier(BaseModel):
     )
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     catalog_visibility = models.BooleanField(default=False)
+    subscription_plan = models.ForeignKey(
+        "subscription.SupplierSelectedSubscriptionPlan",
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
+    )
     def __str__(self):
         """
         Returns the email address of the associated user.

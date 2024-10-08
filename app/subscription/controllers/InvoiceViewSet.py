@@ -51,6 +51,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         return InvoiceService.architect_get_invoices(request)
         
     @action(detail=True, methods=["get"], url_path="get-supplier-invoices", url_name="get-supplier-invoices")
+    @handle_service_exceptions
     def supplier_get_invoices(self, request):
         """
         Custom action to fetch invoices for a specific architect.

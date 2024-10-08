@@ -49,11 +49,14 @@ class SupplierSubscriptionPlanService:
         serializer = SupplierSubscriptionPlanSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
+        event_discount = validated_data.pop("event_discount_id", None)
+        most_popular = validated_data.get("most_popular", False)
 
         with transaction.atomic():
+            if most_popular:
+                SupplierSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
             # Create SubscriptionPlan instance
-            subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data)
+            subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data,event_discount=event_discount)
 
             return True,SupplierSubscriptionPlanSerializer(subscription_plan).data
         
@@ -75,11 +78,15 @@ class SupplierSubscriptionPlanService:
         serializer = SupplierSubscriptionPlanSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
+        event_discount = validated_data.pop("event_discount_id",None)
+        most_popular = validated_data.get("most_popular", False)
 
         with transaction.atomic():
+            if most_popular:
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
+            instance.event_discount = event_discount
             instance.clean()
             instance.save()
 
@@ -108,3 +115,10 @@ class SupplierSubscriptionPlanService:
 
             return True,SupplierSubscriptionPlanSerializer(subscription_plans, many=True).data
         
+    @classmethod
+    def get_all_supplier_subscription_plan(cls):
+        """
+        gets all the supplier subscription plans
+        """
+        subscription_plans = SupplierSubscriptionPlan.objects.all()
+        return True,SupplierSubscriptionPlanSerializer(subscription_plans,many=True).data

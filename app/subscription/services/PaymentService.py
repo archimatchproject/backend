@@ -55,6 +55,7 @@ class PaymentService:
         Returns:
             Response: The response object containing the result of the operation.
         """
+        annual = data.pop("annual_payment",False)
         serializer = ArchitectPaymentPOSTSerializer(data=data)
         
         serializer.is_valid(raise_exception=True)
@@ -72,7 +73,7 @@ class PaymentService:
         # Create the SelectedSubscriptionPlan
         selected_plan_data = {
             "plan_name": subscription_plan.plan_name,
-            "plan_price": subscription_plan.get_effective_price(),
+            "plan_price": subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price(),
             "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
             "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
             "active": subscription_plan.active,

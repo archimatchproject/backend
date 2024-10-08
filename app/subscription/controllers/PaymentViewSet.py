@@ -59,6 +59,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"],url_name="supplier-payment-create",url_path="supplier-payment-create")
+    @handle_service_exceptions
     def create_supplier_payment(self, request):
         """
         Return the payment methods from the choices.

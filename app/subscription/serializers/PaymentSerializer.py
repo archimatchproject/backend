@@ -11,7 +11,7 @@ from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscript
 from app.subscription.models.Payment import Payment
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
-from app.subscription.serializers.SelectedSubscriptionPlanSerializer import ArchitectSelectedSubscriptionPlanSerializer
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import ArchitectSelectedSubscriptionPlanSerializer, SupplierSelectedSubscriptionPlanSerializer
 from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer,SupplierSubscriptionPlanSerializer
 
 
@@ -72,7 +72,7 @@ class SupplierPaymentSerializer(serializers.ModelSerializer):
 
     supplier = serializers.EmailField(read_only=True)
     admin_responsable = serializers.EmailField(read_only=True)
-    payment_subscription_plan = SupplierSubscriptionPlanSerializer(
+    payment_subscription_plan = SupplierSelectedSubscriptionPlanSerializer(
         source="subscription_plan", read_only=True
     )
     subscription_plan = serializers.PrimaryKeyRelatedField(
