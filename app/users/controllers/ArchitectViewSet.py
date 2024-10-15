@@ -38,7 +38,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["architect_update_preferences"]:
             return JSONParser
-        if self.action not in ["architect_update_base_details", "architect_update_company_details"]:
+        if self.action not in ["architect_update_company_details"]:
             return JSONParser
         else:
             return (JSONParser, MultiPartParser, FormParser)
