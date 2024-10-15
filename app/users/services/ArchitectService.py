@@ -19,6 +19,7 @@ from rest_framework.response import Response
 
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
+from app.core.json_parser import transform_querydict_keys
 from app.core.models.Budget import Budget
 from app.core.models.PreferredLocation import PreferredLocation
 from app.core.models.PropertyType import PropertyType
@@ -138,7 +139,10 @@ class ArchitectService:
         Raises:
             APIException: If there are errors during architect profile update.
         """
-        data = request.data
+
+
+        data = transform_querydict_keys(request.data)
+        
         user_id = request.user.id
         serializer = ArchitectBaseDetailsSerializer(data=data)
         serializer.is_valid(raise_exception=True)

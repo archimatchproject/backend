@@ -108,7 +108,7 @@ class GuideThematicService:
         guide_thematic.save()
         return True,GuideThematicSerializer(guide_thematic).data
         
-
+    @classmethod
     def get_thematic_guides_paginated(cls, request):
         """
         Handle GET request and return paginated Supplier objects.
@@ -124,6 +124,7 @@ class GuideThematicService:
             Response: A paginated response containing serialized Supplier objects
                 or a 400 Bad Request response with an error message.
         """
+        
         target_user_type = request.query_params.get("target_user_type")
         if not target_user_type:
             raise ValidationError("The 'target_user_type' query parameter is required.")
@@ -134,4 +135,4 @@ class GuideThematicService:
             serializer = GuideThematicSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         serializer = GuideThematicSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
