@@ -11,9 +11,9 @@ Classes:
 """
 
 import django_filters
+from django.db.models import Q
 
 from app.users.models.Supplier import Supplier
-
 
 class SupplierFilter(django_filters.FilterSet):
     """
@@ -29,12 +29,8 @@ class SupplierFilter(django_filters.FilterSet):
       a case-insensitive contains lookup.
     - Speciality Type: Filters suppliers by the label of the related speciality type
       using a case-insensitive contains lookup.
-
-    Attributes:
-        first_name (CharFilter): Filter by the first name of the related user.
-        last_name (CharFilter): Filter by the last name of the related user.
-        email (CharFilter): Filter by the email address of the related user.
-        speciality_type (CharFilter): Filter by the label of the related speciality type.
+    - Company Name Existence: Filters suppliers based on whether the company_name
+      is empty or not.
     """
 
     first_name = django_filters.CharFilter(field_name="user__first_name", lookup_expr="icontains")
@@ -49,23 +45,30 @@ class SupplierFilter(django_filters.FilterSet):
     company_address = django_filters.CharFilter(
         field_name="company_address", lookup_expr="icontains"
     )
+    
+    company_name_exists = django_filters.BooleanFilter(method='filter_company_name_exists')
 
     class Meta:
         """
         Meta class for SupplierFilter.
-
-        This class defines the model and fields to be used in the SupplierFilter
-        class. It specifies the Supplier model and the fields on which filtering
-        can be applied. These fields include:
-        - first_name: The first name of the related user.
-        - last_name: The last name of the related user.
-        - email: The email address of the related user.
-        - speciality_type: The label of the related speciality type.
-
-        Attributes:
-            model (Supplier): The model to be filtered (Supplier model).
-            fields (list of str): The list of fields on which filtering can be applied.
         """
-
         model = Supplier
-        fields = ["first_name", "last_name", "email", "speciality_type","company_name","company_address"]
+        fields = [
+            "first_name", "last_name", "email",
+            "speciality_type", "company_name", "company_address",
+            "company_name_exists"
+        ]
+    def filter_queryset(self, queryset):
+        
+        queryset = queryset.order_by('created_at') 
+        return super().filter_queryset(queryset)
+  
+    def filter_company_name_exists(self, queryset, name, value):
+        """
+        Custom filter method to filter suppliers based on the existence of company_name.
+        If value is True, include suppliers with non-empty company_name.
+        If value is False, include suppliers with empty company_name.
+        """
+        if value:
+            return queryset.exclude(company_name='')
+        return queryset.filter(company_name='')

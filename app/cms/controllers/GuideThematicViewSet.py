@@ -125,6 +125,5 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
 
     @handle_service_exceptions
     def list(self, request, *args, **kwargs):
-        print("eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         print(request)
         return GuideThematicService.get_thematic_guides_paginated(request=request)

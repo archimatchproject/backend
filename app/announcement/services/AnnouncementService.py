@@ -510,9 +510,10 @@ class AnnouncementService:
         Returns:
             Response: A paginated response containing Announcement objects or an error message.
         """
-        queryset = Announcement.objects.all()
+        queryset = Announcement.objects.all().order_by("created_at")
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
         paginator = cls.pagination_class()
-        page = paginator.paginate_queryset(queryset, request)
+        page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
             serializer = AnnouncementOutputSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
