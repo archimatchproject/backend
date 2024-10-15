@@ -143,6 +143,8 @@ class PaymentService:
         Returns:
             Response: The response object containing the result of the operation.
         """
+        annual = data.pop("annual_payment",False)
+
         serializer = SupplierPaymentPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -155,7 +157,7 @@ class PaymentService:
         # Create the SelectedSubscriptionPlan
         selected_plan_data = {
             "plan_name": subscription_plan.plan_name,
-            "plan_price": subscription_plan.get_effective_price(),
+            "plan_price": subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price(),
             "collection_number": subscription_plan.collection_number,
             "product_number_per_collection": subscription_plan.product_number_per_collection,
             "active": subscription_plan.active,

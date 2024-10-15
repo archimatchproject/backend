@@ -23,9 +23,12 @@ TIME_SLOT_CHOICES = [
     (datetime.time(hour=17, minute=0), "17:00"),
 ]
 
+AWAITING_DECISION = "Awaiting Decision"
+AWAITING_DEMO = "Awaiting Demo"
+
 ARCHITECT_REQUEST_STATUS_CHOICES = [
     ("Accepted", "Accepted"),
     ("Refused", "Refused"),
-    ("Awaiting Demo", "Awaiting Demo"),
-    ("Awaiting Decision", "Awaiting Decision"),
+    (AWAITING_DEMO, AWAITING_DEMO),
+    (AWAITING_DECISION, AWAITING_DECISION),
 ]

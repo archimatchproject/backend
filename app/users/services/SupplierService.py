@@ -567,7 +567,7 @@ class SupplierService:
                 or a 400 Bad Request response with an error message.
         """
 
-        queryset = Supplier.objects.all()
+        queryset = Supplier.objects.all().order_by('created_at')
         # Apply filters using the SupplierFilter class
         filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
 
@@ -680,3 +680,39 @@ class SupplierService:
         showroom = ShowRoom.objects.get(id=pk)
         showroom.delete()
         return True, "show room deleted"
+    
+    @classmethod
+    def supplier_get_accepted_list(cls, request):
+        """
+        Handle GET request and return paginated Supplier objects.
+        This method retrieves all Supplier objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = queryset = Supplier.objects.exclude(company_name='').exclude(company_name__isnull=True)
+        # Apply filters using the SupplierFilter class
+        filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = SupplierSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = SupplierSerializer(filtered_queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    

@@ -21,7 +21,8 @@ from app.announcement.serializers.ArchitecturalStyleSerializer import Architectu
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.architect_request import TIME_SLOT_CHOICES
+from app.architect_request import AWAITING_DECISION, AWAITING_DEMO, TIME_SLOT_CHOICES
+from app.architect_request.filters.ArchitectRequestFilter import ArchitectRequestFilter
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
     ArchitectRequestRescheduleSerializer,
@@ -48,8 +49,8 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
-
-
+from django.utils import timezone
+from django.db.models import Q
 class ArchitectRequestService:
     """
     Service class for ArchitectRequest operations.
@@ -275,32 +276,37 @@ class ArchitectRequestService:
     @classmethod
     def architect_request_paginated(cls, request):
         """
-        Handle GET request and return paginated Realization objects.
+        Handle GET request and return paginated ArchitectRequest objects filtered by status.
 
-        This method retrieves all Realization objects from the database, applies
-        pagination based on the parameters in the request, and returns the paginated
-        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+        This method retrieves ArchitectRequest objects with status 'Awaiting Demo' or 
+        'Awaiting Decision', applies pagination based on the parameters in the request, 
+        and returns the paginated results. If pagination is not applied correctly, it 
+        returns a 400 Bad Request response.
 
         Args:
             request (HttpRequest): The incoming HTTP request.
 
         Returns:
-            Response: A paginated response containing Realization objects or an error message.
+            Response: A paginated response containing ArchitectRequest objects or an error message.
         """
-        queryset = ArchitectRequest.objects.all()
+        cls.update_request_statuses()
+        queryset = ArchitectRequest.objects.filter(
+            status__in=[AWAITING_DEMO, AWAITING_DECISION]
+        ).order_by('date', 'time_slot')
 
-        # Instantiate the paginator
+        filtered_queryset = ArchitectRequestFilter(request.GET, queryset=queryset).qs
+        
         paginator = cls.pagination_class()
 
-        # Apply pagination to the queryset
-        page = paginator.paginate_queryset(queryset, request)
+       
+        page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
             serializer = ArchitectRequestSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        # If pagination is not applied correctly, return a 400 Bad Request response
-        serializer = ArchitectRequestSerializer(queryset, many=True)
-        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+       
+        return Response([], status=status.HTTP_400_BAD_REQUEST)
+
 
     @classmethod
     def get_all_project_categories(cls):
@@ -432,3 +438,21 @@ class ArchitectRequestService:
             for year_experience in YEARS_EXPERIENCE_CHOICES
         ]
         return True,years_experience
+
+    @classmethod
+    def update_request_statuses(cls):
+        """
+        Update the status of ArchitectRequest instances based on the current date and time.
+        Requests that have a meeting date and time that has passed will be updated to 'Awaiting Decision'.
+        """
+        now = timezone.now()
+        
+        # Filter requests that are still in 'Awaiting Demo' or 'Awaiting Decision' status
+        requests_to_update = ArchitectRequest.objects.filter(
+            Q(date__lt=now.date()) | (Q(date=now.date()) & Q(time_slot__lt=now.time()))
+        )
+
+        # Update the status of the filtered requests
+        requests_to_update.update(status=AWAITING_DECISION)
+
+        return requests_to_update.count()  # Return the number of updated requests
