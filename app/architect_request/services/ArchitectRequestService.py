@@ -51,6 +51,9 @@ from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
 from django.utils import timezone
 from django.db.models import Q
+from django.utils import timezone
+from rest_framework import serializers
+from datetime import datetime
 class ArchitectRequestService:
     """
     Service class for ArchitectRequest operations.
@@ -134,9 +137,20 @@ class ArchitectRequestService:
         """
         data = request.data
         architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
-        
-        serializer = ArchitectAcceptSerializer(data=data)
 
+        # Calculate the scheduled datetime for the architect request
+        meeting_naive_datetime = datetime.combine(architect_request.date, architect_request.time_slot)
+        meeting_aware_datetime = timezone.make_aware(
+            meeting_naive_datetime, timezone.get_current_timezone()
+        )
+
+        # Check if the current time is before the scheduled date and time
+        if timezone.now() < meeting_aware_datetime:
+            raise serializers.ValidationError(
+                "You cannot accept this request before the scheduled date and time."
+            )
+
+        serializer = ArchitectAcceptSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         validated_data = serializer.validated_data
@@ -151,6 +165,7 @@ class ArchitectRequestService:
         with transaction.atomic():
             user = ArchimatchUser.objects.create(**user_data)
             user.save()
+
             architect = Architect.objects.create(
                 user=user,
                 address=architect_request.address,
@@ -192,7 +207,7 @@ class ArchitectRequestService:
             }
             api_success_signal.send(sender=cls, data=signal_data)
 
-            return True,ArchitectSerializer(architect).data,
+            return True, ArchitectSerializer(architect).data
                 
 
     @classmethod
@@ -395,7 +410,22 @@ class ArchitectRequestService:
             architect_request.time_slot = serializer.validated_data.get("time_slot")
             architect_request.clean()
             architect_request.save()
-
+            
+            email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+            signal_data = {
+            "template_name": "refuse_architect_request.html",
+            "context": {
+                "first_name": architect_request.first_name,
+                "last_name": architect_request.last_name,
+                "email": architect_request.email,
+                "date" : architect_request.date,
+                "time_slot" : architect_request.time_slot
+            },
+            "to_email": architect_request.email,
+            "subject": "Rescheduling Architect Request",
+            "images": email_images,
+            }
+            api_success_signal.send(sender=cls, data=signal_data)
             return True, ArchitectRequestSerializer(architect_request).data
         
     @classmethod

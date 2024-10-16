@@ -122,7 +122,7 @@ class SubscriptionPlanService:
             current_plan = architect.subscription_plan
             subscription_plans = ArchitectSubscriptionPlan.objects.filter(
                 plan_price__gt=current_plan.plan_price
-            )
+            ).order_by("plan_price")
             
             return True,ArchitectSubscriptionPlanSerializer(subscription_plans, many=True).data
     
@@ -131,5 +131,5 @@ class SubscriptionPlanService:
         """
         gets all the architect subscription plans
         """
-        subscription_plans = ArchitectSubscriptionPlan.objects.all()
+        subscription_plans = ArchitectSubscriptionPlan.objects.all().order_by("plan_price")
         return True,ArchitectSubscriptionPlanSerializer(subscription_plans,many=True).data
