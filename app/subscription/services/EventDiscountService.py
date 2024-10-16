@@ -50,7 +50,7 @@ class EventDiscountService:
                 or a 400 Bad Request response with an error message.
         """
 
-        queryset = EventDiscount.objects.all().order_by("created_at")
+        queryset = EventDiscount.objects.all().order_by("start_date")
         
         # Instantiate the paginator
         paginator = cls.pagination_class()
