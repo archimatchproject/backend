@@ -111,7 +111,7 @@ class SupplierSubscriptionPlanService:
             current_plan = supplier.subscription_plan
             subscription_plans = SupplierSubscriptionPlan.objects.filter(
                 plan_price__gt=current_plan.plan_price
-            )
+            ).order_by("plan_price")
 
             return True,SupplierSubscriptionPlanSerializer(subscription_plans, many=True).data
         
@@ -120,5 +120,5 @@ class SupplierSubscriptionPlanService:
         """
         gets all the supplier subscription plans
         """
-        subscription_plans = SupplierSubscriptionPlan.objects.all()
+        subscription_plans = SupplierSubscriptionPlan.objects.all().order_by("plan_price")
         return True,SupplierSubscriptionPlanSerializer(subscription_plans,many=True).data

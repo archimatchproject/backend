@@ -13,7 +13,7 @@ from app.subscription.controllers.SubscriptionPlanViewSet import SubscriptionPla
 subscription_plan_urlpatterns = [
     path(
         "subscription-plan",
-        SubscriptionPlanViewSet.as_view({"get": "list"}),
+        SubscriptionPlanViewSet.as_view({"get": "get_upgradable_plans"}),
         name="subscription-plan-list",
     ),
     path(
