@@ -78,6 +78,26 @@ def get_resource_name_from_exception(exception):
     
     return formatted_model_name
 
+def extract_validation_error_details(error):
+    """
+    Extracts details from a ValidationError object. This handles both string and dict error structures.
+    """
+    if isinstance(error.detail, dict):
+        error_messages = []
+        for field, messages in error.detail.items():
+            if isinstance(messages, list):
+                # Combine messages for a field
+                for message in messages:
+                    if isinstance(message, dict):
+                        error_messages.append(f"{field}: {message.get('string', str(message))}")
+                    else:
+                        error_messages.append(f"{field}: {str(message)}")
+            else:
+                error_messages.append(f"{field}: {str(messages)}")
+        return "; ".join(error_messages)
+    elif isinstance(error.detail, list):
+        return "; ".join([str(e) for e in error.detail])
+    return str(error.detail)
 
 def handle_service_exceptions(func):
     def wrapper(*args, **kwargs):
@@ -90,6 +110,8 @@ def handle_service_exceptions(func):
             if isinstance(ex, IntegrityError):
                 # Extract details from IntegrityError
                 detail = extract_integrity_error_details(str(ex))
+            elif isinstance(ex, ValidationError):
+                detail = extract_validation_error_details(ex)
             else:
                 detail = str(ex)
             
