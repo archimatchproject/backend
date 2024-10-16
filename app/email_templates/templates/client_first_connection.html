@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block title %} Bienvenue chez Archimatch
+{%endblock%} {% block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Bienvenue, {{ first_name }} {{ last_name }}</h1>
+    <p>Nous espérons que ce message vous trouve en bonne santé.</p>
+    <p>
+      Nous avons le plaisir de vous accueillir sur notre plateforme Archimatch.
+    </p>
+    <p>
+      Pour verifier votre email et acceder a votre compte, veuillez cliquer sur
+      le lien ci-dessous
+    </p>
+    <div class="btn-container">
+      <a href="{{ reset_link }}" class="btn btn-client btn-login"
+        >Vérifier votre Email</a
+      >
+    </div>
+    <p>
+      Nous sommes impatients de vous voir rejoindre notre communauté et de
+      développer une collaboration fructueuse avec vous.
+    </p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

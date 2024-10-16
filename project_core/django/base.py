@@ -6,18 +6,15 @@ This module defines the base configuration constants and settings for the Django
 
 import os
 
-from pathlib import Path
-
-import environ
-
 from project_core.env import BASE_DIR
+from project_core.env import env
 from project_core.settings.cors import *
 from project_core.settings.email_sending import *
+from project_core.settings.firebase_cloud_messaging import *
 from project_core.settings.jwt import *
 from project_core.settings.sms_sending import *
+from project_core.settings.templates_icon import *
 
-
-env = environ.Env()
 
 """
 Third-party applications used in the project.
@@ -29,6 +26,9 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "djangorestframework_camel_case",
     "drf_standardized_errors",
+    "background_task",
+    "fcm_django",
+    "django_filters",
 ]
 
 """
@@ -40,6 +40,13 @@ LOCAL_APPS = [
     "app.cms",
     "app.announcement",
     "app.architect_request",
+    "app.email_templates",
+    "app.architect_realization",
+    "app.subscription",
+    "app.catalogue",
+    "app.moderation",
+    "app.messaging",
+    "app.selection"
 ]
 
 
@@ -74,7 +81,10 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.MultiPartParser",
     ),
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
+
+DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
 
 """
 Middleware stack for request/response processing.
@@ -102,7 +112,9 @@ Template engine configuration.
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "app/email_templates/templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -165,24 +177,13 @@ TIME_ZONE = "Africa/Tunis"
 USE_TZ = True
 USE_I18N = True
 
-"""
-Static files (CSS, JavaScript, Images) serving configuration.
-"""
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
-"""
-Static files storage configuration for production.
-"""
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 
 """
 Default primary key field type configuration.
 """
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-"""
-Media files (uploads) configuration.
-"""
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
+

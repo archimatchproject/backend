@@ -17,7 +17,9 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
-from app.users.models.Admin import Admin
+from app.core.serializers.NoteSerializer import NoteSerializer
+from app.users import PROJECT_COMPLEXITY_CHOICES
+from app.users import YEARS_EXPERIENCE_CHOICES
 
 
 class ArchitectRequestInputSerializer(serializers.ModelSerializer):
@@ -34,7 +36,8 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
     )
-    meeting_responsable = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all())
+    date = serializers.DateField()
+    time_slot = serializers.CharField(source="get_time_slot_display")
 
     class Meta:
         """
@@ -52,13 +55,11 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "address",
-            "architect_identifier",
             "email",
             "architect_speciality",
             "date",
             "time_slot",
-            "meeting_responsable",
-            "status",
+            "city",
         ]
 
 
@@ -77,6 +78,7 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
     meeting_responsable = serializers.EmailField(
         source="meeting_responsable.user.email", read_only=True
     )
+    notes = NoteSerializer(many=True)
 
     class Meta:
         """
@@ -101,6 +103,8 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
             "time_slot",
             "meeting_responsable",
             "status",
+            "notes",
+            "city",
         ]
 
 
@@ -124,6 +128,8 @@ class ArchitectAcceptSerializer(serializers.Serializer):
     architectural_styles = serializers.PrimaryKeyRelatedField(
         queryset=ArchitecturalStyle.objects.all(), many=True, required=True
     )
+    project_complexity = serializers.ChoiceField(choices=PROJECT_COMPLEXITY_CHOICES, required=True)
+    years_experience = serializers.ChoiceField(choices=YEARS_EXPERIENCE_CHOICES, required=True)
 
     def validate_project_categories(self, value):
         """
@@ -170,4 +176,6 @@ class ArchitectAcceptSerializer(serializers.Serializer):
             "property_types",
             "work_types",
             "architectural_styles",
+            "project_complexity",
+            "years_experience",
         ]

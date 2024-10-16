@@ -1,102 +1,30 @@
 """
-Module for serializing Blog instances with Blocks using Django REST Framework serializers.
+Module for serializing Blog instances with Sections using Django REST Framework serializers.
 """
 
 from rest_framework import serializers
 
-from app.cms.models import Block
-from app.cms.models import Blog
-from app.cms.serializers.BlockSerializer import BlockSerializer
-
-
-class BlogInputSerializer(serializers.ModelSerializer):
-    """
-    Serializer for creating and updating Blog instances along with Blocks.
-    """
-
-    blog_blocks = BlockSerializer(many=True)
-
-    class Meta:
-        """
-        Meta class specifying the model and fields for the serializer.
-        """
-
-        model = Blog
-        fields = [
-            "id",
-            "title",
-            "cover_photo",
-            "blog_blocks",
-        ]
-
-    def create(self, validated_data):
-        """
-        Create and return a new Blog instance with associated Blocks.
-
-        Args:
-            validated_data (dict): Validated data for creating Blog instance.
-
-        Returns:
-            Blog: Created Blog instance.
-        """
-        blocks_data = validated_data.pop("blocks", [])
-        blog = Blog.objects.create(**validated_data)
-
-        for block_data in blocks_data:
-            Block.objects.create(blog=blog, **block_data)
-
-        return blog
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing Blog instance with associated Blocks.
-
-        Args:
-            instance (Blog): Existing Blog instance to update.
-            validated_data (dict): Validated data for updating Blog instance.
-
-        Returns:
-            Blog: Updated Blog instance.
-        """
-        blocks_data = validated_data.pop("blocks", [])
-
-        instance.title = validated_data.get("title", instance.title)
-        instance.cover_photo = validated_data.get("cover_photo", instance.cover_photo)
-        instance.save()
-
-        instance.blocks.all().delete()
-        for block_data in blocks_data:
-            Block.objects.create(blog=instance, **block_data)
-
-        return instance
-
-
-class BlogOutputSerializer(serializers.ModelSerializer):
-    """
-    Serializer for retrieving Blog instances with read-only Blocks data.
-    """
-
-    blog_blocks = BlockSerializer(many=True, read_only=True)
-
-    class Meta:
-        """
-        Meta class specifying the model and fields for the serializer.
-        """
-
-        model = Blog
-        fields = [
-            "id",
-            "title",
-            "cover_photo",
-            "blog_blocks",
-        ]
+from app.cms.models.Blog import Blog
+from app.cms.models.BlogTag import BlogTag
+from app.cms.models.BlogThematic import BlogThematic
+from app.cms.serializers.BlogSectionSerializer import BlogSectionSerializer
 
 
 class BlogSerializer(serializers.ModelSerializer):
     """
-    Serializer combining BlogInputSerializer and BlogOutputSerializer
-    for handling input and output of Blog instances.
+    Serializer for defining request body structure of Blog instances with Sections.
     """
+
+    blog_sections = BlogSectionSerializer(many=True, read_only=True)
+    sections = BlogSectionSerializer(many=True, write_only=True)
+    blog_thematic = serializers.SlugRelatedField(read_only=True, slug_field="title")
+    blog_thematic_id = serializers.PrimaryKeyRelatedField(
+        source="blog_thematic", queryset=BlogThematic.objects.all(), write_only=True
+    )
+    tags = serializers.SlugRelatedField(
+        many=True, queryset=BlogTag.objects.all(), slug_field="name"
+    )
+    admin = serializers.EmailField(source="admin.user.email", read_only=True)
 
     class Meta:
         """
@@ -107,60 +35,31 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "sub_title",
             "cover_photo",
-            "blog_blocks",
+            "blog_sections",
+            "sections",
+            "blog_thematic",
+            "blog_thematic_id",
+            "tags",
+            "admin",
+            "visible",
+            "popular",
+            "updated_at",
+            "target_user_type"
         ]
-
-    def to_representation(self, instance):
-        """
-        Transform Blog instance into a representation using BlogOutputSerializer.
-
-        Args:
-            instance (Blog): Blog instance to represent.
-
-        Returns:
-            dict: Represented data of Blog instance.
-        """
-        serializer = BlogOutputSerializer(instance)
-        return serializer.data
-
+        read_only_fields = ["blog_sections", "updated_at"]
+        extra_kwargs = {
+            "target_user_type": {"required": False},
+        }
     def to_internal_value(self, data):
         """
-        Validate input data and return validated data using BlogInputSerializer.
-
-        Args:
-            data (dict): Data to validate for creating/updating Blog instance.
-
-        Returns:
-            dict: Validated data for creating/updating Blog instance.
+        Method mapping tags and adding those who don't exist
         """
-        serializer = BlogInputSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
-
-    def create(self, validated_data):
-        """
-        Create and return a new Blog instance using BlogInputSerializer.
-
-        Args:
-            validated_data (dict): Validated data for creating Blog instance.
-
-        Returns:
-            Blog: Created Blog instance.
-        """
-        input_serializer = BlogInputSerializer()
-        return input_serializer.create(validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing Blog instance using BlogInputSerializer.
-
-        Args:
-            instance (Blog): Existing Blog instance to update.
-            validated_data (dict): Validated data for updating Blog instance.
-
-        Returns:
-            Blog: Updated Blog instance.
-        """
-        input_serializer = BlogInputSerializer()
-        return input_serializer.update(instance, validated_data)
+        tags = data.get("tags", [])
+        for i, tag in enumerate(tags):
+            if isinstance(tag, str):
+                tag_obj, created = BlogTag.objects.get_or_create(name=tag)
+                tags[i] = tag_obj.name
+        data["tags"] = tags
+        return super().to_internal_value(data)

@@ -63,6 +63,10 @@ class ArchimatchUser(AbstractUser):
         related_name="user_permissions_archimatchuser_set",
         blank=True,
     )
+    is_deleted = models.BooleanField(default=False)
+    is_suspended = models.BooleanField(default=False)
+    suspension_start_date = models.DateField(null=True, blank=True)
+    suspension_end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         """
@@ -103,3 +107,8 @@ class ArchimatchUser(AbstractUser):
 
         verbose_name = "Archimatch User"
         verbose_name_plural = "Archimatch Users"
+        indexes = [
+            models.Index(fields=["first_name"]),
+            models.Index(fields=["last_name"]),
+            models.Index(fields=["email"]),
+        ]

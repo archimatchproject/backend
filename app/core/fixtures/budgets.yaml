@@ -1,0 +1,34 @@
+- model: core.Budget
+  pk: 1
+  fields:
+    name: "5.000dt - 10.000dt"
+
+- model: core.Budget
+  pk: 2
+  fields:
+    name: "20.000dt - 40.000dt"
+
+- model: core.Budget
+  pk: 3
+  fields:
+    name: "40.000dt - 120.000dt"
+
+- model: core.Budget
+  pk: 4
+  fields:
+    name: "120.000dt - 250.000dt"
+
+- model: core.Budget
+  pk: 5
+  fields:
+    name: "250.000dt - 500.000dt"
+
+- model: core.Budget
+  pk: 6
+  fields:
+    name: "500.000dt - 1.000.000dt"
+
+- model: core.Budget
+  pk: 7
+  fields:
+    name: "> 1.000.000dt"

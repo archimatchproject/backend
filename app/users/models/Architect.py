@@ -10,12 +10,19 @@ Classes:
 
 from django.db import models
 
+from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.Budget import Budget
+from app.core.models.PreferredLocation import PreferredLocation
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
+from app.core.models.TerrainSurface import TerrainSurface
+from app.core.models.WorkSurface import WorkSurface
 from app.core.models.WorkType import WorkType
+from app.users import PROJECT_COMPLEXITY_CHOICES
+from app.users import YEARS_EXPERIENCE_CHOICES
 from app.users.models.ArchimatchUser import ArchimatchUser
 
 
@@ -49,11 +56,12 @@ class Architect(BaseModel):
         the architect uses.
         budgets (ManyToManyField): Budget ranges the architect typically works
          within.
+        subscription_plan (ForeignKey): The subscription plan associated with the architect.
     """
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(max_length=10, default="")
+    architect_identifier = models.CharField(max_length=10, default="", null=True, blank=True)
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality,
         on_delete=models.CASCADE,
@@ -76,6 +84,30 @@ class Architect(BaseModel):
     property_types = models.ManyToManyField(PropertyType)
     work_types = models.ManyToManyField(WorkType)
     architectural_styles = models.ManyToManyField(ArchitecturalStyle)
+    needs = models.ManyToManyField(Need, related_name="needs_architect")
+
+    project_complexity = models.CharField(
+        max_length=10,
+        choices=PROJECT_COMPLEXITY_CHOICES,
+        default=PROJECT_COMPLEXITY_CHOICES[0][0],
+    )
+    years_experience = models.CharField(
+        max_length=10,
+        choices=YEARS_EXPERIENCE_CHOICES,
+        default=YEARS_EXPERIENCE_CHOICES[0][0],
+    )
+    subscription_plan = models.ForeignKey(
+        "subscription.ArchitectSelectedSubscriptionPlan",
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
+    )
+
+    terrain_surfaces = models.ManyToManyField(TerrainSurface, blank=True)
+    work_surfaces = models.ManyToManyField(WorkSurface, blank=True)
+    budgets = models.ManyToManyField(Budget, blank=True)
+    preferred_locations = models.ManyToManyField(PreferredLocation, blank=True)
 
     def __str__(self):
         """

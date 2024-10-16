@@ -4,10 +4,8 @@ Module-level constants for jwt configuration.
 
 from datetime import timedelta
 
-import environ
+from project_core.env import env
 
-
-env = environ.Env()
 
 SECRET_KEY = env("SECRET_KEY")
 

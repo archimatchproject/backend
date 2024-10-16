@@ -1,0 +1,134 @@
+- model: core.PreferredLocation
+  pk: 1
+  fields:
+    name: "Tunis"
+
+- model: core.PreferredLocation
+  pk: 2
+  fields:
+    name: "Sfax"
+
+- model: core.PreferredLocation
+  pk: 3
+  fields:
+    name: "Sousse"
+
+- model: core.PreferredLocation
+  pk: 4
+  fields:
+    name: "Ettadhamen"
+
+- model: core.PreferredLocation
+  pk: 5
+  fields:
+    name: "Kairouan"
+
+- model: core.PreferredLocation
+  pk: 6
+  fields:
+    name: "Gabès"
+
+- model: core.PreferredLocation
+  pk: 7
+  fields:
+    name: "Bizerte"
+
+- model: core.PreferredLocation
+  pk: 8
+  fields:
+    name: "Ariana"
+
+- model: core.PreferredLocation
+  pk: 9
+  fields:
+    name: "Gafsa"
+
+- model: core.PreferredLocation
+  pk: 10
+  fields:
+    name: "Monastir"
+
+- model: core.PreferredLocation
+  pk: 11
+  fields:
+    name: "Médenine"
+
+- model: core.PreferredLocation
+  pk: 12
+  fields:
+    name: "Beja"
+
+- model: core.PreferredLocation
+  pk: 13
+  fields:
+    name: "Jendouba"
+
+- model: core.PreferredLocation
+  pk: 14
+  fields:
+    name: "Nabeul"
+
+- model: core.PreferredLocation
+  pk: 15
+  fields:
+    name: "Kasserine"
+
+- model: core.PreferredLocation
+  pk: 16
+  fields:
+    name: "Sidi Bouzid"
+
+- model: core.PreferredLocation
+  pk: 17
+  fields:
+    name: "Tozeur"
+
+- model: core.PreferredLocation
+  pk: 18
+  fields:
+    name: "Siliana"
+
+- model: core.PreferredLocation
+  pk: 19
+  fields:
+    name: "Tataouine"
+
+- model: core.PreferredLocation
+  pk: 20
+  fields:
+    name: "Kebili"
+
+- model: core.PreferredLocation
+  pk: 21
+  fields:
+    name: "Ben Arous"
+
+- model: core.PreferredLocation
+  pk: 22
+  fields:
+    name: "Mahdia"
+
+- model: core.PreferredLocation
+  pk: 23
+  fields:
+    name: "Manouba"
+
+- model: core.PreferredLocation
+  pk: 24
+  fields:
+    name: "Zaghouan"
+
+- model: core.PreferredLocation
+  pk: 25
+  fields:
+    name: "Kef"
+
+- model: core.PreferredLocation
+  pk: 26
+  fields:
+    name: "Moknine"
+
+- model: core.PreferredLocation
+  pk: 27
+  fields:
+    name: "Menzel Temime"

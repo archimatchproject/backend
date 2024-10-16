@@ -8,13 +8,13 @@ using Django REST Framework, including custom login actions.
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from app.users.models import Client
+from app.users.models.Client import Client
 from app.users.serializers.ClientSerializer import ClientSerializer
-from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
-from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services.ClientService import ClientService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ClientViewSet(viewsets.ModelViewSet):
     """
@@ -34,6 +34,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         url_path="login-email",
         serializer_class=UserAuthSerializer,
     )
+    @handle_service_exceptions
     def client_login_email(self, request):
         """
         Performs email-based login for clients using a custom action.
@@ -45,43 +46,63 @@ class ClientViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of the login attempt.
         """
-        return ClientService.client_login_email(request)
+        success,client_data = ClientService.client_login_email(request)
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
+
 
     @action(
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        url_path="send-code",
-        serializer_class=UserAuthPhoneSerializer,
+        url_path="send-reset-password-link",
+        url_name="send-reset-password-link",
     )
-    def client_send_verification_code(self, request):
+    @handle_service_exceptions
+    def client_send_reset_password_link(self, request):
         """
-        Sends a verification code to the client's phone number.
+        sends client reset password email.
 
         Args:
-            request (Request): HTTP request object containing the phone number.
-
-        Returns:
-            Response: Response indicating whether the verification code was sent successfully.
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
         """
-        return ClientService.client_send_verification_code(request)
+        success,message = ClientService.client_send_reset_password_link(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
         methods=["POST"],
         permission_classes=[],
-        url_path="verify-code",
-        serializer_class=VerifyCodeSerializer,
+        url_path="validate-password-token",
+        url_name="validate-password-token",
     )
-    def client_verify_verification_code(self, request):
+    @handle_service_exceptions
+    def client_validate_password_token(self, request):
         """
-        Verifies the client's phone number using the verification code.
+        sends client reset password email.
 
         Args:
-            request (Request): HTTP request object containing the phone number and
-            verification code.
-
-        Returns:
-            Response: Response indicating success or failure of the verification.
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
         """
-        return ClientService.client_verify_verification_code(request)
+        success,client_data = ClientService.client_validate_password_token(request)
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="validate-email-token",
+        url_name="validate-email-token",
+    )
+    @handle_service_exceptions
+    def client_validate_email_token(self, request):
+        """
+        sends client reset password email.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+        """
+        success,client_data = ClientService.client_validate_email_token(request)
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Architect_welcome</title>
+    <style>
+      * {
+        font-family: "Jost", sans-serif;
+        font-optical-sizing: auto;
+      }
+      .container {
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+      }
+      @media (min-width: 500px) {
+        .container {
+          width: 750px;
+        }
+        .date-container {
+          width: 520px !important;
+        }
+      }
+      @media (min-width: 768px) {
+        .container {
+          width: 750px;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .container {
+          width: 970px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .container {
+          width: 1170px;
+        }
+      }
+      .header-container {
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+      }
+      .header {
+        display: inline-block;
+        width: 100% !important;
+      }
+      .inner-container {
+        display: inline;
+        width: 100%;
+      }
+
+      .align-right {
+        float: right;
+      }
+
+      .align-center {
+        text-align: center;
+      }
+
+      .align-left {
+        float: left;
+      }
+
+      .align-items-center {
+        vertical-align: middle;
+      }
+
+      .social-media {
+        display: inline-block !important;
+        gap: 20px !important;
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+      }
+      .social-media > * {
+        margin-right: 10px !important;
+      }
+
+      .social-media > *:last-child {
+        margin-right: 0 !important;
+      }
+
+      .social-icon:hover {
+        filter: invert(20%) sepia(90%) saturate(600%) hue-rotate(340deg)
+          brightness(100%) contrast(100%);
+        cursor: pointer;
+      }
+
+      .content {
+        width: 90% !important;
+        margin: auto !important;
+        gap: 30px !important;
+      }
+      .content > * {
+        margin-bottom: 30px;
+      }
+
+      .content > *:last-child {
+        margin-bottom: 0;
+      }
+
+      .btn {
+        text-decoration: none !important;
+        padding: 16px 32px !important;
+        color: white !important;
+        border-radius: 8px !important;
+        max-width: 230px !important;
+        text-align: center !important;
+        font-weight: bold !important;
+        display: inline-block !important;
+      }
+
+      .btn-login {
+        margin: auto !important;
+      }
+
+      .btn-architect {
+        background-color: #fc5c63 !important;
+      }
+
+      .header-img {
+        width: 100% !important;
+
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+      }
+      .sub-img {
+        margin-top: -80px !important;
+      }
+      .logo {
+        margin-bottom: 20px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+      }
+      .btn-container {
+        text-align: center;
+        display: block;
+        width: 100% !important;
+      }
+      .footer-p {
+        font-size: 14px;
+        color: #888fa7;
+      }
+      .sub-container {
+        padding-bottom: 10px !important;
+        background-color: white !important;
+        border-radius: 12px !important;
+      }
+      .date-container {
+        background-color: #fafbff !important;
+        border-radius: 10px !important;
+        width: 200px !important;
+        margin: auto !important;
+        padding: 5px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="align-items-center align-center">
+          <img
+            src="cid:architect_logo.png"
+            alt=""
+            class="align-items-center logo"
+          />
+          <!-- <div class="social-media align-right">
+            <img src="cid:twitter.png" alt="" class="social-icon" />
+            <img src="cid:facebook.png" alt="" class="social-icon" />
+            <img src="cid:instagram.png" alt="" class="social-icon" />
+          </div> -->
+        </div>
+      </div>
+      <div class="sub-container">
+        <img src="cid:architect_request_header.png" alt="" class="header-img" />
+
+        <div class="content align-center align-items-center">
+          <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+
+          <p>Nous sommes heureux de vous accueillir sur Archimatch !</p>
+          <p>
+            Nous organiserons un entretien d'acceptation pour mieux vous
+            connaître, discuter de votre profil et vous présenter notre
+            plateforme.
+          </p>
+
+          <div class="date-container">
+            <div
+              style="
+                display: inline-block;
+                vertical-align: top;
+                padding-right: 20% !important;
+              "
+            >
+              <p>Date</p>
+              <p>{{ date }}</p>
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+              <p>Temps</p>
+              <p>{{ time_slot }}</p>
+            </div>
+          </div>
+          <p>
+            Pour toute question préalable à l'entretien, contactez-nous à
+            archimatch.projet@gmail.com.
+          </p>
+          <h2>Team Archimatch</h2>
+        </div>
+      </div>
+
+      <div class="align-items-center align-center">
+        <div class="social-media align-items-center">
+          <img src="cid:twitter.png" alt="" class="social-icon" />
+          <img src="cid:facebook.png" alt="" class="social-icon" />
+          <img src="cid:instagram.png" alt="" class="social-icon" />
+        </div>
+      </div>
+
+      <div class="align-items-center align-center">
+        <div class="align-items-center">
+          <img
+            src="cid:footer_logo.png"
+            alt=""
+            class="align-items-center logo"
+          />
+          <p class="footer-p">
+            Cet e-mail a été généré pour {{ first_name }} {{ last_name }}
+          </p>
+          <p class="footer-p">politique de confidentialite ⋅ Centre d'aide</p>
+          <p class="footer-p">
+            Archimatch 5800 Bristol Pkwy, Culver City, CA 90230.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

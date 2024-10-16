@@ -11,10 +11,15 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import Supplier
+from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
+from app.core.models.SupplierSpeciality import SupplierSpeciality
+from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import SupplierSelectedSubscriptionPlanSerializer
+from app.users.models.Supplier import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
+from app.users.serializers.ShowRoomSerializer import ShowRoomSerializer
+from app.users.serializers.SupplierCoverImageSerializer import SupplierCoverImageSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
-from app.users.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -36,7 +41,11 @@ class SupplierSerializer(serializers.ModelSerializer):
     user = ArchimatchUserSerializer(required=True)
     social_links = SupplierSocialMediaSerializer()
     speciality_type = SupplierSpecialitySerializer(many=True)
-
+    supplier_collections = CollectionSerializer(many=True)
+    supplier_cover_images = SupplierCoverImageSerializer(many=True, read_only=True)
+    showrooms = ShowRoomSerializer(many=True)
+    subscription_plan = SupplierSelectedSubscriptionPlanSerializer()
+    
     class Meta:
         """
         Meta class for SupplierSerializer.
@@ -48,3 +57,75 @@ class SupplierSerializer(serializers.ModelSerializer):
 
         model = Supplier
         fields = "__all__"
+
+
+class SupplierInputSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Supplier model.
+
+    This serializer includes nested serialization for the ArchimatchUser and
+    SupplierSocialMedia models.
+
+    Fields:
+        user_phone_number: Phone number from the ArchimatchUser associated with the supplier.
+        social_links: Nested serializer for the SupplierSocialMedia associated
+        with the supplier.
+        speciality_type: Array of IDs for the SupplierSpeciality associated
+        with the supplier.
+    """
+
+    phone_number = serializers.CharField(source="user.phone_number")
+    email = serializers.CharField(source="user.email")
+    speciality_type = serializers.PrimaryKeyRelatedField(
+        queryset=SupplierSpeciality.objects.all(),
+        many=True,
+    )
+
+    class Meta:
+        """
+        Meta class for SupplierSerializer.
+
+        Meta Attributes:
+            model: The model that this serializer is associated with.
+            fields: The fields to include in the serialized representation.
+        """
+
+        model = Supplier
+        fields = (
+            "id",
+            "company_address",
+            "company_speciality",
+            "speciality_type",
+            "phone_number",
+            "email",
+        )
+
+
+class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Supplier model.
+
+    This serializer includes nested serialization for the ArchimatchUser and
+    SupplierSocialMedia models.
+
+    Fields:
+        user_phone_number: Phone number from the ArchimatchUser associated with the supplier.
+        social_links: Nested serializer for the SupplierSocialMedia associated
+        with the supplier.
+        speciality_type: Array of IDs for the SupplierSpeciality associated
+        with the supplier.
+    """
+
+    phone_number = serializers.CharField(source="user.phone_number")
+    showrooms = ShowRoomSerializer(many=True,read_only=True)
+    class Meta:
+        """
+        Meta class for SupplierSerializer.
+
+        Meta Attributes:
+            model: The model that this serializer is associated with.
+            fields: The fields to include in the serialized representation.
+        """
+
+        model = Supplier
+        fields = ("id", "company_address", "company_speciality", "phone_number", "company_name","showrooms")
