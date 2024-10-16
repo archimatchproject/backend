@@ -70,5 +70,5 @@ class SupplierFilter(django_filters.FilterSet):
         If value is False, include suppliers with empty company_name.
         """
         if value:
-            return queryset.exclude(company_name='')
-        return queryset.filter(company_name='')
+            return queryset.exclude(company_name='').order_by("created_at")
+        return queryset.filter(company_name='').order_by("created_at")
