@@ -2,21 +2,40 @@ from django.db import models
 from app.selection import INTERESTED
 from app.selection import SELECTION_STATUS_CHOICES
 
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+
+
 class Selection(models.Model):
     """
     Model representing the selection of architects for an announcement.
-
-    Attributes:
-        announcement (ForeignKey): The announcement that the architect is interested in.
-        architect (ForeignKey): The architect who is interested in the announcement.
-        status (CharField): The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
-
-    announcement = models.ForeignKey("announcement.Announcement", on_delete=models.CASCADE, related_name='selections')
-    architect = models.ForeignKey("users.Architect", on_delete=models.CASCADE, related_name='selections')
-    status = models.CharField(max_length=10, choices=SELECTION_STATUS_CHOICES, default=INTERESTED)
-
+    announcement = models.ForeignKey(
+        "announcement.Announcement",
+        on_delete=models.CASCADE,
+        related_name='selections'
+    )
+    architect = models.ForeignKey(
+        "users.Architect",
+        on_delete=models.CASCADE,
+        related_name='selections'
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=SELECTION_STATUS_CHOICES,
+        default=INTERESTED
+    )
+    # One-to-one relationship with Phase
+    phase = models.OneToOneField(
+        'Phase',
+        on_delete=models.CASCADE,
+        related_name='selection',
+        null=True,  
+        blank=True  
+    )
+    
     class Meta:
         unique_together = ('announcement', 'architect')
         constraints = [

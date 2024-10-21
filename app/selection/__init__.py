@@ -6,3 +6,15 @@ SELECTION_STATUS_CHOICES = [
     (REFUSED, REFUSED),
     (INTERESTED, INTERESTED),
 ]
+
+
+DISCUSSION = 'Discussion'
+QUOTES = 'Quotes'
+DECISION = 'Decision'
+
+# Choices for the phase names
+PHASE_NAME_CHOICES = [
+    (DISCUSSION, DISCUSSION),
+    (QUOTES, QUOTES),
+    (DECISION, DECISION),
+]
