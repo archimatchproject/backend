@@ -106,3 +106,38 @@ class ClientViewSet(viewsets.ModelViewSet):
         """
         success,client_data = ClientService.client_validate_email_token(request)
         return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
+
+    
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile",
+    )
+    @handle_service_exceptions
+    def client_get_profile(self, request):
+        """
+        Retrieves Client details.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing Client details.
+        """
+        success,client_data = ClientService.client_get_profile(request)
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
+    
+    @handle_service_exceptions
+    def client_validate_email(self, request):
+        """
+        sends client reset password email.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+        """
+        success,client_data = ClientService.client_validate_email_first_login(request)
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)

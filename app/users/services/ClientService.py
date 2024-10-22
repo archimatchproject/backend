@@ -136,3 +136,41 @@ class ClientService:
         client.save()
         serializer = ClientSerializer(client)
         return True,serializer.data
+
+    @classmethod
+    def client_get_profile(cls, request):
+        """
+        Retrieves client information.
+
+        Args:
+            request (Request): Django request object containing user ID.
+
+        Returns:
+            Response: Response object containing client data.
+
+        Raises:
+            APIException: If there are errors during the process.
+        """
+        user_id = request.user.id
+        client = Client.objects.get(user__id=user_id)
+        client_serializer = ClientSerializer(client)
+        return True,client_serializer.data
+    
+    @classmethod
+    def client_validate_email_first_login(cls, request):
+        """
+        validate password token
+        """
+        print(request.data)
+        data = request.data
+        user_id = request.user.id
+        code = data.get("code", False)
+        print(int(code) is not 0000)
+        if int(code) is not 0000:
+            raise serializers.ValidationError(detail="code is invalid")
+
+        client = Client.objects.get(user__id=user_id)
+        client.is_verified = True
+        client.save()
+        serializer = ClientSerializer(client)
+        return True,serializer.data

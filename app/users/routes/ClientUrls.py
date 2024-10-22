@@ -29,4 +29,14 @@ client_urlpatterns = [
         ClientViewSet.as_view({"post": "client_validate_email_token"}),
         name="validate-email-token",
     ),
+    path(
+        "client/get-profile/",
+        ClientViewSet.as_view({"get": "client_get_profile"}),
+        name="profile",
+    ),
+    path(
+        "client/validate-email/",
+        ClientViewSet.as_view({"post": "client_validate_email"}),
+        name="validate-email",
+    ),
 ]
