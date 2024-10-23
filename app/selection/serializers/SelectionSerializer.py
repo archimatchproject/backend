@@ -8,6 +8,8 @@ Classes:
 
 from rest_framework import serializers
 from app.selection.models.Selection import Selection
+from app.selection.serializers.PhaseSerializer import PhaseSerializer
+from app.selection.serializers.QuoteSerializer import QuoteSerializer
 from app.users.models import Architect
 from app.announcement.models import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
@@ -22,15 +24,17 @@ class SelectionSerializer(serializers.ModelSerializer):
     Fields:
         announcement: The announcement related to the selection.
         architect: The architect interested in the announcement.
+        phase: The current phase in the selection process.
         status: The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
     announcement = AnnouncementSerializer()
     architect = ArchitectSerializer()
-
+    phase = PhaseSerializer() 
+    quotes = QuoteSerializer(many=True, read_only=True)
     class Meta:
         model = Selection
-        fields = ['announcement', 'architect', 'status']
+        fields = ['announcement', 'architect', 'phase', 'status','quotes','name']
 
 class SelectionPostSerializer(serializers.ModelSerializer):
     """
