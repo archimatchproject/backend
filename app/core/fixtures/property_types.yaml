@@ -1,0 +1,96 @@
+# property_types.yaml
+
+# Property Types for Projet résidentiel (Project Category)
+- model: core.PropertyType
+  pk: 1
+  fields:
+    label: "Maison"
+    icon: "icons/PropertyTypeIcons/house.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 2
+  fields:
+    label: "Immeuble"
+    icon: "icons/PropertyTypeIcons/building.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 3
+  fields:
+    label: "Villa"
+    icon: "icons/PropertyTypeIcons/villa.png"
+    project_category: 1
+
+- model: core.PropertyType
+  pk: 4
+  fields:
+    label: "Appartement"
+    icon: "icons/PropertyTypeIcons/apartment.png"
+    project_category: 1
+
+# Property Types for Grand œuvre immobilier (Project Category)
+- model: core.PropertyType
+  pk: 5
+  fields:
+    label: "Immeubles bureaux"
+    icon: "icons/PropertyTypeIcons/building.png"
+    project_category: 2
+
+- model: core.PropertyType
+  pk: 6
+  fields:
+    label: "Clinique"
+    icon: "icons/PropertyTypeIcons/hospital.png"
+    project_category: 2
+
+- model: core.PropertyType
+  pk: 7
+  fields:
+    label: "Showroom"
+    icon: "icons/PropertyTypeIcons/showroom.png"
+    project_category: 2
+
+# Property Types for Point de Vente et Commercial (Project Category)
+- model: core.PropertyType
+  pk: 8
+  fields:
+    label: "Restaurant/Salon de thé"
+    icon: "icons/PropertyTypeIcons/restaurant.png"
+    project_category: 3
+
+- model: core.PropertyType
+  pk: 9
+  fields:
+    label: "Magasin"
+    icon: "icons/PropertyTypeIcons/store.png"
+    project_category: 3
+
+- model: core.PropertyType
+  pk: 10
+  fields:
+    label: "Agences/Bureaux"
+    icon: "icons/PropertyTypeIcons/office.png"
+    project_category: 3
+
+# Property Types for projet Industriel (Project Category)
+- model: core.PropertyType
+  pk: 11
+  fields:
+    label: "Entrepôt"
+    icon: "icons/PropertyTypeIcons/warehouse.png"
+    project_category: 4
+
+- model: core.PropertyType
+  pk: 12
+  fields:
+    label: "Usines"
+    icon: "icons/PropertyTypeIcons/factory.png"
+    project_category: 4
+
+- model: core.PropertyType
+  pk: 13
+  fields:
+    label: "Atelier conception"
+    icon: "icons/PropertyTypeIcons/workshop.png"
+    project_category: 4

@@ -1,18 +1,32 @@
 """
-Module defining the Blog model for representing blog posts.
+Module defining the Blog model.
+
+This module contains the Blog class, which represents a blog post in the application.
 """
 
 from django.db import models
 
+from app.cms import TARGET_USER_TYPE
+from app.cms.models.BlogTag import BlogTag
+from app.cms.models.BlogThematic import BlogThematic
+from app.core.models.BaseModel import BaseModel
+from app.users.models.Admin import Admin
 
-class Blog(models.Model):
+
+class Blog(BaseModel):
     """
     Model representing a blog post.
 
     Attributes:
-        title (CharField): Title of the blog post, maximum length of 255 characters.
-        cover_photo (ImageField): Optional cover photo for the blog post, stored in
-        'BlogsCoverPhotos/' directory.
+        title (str): The title of the blog post.
+        sub_title (str): The subtitle of the blog post.
+        content (TextField): The content of the blog post.
+        blog_thematic (ForeignKey): The thematic category to which the blog post belongs.
+        tags (ManyToManyField): Tags associated with the blog post.
+        admin (ForeignKey): The admin who created the blog post.
+        visible (bool): Whether the blog post is visible.
+        popular (bool): Whether the blog post is popular.
+        last_update (DateTimeField): The date and time of the last update.
     """
 
     title = models.CharField(max_length=255)
@@ -21,19 +35,30 @@ class Blog(models.Model):
         blank=True,
         null=True,
     )
-
-    def __str__(self):
-        """
-        String representation of the blog post.
-        """
-        return self.title
+    sub_title = models.CharField(max_length=255, blank=True, null=True)
+    blog_thematic = models.ForeignKey(
+        BlogThematic, on_delete=models.CASCADE, related_name="blog_thematic_blogs"
+    )
+    tags = models.ManyToManyField(BlogTag)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
+    visible = models.BooleanField(default=False)
+    popular = models.BooleanField(default=False)
+    target_user_type = models.CharField(
+        max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
+    )
 
     class Meta:
         """
         Meta class for Blog model.
 
-        Defines display names for singular and plural forms of Blog in the Django admin.
+        Provides verbose names for the model in the Django admin interface.
         """
 
         verbose_name = "Blog"
         verbose_name_plural = "Blogs"
+
+    def __str__(self):
+        """
+        String representation of the blog.
+        """
+        return self.title

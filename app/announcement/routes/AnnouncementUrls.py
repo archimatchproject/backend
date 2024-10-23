@@ -10,6 +10,11 @@ from app.announcement.controllers.AnnouncementViewSet import AnnouncementViewSet
 
 announcement_urlpatterns = [
     path(
+        "client-announcement",
+        AnnouncementViewSet.as_view({"get": "list"}),
+        name="client-get-announcement",
+    ),
+    path(
         "create-announcement/",
         AnnouncementViewSet.as_view({"post": "create_announcement"}),
         name="create-announcement",
@@ -20,42 +25,47 @@ announcement_urlpatterns = [
         name="update-announcement",
     ),
     path(
-        "architect-specialities/",
+        "update-announcement-images/<int:pk>/",
+        AnnouncementViewSet.as_view({"put": "update_announcement_images"}),
+        name="update-announcement",
+    ),
+    path(
+        "architect-specialities",
         AnnouncementViewSet.as_view({"get": "get_architect_specialities"}),
         name="architect-specialities",
     ),
     path(
-        "architect-speciality-needs/<int:architect_speciality_id>/",
+        "architect-speciality-needs",
         AnnouncementViewSet.as_view({"get": "get_architect_speciality_needs"}),
         name="architect-speciality-needs",
     ),
     path(
-        "project-categories/",
+        "project-categories",
         AnnouncementViewSet.as_view({"get": "get_project_categories"}),
         name="project-categories",
     ),
     path(
-        "property-types/<int:project_category_id>/",
+        "property-types",
         AnnouncementViewSet.as_view({"get": "get_property_types"}),
         name="property-types",
     ),
     path(
-        "work-types/",
+        "work-types",
         AnnouncementViewSet.as_view({"get": "get_announcement_work_types"}),
         name="work-types",
     ),
     path(
-        "renovation-pieces/",
+        "renovation-pieces",
         AnnouncementViewSet.as_view({"get": "get_renovation_pieces"}),
         name="renovation-pieces",
     ),
     path(
-        "cities/",
+        "cities",
         AnnouncementViewSet.as_view({"get": "get_cities"}),
         name="cities",
     ),
     path(
-        "terrain-surfaces/",
+        "terrain-surfaces",
         AnnouncementViewSet.as_view({"get": "get_terrain_surfaces"}),
         name="terrain-surfaces",
     ),
@@ -65,18 +75,68 @@ announcement_urlpatterns = [
         name="work-surfaces",
     ),
     path(
-        "budgets/",
+        "budgets",
         AnnouncementViewSet.as_view({"get": "get_budgets"}),
         name="budgets",
     ),
     path(
-        "architectural-styles/",
+        "architectural-styles",
         AnnouncementViewSet.as_view({"get": "get_architectural_styles"}),
         name="architectural-styles",
     ),
     path(
-        "project-extensions/",
+        "project-extensions",
         AnnouncementViewSet.as_view({"get": "get_project_extensions"}),
         name="project-extensions",
+    ),
+    path(
+        "add-note/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "add_note"}),
+        name="announcement-add-note",
+    ),
+    path(
+        "get-announcements",
+        AnnouncementViewSet.as_view({"get": "get"}),
+        name="get-announcements",
+    ),
+    path(
+        "accept-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "accept_announcement"}),
+        name="accept-announcement",
+    ),
+    path(
+        "refuse-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "refuse_announcement"}),
+        name="refuse-announcement",
+    ),
+    path(
+        "get-details/<int:pk>/",
+        AnnouncementViewSet.as_view({"get": "get_announcement_details"}),
+        name="get-details",
+    ),
+    path(
+        "get-announcements-by-architect/",
+        AnnouncementViewSet.as_view({"get": "get_announcements_by_architect"}),
+        name="get-announcements-by-architect",
+    ),
+    path(
+        "revoke-announcement/<int:pk>/",
+        AnnouncementViewSet.as_view({"post": "revoke_announcement"}),
+        name="revoke-announcement",
+    ),
+    path(
+        "get-announcements-by-client/",
+        AnnouncementViewSet.as_view({"get": "get_announcements_by_client"}),
+        name="get-announcements-by-client",
+    ),
+    path(
+        "all-property-types",
+        AnnouncementViewSet.as_view({"get": "get_all_property_types"}),
+        name="all-property-types",
+    ),
+    path(
+        "all-work-types",
+        AnnouncementViewSet.as_view({"get": "get_all_work_types"}),
+        name="all-work-types",
     ),
 ]

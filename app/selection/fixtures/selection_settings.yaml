@@ -1,0 +1,14 @@
+# selection_settings.yaml
+
+- model: selection.SelectionSettings
+  pk: 1
+  fields:
+    phase_days: 7 # Number of days for each phase
+    days_before_call_email: 2 # Number of days to send email before a phone call
+    days_to_phone_call: 3 # Number of days to make a phone call
+    days_after_call_email: 2 # Number of days to send email after the phone call
+    days_to_rediffuse: 30 # Number of days to re-publish the project
+    days_to_lock_project: 15 # Number of days after which the project is locked
+    times_to_unlock_project: 3 # Number of times the project can be unlocked
+    days_for_admin_management: 10 # Number of days the admin can manage the selection
+    email_sending_hour: "09:00:00" # Time of the day for sending email notifications

@@ -1,0 +1,63 @@
+- model: subscription.PlanService
+  pk: 1
+  fields:
+    description: Can access platform client projects
+    special_identifier: "access_platform_projects"
+    permissions:
+      - "announcement.view_announcement"
+
+- model: subscription.PlanService
+  pk: 2
+  fields:
+    description: Can access profile client projects
+    special_identifier: "access_profile_projects"
+    permissions:
+      - "announcement.view_announcement"
+
+- model: subscription.PlanService
+  pk: 3
+  fields:
+    description: Can view realizations on ArchiMatch
+    special_identifier: "view_realizations"
+    permissions:
+      - "architect_realization.view_realization"
+
+- model: subscription.PlanService
+  pk: 4
+  fields:
+    description: Can access partner suppliers
+    special_identifier: "access_partners"
+    permissions:
+      - "users.view_archimatchuser"
+
+- model: subscription.PlanService
+  pk: 5
+  fields:
+    description: Can access ArchiMatch support
+    special_identifier: "access_support"
+    permissions:
+      - "cms.view_blogsection"
+
+- model: subscription.PlanService
+  pk: 6
+  fields:
+    description: Can receive project suggestions based on preferences
+    special_identifier: "receive_project_suggestions"
+    permissions:
+      - "announcement.view_announcement"
+
+- model: subscription.PlanService
+  pk: 7
+  fields:
+    description: Can highlight profile on ArchiMatch
+    special_identifier: "highlight_profile"
+    permissions:
+      - "announcement.view_announcement"
+
+- model: subscription.PlanService
+  pk: 8
+  fields:
+    description: Can generate quotes
+    special_identifier: "generate_quotes"
+    permissions:
+      - "announcement.view_announcement"

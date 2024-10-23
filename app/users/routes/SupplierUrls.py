@@ -54,4 +54,69 @@ supplier_urlpatterns = [
         SupplierViewSet.as_view({"get": "get_appearances"}),
         name="appearances",
     ),
+    path(
+        "supplier/get-profile/",
+        SupplierViewSet.as_view({"get": "supplier_get_profile"}),
+        name="profile",
+    ),
+    path(
+        "supplier/get-profile/<int:pk>/",
+        SupplierViewSet.as_view({"get": "get_profile_by_id"}),
+        name="get-profile-by-id",
+    ),
+    path(
+        "supplier/send-reset-password-link/",
+        SupplierViewSet.as_view({"post": "supplier_send_reset_password_link"}),
+        name="send-reset-password-link",
+    ),
+    path(
+        "supplier/update-profile-image/",
+        SupplierViewSet.as_view({"put": "supplier_update_profile_image"}),
+        name="update-profile-image",
+    ),
+    path(
+        "supplier/update-cover-image/",
+        SupplierViewSet.as_view({"put": "supplier_update_cover_image"}),
+        name="update-cover-image",
+    ),
+    path(
+        "supplier/update-visibility/",
+        SupplierViewSet.as_view({"put": "supplier_update_visibility"}),
+        name="update-visibility",
+    ),
+    path(
+        "supplier/validate-password-token/",
+        SupplierViewSet.as_view({"post": "supplier_validate_password_token"}),
+        name="validate-password-token",
+    ),
+    path(
+        "supplier/get-all-suppliers/",
+        SupplierViewSet.as_view({"get": "get"}),
+        name="get-all-suppliers",
+    ),
+    path(
+        "supplier/get-supplier/<int:pk>/",
+        SupplierViewSet.as_view({"get": "retrieve"}),
+        name="supplier-detail",
+    ),
+    path(
+        "supplier/resend-email/<int:pk>/",
+        SupplierViewSet.as_view({"post": "supplier_resend_email"}),
+        name="resend-email",
+    ),
+    path(
+        "suppliers/delete/<int:pk>/",
+        SupplierViewSet.as_view({"delete": "delete"}),
+        name="delete-supplier",
+    ),
+    path(
+        "supplier/update-catalog-visibility/",
+        SupplierViewSet.as_view({"put": "supplier_update_catalog_visibility"}),
+        name="update-catalog-visibility",
+    ),
+        path(
+        "supplier/showroom/delete/<int:pk>/",
+        SupplierViewSet.as_view({"delete": "delete_showroom"}),
+        name="showroom-delete",
+    ),
 ]

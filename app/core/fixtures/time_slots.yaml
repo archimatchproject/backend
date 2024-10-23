@@ -1,0 +1,94 @@
+- model: users.TimeSlot
+  pk: 1
+  fields:
+    time: "08:00:00"
+
+- model: users.TimeSlot
+  pk: 2
+  fields:
+    time: "08:30:00"
+
+- model: users.TimeSlot
+  pk: 3
+  fields:
+    time: "09:00:00"
+
+- model: users.TimeSlot
+  pk: 4
+  fields:
+    time: "09:30:00"
+
+- model: users.TimeSlot
+  pk: 5
+  fields:
+    time: "10:00:00"
+
+- model: users.TimeSlot
+  pk: 6
+  fields:
+    time: "10:30:00"
+
+- model: users.TimeSlot
+  pk: 7
+  fields:
+    time: "11:00:00"
+
+- model: users.TimeSlot
+  pk: 8
+  fields:
+    time: "11:30:00"
+
+- model: users.TimeSlot
+  pk: 9
+  fields:
+    time: "12:00:00"
+
+- model: users.TimeSlot
+  pk: 10
+  fields:
+    time: "12:30:00"
+
+- model: users.TimeSlot
+  pk: 11
+  fields:
+    time: "13:00:00"
+
+- model: users.TimeSlot
+  pk: 12
+  fields:
+    time: "13:30:00"
+
+- model: users.TimeSlot
+  pk: 13
+  fields:
+    time: "14:00:00"
+
+- model: users.TimeSlot
+  pk: 14
+  fields:
+    time: "14:30:00"
+
+- model: users.TimeSlot
+  pk: 15
+  fields:
+    time: "15:00:00"
+
+- model: users.TimeSlot
+  pk: 16
+  fields:
+    time: "15:30:00"
+
+- model: users.TimeSlot
+  pk: 17
+  fields:
+    time: "16:00:00"
+
+- model: users.TimeSlot
+  pk: 18
+  fields:
+    time: "16:30:00"
+
+- model: users.TimeSlot
+  pk: 19
+  fields:
+    time: "17:00:00"

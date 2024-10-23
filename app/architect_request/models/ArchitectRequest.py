@@ -8,16 +8,22 @@ Classes:
     ArchitectRequest: Defines the ArchitectRequest model with additional fields and relationships.
 """
 
-import datetime
+from datetime import date
+from datetime import datetime
+from datetime import time
 
-from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils import timezone
 
+from rest_framework.serializers import ValidationError
+
+from app.announcement import CITIES
 from app.architect_request import ARCHITECT_REQUEST_STATUS_CHOICES
 from app.architect_request import TIME_SLOT_CHOICES
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.Note import Note
 from app.users.models.Admin import Admin
 
 
@@ -43,7 +49,7 @@ class ArchitectRequest(BaseModel):
     last_name = models.CharField(max_length=255, default="")
     phone_number = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(max_length=10, default="")
+    architect_identifier = models.CharField(max_length=10, null=True, blank=True)
     email = models.EmailField(unique=True)
 
     architect_speciality = models.ForeignKey(
@@ -54,10 +60,17 @@ class ArchitectRequest(BaseModel):
     date = models.DateField()
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
 
-    meeting_responsable = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    meeting_responsable = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(
         max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
     )
+    city = models.CharField(
+        max_length=50,
+        choices=CITIES,
+        default=CITIES[0],
+    )
+
+    notes = GenericRelation(Note)
 
     def clean(self):
         """
@@ -71,7 +84,26 @@ class ArchitectRequest(BaseModel):
             raise ValidationError("This time slot on the selected date is already taken.")
 
         now = timezone.now()
-        meeting_naive_datetime = datetime.datetime.combine(self.date, self.time_slot)
+
+        if isinstance(self.date, str):
+            try:
+                self.date = datetime.strptime(self.date, "%Y-%m-%d").date()
+            except ValueError:
+                raise ValidationError("Date should be in YYYY-MM-DD format.")
+
+        if not isinstance(self.date, date):
+            raise ValidationError("Date should be a valid date object.")
+
+        if isinstance(self.time_slot, str):
+            try:
+                self.time_slot = datetime.strptime(self.time_slot, "%H:%M").time()
+            except ValueError:
+                raise ValidationError("Time slot should be in HH:MM format.")
+
+        if not isinstance(self.time_slot, time):
+            raise ValidationError("Time slot should be a valid time object.")
+
+        meeting_naive_datetime = datetime.combine(self.date, self.time_slot)
         meeting_aware_datetime = timezone.make_aware(
             meeting_naive_datetime,
             timezone.get_current_timezone(),

@@ -1,0 +1,71 @@
+- model: moderation.Decision
+  pk: 1
+  fields:
+    name: "Adresser un avertissement"
+    report_type: "Architect"
+
+- model: moderation.Decision
+  pk: 2
+  fields:
+    name: "Suspendre temporairement"
+    report_type: "Architect"
+
+- model: moderation.Decision
+  pk: 3
+  fields:
+    name: "Suspendre définitivement"
+    report_type: "Architect"
+
+- model: moderation.Decision
+  pk: 4
+  fields:
+    name: "None"
+    report_type: "Architect"
+
+- model: moderation.Decision
+  pk: 5
+  fields:
+    name: "Adresser un avertissement au client"
+    report_type: "Review"
+
+- model: moderation.Decision
+  pk: 6
+  fields:
+    name: "Suppression avis"
+    report_type: "Review"
+
+- model: moderation.Decision
+  pk: 7
+  fields:
+    name: "Conservation avis"
+    report_type: "Review"
+
+- model: moderation.Decision
+  pk: 8
+  fields:
+    name: "None"
+    report_type: "Review"
+
+- model: moderation.Decision
+  pk: 9
+  fields:
+    name: "Adresser un avertissement au client"
+    report_type: "Project"
+
+- model: moderation.Decision
+  pk: 10
+  fields:
+    name: "Suppression projet"
+    report_type: "Project"
+
+- model: moderation.Decision
+  pk: 11
+  fields:
+    name: "Conservation projet"
+    report_type: "Project"
+
+- model: moderation.Decision
+  pk: 12
+  fields:
+    name: "None"
+    report_type: "Project"

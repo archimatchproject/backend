@@ -1,0 +1,19 @@
+# architect_specialities.yaml
+
+- model: core.ArchitectSpeciality
+  pk: 1
+  fields:
+    label: "Architecte de construction"
+    icon: "icons/ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 2
+  fields:
+    label: "Designer d'interieur"
+    icon: "icons/ArchitectSpecialityIcons/img.png"
+
+- model: core.ArchitectSpeciality
+  pk: 3
+  fields:
+    label: "Artisan de construction"
+    icon: "icons/ArchitectSpecialityIcons/img.png"

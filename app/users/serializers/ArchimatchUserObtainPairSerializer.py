@@ -11,7 +11,9 @@ Classes:
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from app.users import USER_TYPE_CHOICES
 from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Client import Client
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
@@ -46,18 +48,27 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         Returns:
             dict: Custom response containing the auth pair and user data.
         """
-        super().validate(attrs)
 
+        super().validate(attrs)
+        if self.user.is_deleted:
+            raise serializers.ValidationError(detail="User has been deleted")
+        if self.user.is_suspended:
+            raise serializers.ValidationError(detail="User has been suspended")
         refresh = self.get_token(self.user)
         access = refresh.access_token
 
         user_data = ArchimatchUserSerializer(self.user).data
-
-        return {
+        response_data = {
             "refresh": str(refresh),
             "access": str(access),
             "user": user_data,
         }
+        if self.user.user_type == USER_TYPE_CHOICES[1][0]:
+            is_verified = Client.objects.get(user=self.user).is_verified
+            response_data["is_verified"] = is_verified
+            
+
+        return response_data
 
 
 class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -86,7 +97,10 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
         password = attrs.get("password")
 
         user = ArchimatchUser.objects.filter(phone_number=phone_number).first()
-
+        if self.user.is_deleted:
+            raise serializers.ValidationError(detail="User has been deleted")
+        if self.user.is_suspended:
+            raise serializers.ValidationError(detail="User has been suspended")
         if user and user.check_password(password):
             attrs["email"] = user.email
             attrs.pop("phone_number")

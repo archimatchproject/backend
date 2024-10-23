@@ -16,13 +16,20 @@ from app.architect_request.controllers.ManageArchitectRequestPermission import (
     ManageArchitectRequestPermission,
 )
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
+    ArchitectRequestRescheduleSerializer,
+)
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
 )
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
-
+from app.core.pagination import CustomPagination
+from app.core.serializers.NoteSerializer import NoteSerializer
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class ArchitectRequestViewSet(viewsets.ModelViewSet):
     """
@@ -40,10 +47,23 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
 
     queryset = ArchitectRequest.objects.all()
     serializer_class = ArchitectRequestSerializer
-    permission_classes = [
-        IsAuthenticated,
-        ManageArchitectRequestPermission,
-    ]
+    pagination_class = CustomPagination
+
+    def get(self, request):
+        """
+        Handle GET request and return paginated Realization objects.
+
+        This method retrieves all Realization objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Realization objects or an error message.
+        """
+        return ArchitectRequestService.architect_request_paginated(request)
 
     def get_serializer_class(self):
         """
@@ -55,16 +75,35 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Serializer Class: The appropriate serializer class based on the request method.
         """
-        if self.request.method in ["POST", "PUT"]:
+        if self.action == "create_architect_request":
+            return ArchitectRequestInputSerializer
+        elif self.action == "admin_accept":
+            return ArchitectAcceptSerializer
+        elif self.action == "add_note":
+            return NoteSerializer
+        elif self.action == "reschedule":
+            return ArchitectRequestRescheduleSerializer
+        elif self.action in ["create", "update", "partial_update"]:
             return ArchitectRequestInputSerializer
         return ArchitectRequestSerializer
 
-    @action(
-        detail=False,
-        methods=["POST"],
-        url_path="create-architect-request",
-        permission_classes=[],
-    )
+    def get_permissions(self):
+        """
+        Return the list of permissions that this view requires.
+
+        Applies different permissions based on the action being executed.
+
+        Returns:
+            list: The list of permission classes.
+        """
+        if self.action in ["create_architect_request", "get_time_slots"]:
+            self.permission_classes = []
+        else:
+            self.permission_classes = [IsAuthenticated, ManageArchitectRequestPermission]
+        return super().get_permissions()
+
+    @action(detail=False, methods=["POST"], url_path="create-architect-request")
+    @handle_service_exceptions
     def create_architect_request(self, request):
         """
         Custom action to create an ArchitectRequest.
@@ -78,7 +117,8 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.add_architect_request(request.data)
+        success,data = ArchitectRequestService.add_architect_request(request.data)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
@@ -86,6 +126,7 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         url_path="admin-accept",
         serializer_class=ArchitectAcceptSerializer,
     )
+    @handle_service_exceptions
     def admin_accept(self, request, pk=None):
         """
         Custom action to accept an ArchitectRequest and create an Architect instance.
@@ -97,13 +138,15 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.admin_accept_architect_request(pk, request.data)
+        success,data = ArchitectRequestService.admin_accept_architect_request(pk, request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
         methods=["POST"],
         url_path="admin-refuse",
     )
+    @handle_service_exceptions
     def admin_refuse(self, request, pk=None):
         """
         Custom action to refuse an ArchitectRequest.
@@ -115,13 +158,14 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return ArchitectRequestService.admin_refuse_architect_request(pk)
-
+        success,data = ArchitectRequestService.admin_refuse_architect_request(pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
     @action(
         detail=True,
         methods=["POST"],
         url_path="admin-assign-responsable",
     )
+    @handle_service_exceptions
     def admin_assign_responsable(self, request, pk=None):
         """
         Custom action to assign a responsible admin for an ArchitectRequest.
@@ -134,4 +178,158 @@ class ArchitectRequestViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         admin_id = request.data.get("admin_id")
-        return ArchitectRequestService.admin_assign_responsable(pk, admin_id)
+        success,data = ArchitectRequestService.admin_assign_responsable(pk, admin_id)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="add-note",
+        serializer_class=NoteSerializer,
+    )
+    @handle_service_exceptions
+    def add_note(self, request, pk=None):
+        """
+        Custom action to add a note to an ArchitectRequest.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the ArchitectRequest to which the note will be added.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        success,data = ArchitectRequestService.add_note_to_architect_request(pk, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+        
+
+    @action(detail=False, methods=["GET"], url_path="project-categories")
+    @handle_service_exceptions
+    def get_project_categories(self, request):
+        """
+        Retrieve all project categories.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of project categories.
+        """
+        success,data = ArchitectRequestService.get_all_project_categories()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path="property-types")
+    @handle_service_exceptions
+    def get_property_types(self, request):
+        """
+        Retrieve all property types.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of property types.
+        """
+        success,data = ArchitectRequestService.get_all_property_types()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=["GET"], url_path="work-types")
+    @handle_service_exceptions
+    def get_work_types(self, request):
+        """
+        Retrieve all work types.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of work types.
+        """
+        success,data = ArchitectRequestService.get_all_work_types()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path="architectural-styles")
+    @handle_service_exceptions
+    def get_architectural_styles(self, request):
+        """
+        Retrieve all architectural styles.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of architectural styles.
+        """
+        success,data = ArchitectRequestService.get_all_architectural_styles()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
+
+    @action(
+        detail=True,
+        methods=["PUT"],
+        url_path="reschedule-meeting",
+        serializer_class=ArchitectRequestRescheduleSerializer,
+    )
+    @handle_service_exceptions
+    def reschedule(self, request, pk=None):
+        """
+        Custom action to reschedule an ArchitectRequest.
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the ArchitectRequest to be rescheduled.
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        success,data =ArchitectRequestService.reschedule_architect_request(pk, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=["GET"], url_path="time-slots")
+    @handle_service_exceptions
+    def get_time_slots(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        success,data = ArchitectRequestService.get_all_time_slots()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["GET"], url_path="project-complexities")
+    @handle_service_exceptions
+    def get_project_complexities(self, request):
+        """
+        Retrieve all available project complexities.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of project complexities.
+        """
+        success,data = ArchitectRequestService.get_all_project_complexities()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+        
+
+    @action(detail=False, methods=["GET"], url_path="years-experience")
+    @handle_service_exceptions
+    def get_years_experience(self, request):
+        """
+        Retrieve all available time slots.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response object containing the list of time slots.
+        """
+        success,data = ArchitectRequestService.get_all_years_experience()
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+

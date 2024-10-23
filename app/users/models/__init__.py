@@ -4,4 +4,7 @@ from app.users.models.Architect import Architect
 from app.users.models.ArchitectType import ArchitectType
 from app.users.models.Client import Client
 from app.users.models.Supplier import Supplier
-from app.users.models.SupplierSpeciality import SupplierSpeciality
+from app.users.models.SupplierCoverImage import SupplierCoverImage
+from app.users.models.Unavailability import Unavailability
+from app.users.models.Meeting import Meeting
+from app.users.models.ShowRoom import ShowRoom

@@ -54,17 +54,27 @@ class Admin(BaseModel):
 
     def set_permissions(self, rights):
         """
-        Assigns permissions based on a list of rights.
+        Assigns permissions based on a list of rights, ensuring only the specified
+        permissions are assigned and others are removed.
 
         Args:
             rights (list): List of rights to assign permissions for.
+
+        Raises:
+            serializers.ValidationError: If a right or permission does not exist.
         """
+
+        # Initialize sets for permissions to add and current permissions
+        permissions_to_add = set()
+        current_permissions = set(self.permissions.all())
+
+        # Iterate through the provided rights to validate and collect permissions
         for right in rights:
             if right in PERMISSION_CODENAMES:
-                for codename in PERMISSION_CODENAMES[right]:
+                for codename in PERMISSION_CODENAMES[right]["permissions"]:
                     try:
                         permission = Permission.objects.get(codename=codename)
-                        self.permissions.add(permission)
+                        permissions_to_add.add(permission)
                     except Permission.DoesNotExist:
                         raise serializers.ValidationError(
                             {
@@ -75,6 +85,13 @@ class Admin(BaseModel):
                         )
             else:
                 raise serializers.ValidationError({"rights": [f"Right '{right}' is not valid."]})
+
+        # Determine permissions to remove
+        permissions_to_remove = current_permissions - permissions_to_add
+
+        # Update the permissions: add new ones and remove old ones
+        self.permissions.remove(*permissions_to_remove)
+        self.permissions.add(*permissions_to_add)
 
     def has_permission(self, perm):
         """

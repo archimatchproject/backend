@@ -18,7 +18,7 @@ class LabeledIcon(models.Model):
     """
 
     label = models.CharField(max_length=255, default="")
-    icon = models.ImageField(upload_to="LabeledIcons/")
+    icon = models.ImageField(upload_to="icons/LabeledIcons/")
 
     def __str__(self):
         """
@@ -36,5 +36,6 @@ class LabeledIcon(models.Model):
         Provides verbose names for the model in the Django admin interface.
         """
 
+        abstract = True
         verbose_name = "Labeled Icon"
         verbose_name_plural = "Labeled Icons"

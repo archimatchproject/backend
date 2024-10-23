@@ -15,13 +15,28 @@ client_urlpatterns = [
         name="login-email",
     ),
     path(
-        "client/send-code/",
-        ClientViewSet.as_view({"post": "client_send_verification_code"}),
-        name="send-code",
+        "client/send-reset-password-link/",
+        ClientViewSet.as_view({"post": "client_send_reset_password_link"}),
+        name="send-reset-password-link",
     ),
     path(
-        "client/verify-code/",
-        ClientViewSet.as_view({"post": "client_verify_verification_code"}),
-        name="verify-code",
+        "client/validate-password-token/",
+        ClientViewSet.as_view({"post": "client_validate_password_token"}),
+        name="validate-password-token",
+    ),
+    path(
+        "client/validate-email-token/",
+        ClientViewSet.as_view({"post": "client_validate_email_token"}),
+        name="validate-email-token",
+    ),
+    path(
+        "client/get-profile/",
+        ClientViewSet.as_view({"get": "client_get_profile"}),
+        name="profile",
+    ),
+    path(
+        "client/validate-email/",
+        ClientViewSet.as_view({"post": "client_validate_email"}),
+        name="validate-email",
     ),
 ]

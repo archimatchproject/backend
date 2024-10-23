@@ -9,18 +9,22 @@ Classes:
 
 """
 
+from django.utils.translation import get_language_from_request
+
+from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from app.core.services.SMS.SMSVerificationService import SMSVerificationService
-from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
-from app.core.validation.exceptions import InvalidPhoneNumberException
-from app.core.validation.exceptions import SMSException
-from app.core.validation.exceptions import UserDataException
-from app.core.validation.validate_data import is_valid_phone_number
-from app.users.models import ArchimatchUser
-from app.users.models import Client
+from app.email_templates.signals import api_success_signal
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Client import Client
+from app.users.serializers.ClientSerializer import ClientSerializer
+from app.users.serializers.UserAuthSerializer import UserAuthSerializer
+from app.users.utils import generate_password_reset_token
+from app.users.utils import validate_password_reset_token
+from project_core.django import base as settings
 
 
 class ClientService:
@@ -28,25 +32,6 @@ class ClientService:
     Service class for handling client-related operations such as login using email or phone number.
 
     """
-
-    twilio_service = TwilioVerifyService()
-    sms_verification_service = SMSVerificationService(twilio_service)
-
-    @classmethod
-    def handle_user_data(cls, request_keys, expected_keys):
-        """
-        Validates the presence of expected keys in request data.
-
-        Args:
-            request_keys (set): Set of keys present in the request data.
-            expected_keys (set): Set of keys expected to be present in the request data.
-
-        Raises:
-            APIException: If any expected key is missing in the request data.
-        """
-        if not expected_keys.issubset(request_keys):
-            missing_keys = expected_keys - request_keys
-            raise UserDataException(f"Missing keys: {', '.join(missing_keys)}")
 
     @classmethod
     def client_login_email(cls, request):
@@ -60,194 +45,132 @@ class ClientService:
             Response: Response object with a message indicating if the client has set a password.
 
         Raises:
-            APIException: If there are errors during client authentication.
+            serializers.ValidationError: If there are errors during client authentication.
         """
-        try:
-            data = request.data
-            request_keys = set(data.keys())
-            expected_keys = {"email"}
-            cls.handle_user_data(request_keys, expected_keys)
 
-            email_req = data.get("email")
+        data = request.data
+        email_req = data.get("email", None)
+        if email_req is None:
+            raise serializers.ValidationError(detail="Email is required")
+        if not Client.objects.filter(user__email=email_req).exists():
+            raise NotFound(detail="Client Not Found")
 
-            if Client.objects.filter(user__email=email_req).exists():
-                user = ArchimatchUser.objects.get(email=email_req)
-                if user.password == "":
-                    response_data = {
-                        "message": {"has_password": False},
-                        "status_code": status.HTTP_200_OK,
-                    }
-                else:
-                    response_data = {
-                        "message": {"has_password": True},
-                        "status_code": status.HTTP_200_OK,
-                    }
-            else:
-                response_data = {
-                    "message": "Client Not Found",
-                    "status_code": status.HTTP_404_NOT_FOUND,
-                }
+        user = ArchimatchUser.objects.get(email=email_req)
+        has_password = user.password != ""
+        return True,{"has_password": has_password}
 
-            return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
-            )
-        except APIException as e:
-            return Response(
-                {"message": str(e)},
-                status=e.status_code,
-            )
-        except Exception as e:
-            return Response(
-                {"message": str(e)},
-                status=status.HTTP_410_GONE,
-            )
+
 
     @classmethod
-    def client_send_verification_code(cls, request):
+    def client_send_reset_password_link(cls, request):
         """
-        Sends a verification code to the client's phone number.
+        send reset password link for clients.
 
-        Args:
-            request (Request): Django request object containing client's phone number.
 
-        Returns:
-            Response: Response object indicating whether the verification code was
-            sent successfully.
         """
-        try:
-            data = request.data
-            request_keys = set(data.keys())
-            expected_keys = {"phone_number"}
-            cls.handle_user_data(request_keys, expected_keys)
 
-            phone_number = data.get("phone_number")
+        data = request.data
+        serializer = UserAuthSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
 
-            is_valid_phone_number(phone_number)
+        client = Client.objects.get(user__email=email)
+        token = generate_password_reset_token(client.user.id)
+        email_images = settings.CLIENT_PASSWORD_IMAGES
+        language_code = get_language_from_request(request)
+        url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
+        reset_link = f"""{url}/client/forget-password/{token}"""
 
-            if not Client.objects.filter(user__phone_number=phone_number).exists():
-                response_data = {
-                    "message": {"message": "Client Not Found"},
-                    "status_code": status.HTTP_404_NOT_FOUND,
-                }
-                return Response(
-                    response_data.get("message"),
-                    status=response_data.get("status_code"),
-                )
-
-            sid = cls.sms_verification_service.send_verification_code(phone_number)
-            if sid:
-                response_data = {
-                    "message": {"message": "Verification code sent successfully."},
-                    "status_code": status.HTTP_200_OK,
-                }
-            else:
-                response_data = {
-                    "message": {"message": "Failed to send verification code."},
-                    "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                }
-
-            return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
-            )
-        except SMSException:
-            return Response(
-                {"message": "Error Sending SMS Code"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except InvalidPhoneNumberException as e:
-            return Response(
-                {"message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except UserDataException as e:
-            return Response(
-                {"message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except APIException as e:
-            return Response(
-                {"message": str(e)},
-                status=e.status_code,
-            )
+        context = {
+            "first_name": client.user.first_name,
+            "last_name": client.user.last_name,
+            "email": email,
+            "reset_link": reset_link,
+        }
+        signal_data = {
+            "template_name": "client_reset_password.html",
+            "context": context,
+            "to_email": email,
+            "subject": "client Reset Password",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        return True,"email sent successfully"
+        
+        
 
     @classmethod
-    def client_verify_verification_code(cls, request):
+    def client_validate_password_token(cls, request):
         """
-        Authenticates a client using phone number and verifies the SMS code.
+        validate password token
+        """
+        
+        data = request.data
+        token = data.get("token", False)
+        if not token:
+            raise serializers.ValidationError(detail="token is required")
+
+        user_id, error = validate_password_reset_token(token)
+        if error:
+            raise APIException(detail=error)
+        client = Client.objects.get(user__id=user_id)
+        serializer = ClientSerializer(client)
+        return True,serializer.data
+
+    @classmethod
+    def client_validate_email_token(cls, request):
+        """
+        validate password token
+        """
+
+        data = request.data
+        token = data.get("token", False)
+        if not token:
+            raise serializers.ValidationError(detail="token is required")
+
+        user_id, error = validate_password_reset_token(token)
+        if error:
+            raise APIException(detail=error)
+        client = Client.objects.get(user__id=user_id)
+        client.is_verified = True
+        client.save()
+        serializer = ClientSerializer(client)
+        return True,serializer.data
+
+    @classmethod
+    def client_get_profile(cls, request):
+        """
+        Retrieves client information.
 
         Args:
-            request (Request): Django request object containing client's phone number and
-            verification code.
+            request (Request): Django request object containing user ID.
 
         Returns:
-            Response: Response object with a message indicating if the client has set a password
-            and their email.
+            Response: Response object containing client data.
 
         Raises:
-            APIException: If there are errors during client authentication.
+            APIException: If there are errors during the process.
         """
-        try:
-            data = request.data
-            request_keys = set(data.keys())
-            expected_keys = {
-                "phone_number",
-                "verification_code",
-            }
-            cls.handle_user_data(request_keys, expected_keys)
+        user_id = request.user.id
+        client = Client.objects.get(user__id=user_id)
+        client_serializer = ClientSerializer(client)
+        return True,client_serializer.data
+    
+    @classmethod
+    def client_validate_email_first_login(cls, request):
+        """
+        validate password token
+        """
+        print(request.data)
+        data = request.data
+        user_id = request.user.id
+        code = data.get("code", False)
+        print(int(code) is not 0000)
+        if int(code) is not 0000:
+            raise serializers.ValidationError(detail="code is invalid")
 
-            phone_number = data.get("phone_number")
-            verification_code = data.get("verification_code")
-
-            if Client.objects.filter(user__phone_number=phone_number).exists():
-                user = ArchimatchUser.objects.get(phone_number=phone_number)
-
-                # Verify the SMS code
-                if cls.sms_verification_service.check_verification_code(
-                    phone_number,
-                    verification_code,
-                ):
-                    if user.password == "":
-                        response_data = {
-                            "message": {
-                                "has_password": False,
-                                "email": user.username,
-                            },
-                            "status_code": status.HTTP_200_OK,
-                        }
-                    else:
-                        response_data = {
-                            "message": {"has_password": True, "email": user.email},
-                            "status_code": status.HTTP_200_OK,
-                        }
-                else:
-                    response_data = {
-                        "message": {"message": "Invalid verification code."},
-                        "status_code": status.HTTP_400_BAD_REQUEST,
-                    }
-            else:
-                response_data = {
-                    "message": {"message": "Client Not Found"},
-                    "status_code": status.HTTP_404_NOT_FOUND,
-                }
-
-            return Response(
-                response_data.get("message"),
-                status=response_data.get("status_code"),
-            )
-        except SMSException:
-            return Response(
-                {"message": "Error Verifying SMS Code"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except UserDataException as e:
-            return Response(
-                {"message": str(e)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except APIException as e:
-            return Response(
-                {"message": str(e)},
-                status=e.status_code,
-            )
+        client = Client.objects.get(user__id=user_id)
+        client.is_verified = True
+        client.save()
+        serializer = ClientSerializer(client)
+        return True,serializer.data

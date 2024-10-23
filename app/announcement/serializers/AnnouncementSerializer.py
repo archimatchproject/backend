@@ -27,8 +27,9 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.serializers.NoteSerializer import NoteSerializer
 from app.users.serializers.ClientSerializer import ClientSerializer
-
+from app.users.models.Architect import Architect
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
@@ -39,12 +40,12 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
 
     """
 
-    client = ClientSerializer()
+    client = ClientSerializer(required=False)
     architect_speciality = serializers.PrimaryKeyRelatedField(
         queryset=ArchitectSpeciality.objects.all()
     )
     architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
+        queryset=ArchitecturalStyle.objects.all(), required=False
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
@@ -57,13 +58,14 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(),
-        many=True,
+        queryset=ProjectExtension.objects.all(), many=True, required=False
     )
     project_images = serializers.ListField(
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(),required=False)
 
     class Meta:
         """
@@ -90,6 +92,8 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "architect"
         ]
 
 
@@ -126,6 +130,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
 
     class Meta:
         """
@@ -151,15 +156,14 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "admin_note",
+            "number_floors",
         ]
 
 
 class AnnouncementOutputSerializer(serializers.ModelSerializer):
     """
     Serializer for retrieving Announcement instances.
-
-    This serializer handles the output representation of Announcement instances,
-    including related fields serialized with their respective serializers.
     """
 
     client = ClientSerializer()
@@ -172,14 +176,11 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
+    notes = NoteSerializer(many=True)
+    interested_architects_count = serializers.SerializerMethodField(required=False)
+    has_selected = serializers.SerializerMethodField(required=False)
 
     class Meta:
-        """
-        Meta class for Announcement Serializer.
-
-        Defines display fields.
-        """
-
         model = Announcement
         fields = [
             "id",
@@ -199,8 +200,38 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "notes",
+            "created_at",
+            "status",
+            "admin_note",
+            "interested_architects_count",  # Optional
+            "has_selected",  # Optional
         ]
 
+    def get_interested_architects_count(self, obj):
+        """
+        Return the count of interested architects.
+        """
+        return obj.selections.filter(status='Interested').count()
+
+    def get_has_selected(self, obj):
+        """
+        Check if the architect has selected the announcement.
+        """
+        request = self.context.get('request')
+
+        if not request or not hasattr(request, 'user'):
+            return False
+
+        user = request.user
+
+        try:
+            architect = Architect.objects.get(user=user)
+        except Architect.DoesNotExist:
+            return False
+
+        return obj.selections.filter(architect=architect).exists()
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     """
@@ -237,6 +268,8 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "admin_note",
         ]
 
     def to_representation(self, instance):

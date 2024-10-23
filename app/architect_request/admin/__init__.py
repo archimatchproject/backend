@@ -1,1 +1,2 @@
 from app.architect_request.admin.ArchitectRequestAdmin import ArchitectRequestAdmin
+from app.architect_request.admin.NoteAdmin import NoteAdmin
