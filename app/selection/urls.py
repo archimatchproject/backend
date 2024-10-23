@@ -14,11 +14,12 @@ from django.urls import path
 from rest_framework import routers
 
 from app.selection.routes.SelectionUrls import selection_urlpatterns
-
+from app.selection.routes.QuoteUrls import quote_urlpatterns
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path("", include(router.urls)),
     *selection_urlpatterns,
+    *quote_urlpatterns
 ]

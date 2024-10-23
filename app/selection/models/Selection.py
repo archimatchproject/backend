@@ -35,6 +35,12 @@ class Selection(models.Model):
         null=True,  
         blank=True  
     )
+    name = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("Selection Name")
+    )
     
     class Meta:
         unique_together = ('announcement', 'architect')
