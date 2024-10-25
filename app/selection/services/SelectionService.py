@@ -11,6 +11,7 @@ Classes:
 
 from rest_framework.exceptions import APIException
 from django.utils import timezone
+from app.core.pagination import CustomPagination
 from app.selection.models.Phase import Phase
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
@@ -21,12 +22,15 @@ from rest_framework import serializers
 from datetime import datetime, timedelta
 from app.selection import DISCUSSION
 from django.db import transaction
+from rest_framework.response import Response
+from rest_framework import status
+
 class SelectionService:
     """
     Service class for handling announcement-related operations .
 
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_selection(cls, data, user):
         """
@@ -138,7 +142,7 @@ class SelectionService:
     
     
     @classmethod
-    def get_selections_by_architect(cls, architect):
+    def get_selections_by_architect(cls, request):
         """
         Retrieves all selections made by the given architect.
 
@@ -148,13 +152,16 @@ class SelectionService:
         Returns:
             tuple: (bool, list) indicating success and the serialized selection data.
         """
+        architect = Architect.objects.get(user=request.user)
         # Retrieve selections for the given architect
         selections = Selection.objects.filter(architect=architect)
-
-        # Serialize the retrieved selections
-        serialized_selections = SelectionSerializer(selections, many=True).data
-
-        return True, serialized_selections
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(selections, request)
+        if page is not None:
+            serialized_selections = SelectionSerializer(page, many=True).data
+            return paginator.get_paginated_response(serialized_selections)
+        return Response([], status=status.HTTP_200_OK)
+        
     
     @classmethod
     def update_selection_name(cls, selection_id, name):

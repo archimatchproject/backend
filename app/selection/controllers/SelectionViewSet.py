@@ -82,9 +82,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: The response object with the list of selections made by the architect.
         """
         
-        architect = Architect.objects.get(user=request.user)
-        success, data = SelectionService.get_selections_by_architect(architect)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return SelectionService.get_selections_by_architect(request)
+        
     
     @action(detail=True, methods=["PUT"], url_path="update-name")
     @handle_service_exceptions
