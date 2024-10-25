@@ -34,7 +34,7 @@ class SelectionSerializer(serializers.ModelSerializer):
     quotes = QuoteSerializer(many=True, read_only=True)
     class Meta:
         model = Selection
-        fields = ['announcement', 'architect', 'phase', 'status','quotes','name']
+        fields = ['id','announcement', 'architect', 'phase', 'status','quotes','name']
 
 class SelectionPostSerializer(serializers.ModelSerializer):
     """
