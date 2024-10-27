@@ -21,6 +21,8 @@ from rest_framework import serializers
 from app.selection.models.Phase import Phase
 from datetime import datetime
 
+from app.selection.models.SelectionSettings import SelectionSettings
+
 class PhaseSerializer(serializers.ModelSerializer):
     """
     Serializer for the Phase model.
@@ -29,10 +31,11 @@ class PhaseSerializer(serializers.ModelSerializer):
     and calculates the progress as the percentage of time passed between start_date and limit_date.
     """
     progress = serializers.SerializerMethodField()
-
+    days_elapsed = serializers.SerializerMethodField()
+    remaining_days = serializers.SerializerMethodField()
     class Meta:
         model = Phase
-        fields = ['id', 'name', 'number', 'limit_date', 'start_date', 'progress']
+        fields = ['id', 'name', 'number', 'limit_date', 'start_date', 'progress','days_elapsed','remaining_days']
 
     def get_progress(self, obj):
         """
@@ -57,3 +60,26 @@ class PhaseSerializer(serializers.ModelSerializer):
         elapsed_time = (now - start_date).days
 
         return int((elapsed_time / total_duration) * 100) if total_duration > 0 else 0
+
+    def get_days_elapsed(self, obj):
+        """
+        Calculates the number of days passed since start_date up to now or limit_date, whichever is earlier.
+        """
+        now = datetime.now().date()
+        start_date = obj.start_date
+        limit_date = obj.limit_date
+
+        if now < start_date:
+            return 0
+        elif now >= limit_date:
+            return (limit_date - start_date).days
+        else:
+            return (now - start_date).days
+  
+    def get_remaining_days(self, obj):
+        """
+        Calculates the number of remaining days for the phase based on SelectionSettings.
+        """
+        phase_days = SelectionSettings.objects.first().phase_days
+        days_elapsed = self.get_days_elapsed(obj)
+        return max(phase_days - days_elapsed, 0) 
