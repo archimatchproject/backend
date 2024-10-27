@@ -3,7 +3,7 @@
 - model: selection.SelectionSettings
   pk: 1
   fields:
-    phase_days: 7 # Number of days for each phase
+    phase_days: 5 # Number of days for each phase
     days_before_call_email: 2 # Number of days to send email before a phone call
     days_to_phone_call: 3 # Number of days to make a phone call
     days_after_call_email: 2 # Number of days to send email after the phone call

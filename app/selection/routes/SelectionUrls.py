@@ -39,4 +39,9 @@ selection_urlpatterns = [
         SelectionViewSet.as_view({"post": "confirm_discussion_phase"}),
         name="confirm-discussion-phase",
     ),
+    path(
+        "delete-selection/<int:pk>",
+        SelectionViewSet.as_view({"delete": "destroy"}),
+        name="delete-selection",
+    ),
 ]
