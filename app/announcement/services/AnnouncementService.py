@@ -58,6 +58,7 @@ from app.email_templates.signals import api_success_signal
 from app.users import USER_TYPE_CHOICES
 from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.VerificationCode import VerificationCode
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
@@ -107,11 +108,13 @@ class AnnouncementService:
                 language_code = get_language_from_request(request)
                 url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
                 reset_link = f"""{url}/client/verify-email/{token}"""
+                code = VerificationCode.create_or_regenerate_code(user_instance)
+                print(code)
                 context = {
                     "first_name": client_instance.user.first_name,
                     "last_name": client_instance.user.last_name,
                     "email": client_instance.user.email,
-                    "reset_link": reset_link,
+                    "reset_link": code.code,
                 }
                 signal_data = {
                     "template_name": "client_first_connection.html",
@@ -595,7 +598,7 @@ class AnnouncementService:
             Response: A paginated response containing Announcement objects or an error message.
         """
         user = request.user
-        queryset = Announcement.objects.filter(architect__user=user).annotate(
+        queryset = Announcement.objects.filter(architect__user=user,status=ACCEPTED).annotate(
             interested_architects_count=Count('selections', filter=Q(selections__status='Interested'))
         )
         filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs

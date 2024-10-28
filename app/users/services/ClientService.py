@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
+from app.users.models.VerificationCode import VerificationCode
 from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
@@ -161,12 +162,14 @@ class ClientService:
         """
         validate password token
         """
-        print(request.data)
         data = request.data
         user_id = request.user.id
         code = data.get("code", False)
-        print(int(code) is not 0000)
-        if int(code) is not 0000:
+        saved_code = VerificationCode.objects.get(user__id=user_id)
+        if saved_code.is_expired():
+            raise APIException(detail="Code has expired")
+        print(code,saved_code.code)
+        if int(code) != int(saved_code.code):
             raise serializers.ValidationError(detail="code is invalid")
 
         client = Client.objects.get(user__id=user_id)
@@ -174,3 +177,31 @@ class ClientService:
         client.save()
         serializer = ClientSerializer(client)
         return True,serializer.data
+    
+    
+    @classmethod
+    def client_regenerate_verification_code(cls, request):
+        """
+        validate password token
+        """
+        data = request.data
+        user_id = request.user.id
+        user = ArchimatchUser.objects.get(id=user_id)
+        email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
+        code = VerificationCode.objects.get(user=user)
+                
+        context = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "reset_link": code.code,
+        }
+        signal_data = {
+            "template_name": "client_first_connection.html",
+            "context": context,
+            "to_email": user.email,
+            "subject": "Client Account Creation",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+        return True,"A verification code is sent by email, Please check your email"

@@ -27,6 +27,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
+    
     @action(
         detail=False,
         methods=["POST"],
@@ -141,3 +142,15 @@ class ClientViewSet(viewsets.ModelViewSet):
         """
         success,client_data = ClientService.client_validate_email_first_login(request)
         return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
+    
+    @handle_service_exceptions
+    def client_regenerate_verification_code(self, request):
+        """
+        sends client reset password email.
+
+        Args:
+            self (ClientViewSet): Instance of the ClientViewSet class.
+            request (Request): HTTP request object.
+        """
+        success,message = ClientService.client_regenerate_verification_code(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
