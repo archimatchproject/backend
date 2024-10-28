@@ -39,4 +39,9 @@ client_urlpatterns = [
         ClientViewSet.as_view({"post": "client_validate_email"}),
         name="validate-email",
     ),
+     path(
+        "client/regenerate-verification-code/",
+        ClientViewSet.as_view({"post": "client_regenerate_verification_code"}),
+        name="regenerate-verification-code",
+    ),
 ]
