@@ -27,8 +27,11 @@ from app.architect_realization.serializers.RealizationSerializer import Realizat
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.pagination import CustomPagination
+from app.users import GOLD
 from app.users.models.Architect import Architect
+from django.db.models import Q, Count
 
+from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 
 class RealizationService:
     """
@@ -202,8 +205,24 @@ class RealizationService:
             Response: Response containing list of realizations related to the project category.
         """
         try:
+            # Filter realizations based on project category
             realizations = Realization.objects.all()
-            filtered_queryset = RealizationFilter(request.GET, queryset=realizations).qs
+            
+            # Filter realizations by architects with a gold badge
+            gold_realization_ids = []
+            for realization in realizations:
+                architect = realization.architect
+                serializer = ArchitectSerializer(architect)
+                
+                # Check if the architect has a gold badge
+                if serializer.get_badge(architect) == GOLD:
+                    gold_realization_ids.append(realization.id)
+
+            # Get a queryset for filtered realizations
+            gold_realizations_queryset = Realization.objects.filter(id__in=gold_realization_ids)
+            
+            # Apply additional filters using RealizationFilter
+            filtered_queryset = RealizationFilter(request.GET, queryset=gold_realizations_queryset).qs
             paginator = cls.pagination_class()
             page = paginator.paginate_queryset(filtered_queryset, request)
             if page is not None:
