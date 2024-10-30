@@ -10,7 +10,7 @@ from app.selection.controllers.QuoteViewSet import QuoteViewSet
 
 quote_urlpatterns = [
     path(
-        "create-quote",
+        "create-quote/<int:pk>",
         QuoteViewSet.as_view({"post": "create_quote"}),
         name="create-selection",
     ),
