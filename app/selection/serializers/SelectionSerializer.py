@@ -77,6 +77,30 @@ class SelectionSerializer(serializers.ModelSerializer):
         """
         last_pending_quote = obj.quotes.filter(status=QUOTE_PENDING).order_by('-created_at').first()
         return QuoteSerializer(last_pending_quote).data if last_pending_quote else None
+    
+    def to_representation(self, instance):
+        """
+        Customize the representation of the Selection instance.
+
+        Args:
+            instance (Selection): The Selection instance.
+
+        Returns:
+            dict: The serialized representation of the Selection instance.
+        """
+        representation = super().to_representation(instance)
+
+        # Get the last pending quote
+        last_pending_quote = self.get_last_pending_quote(instance)
+
+        # Remove the last pending quote from the quotes list if it exists
+        if last_pending_quote:
+            representation['quotes'] = [
+                quote for quote in representation['quotes']
+                if quote['id'] != last_pending_quote['id']
+            ]
+
+        return representation
 
 class SelectionPostSerializer(serializers.ModelSerializer):
     """
