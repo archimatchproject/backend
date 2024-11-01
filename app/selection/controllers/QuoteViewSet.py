@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from app.selection.services.QuoteService import QuoteService
 from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
+from app.core.response_builder import build_response
 
 class QuoteViewSet(viewsets.ModelViewSet):
     """
@@ -55,7 +56,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             raise ValidationError(detail="File is required.", status=status.HTTP_400_BAD_REQUEST)
 
         success, data = QuoteService.create_quote(selection_id=pk, file=file,architect=architect)
-        return Response(data, status=status.HTTP_201_CREATED, success=success)
+        return build_response(data, status=status.HTTP_201_CREATED, success=success)
 
     @action(detail=True, methods=['POST'], url_path='accept')
     def accept_quote(self, request, pk=None):
@@ -70,7 +71,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         """
 
         success, message = QuoteService.accept_quote(quote_id=pk)
-        return Response(success=success, message=message, status=status.HTTP_200_OK)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
     
 
     @action(detail=True, methods=['POST'], url_path='refuse')
@@ -85,4 +86,4 @@ class QuoteViewSet(viewsets.ModelViewSet):
             Response: The updated quote data or an error message.
         """
         success, message = QuoteService.refuse_quote(quote_id=pk)
-        return Response(success=success, message=message, status=status.HTTP_200_OK)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

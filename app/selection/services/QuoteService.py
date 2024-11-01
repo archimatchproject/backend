@@ -40,7 +40,7 @@ class QuoteService:
         
 
         selection = Selection.objects.get(id=selection_id)
-        if selection.architect is not architect :
+        if selection.architect != architect :
             raise APIException(detail="you must be the owner of the project to upload a Quote")
         
         cls._validate_pdf_file(file)
