@@ -56,7 +56,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
             raise ValidationError(detail="File is required.", status=status.HTTP_400_BAD_REQUEST)
 
         success, data = QuoteService.create_quote(selection_id=pk, file=file,architect=architect)
-        return build_response(data, status=status.HTTP_201_CREATED, success=success)
+        return build_response(data=data, status=status.HTTP_201_CREATED, success=success)
 
     @action(detail=True, methods=['POST'], url_path='accept')
     def accept_quote(self, request, pk=None):
