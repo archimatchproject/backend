@@ -525,7 +525,7 @@ class AnnouncementService:
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
-    def accept_announcement(cls, pk):
+    def accept_announcement(cls, pk,request):
         """
         Custom action to accept an Announcement.
 
@@ -539,6 +539,7 @@ class AnnouncementService:
 
         announcement = Announcement.objects.get(pk=pk)
         announcement.status = ACCEPTED
+        announcement.token_number = request.data.get("token_number")
         announcement.save()
         return True,"announcement Accepted"
         

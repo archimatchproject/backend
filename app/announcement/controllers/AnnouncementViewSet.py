@@ -438,7 +438,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the acceptance operation.
         """
-        success,message = AnnouncementService.accept_announcement(pk)
+        success,message = AnnouncementService.accept_announcement(pk,request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(

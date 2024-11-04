@@ -15,13 +15,13 @@ quote_urlpatterns = [
         name="create-selection",
     ),
     path(
-        "accept-quote",
+        "accept-quote/<int:pk>",
         QuoteViewSet.as_view({"put": "accept_quote"}),
         name="create-selection",
     ),
     path(
-        "refuse-quote",
-        QuoteViewSet.as_view({"post": "refuse_quote"}),
+        "refuse-quote/<int:pk>",
+        QuoteViewSet.as_view({"put": "refuse_quote"}),
         name="create-selection",
     ),
 ]

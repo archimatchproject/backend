@@ -270,6 +270,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "project_images",
             "number_floors",
             "admin_note",
+            "token_number"
         ]
 
     def to_representation(self, instance):

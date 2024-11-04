@@ -44,7 +44,7 @@ class QuoteService:
             raise APIException(detail="you must be the owner of the project to upload a Quote")
         
         cls._validate_pdf_file(file)
-
+        
         quote = Quote.objects.create(
             selection=selection,
             file=file
