@@ -11,6 +11,7 @@ Classes:
 
 from rest_framework.exceptions import APIException
 from django.utils import timezone
+from app.announcement.models.Announcement import Announcement
 from app.core.pagination import CustomPagination
 from app.selection.models.Phase import Phase
 from app.selection.models.Selection import Selection
@@ -77,7 +78,14 @@ class SelectionService:
 
         # Deduct 5 tokens from the architect's subscription plan
         subscription_plan = architect.subscription_plan
-        subscription_plan.remaining_tokens -= 5
+        if (subscription_plan.remaining_tokens <=0):
+            raise APIException("You don't have enough tokens.")
+        
+        if announcement.token_number is not None:
+            subscription_plan.remaining_tokens -= announcement.token_number
+        else:
+            subscription_plan.remaining_tokens -= 5
+        
         subscription_plan.save()
 
         # Fetch the number of days for the phase from the SelectionSettings model

@@ -207,6 +207,7 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "admin_note",
             "interested_architects_count",  # Optional
             "has_selected",  # Optional
+            "token_number"
         ]
 
     def get_interested_architects_count(self, obj):
