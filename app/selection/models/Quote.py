@@ -40,10 +40,6 @@ class Quote(BaseModel):
         default=QUOTE_PENDING
     )
     
-    def clean(self):
-        super().clean()
-        if Quote.objects.filter(selection=self.selection, file=self.file.name).exists():
-            raise ValidationError("A quote with this file name already exists for the selected selection.")
 
     def __str__(self):
         return f"Quote {self.id} for Selection {self.selection.id}"
