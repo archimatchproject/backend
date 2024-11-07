@@ -15,7 +15,7 @@ from app.selection.services.QuoteService import QuoteService
 from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
 from app.core.response_builder import build_response
-
+from rest_framework.exceptions import APIException
 class QuoteViewSet(viewsets.ModelViewSet):
     """
     ViewSet for handling quote-related actions.
@@ -87,6 +87,6 @@ class QuoteViewSet(viewsets.ModelViewSet):
         """
         is_client_interested = request.data.get("is_client_interested",None)
         if is_client_interested is None:
-            raise ValidationError(detail="Choose an option to be able to refuse the quote")
+            raise APIException("Choose an option to be able to refuse the quote")
         success, message = QuoteService.refuse_quote(quote_id=pk,is_client_interested=is_client_interested)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
