@@ -37,7 +37,7 @@ class SelectionSerializer(serializers.ModelSerializer):
     last_pending_quote = serializers.SerializerMethodField()
     class Meta:
         model = Selection
-        fields = ['id', 'announcement', 'architect', 'phase', 'status', 'quotes', 'is_last_quote_accepted', 'is_last_quote_refused', 'name','last_pending_quote']
+        fields = ['id', 'announcement', 'architect', 'phase', 'status', 'quotes', 'is_last_quote_accepted', 'is_last_quote_refused', 'name','last_pending_quote','is_client_interested']
 
     def get_is_last_quote_accepted(self, obj):
         """
