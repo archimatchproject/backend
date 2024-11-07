@@ -100,7 +100,7 @@ class QuoteService:
 
     @classmethod
     @transaction.atomic
-    def refuse_quote(cls, quote_id):
+    def refuse_quote(cls, quote_id,is_client_interested):
         """
         Refuses a quote by setting its status to 'Refused'.
 
@@ -122,7 +122,10 @@ class QuoteService:
             raise APIException("This quote has already been refused.")
 
         quote.status = QUOTE_REFUSED
+        selection = quote.selection
+        selection.is_client_interested = is_client_interested
         quote.save()
+        selection.save()
 
         # Return success and the updated quote data
         return True, "Quote is accepted"
