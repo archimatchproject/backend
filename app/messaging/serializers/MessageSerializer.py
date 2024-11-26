@@ -7,6 +7,7 @@ from fcm_django.models import FCMDevice
 from rest_framework import serializers
 
 from app.messaging.models.Message import Message
+from app.users.models.ArchimatchUser import ArchimatchUser
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -28,11 +29,11 @@ class MessageSerializer(serializers.ModelSerializer):
     generated.
     """
 
-    recipient_device = serializers.PrimaryKeyRelatedField(
-        queryset=FCMDevice.objects.all(), write_only=True
+    recipient_id = serializers.PrimaryKeyRelatedField(
+        queryset=ArchimatchUser.objects.all(), write_only=True
     )
-    sender = serializers.EmailField(source="sender_device.user.email", read_only=True)
-    recipient = serializers.EmailField(source="recipient_device.user.email", read_only=True)
+    sender = serializers.EmailField(source="sender.email", read_only=True)
+    recipient = serializers.EmailField(source="recipient.email", read_only=True)
 
     class Meta:
         """
@@ -44,4 +45,4 @@ class MessageSerializer(serializers.ModelSerializer):
         """
 
         model = Message
-        fields = ["sender", "recipient", "recipient_device", "content", "timestamp"]
+        fields = ["sender", "recipient", "recipient_id", "content", "timestamp"]
