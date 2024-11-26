@@ -15,10 +15,11 @@ from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
 
 from app.messaging.routes.MessageUrls import message_urlpatterns
+from app.messaging.routes.FCMDeviceUrls import device_urlpatterns
 
 
 router = DefaultRouter()
 router.register("devices", FCMDeviceAuthorizedViewSet)
 
 
-urlpatterns = [path("", include(router.urls)), *message_urlpatterns]
+urlpatterns = [path("", include(router.urls)), *message_urlpatterns,*device_urlpatterns]

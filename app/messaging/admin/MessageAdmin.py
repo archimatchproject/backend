@@ -17,8 +17,8 @@ class MessageAdmin(admin.ModelAdmin):
     """
 
     list_display = (
-        "sender_device",
-        "recipient_device",
+        "sender",
+        "recipient",
         "content",
         "timestamp",
     )

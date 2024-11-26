@@ -6,7 +6,7 @@ This module defines the models for storing messages exchanged between devices us
 from django.db import models
 
 from fcm_django.models import FCMDevice
-
+from app.users.models.ArchimatchUser import ArchimatchUser
 
 class Message(models.Model):
     """
@@ -19,11 +19,11 @@ class Message(models.Model):
     - timestamp (DateTimeField): The timestamp when the message was sent.
     """
 
-    sender_device = models.ForeignKey(
-        FCMDevice, related_name="sent_messages", on_delete=models.CASCADE
+    sender = models.ForeignKey(
+        ArchimatchUser, related_name="sent_messages", on_delete=models.CASCADE
     )
-    recipient_device = models.ForeignKey(
-        FCMDevice, related_name="received_messages", on_delete=models.CASCADE
+    recipient = models.ForeignKey(
+        ArchimatchUser, related_name="received_messages", on_delete=models.CASCADE
     )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -35,7 +35,7 @@ class Message(models.Model):
         Returns:
         str: A string in the format 'Message from <sender_device> to <recipient_device>'.
         """
-        return f"Message from {self.sender_device} to {self.recipient_device}"
+        return f"Message from {self.sender} to {self.recipient}"
 
     class Meta:
         """

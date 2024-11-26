@@ -23,6 +23,8 @@ from rest_framework.response import Response
 from app.messaging.models.Message import Message
 from app.messaging.serializers.DeviceSerializer import DeviceSerializer
 from app.messaging.serializers.MessageSerializer import MessageSerializer
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
 class MessageService:
@@ -52,90 +54,101 @@ class MessageService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         user = request.user
+
         try:
-            sender_device = FCMDevice.objects.get(user=user, active=True)
-            recipient_device = validated_data.get("recipient_device")
+            # Fetch the recipient user based on provided data
+            recipient = validated_data.get("recipient_id")
+            
+
+            # Begin transaction to save the message
             with transaction.atomic():
                 message = Message.objects.create(
-                    sender_device=sender_device,
-                    recipient_device=recipient_device,
+                    sender=user,
+                    recipient=recipient,
                     content=validated_data.get("content"),
                 )
-                print(message)
-                fcm_message = FCMMessage(
-                    data={"device_id": str(sender_device.id)},
-                    notification=Notification(
-                        title=f"New Message from {str(user)}", body=validated_data.get("content")
-                    ),
-                )
-                recipient_device.send_message(fcm_message)
+
+                # Send notification to recipient’s device (if required)
+                recipient_device = FCMDevice.objects.filter(user=recipient, active=True).first()
+                if recipient_device:
+                    fcm_message = FCMMessage(
+                        data={"user_id": str(user.id)},
+                        notification=Notification(
+                            title=f"New Message from {str(user)}",
+                            body=validated_data.get("content"),
+                        ),
+                        token=recipient_device.registration_id
+                    )
+                    print(fcm_message)
+                    recipient_device.send_message(fcm_message)
+
                 return Response(
                     MessageSerializer(message).data,
                     status=status.HTTP_201_CREATED,
                 )
 
-        except FCMDevice.DoesNotExist:
-            raise NotFound(detail="Device not found or is inactive.")
+        except ArchimatchUser.DoesNotExist:
+            raise NotFound(detail="Recipient user not found.")
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error creating message: {str(e)}")
 
     @classmethod
-    def get_user_devices(cls, request):
+    def get_user_contacts(cls, request):
         """
-        Retrieves devices associated with the authenticated user.
+        Retrieves users with whom the authenticated user has exchanged messages.
 
         Args:
             request (Request): The request object containing the authenticated user.
 
         Returns:
-            Response: A response object containing the list of devices associated with the user.
+            Response: A response object containing the list of users the authenticated user
+                    has sent or received messages from.
         """
         user = request.user
 
-        # Get devices where the user is either the sender or recipient
-        sender_devices = FCMDevice.objects.filter(sent_messages__recipient_device__user=user)
-        recipient_devices = FCMDevice.objects.filter(received_messages__sender_device__user=user)
+        # Get users who are either recipients of messages from the user or senders of messages to the user
+        sent_users = ArchimatchUser.objects.filter(received_messages__sender=user)
+        received_users = ArchimatchUser.objects.filter(sent_messages__recipient=user)
 
-        # Combine the sender and recipient devices, removing duplicates
-        devices = sender_devices | recipient_devices
-        devices = devices.distinct()
+        # Combine the querysets and remove duplicates
+        contacts = (sent_users | received_users).distinct()
 
-        serialized_devices = DeviceSerializer(devices, many=True)
-        return Response(serialized_devices.data)
+        # Serialize the user contacts
+        serialized_users = ArchimatchUserSerializer(contacts, many=True)  # Replace UserSerializer with your actual serializer for users
+        return Response(serialized_users.data)
 
     @classmethod
     def get_conversation(cls, request):
         """
-        Retrieves messages between the authenticated user and a specified device.
+        Retrieves messages between the authenticated user and a specified user.
 
         Args:
             request (Request): The request object containing the authenticated user.
-            device_id (int): The ID of the device to retrieve messages for.
 
         Returns:
             Response: A response object containing the list of messages between
-            the user and the device.
+            the user and the specified recipient.
         """
         user = request.user
         try:
-            device_id = request.query_params.get("device_id")
-            if not device_id:
-                raise serializers.ValidationError(detail="Device ID is required.")
-            user_device = FCMDevice.objects.get(user=user, active=True)
-            specified_device = FCMDevice.objects.get(id=device_id)
+            print(request.query_params)
+            recipient_id = request.query_params.get("recipient_id")
+            if not recipient_id:
+                raise serializers.ValidationError(detail="Recipient ID is required.")
+
+            recipient = ArchimatchUser.objects.get(id=recipient_id)
             messages = Message.objects.filter(
-                (models.Q(sender_device=user_device) & models.Q(recipient_device=specified_device))
-                | (
-                    models.Q(sender_device=specified_device)
-                    & models.Q(recipient_device=user_device)
-                )
-            )
+                (models.Q(sender=user) & models.Q(recipient=recipient))
+                | (models.Q(sender=recipient) & models.Q(recipient=user))
+            ).order_by("timestamp")
+
             serialized_messages = MessageSerializer(messages, many=True)
             return Response(serialized_messages.data)
-        except FCMDevice.DoesNotExist:
-            raise NotFound(detail="Device not found.")
+
+        except ArchimatchUser.DoesNotExist:
+            raise NotFound(detail="Recipient user not found.")
         except serializers.ValidationError as e:
             raise e
         except Exception as e:
