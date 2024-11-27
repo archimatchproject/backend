@@ -3,7 +3,12 @@ Module-level constants for firebase_cloud_messaging configuration.
 """
 
 from firebase_admin import initialize_app
+from firebase_admin import credentials
+from project_core.env import env
 
+GOOGLE_APPLICATION_CREDENTIALS = env("GOOGLE_APPLICATION_CREDENTIALS")
+# Path to your Firebase service account key file
+cred = credentials.Certificate(f"ssl/{GOOGLE_APPLICATION_CREDENTIALS}")
 
 # Optional ONLY IF you have initialized a firebase app already:
 # Visit https://firebase.google.com/docs/admin/setup/#python
@@ -11,7 +16,7 @@ from firebase_admin import initialize_app
 # Store an environment variable called GOOGLE_APPLICATION_CREDENTIALS
 # which is a path that point to a json file with your credentials.
 # Additional arguments are available: credentials, options, name
-FIREBASE_APP = initialize_app()
+FIREBASE_APP = initialize_app(cred)
 # To learn more, visit the docs here:
 # https://cloud.google.com/docs/authentication/getting-started>
 

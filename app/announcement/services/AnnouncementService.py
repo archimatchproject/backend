@@ -109,7 +109,7 @@ class AnnouncementService:
                 url = f"""{settings.BASE_FRONTEND_URL}/{language_code}"""
                 reset_link = f"""{url}/client/verify-email/{token}"""
                 code = VerificationCode.create_or_regenerate_code(user_instance)
-                print(code)
+                
                 context = {
                     "first_name": client_instance.user.first_name,
                     "last_name": client_instance.user.last_name,

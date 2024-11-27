@@ -28,7 +28,6 @@ def send_email_background_task(data):
         to_email = data.get("to_email", "default@example.com")
         subject = data.get("subject", "Default Subject")
         images = data.get("images", settings.COMMON_IMAGES)
-        print(to_email)
         html_content = render_to_string(template_name=template_name, context=context)
 
         send_email_with_template(to_email, subject, html_content, images)
