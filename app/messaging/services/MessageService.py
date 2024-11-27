@@ -58,7 +58,6 @@ class MessageService:
         try:
             # Fetch the recipient user based on provided data
             recipient = validated_data.get("recipient_id")
-            
 
             # Begin transaction to save the message
             with transaction.atomic():
@@ -79,8 +78,12 @@ class MessageService:
                         ),
                         token=recipient_device.registration_id
                     )
-                    print(fcm_message)
-                    recipient_device.send_message(fcm_message)
+                    try:
+                        recipient_device.send_message(fcm_message)
+                    except Exception as fcm_error:
+                        print(f"Error sending FCM message: {fcm_error}")
+                        raise APIException(detail="Error with FCM notification: " + str(fcm_error))
+                    
 
                 return Response(
                     MessageSerializer(message).data,
@@ -133,7 +136,6 @@ class MessageService:
         """
         user = request.user
         try:
-            print(request.query_params)
             recipient_id = request.query_params.get("recipient_id")
             if not recipient_id:
                 raise serializers.ValidationError(detail="Recipient ID is required.")

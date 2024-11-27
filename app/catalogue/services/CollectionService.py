@@ -168,7 +168,6 @@ class CollectionService:
         # Apply pagination to the filtered queryset
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
-            print(page)
             serializer = CollectionSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 

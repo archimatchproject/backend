@@ -168,7 +168,6 @@ class ClientService:
         saved_code = VerificationCode.objects.get(user__id=user_id)
         if saved_code.is_expired():
             raise APIException(detail="Code has expired")
-        print(code,saved_code.code)
         if int(code) != int(saved_code.code):
             raise serializers.ValidationError(detail="code is invalid")
 

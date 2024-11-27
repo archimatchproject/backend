@@ -114,7 +114,6 @@ class ArchitectReportService:
 
         # Apply pagination to the serialized grouped reports
         page = paginator.paginate_queryset(grouped_reports, request)
-        print(page)
         if page is not None:
             # Get paginated response with serialized data
             return paginator.get_paginated_response(page)
