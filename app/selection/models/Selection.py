@@ -42,6 +42,10 @@ class Selection(models.Model):
         verbose_name=_("Selection Name")
     )
     is_client_interested = models.BooleanField(default=True)
+    is_abandoned = models.BooleanField(default=False)
+    
+    
+    
     class Meta:
         unique_together = ('announcement', 'architect')
         constraints = [

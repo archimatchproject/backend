@@ -4,13 +4,13 @@
   pk: 1
   fields:
     label: "Architecte de construction"
-    icon: "icons/ArchitectSpecialityIcons/img.png"
+    icon: "icons/ArchitectSpecialityIcons/construction.svg"
 
 - model: core.ArchitectSpeciality
   pk: 2
   fields:
     label: "Designer d'interieur"
-    icon: "icons/ArchitectSpecialityIcons/img.png"
+    icon: "icons/ArchitectSpecialityIcons/interior.svg"
 
 - model: core.ArchitectSpeciality
   pk: 3

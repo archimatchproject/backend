@@ -24,4 +24,9 @@ quote_urlpatterns = [
         QuoteViewSet.as_view({"put": "refuse_quote"}),
         name="create-selection",
     ),
+    path(
+        "delete-quote/<int:pk>",
+        QuoteViewSet.as_view({"delete": "destroy"}),
+        name="delete-quote",
+    ),
 ]

@@ -44,4 +44,14 @@ selection_urlpatterns = [
         SelectionViewSet.as_view({"delete": "destroy"}),
         name="delete-selection",
     ),
+    path(
+        "get-selections-paginated/",
+        SelectionViewSet.as_view({"get": "get"}),
+        name="get-selections-paginated",
+    ),
+    path(
+        "abandon-selection/<int:pk>",
+        SelectionViewSet.as_view({"put": "abandon_selection"}),
+        name="abandon-selection",
+    ),
 ]
