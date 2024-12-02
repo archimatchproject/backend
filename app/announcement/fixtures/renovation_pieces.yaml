@@ -5,28 +5,28 @@
   pk: 1
   fields:
     label: "Chambre principale"
-    icon: "icons/PieceRenovateIcons/living_room.png"
+    icon: "icons/PieceRenovateIcons/living_room.svg"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.PieceRenovate
   pk: 2
   fields:
     label: "Salle de bain"
-    icon: "icons/PieceRenovateIcons/bathroom.png"
+    icon: "icons/PieceRenovateIcons/bathroom.svg"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.PieceRenovate
   pk: 3
   fields:
     label: "Cuisine"
-    icon: "icons/PieceRenovateIcons/kitchen.png"
+    icon: "icons/PieceRenovateIcons/kitchen.svg"
     property_type: 1 # Replace with the primary key of Maison
 
 - model: announcement.PieceRenovate
   pk: 4
   fields:
     label: "Salon"
-    icon: "icons/PieceRenovateIcons/living_room.png"
+    icon: "icons/PieceRenovateIcons/living_room.svg"
     property_type: 1 # Replace with the primary key of Maison
 
 # Pieces for Immeuble (Property Type)
@@ -34,28 +34,28 @@
   pk: 5
   fields:
     label: "Hall d'entrée"
-    icon: "icons/PieceRenovateIcons/hall.png"
+    icon: "icons/PieceRenovateIcons/hall.svg"
     property_type: 2 # Replace with the primary key of Immeuble
 
 - model: announcement.PieceRenovate
   pk: 6
   fields:
     label: "Bureaux individuels"
-    icon: "icons/PieceRenovateIcons/office.png"
+    icon: "icons/PieceRenovateIcons/office.svg"
     property_type: 2 # Replace with the primary key of Immeuble
 
 - model: announcement.PieceRenovate
   pk: 7
   fields:
     label: "Salle de conférence"
-    icon: "icons/PieceRenovateIcons/office.png"
+    icon: "icons/PieceRenovateIcons/office.svg"
     property_type: 2 # Replace with the primary key of Immeuble
 
 - model: announcement.PieceRenovate
   pk: 8
   fields:
     label: "Espace de réception"
-    icon: "icons/PieceRenovateIcons/hall.png"
+    icon: "icons/PieceRenovateIcons/hall.svg"
     property_type: 2 # Replace with the primary key of Immeuble
 
 # Pieces for Villa (Property Type)
@@ -63,28 +63,28 @@
   pk: 9
   fields:
     label: "Suite parentale"
-    icon: "icons/PieceRenovateIcons/parents.png"
+    icon: "icons/PieceRenovateIcons/parents.svg"
     property_type: 3 # Replace with the primary key of Villa
 
 - model: announcement.PieceRenovate
   pk: 10
   fields:
     label: "Salle de sport"
-    icon: "icons/PieceRenovateIcons/img.png"
+    icon: "icons/PieceRenovateIcons/img.svg"
     property_type: 3 # Replace with the primary key of Villa
 
 - model: announcement.PieceRenovate
   pk: 11
   fields:
     label: "Bibliothèque"
-    icon: "icons/PieceRenovateIcons/img.png"
+    icon: "icons/PieceRenovateIcons/img.svg"
     property_type: 3 # Replace with the primary key of Villa
 
 - model: announcement.PieceRenovate
   pk: 12
   fields:
     label: "Piscine"
-    icon: "icons/PieceRenovateIcons/img.png"
+    icon: "icons/PieceRenovateIcons/img.svg"
     property_type: 3 # Replace with the primary key of Villa
 
 # Pieces for Appartement (Property Type)
@@ -92,26 +92,26 @@
   pk: 13
   fields:
     label: "Cuisine ouverte"
-    icon: "icons/PieceRenovateIcons/kitchen.png"
+    icon: "icons/PieceRenovateIcons/kitchen.svg"
     property_type: 4 # Replace with the primary key of Appartement
 
 - model: announcement.PieceRenovate
   pk: 14
   fields:
     label: "Balcon"
-    icon: "icons/PieceRenovateIcons/garden.png"
+    icon: "icons/PieceRenovateIcons/garden.svg"
     property_type: 4 # Replace with the primary key of Appartement
 
 - model: announcement.PieceRenovate
   pk: 15
   fields:
     label: "Chambre à coucher"
-    icon: "icons/PieceRenovateIcons/room.png"
+    icon: "icons/PieceRenovateIcons/room.svg"
     property_type: 4 # Replace with the primary key of Appartement
 
 - model: announcement.PieceRenovate
   pk: 16
   fields:
     label: "Salle à manger"
-    icon: "icons/PieceRenovateIcons/eat.png"
+    icon: "icons/PieceRenovateIcons/eat.svg"
     property_type: 4 # Replace with the primary key of Appartement

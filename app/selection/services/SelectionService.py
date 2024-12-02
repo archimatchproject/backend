@@ -13,6 +13,7 @@ from rest_framework.exceptions import APIException
 from django.utils import timezone
 from app.announcement.models.Announcement import Announcement
 from app.core.pagination import CustomPagination
+from app.selection.filters import SelectionFilter
 from app.selection.models.Phase import Phase
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
@@ -31,7 +32,9 @@ class SelectionService:
     Service class for handling announcement-related operations .
 
     """
+    
     pagination_class = CustomPagination
+    
     @classmethod
     def create_selection(cls, data, user):
         """
@@ -232,6 +235,56 @@ class SelectionService:
         phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
         
         phase.save()
+
+        return True, "discussion phase is confirmed"
+    
+    
+    @classmethod
+    def get_selections(cls, request):
+        """
+        Handle GET request and return paginated Announcement objects.
+
+        This method retrieves all Announcement objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Announcement objects or an error message.
+        """
+        queryset = Selection.objects.all().order_by("created_at")
+        filtered_queryset = SelectionFilter(request.GET, queryset=queryset).qs
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = SelectionSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = SelectionSerializer(queryset, many=True)
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @classmethod
+    @transaction.atomic
+    def abandon_selection(cls, selection_id):
+        """
+        give the hand to an architect to abandon a selection
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a success message.
+
+        Raises:
+            APIException: If the selection or its phase is not found, or if there is an issue.
+        """
+        
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+        selection.is_abandoned = True
+        selection.save()
 
         return True, "discussion phase is confirmed"
     

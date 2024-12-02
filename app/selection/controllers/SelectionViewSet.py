@@ -105,6 +105,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
         
     @action(detail=True, methods=['POST'], url_path='confirm-discussion-phase')
+    @handle_service_exceptions
     def confirm_discussion_phase(self, request, pk=None):
         """
         Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
@@ -119,3 +120,34 @@ class SelectionViewSet(viewsets.ModelViewSet):
         success, message = SelectionService.confirm_discussion_phase(selection_id=pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)    
     
+    def get(self, request):
+        """
+        Handle GET request and return paginated Selections objects.
+
+        This method retrieves all Selections objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing Selections objects or an error message.
+        """
+        return SelectionService.get_selections(request)
+    
+    @action(detail=True, methods=['PUT'], url_path='abandon-selection')
+    @handle_service_exceptions
+    def abandon_selection(self, request, pk=None):
+        """
+        Endpoint to abandon the selection by an architect
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: a success or an error message.
+        """
+
+        success, message = SelectionService.abandon_selection(selection_id=pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)  
