@@ -6,6 +6,7 @@ and AnnouncementSerializer classes, which handle the serialization and deseriali
 of Announcement instances for API views.
 """
 
+from datetime import timedelta
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
@@ -28,8 +29,10 @@ from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.selection.models.SelectionSettings import SelectionSettings
 from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.models.Architect import Architect
+from django.utils.timezone import now
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
@@ -179,7 +182,8 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     notes = NoteSerializer(many=True)
     interested_architects_count = serializers.SerializerMethodField(required=False)
     has_selected = serializers.SerializerMethodField(required=False)
-
+    days_remaining = serializers.SerializerMethodField()
+    admin_management_reached = serializers.SerializerMethodField()
     class Meta:
         model = Announcement
         fields = [
@@ -207,7 +211,10 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "admin_note",
             "interested_architects_count",  # Optional
             "has_selected",  # Optional
-            "token_number"
+            "token_number",
+            "days_remaining",
+            "architect",
+            "admin_management_reached",
         ]
 
     def get_interested_architects_count(self, obj):
@@ -233,6 +240,37 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             return False
 
         return obj.selections.filter(architect=architect).exists()
+    
+    def get_days_remaining(self, obj):
+        """
+        Calculate the remaining days for the end of the phase.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return None  
+
+            phase_days = settings.phase_days
+            end_of_phase_date = obj.suggested_at + timedelta(days=phase_days)
+            remaining_days = (end_of_phase_date - now()).days
+            return max(0, remaining_days)
+        except Exception as e:
+            return None 
+    
+    def get_admin_management_reached(self, obj):
+        """
+        Determine if the time from created_at to today has reached days_for_admin_management.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return False  
+
+            admin_management_days = settings.days_for_admin_management
+            time_elapsed = (now() - obj.created_at).days
+            return time_elapsed >= admin_management_days
+        except Exception as e:
+            return False
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     """

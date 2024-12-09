@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Un projet attend votre décision sur ArchiMatch. Pour recevoir de nouvelles
+      propositions, merci de le sélectionner ou le refuser dès que possible. Si
+      vous n'êtes pas disponible pour de nouveaux projets, pensez à désactiver
+      la réception.
+    </p>
+    <p>
+      Sans décision sous 2 jours 8 jours au total, le projet sera retiré de
+      votre liste et redistribué, et vous perdrez les jetons utilisés.
+    </p>
+    <p>
+      Connectez-vous à votre compte pour agir. Nous restons disponibles pour
+      toute assistance.
+    </p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

@@ -7,6 +7,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from app.selection import NOT_SELECTED, PHASE_NAME_CHOICES
+
 class SelectionSettings(models.Model):
     """
     Singleton model for managing configuration settings related to selections.
@@ -22,7 +24,12 @@ class SelectionSettings(models.Model):
         days_for_admin_management (PositiveIntegerField): Number of days for the admin to manage the selection.
         email_sending_hour (TimeField): Hour of the day for sending email notifications.
     """
-
+    name = models.CharField(
+        max_length=20,
+        choices=PHASE_NAME_CHOICES,
+        verbose_name=_("Phase Name"),
+        default=NOT_SELECTED
+    )
     phase_days = models.PositiveIntegerField(
         verbose_name=_("Phase Number of Days"),
         help_text=_("The number of days for each phase in the selection process.")
@@ -59,24 +66,15 @@ class SelectionSettings(models.Model):
         verbose_name=_("Email Sending Hour"),
         help_text=_("The hour of the day for sending email notifications.")
     )
+    days_for_admin_display = models.PositiveIntegerField(
+        verbose_name=_("Days for Admin Display"),
+        help_text=_("The number of days for the admin to see the selection.")
+    )
 
     class Meta:
         verbose_name = "Selection Settings"
         verbose_name_plural = "Selection Settings"
 
-    def clean(self):
-        """
-        Enforce the singleton behavior by checking if another instance exists before saving.
-        """
-        if SelectionSettings.objects.exists() and not self.pk:
-            raise ValidationError("Only one instance of SelectionSettings is allowed.")
-
-    def save(self, *args, **kwargs):
-        """
-        Override save to ensure only one instance of the model exists.
-        """
-        self.full_clean() 
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return "Selection Settings"

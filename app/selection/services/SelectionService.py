@@ -11,7 +11,9 @@ Classes:
 
 from rest_framework.exceptions import APIException
 from django.utils import timezone
+from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
 from app.announcement.models.Announcement import Announcement
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer, AnnouncementSerializer
 from app.core.pagination import CustomPagination
 from app.selection.filters import SelectionFilter
 from app.selection.models.Phase import Phase
@@ -22,10 +24,12 @@ from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from datetime import datetime, timedelta
-from app.selection import DISCUSSION
+from app.selection import DISCUSSION, NOT_SELECTED, QUOTES
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils.timezone import now
+
 
 class SelectionService:
     """
@@ -92,8 +96,8 @@ class SelectionService:
         subscription_plan.save()
 
         # Fetch the number of days for the phase from the SelectionSettings model
-        phase_duration_days = cls.get_phase_duration_from_settings()
-
+        phase_settings = cls.get_selection_settings(name=DISCUSSION)
+        phase_duration_days = phase_settings.phase_days
         # Create the Phase
         start_date = datetime.now().date()
         limit_date = start_date + timedelta(days=phase_duration_days)
@@ -111,23 +115,7 @@ class SelectionService:
 
         return True, SelectionSerializer(selection).data
 
-    @staticmethod
-    def get_phase_duration_from_settings():
-        """
-        Fetch the phase duration from the SelectionSettings model.
-        
-        Returns:
-            int: The number of days for the phase duration.
 
-        Raises:
-            APIException: If the setting is not found or invalid.
-        """
-
-        settings = SelectionSettings.objects.first()
-        if not settings or settings.phase_days is None:
-            raise APIException("Phase duration settings are not properly configured.")
-        
-        return settings.phase_days
 
     @classmethod
     def get_announcement_selections(cls, announcement_id):
@@ -226,8 +214,8 @@ class SelectionService:
         
         phase = selection.phase
 
-        phase_duration_days = cls.get_phase_duration_from_settings()
-        
+        phase_settings = cls.get_selection_settings(name=QUOTES)
+        phase_duration_days = phase_settings.phase_days
         
         phase.number = 2
         phase.start_date = timezone.now()
@@ -288,3 +276,74 @@ class SelectionService:
 
         return True, "discussion phase is confirmed"
     
+    @classmethod
+    def get_not_selected_announcements(self, request):
+        """
+        Handle GET request and return paginated not selected announcements objects.
+
+        This method retrieves all not selected announcements objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing not selected announcements objects or an error message.
+        """
+
+        selection_settings = self.get_selection_settings(name=NOT_SELECTED)
+        phase_days = selection_settings.phase_days
+        
+        phase_days = selection_settings.phase_days
+        days_before = now().date() + timedelta(days=selection_settings.days_for_admin_display)
+        announcements = Announcement.objects.filter(
+            selections__isnull=True,
+            suggested_at__lte=days_before - timedelta(days=phase_days),
+        ).order_by("created_at")
+
+        filtered_queryset = AnnouncementFilter(request.GET, queryset=announcements).qs
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = AnnouncementOutputSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @classmethod
+    def get_selection_settings(cls,name:str):
+        """
+        Utility function to retrieve the SelectionSettings singleton instance.
+
+        Returns:
+            SelectionSettings: The instance of the SelectionSettings model.
+
+        Raises:
+            ValidationError: If SelectionSettings is not configured.
+        """
+        selection_settings = SelectionSettings.objects.filter(name=name).first()
+        if not selection_settings:
+            raise ValidationError(detail="Selection settings not configured.")
+        return selection_settings
+    
+    
+    @classmethod
+    @transaction.atomic
+    def broadcast_announcement(cls, announcement_id):
+        """
+        broadcast announcement
+
+        Args:
+            announcement_id (int): The ID of the announcement to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a success message.
+
+        """
+        
+        announcement = Announcement.objects.select_for_update().get(id=announcement_id)
+        announcement.architect = None
+        announcement.save()
+
+        return True, "the broadcast of the announcement is successfull"
