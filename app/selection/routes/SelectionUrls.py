@@ -54,4 +54,14 @@ selection_urlpatterns = [
         SelectionViewSet.as_view({"put": "abandon_selection"}),
         name="abandon-selection",
     ),
+    path(
+        "not-selected-announcements/",
+        SelectionViewSet.as_view({"get": "get_not_selected_announcements"}),
+        name="not-selected-announcements",
+    ),
+        path(
+        "broadcast-announcement/<int:pk>",
+        SelectionViewSet.as_view({"post": "broadcast_announcement"}),
+        name="broadcast-announcement",
+    ),
 ]

@@ -40,7 +40,7 @@ class SelectionSettingsViewSet(viewsets.ViewSet):
     
     @action(detail=False, methods=['GET'], url_path='get-settings')
     @handle_service_exceptions
-    def get_settings(self, request):
+    def get_settings(self, request,pk):
         """
         Retrieve the current selection settings.
 
@@ -53,12 +53,12 @@ class SelectionSettingsViewSet(viewsets.ViewSet):
         Raises:
             APIException: If no selection settings instance is found.
         """
-        success, data = SelectionSettingsService.get_selection_settings(request)
+        success, data = SelectionSettingsService.get_selection_settings(request,pk)
         return build_response(data=data, status=status.HTTP_200_OK, success=success)
 
     @action(detail=False, methods=['PUT'], url_path='update-settings')
     @handle_service_exceptions
-    def update_settings(self, request):
+    def update_settings(self, request,pk):
         """
         Update the selection settings with provided data.
 
@@ -73,12 +73,12 @@ class SelectionSettingsViewSet(viewsets.ViewSet):
             APIException: If no selection settings instance exists.
         """
 
-        success, data = SelectionSettingsService.update_selection_settings(request.data)
+        success, data = SelectionSettingsService.update_selection_settings(request.data,pk)
         return build_response(data=data, status=status.HTTP_200_OK, success=success)
 
     @action(detail=False, methods=['GET'], url_path='get-settings-choises')
     @handle_service_exceptions
-    def get_settings(self, request):
+    def get_settings_choices(self, request):
         """
         Retrieve the current selection settings.
 

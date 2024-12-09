@@ -10,12 +10,12 @@ from app.selection.controllers.SelectionSettingsViewSet import SelectionSettings
 
 selectionSettings_urlpatterns = [
     path(
-        "settings/get-settings",
+        "settings/get-settings/<int:pk>",
         SelectionSettingsViewSet.as_view({"get": "get_settings"}),
         name="get-settings",
     ),
     path(
-        "settings/update-settings",
+        "settings/update-settings/<int:pk>",
         SelectionSettingsViewSet.as_view({"put": "update_settings"}),
         name="update-settings",
     ),

@@ -5,6 +5,7 @@ This module contains the Announcement class, which represents an announcement
 for a construction or renovation project in the application.
 """
 
+from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
@@ -102,6 +103,8 @@ class Announcement(BaseModel):
     architect = models.ForeignKey("users.Architect", on_delete=models.CASCADE,null=True, blank=True)
     
     token_number = models.PositiveIntegerField(null=True, blank=True)
+    suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
+    is_blocked = models.BooleanField(default=False)
     
     def __str__(self):
         """

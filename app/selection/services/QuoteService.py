@@ -128,4 +128,4 @@ class QuoteService:
         selection.save()
 
         # Return success and the updated quote data
-        return True, "Quote is accepted"
+        return True, "Quote is refused"

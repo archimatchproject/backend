@@ -8,6 +8,7 @@ Classes:
     SelectionSettingsService: Service class for `SelectionSettings` operations.
 """
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.exceptions import APIException
 from django.db import transaction
 from app.selection.models.SelectionSettings import SelectionSettings
@@ -31,7 +32,7 @@ class SelectionSettingsService:
     """
 
     @classmethod
-    def get_selection_settings(cls, request):
+    def get_selection_settings(cls, request,pk):
         """
         Retrieve the selection settings.
 
@@ -44,7 +45,7 @@ class SelectionSettingsService:
         Raises:
             APIException: If no `SelectionSettings` instance exists.
         """
-        settings = SelectionSettings.objects.first()
+        settings = SelectionSettings.objects.get(id=pk)
         if not settings:
             raise APIException("Selection settings not configured.")
         
@@ -53,30 +54,38 @@ class SelectionSettingsService:
 
     @classmethod
     @transaction.atomic
-    def update_selection_settings(cls, data):
+    def update_selection_settings(cls, data, pk):
         """
-        Update the selection settings.
+        Update a specific selection setting.
 
         Args:
-            data (dict): A dictionary containing the updated selection settings values.
+            data (dict): A dictionary containing the field name (`name`) and its updated value (`value`).
+            pk (int): The primary key of the SelectionSettings instance to update.
 
         Returns:
             tuple: A tuple containing a success flag (bool) and the updated serialized selection settings data (dict).
 
         Raises:
-            ValidationError: If validation fails for any of the updated settings fields.
-            APIException: If no `SelectionSettings` instance exists to update.
+            ValidationError: If validation fails for the updated field.
+            APIException: If no `SelectionSettings` instance exists or the field name is invalid.
         """
-        settings = SelectionSettings.objects.first()
-        if not settings:
+
+        try:
+            settings = SelectionSettings.objects.get(id=pk)
+        except SelectionSettings.DoesNotExist:
             raise APIException("Selection settings not configured.")
         
+        field_name = data.get("name")
+        
+        new_value = data.get("value")
 
-        for key, value in data.items():
-            if hasattr(settings, key):
-                setattr(settings, key, value)
+        if not hasattr(settings, field_name):
+            raise ValidationError(detail=f"Field '{field_name}' does not exist in SelectionSettings.")
+        
+        # Dynamically update the field value
+        setattr(settings, field_name, new_value)
 
-  
+        # Validate the model before saving
         settings.full_clean()
         settings.save()
 

@@ -80,6 +80,6 @@ class PhaseSerializer(serializers.ModelSerializer):
         """
         Calculates the number of remaining days for the phase based on SelectionSettings.
         """
-        phase_days = SelectionSettings.objects.first().phase_days
+        phase_days = SelectionSettings.objects.filter(name=obj.name).first().phase_days
         days_elapsed = self.get_days_elapsed(obj)
         return max(phase_days - days_elapsed, 0) 

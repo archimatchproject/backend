@@ -151,3 +151,38 @@ class SelectionViewSet(viewsets.ModelViewSet):
 
         success, message = SelectionService.abandon_selection(selection_id=pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)  
+    
+    @action(detail=True, methods=['GET'], url_path='not-selected-announcements')
+    @handle_service_exceptions
+    def get_not_selected_announcements(self, request, pk=None):
+        """
+        Handle GET request and return paginated not selected announcements objects.
+
+        This method retrieves all not selected announcements objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination is not applied correctly, it returns a 400 Bad Request response.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing not selected announcements objects or an error message.
+        """
+
+        return SelectionService.get_not_selected_announcements(request)
+        
+    @action(detail=True, methods=['POST'], url_path='broadcast-announcement')
+    @handle_service_exceptions
+    def broadcast_announcement(self, request, pk=None):
+        """
+        Endpoint to broadcast the announcement
+
+        Args:
+            pk (int): The ID of the announcement to update.
+
+        Returns:
+            Response: a success or an error message.
+        """
+
+        success, message = SelectionService.broadcast_announcement(announcement_id=pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)  
