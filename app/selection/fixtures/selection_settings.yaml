@@ -19,12 +19,12 @@
   pk: 2
   fields:
     name: "Discussion"
-    phase_days: 5
+    phase_days: 7
     days_before_call_email: 2
     days_to_phone_call: 3
     days_after_call_email: 2
-    days_to_rediffuse: 30
-    days_to_lock_project: 15
+    days_to_rediffuse: 8
+    days_to_lock_project: 3
     times_to_unlock_project: 3
     days_for_admin_management: 10
     email_sending_hour: "09:00:00"
