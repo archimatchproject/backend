@@ -44,3 +44,18 @@ DAYS_TO_LOCK_PROJECT_CHOICES = generate_choices(1, 3, "après {value} jours")
 TIMES_TO_UNLOCK_PROJECT_CHOICES = generate_choices(1, 3, "{value} fois")
 DAYS_FOR_ADMIN_MANAGEMENT_CHOICES = generate_choices(10, 15, "apres {value} jours")
 DAYS_FOR_ADMIN_DISPLAY_CHOICES = generate_choices(3, 7, "après {value} jours")
+
+
+CHANGE_DEADLINE = "Change deadline"
+CANCEL_PROJECT = "Cancel the project"
+BLOCK_PROJECT = "Block the project"
+REBROADCAST_PROJECT = "Rebroadcast the project"
+CONFIRM_DISCUSSION_PHASE = "Confirm discussion phase"
+
+ACTION_CHOICES  = [
+    (CHANGE_DEADLINE, CHANGE_DEADLINE),
+    (CANCEL_PROJECT, CANCEL_PROJECT),
+    (BLOCK_PROJECT, BLOCK_PROJECT),
+    (REBROADCAST_PROJECT, REBROADCAST_PROJECT),
+    (CONFIRM_DISCUSSION_PHASE,CONFIRM_DISCUSSION_PHASE)
+]

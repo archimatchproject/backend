@@ -33,3 +33,5 @@ class SelectionConfig(AppConfig):
         next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         if not Task.objects.filter(task_name='app.selection.tasks.selection_phase_tasks.process_email_triggers').exists():
             process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)
+        if not Task.objects.filter(task_name='app.selection.tasks.selection_phase_tasks.process_email_discussion_triggers').exists():
+            process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)

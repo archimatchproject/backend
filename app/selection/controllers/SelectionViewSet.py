@@ -186,3 +186,130 @@ class SelectionViewSet(viewsets.ModelViewSet):
 
         success, message = SelectionService.broadcast_announcement(announcement_id=pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)  
+    
+    @action(detail=True, methods=['GET'], url_path='not-selected-announcements')
+    @handle_service_exceptions
+    def get_discussion_phase_selections(self, request):
+        """
+        Handle GET request and return paginated not selected announcements objects.
+
+        This method retrieves all not selected announcements objects that are in the
+        'DISCUSSION' phase and have 3, 2, 1, or 0 days left until the limit date. Pagination is applied
+        based on the parameters in the request.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing the filtered selections or an error message.
+        """
+
+        return SelectionService.get_discussion_phase_selections(request)
+    
+    @action(detail=True, methods=['GET'], url_path='selection-logs')
+    @handle_service_exceptions
+    def get_selection_logs(self, request, pk=None):
+        """
+        Retrieve the action logs associated with a specific selection.
+
+        This endpoint fetches the logs for the given selection ID (pk) and returns 
+        the serialized log data. It utilizes the `SelectionService.get_selection_logs` 
+        method to perform the retrieval.
+
+        Args:
+            request (Request): The incoming HTTP request object.
+            pk (int): The ID of the selection for which to retrieve action logs.
+
+        Returns:
+            Response: A JSON response containing:
+                - `success` (bool): Indicates whether the operation was successful.
+                - `data` (list): Serialized list of action logs for the selection.
+                - HTTP 200 OK: Returned upon successful retrieval.
+            
+        Raises:
+            APIException: If no logs are found or an internal error occurs.
+        """
+
+        success, data = SelectionService.get_selection_logs(selection_id=pk)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+    
+    
+    @action(detail=True, methods=['POST'], url_path='broadcast-selection-announcement')
+    @handle_service_exceptions
+    def broadcast_selection_announcement(self, request, pk=None):
+        """
+        Endpoint to broadcast the announcement
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: a success or an error message.
+        """
+
+        success, message = SelectionService.broadcast_selection_announcement(selection_id=pk,user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)  
+    
+    @action(detail=True, methods=['POST'], url_path='block-selection')
+    @handle_service_exceptions
+    def block_selection(self, request, pk=None):
+        """
+        Endpoint to to block selection
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: a success or an error message.
+        """
+
+        success, message = SelectionService.block_selection(selection_id=pk,user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)  
+    
+    @action(detail=True, methods=['POST'], url_path='change-selection-deadline')
+    @handle_service_exceptions
+    def change_selection_deadline(self, request, pk=None):
+        """
+        change the selection deadline
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: a success or an error message.
+        """
+
+        success, message = SelectionService.change_selection_deadline(selection_id=pk,user=request.user,data=request.data)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)  
+    
+    @action(detail=True, methods=['POST'], url_path='confirm-discussion-phase-admin')
+    @handle_service_exceptions
+    def confirm_discussion_phase_admin(self, request, pk=None):
+        """
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: The updated selection and phase data or an error message.
+        """
+
+        success, message = SelectionService.confirm_discussion_phase_admin(selection_id=pk,user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)    
+    
+    @action(detail=True, methods=['POST'], url_path='cancel-selection')
+    @handle_service_exceptions
+    def cancel_selection(self, request, pk=None):
+        """
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: The updated selection and phase data or an error message.
+        """
+
+        success, message = SelectionService.cancel_selection(selection_id=pk,user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)    

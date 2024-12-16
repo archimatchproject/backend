@@ -215,6 +215,8 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "days_remaining",
             "architect",
             "admin_management_reached",
+            "is_blocked",
+            "is_broadcasted"
         ]
 
     def get_interested_architects_count(self, obj):
