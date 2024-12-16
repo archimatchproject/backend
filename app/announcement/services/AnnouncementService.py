@@ -79,8 +79,9 @@ class AnnouncementService:
         Creating new announcement
         """
         data = request.data
-        
         user = request.user
+        is_broadcasted = data.pop("is_broadcasted",True)
+        
         serializer = AnnouncementPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -130,7 +131,7 @@ class AnnouncementService:
                         detail="You must be a valid client to create an announcement"
                     )
                 client_instance = Client.objects.get(user=user)
-            announcement = Announcement.objects.create(client=client_instance, **validated_data)
+            announcement = Announcement.objects.create(client=client_instance, **validated_data,is_broadcasted=is_broadcasted)
             announcement.needs.set(needs_data)
             for piece_data in pieces_renovate_data:
                 for piece_renovate_id, number in piece_data.items():

@@ -105,6 +105,7 @@ class Announcement(BaseModel):
     token_number = models.PositiveIntegerField(null=True, blank=True)
     suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
     is_blocked = models.BooleanField(default=False)
+    is_broadcasted = models.BooleanField(default=True)
     
     def __str__(self):
         """

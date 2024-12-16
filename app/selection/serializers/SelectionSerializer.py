@@ -8,6 +8,7 @@ Classes:
 
 from rest_framework import serializers
 from app.selection.models.Selection import Selection
+from app.selection.models.SelectionSettings import SelectionSettings
 from app.selection.serializers.PhaseSerializer import PhaseSerializer
 from app.selection.serializers.QuoteSerializer import QuoteSerializer
 from app.users.models import Architect
@@ -15,7 +16,7 @@ from app.announcement.models import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.selection import SELECTION_STATUS_CHOICES,QUOTE_ACCEPTED,QUOTE_REFUSED,QUOTE_PENDING
-
+from django.utils.timezone import now
 
 class SelectionSerializer(serializers.ModelSerializer):
     """
@@ -35,9 +36,11 @@ class SelectionSerializer(serializers.ModelSerializer):
     is_last_quote_accepted = serializers.SerializerMethodField()
     is_last_quote_refused = serializers.SerializerMethodField()
     last_pending_quote = serializers.SerializerMethodField()
+    days_remaining = serializers.SerializerMethodField()
+    admin_management_reached = serializers.SerializerMethodField()
     class Meta:
         model = Selection
-        fields = ['id', 'announcement', 'architect', 'phase', 'status', 'quotes', 'is_last_quote_accepted', 'is_last_quote_refused', 'name','last_pending_quote','is_client_interested']
+        fields = ['id', 'announcement', 'architect', 'phase', 'status', 'quotes', 'is_last_quote_accepted', 'is_last_quote_refused', 'name','last_pending_quote','is_client_interested','days_remaining','admin_management_reached','is_blocked']
 
     def get_is_last_quote_accepted(self, obj):
         """
@@ -77,6 +80,41 @@ class SelectionSerializer(serializers.ModelSerializer):
         """
         last_pending_quote = obj.quotes.filter(status=QUOTE_PENDING).order_by('-created_at').first()
         return QuoteSerializer(last_pending_quote).data if last_pending_quote else None
+    
+    def get_days_remaining(self, obj):
+        """
+        Calculate the remaining days for the end of the phase.
+
+        Args:
+            obj (Selection): The Selection instance.
+
+        Returns:
+            int: The number of days remaining until the phase's limit_date. Returns None if no phase is set.
+        """
+        if obj.phase and obj.phase.limit_date:
+            today = now().date()
+            remaining_days = (obj.phase.limit_date - today).days
+            return max(0,remaining_days)
+        return None
+
+    def get_admin_management_reached(self, obj):
+        """
+        Determine if the time from created_at to today has reached days_for_admin_management.
+
+        Args:
+            obj (Selection): The Selection instance.
+
+        Returns:
+            bool: True if the duration since created_at equals or exceeds days_for_admin_management, False otherwise.
+        """
+        selection_settings = self.context.get('selection_settings',None)
+        if selection_settings:
+            days_for_admin_management = selection_settings.days_for_admin_management
+            created_at = obj.phase.start_date
+            today = now().date()
+            duration = (today - created_at).days
+            return duration >= days_for_admin_management
+        return False
     
     def to_representation(self, instance):
         """

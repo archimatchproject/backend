@@ -19,8 +19,10 @@ from background_task import background
 
 from app.announcement.models import Announcement
 from app.email_templates.utils import schedule_email_trigger
+from app.selection import DISCUSSION
+from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.selection.utils import send_reminder_email
+from app.selection.utils import send_reminder_discussion_email, send_reminder_email
 from collections import namedtuple
 
 EmailTriggerParams = namedtuple('EmailTriggerParams', ['model', 'filter_field', 'offset_days', 'action_callback', 'extra_conditions','email_template','extra_action'])
@@ -37,83 +39,63 @@ def generate_email_triggers(settings:SelectionSettings):
     """
     return [
         EmailTriggerParams(
-            model=Announcement,
-            filter_field="suggested_at",
-            offset_days=settings.days_before_call_email,
-            action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            model=Selection,
+            filter_field="phase__start_date",
+            offset_days=settings.days_before_call_email-1,
+            action_callback=send_reminder_discussion_email,
+            extra_conditions={"phase__number": 1},
             email_template="architect_precall_email.html",
             extra_action=None
         ),
 
         EmailTriggerParams(
-            model=Announcement,
-            filter_field="suggested_at",
-            offset_days=settings.days_before_call_email+1,
-            action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            model=Selection,
+            filter_field="phase__start_date",
+            offset_days=settings.days_before_call_email,
+            action_callback=send_reminder_discussion_email,
+            extra_conditions={"phase__number": 1},
             email_template="architect_precall_email.html",
             extra_action=None
         ),
         EmailTriggerParams(
-            model=Announcement,
-            filter_field="suggested_at",
-            offset_days=settings.days_before_call_email+settings.days_after_call_email,
-            action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
-            email_template="architect_postcall_email.html",
+            model=Selection,
+            filter_field="phase__start_date",
+            offset_days=settings.days_before_call_email+2,
+            action_callback=send_reminder_discussion_email,
+            extra_conditions={"phase__number": 1},
+            email_template="architect_precall_email.html",
             extra_action=None
         ),
         EmailTriggerParams(
-            model=Announcement,
-            filter_field="suggested_at",
-            offset_days=settings.days_to_rediffuse,
-            action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
-            email_template="architect_broadcast_email.html",
-            extra_action=broadcast_announcement
-        ),
-        EmailTriggerParams(
-            model=Announcement,
-            filter_field="suggested_at",
+            model=Selection,
+            filter_field="phase__start_date",
             offset_days=settings.phase_days,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"phase__number": 1},
             email_template="architect_block_email.html",
-            extra_action=bloc_announcement
+            extra_action=bloc_selection
         ),
     ]
     
-
-def broadcast_announcement(announcement:Announcement):
+def bloc_selection(selection:Selection):
     """
-    Resets the architect association for an Announcement instance.
+    Blocks an selection instance.
 
     Args:
-        announcement (Announcement): The Announcement instance to modify.
+        selection (Selection): The selection instance to block.
 
     """
-    announcement.is_broadcasted=True
-    announcement.save()
-
-def bloc_announcement(announcement:Announcement):
-    """
-    Blocks an Announcement instance.
-
-    Args:
-        announcement (Announcement): The Announcement instance to block.
-
-    """
-    announcement.is_blocked=True
-    announcement.save() 
+    selection.is_blocked=True
+    selection.save() 
+ 
 
 @background(schedule=0)
-def process_email_triggers():
+def process_email_discussion_triggers():
     """
     Periodically checks and triggers email notifications based on date conditions.
     """
     try:
-        settings = SelectionSettings.objects.first()
+        settings = SelectionSettings.objects.filter(name=DISCUSSION).first()
         if not settings:
             print("No SelectionSettings found. Exiting...")
             return

@@ -91,7 +91,6 @@ def send_reminder_email(announcement,email_template):
         announcement (Announcement): The announcement instance triggering the email.
     """
     try:
-        from django.utils.timezone import now
         from project_core.django import base as settings
         architect = announcement.architect
         if not architect or not architect.user.email:
@@ -104,7 +103,6 @@ def send_reminder_email(announcement,email_template):
             "context": {
                 "first_name": architect.user.first_name,
                 "last_name": architect.user.last_name,
-                "date": now().date(),
                 "email": architect.user.email,
             },
             "to_email": architect.user.email,
@@ -116,3 +114,35 @@ def send_reminder_email(announcement,email_template):
         send_email(data)
     except Exception as e:
         print(f"Error sending email for announcement {announcement.id}: {e}")
+
+def send_reminder_discussion_email(selection,email_template):
+    """
+    Sends a reminder email to the architect related to a selection.
+    
+    Args:
+        announcselectionement (Selection): The selection instance triggering the email.
+    """
+    try:
+        from project_core.django import base as settings
+        architect = selection.architect
+        if not architect or not architect.user.email:
+            print(f"No architect or email found for selection {selection.id}")
+            return
+
+        # Prepare the email data
+        data = {
+            "template_name": email_template,
+            "context": {
+                "first_name": architect.user.first_name,
+                "last_name": architect.user.last_name,
+                "email": architect.user.email,
+            },
+            "to_email": architect.user.email,
+            "subject": "Reminder: Architect Project Selection",
+            "images": getattr(settings, "REFUSE_ARCHITECT_REQUEST_IMAGES", []),
+        }
+        
+        # Send the email
+        send_email(data)
+    except Exception as e:
+        print(f"Error sending email for announcement {selection.id}: {e}")

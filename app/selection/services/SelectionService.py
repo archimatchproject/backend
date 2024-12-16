@@ -16,15 +16,18 @@ from app.announcement.models.Announcement import Announcement
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer, AnnouncementSerializer
 from app.core.pagination import CustomPagination
 from app.selection.filters import SelectionFilter
+from app.selection.models.ActionLog import ActionLog
 from app.selection.models.Phase import Phase
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
+from app.selection.serializers.ActionLogSerializer import ActionLogSerializer
 from app.selection.serializers.SelectionSerializer import SelectionSerializer,SelectionPostSerializer
+from app.users.models.Admin import Admin
 from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from datetime import datetime, timedelta
-from app.selection import DISCUSSION, NOT_SELECTED, QUOTES
+from app.selection import BLOCK_PROJECT, CANCEL_PROJECT, CHANGE_DEADLINE, CONFIRM_DISCUSSION_PHASE, DECISION, DISCUSSION, NOT_SELECTED, QUOTES, REBROADCAST_PROJECT
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
@@ -113,7 +116,7 @@ class SelectionService:
         selection.phase = phase
         selection.save()
 
-        return True, SelectionSerializer(selection).data
+        return True, SelectionSerializer(selection,context={}).data
 
 
 
@@ -137,7 +140,7 @@ class SelectionService:
             raise APIException("No selections found for this announcement.")
         
         # Serialize the selections
-        return True,SelectionSerializer(selections, many=True).data
+        return True,SelectionSerializer(selections, many=True,context={}).data
     
     
     @classmethod
@@ -157,7 +160,7 @@ class SelectionService:
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
-            serialized_selections = SelectionSerializer(page, many=True).data
+            serialized_selections = SelectionSerializer(page, many=True,context={}).data
             return paginator.get_paginated_response(serialized_selections)
         return Response([], status=status.HTTP_200_OK)
         
@@ -218,6 +221,7 @@ class SelectionService:
         phase_duration_days = phase_settings.phase_days
         
         phase.number = 2
+        phase.name = QUOTES
         phase.start_date = timezone.now()
 
         phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
@@ -250,7 +254,7 @@ class SelectionService:
             serializer = SelectionSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        serializer = SelectionSerializer(queryset, many=True)
+        serializer = SelectionSerializer(queryset, many=True,context={})
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
     
     
@@ -343,7 +347,229 @@ class SelectionService:
         """
         
         announcement = Announcement.objects.select_for_update().get(id=announcement_id)
-        announcement.architect = None
+        announcement.is_broadcasted = True
         announcement.save()
 
         return True, "the broadcast of the announcement is successfull"
+    
+    
+    @classmethod
+    def get_discussion_phase_selections(self, request):
+        """
+        Handle GET request and return paginated not selected announcements objects.
+
+        This method retrieves all not selected announcements objects that are in the
+        'DISCUSSION' phase and have 3, 2, 1, or 0 days left until the limit date. Pagination is applied
+        based on the parameters in the request.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing the filtered selections or an error message.
+        """
+
+        selection_settings = self.get_selection_settings(name=DISCUSSION)
+        today = now().date()
+        selections = Selection.objects.filter(
+            phase__name=DISCUSSION,
+             phase__limit_date__lte=today + timedelta(days=selection_settings.days_for_admin_display)
+        ).order_by("phase__start_date")
+        
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(selections, request)
+        if page is not None:
+            serializer = SelectionSerializer(page, many=True,context={'selection_settings': selection_settings})
+            return paginator.get_paginated_response(serializer.data)
+        
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @classmethod
+    def get_selection_logs(cls,selection_id):
+        """
+        Retrieve the action logs associated with a specific selection ID.
+
+        This method filters the ActionLog entries based on the `selection_id` 
+        stored in the `details` JSON field and orders them by the most recent logs.
+
+        Args:
+            selection_id (int): The ID of the selection for which to fetch action logs.
+
+        Returns:
+            tuple: A tuple containing:
+                - bool: `True` if logs are found.
+                - list: A serialized list of action logs.
+
+        Raises:
+            APIException: If no logs are found for the given selection ID.
+        """
+        logs = ActionLog.objects.filter(details__selection_id=selection_id).order_by('-timestamp')
+
+        if not logs.exists():
+            raise APIException(detail="No logs found for this selection.")
+        serializer = ActionLogSerializer(logs, many=True)
+        return True,serializer.data
+    
+    
+    @classmethod
+    @transaction.atomic
+    def broadcast_selection_announcement(cls, selection_id,user):
+        """
+        broadcast announcement for a particular selection
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a success message.
+
+        """
+        admin = Admin.objects.get(user=user)
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+        announcement = selection.announcement
+        announcement.is_broadcasted = True
+        announcement.save()
+        selection.save()
+        
+        ActionLog.objects.create(
+            admin=admin,
+            action=REBROADCAST_PROJECT,
+            details={"selection_id": selection_id}
+        )
+
+        return True, "the broadcast of the announcement is successfull"
+    
+    @classmethod
+    @transaction.atomic
+    def block_selection(cls, selection_id,user):
+        """
+        block selection for a particular architect
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a success message.
+
+        """
+        admin = Admin.objects.get(user=user)
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+        selection.is_blocked = True
+        selection.save()
+        
+        ActionLog.objects.create(
+            admin=admin,
+            action=BLOCK_PROJECT,
+            details={"selection_id": selection_id}
+        )
+
+        return True, "the broadcast of the announcement is successfull"
+    
+    
+    @classmethod
+    @transaction.atomic
+    def change_selection_deadline(cls, selection_id,user,data):
+        """
+        block selection for a particular architect
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a success message.
+
+        """
+        days_number = data.get("days_number",None)
+        if days_number is None:
+            raise APIException(detail="number of days has to be defined")
+        admin = Admin.objects.get(user=user)
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+        print(selection.phase)
+        phase = selection.phase 
+        phase.limit_date += timedelta(days=days_number) 
+        phase.save()
+        selection.save()
+        
+        ActionLog.objects.create(
+            admin=admin,
+            action=CHANGE_DEADLINE,
+            details={"selection_id": selection_id}
+        )
+
+        return True, "the broadcast of the announcement is successfull"
+    
+    @classmethod
+    @transaction.atomic
+    def confirm_discussion_phase_admin(cls, selection_id,user):
+        """
+        Confirms the completion of the discussion phase and progresses to phase 2.
+
+        - Updates the phase to 2.
+        - Sets the start date to the current time.
+        - Sets the limit date based on the number of days defined in `SelectionSettings`.
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, dict) A success flag and the updated selection and phase data.
+
+        Raises:
+            APIException: If the selection or its phase is not found, or if there is an issue.
+        """
+        
+        stat,message= cls.confirm_discussion_phase(selection_id=selection_id)
+        admin = Admin.objects.get(user=user)
+        ActionLog.objects.create(
+            admin=admin,
+            action=CONFIRM_DISCUSSION_PHASE,
+            details={"selection_id": selection_id}
+        )
+        return stat, message
+    
+    
+    @classmethod
+    @transaction.atomic
+    def cancel_selection(cls, selection_id,user):
+        """
+        Confirms the completion of the discussion phase and progresses to phase 2.
+
+        - Updates the phase to 2.
+        - Sets the start date to the current time.
+        - Sets the limit date based on the number of days defined in `SelectionSettings`.
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, dict) A success flag and the updated selection and phase data.
+
+        Raises:
+            APIException: If the selection or its phase is not found, or if there is an issue.
+        """
+        
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+ 
+        if not selection.phase:
+            raise APIException(detail="Phase not associated with the selection.")
+        
+        phase = selection.phase
+
+        phase_settings = cls.get_selection_settings(name=QUOTES)
+        phase_duration_days = phase_settings.phase_days
+        
+        phase.number = 3
+        phase.name = DECISION
+        phase.start_date = timezone.now()
+
+        phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
+        
+        phase.save()
+        admin = Admin.objects.get(user=user)
+        ActionLog.objects.create(
+            admin=admin,
+            action=CANCEL_PROJECT,
+            details={"selection_id": selection_id}
+        )
+        return True, "Project canceled"

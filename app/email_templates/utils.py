@@ -84,7 +84,6 @@ def schedule_email_trigger(model, filter_field, offset_days, action_callback,ema
     try:
         # Calculate the target date
         target_date = now().date()
-        print(f"Target date: {target_date}")
 
         # Base filter condition
         filter_conditions = {

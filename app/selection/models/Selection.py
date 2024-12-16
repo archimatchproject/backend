@@ -43,6 +43,7 @@ class Selection(models.Model):
     )
     is_client_interested = models.BooleanField(default=True)
     is_abandoned = models.BooleanField(default=False)
+    is_blocked = models.BooleanField(default=False)
     
     
     

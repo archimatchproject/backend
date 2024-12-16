@@ -64,4 +64,39 @@ selection_urlpatterns = [
         SelectionViewSet.as_view({"post": "broadcast_announcement"}),
         name="broadcast-announcement",
     ),
+    path(
+        "get-discussion-phase-selections/",
+        SelectionViewSet.as_view({"get": "get_discussion_phase_selections"}),
+        name="get-discussion-phase-selections",
+    ),
+    path(
+        "selection-logs/<int:pk>",
+        SelectionViewSet.as_view({"get": "get_selection_logs"}),
+        name="selection-logs",
+    ),
+    path(
+        "broadcast-selection-announcement/<int:pk>",
+        SelectionViewSet.as_view({"post": "broadcast_selection_announcement"}),
+        name="broadcast-selection-announcement",
+    ),
+    path(
+        "block-selection/<int:pk>",
+        SelectionViewSet.as_view({"post": "block_selection"}),
+        name="block-selection",
+    ),
+    path(
+        "change-selection-deadline/<int:pk>",
+        SelectionViewSet.as_view({"post": "change_selection_deadline"}),
+        name="change-selection-deadline",
+    ),
+    path(
+        "confirm-discussion-phase-admin/<int:pk>",
+        SelectionViewSet.as_view({"post": "confirm_discussion_phase_admin"}),
+        name="confirm-discussion-phase-admin",
+    ),
+    path(
+        "cancel-selection/<int:pk>",
+        SelectionViewSet.as_view({"post": "cancel_selection"}),
+        name="cancel-selection",
+    ),
 ]
