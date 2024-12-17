@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Nous espérons que vous allez bien. Concernant le projet que vous avez
+      sélectionné sur ArchiMatch, il est crucial que vous contactiez le client
+      dès que possible.
+    </p>
+    <p>
+      Vous aviez initialement 5 jours pour cela, mais nous n'avons pas encore eu
+      confirmation de votre part. Nous vous accordons 2 jours supplémentaires
+      pour finaliser cette étape. Passé ce délai, vous risquez de perdre votre
+      sélection et les jetons utilisés..
+    </p>
+    <p>
+      Si vous rencontrez des difficultés ou si vous n'êtes pas disponible pour
+      de nouveaux projets, pensez à désactiver la réception de nouvelles
+      propositions sur votre compte.
+    </p>
+    <p>
+      Nous restons à votre disposition pour toute assistance. Merci de votre
+      attention.
+    </p>
+    <p>Merci pour votre attention.</p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

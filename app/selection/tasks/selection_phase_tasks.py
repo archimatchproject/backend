@@ -41,7 +41,7 @@ def generate_email_triggers(settings:SelectionSettings):
             filter_field="suggested_at",
             offset_days=settings.days_before_call_email,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"selections__isnull": True,"architect__isnull": False},
             email_template="architect_precall_email.html",
             extra_action=None
         ),
@@ -51,7 +51,7 @@ def generate_email_triggers(settings:SelectionSettings):
             filter_field="suggested_at",
             offset_days=settings.days_before_call_email+1,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"selections__isnull": True,"architect__isnull": False},
             email_template="architect_precall_email.html",
             extra_action=None
         ),
@@ -60,7 +60,7 @@ def generate_email_triggers(settings:SelectionSettings):
             filter_field="suggested_at",
             offset_days=settings.days_before_call_email+settings.days_after_call_email,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"selections__isnull": True,"architect__isnull": False},
             email_template="architect_postcall_email.html",
             extra_action=None
         ),
@@ -69,7 +69,7 @@ def generate_email_triggers(settings:SelectionSettings):
             filter_field="suggested_at",
             offset_days=settings.days_to_rediffuse,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"selections__isnull": True,"architect__isnull": False},
             email_template="architect_broadcast_email.html",
             extra_action=broadcast_announcement
         ),
@@ -78,7 +78,7 @@ def generate_email_triggers(settings:SelectionSettings):
             filter_field="suggested_at",
             offset_days=settings.phase_days,
             action_callback=send_reminder_email,
-            extra_conditions={"selections__isnull": True},
+            extra_conditions={"selections__isnull": True,"architect__isnull": False},
             email_template="architect_block_email.html",
             extra_action=bloc_announcement
         ),
