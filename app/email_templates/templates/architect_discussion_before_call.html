@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Nous souhaitons vous rappeler que vous avez sélectionné le projet [nom du
+      projet ou description brève], mais il semble que le client n'ait pas
+      encore été contacté.
+    </p>
+    <p>
+      Pour garantir la réussite de ce projet, veuillez contacter le client dès
+      que possible. Votre réactivité est essentielle pour établir une bonne
+      relation et assurer le bon déroulement du projet.
+    </p>
+    <p>Merci pour votre attention.</p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

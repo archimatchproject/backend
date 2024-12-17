@@ -44,7 +44,7 @@ def generate_email_triggers(settings:SelectionSettings):
             offset_days=settings.days_before_call_email-1,
             action_callback=send_reminder_discussion_email,
             extra_conditions={"phase__number": 1},
-            email_template="architect_precall_email.html",
+            email_template="architect_discussion_before_call.html",
             extra_action=None
         ),
 
@@ -54,7 +54,7 @@ def generate_email_triggers(settings:SelectionSettings):
             offset_days=settings.days_before_call_email,
             action_callback=send_reminder_discussion_email,
             extra_conditions={"phase__number": 1},
-            email_template="architect_precall_email.html",
+            email_template="architect_discussion_call.html",
             extra_action=None
         ),
         EmailTriggerParams(
@@ -72,7 +72,7 @@ def generate_email_triggers(settings:SelectionSettings):
             offset_days=settings.phase_days,
             action_callback=send_reminder_email,
             extra_conditions={"phase__number": 1},
-            email_template="architect_block_email.html",
+            email_template="architect_discussion_block_email.html",
             extra_action=bloc_selection
         ),
     ]
