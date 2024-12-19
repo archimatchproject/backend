@@ -1,5 +1,4 @@
 from app.selection.utils import generate_choices
-from django.utils.translation import gettext_lazy as _
 
 ACCEPTED = "Accepted"
 REFUSED = "Refused"
@@ -11,10 +10,10 @@ SELECTION_STATUS_CHOICES = [
 ]
 
 
-DISCUSSION = 'Discussion'
-QUOTES = 'Quotes'
-DECISION = 'Decision'
-NOT_SELECTED = 'Not Selected'
+DISCUSSION = "Discussion"
+QUOTES = "Quotes"
+DECISION = "Decision"
+NOT_SELECTED = "Not Selected"
 
 # Choices for the phase names
 PHASE_NAME_CHOICES = [
@@ -22,12 +21,11 @@ PHASE_NAME_CHOICES = [
     (QUOTES, QUOTES),
     (DECISION, DECISION),
     (NOT_SELECTED, NOT_SELECTED),
-    
 ]
 
-QUOTE_PENDING = 'Pending'
-QUOTE_ACCEPTED = 'Accepted'
-QUOTE_REFUSED = 'Refused'
+QUOTE_PENDING = "Pending"
+QUOTE_ACCEPTED = "Accepted"
+QUOTE_REFUSED = "Refused"
 QUOTE_STATUS_CHOICES = [
     (QUOTE_PENDING, QUOTE_PENDING),
     (QUOTE_ACCEPTED, QUOTE_ACCEPTED),
@@ -52,10 +50,10 @@ BLOCK_PROJECT = "Block the project"
 REBROADCAST_PROJECT = "Rebroadcast the project"
 CONFIRM_DISCUSSION_PHASE = "Confirm discussion phase"
 
-ACTION_CHOICES  = [
+ACTION_CHOICES = [
     (CHANGE_DEADLINE, CHANGE_DEADLINE),
     (CANCEL_PROJECT, CANCEL_PROJECT),
     (BLOCK_PROJECT, BLOCK_PROJECT),
     (REBROADCAST_PROJECT, REBROADCAST_PROJECT),
-    (CONFIRM_DISCUSSION_PHASE,CONFIRM_DISCUSSION_PHASE)
+    (CONFIRM_DISCUSSION_PHASE, CONFIRM_DISCUSSION_PHASE),
 ]

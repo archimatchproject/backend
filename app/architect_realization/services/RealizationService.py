@@ -9,29 +9,32 @@ Classes:
 """
 
 from django.db import transaction
-
-from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.announcement.models.Need import Need
-from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
+)
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.architect_realization.filters.RealizationFilter import RealizationFilter
 from app.architect_realization.models.Realization import Realization
 from app.architect_realization.models.RealizationImage import RealizationImage
-from app.architect_realization.serializers.RealizationSerializer import RealizationOutputSerializer
-from app.architect_realization.serializers.RealizationSerializer import RealizationPOSTSerializer
-from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.architect_realization.serializers.RealizationSerializer import (
+    RealizationOutputSerializer,
+)
+from app.architect_realization.serializers.RealizationSerializer import (
+    RealizationPOSTSerializer,
+)
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.pagination import CustomPagination
 from app.users import GOLD
 from app.users.models.Architect import Architect
-from django.db.models import Q, Count
 
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
+
 
 class RealizationService:
     """
@@ -47,16 +50,17 @@ class RealizationService:
         Creating new realization
         """
         data = request.data
-        
+
         serializer = RealizationPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-
         needs_data = validated_data.pop("needs")
         user_id = request.user.id
         if not Architect.objects.filter(user__id=user_id).exists():
-            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
+            raise NotFound(
+                detail="Architect not found.", code=status.HTTP_404_NOT_FOUND
+            )
 
         architect = Architect.objects.get(user__id=user_id)
         realization_images = validated_data.pop("realization_images", [])
@@ -72,8 +76,10 @@ class RealizationService:
                     realization=realization,
                     image=image,
                 )
-        return True,RealizationOutputSerializer(realization).data,
-
+        return (
+            True,
+            RealizationOutputSerializer(realization).data,
+        )
 
     @classmethod
     def get_architectural_styles(cls):
@@ -89,9 +95,10 @@ class RealizationService:
             architectural_styles,
             many=True,
         )
-        return True,serializer.data,
-
-        
+        return (
+            True,
+            serializer.data,
+        )
 
     @classmethod
     def get_architect_speciality_needs(cls, request):
@@ -107,12 +114,13 @@ class RealizationService:
         user_id = request.user.id
         architect = Architect.objects.get(user__id=user_id)
 
-        needs = Need.objects.filter(architect_speciality_id=architect.architect_speciality.id)
+        needs = Need.objects.filter(
+            architect_speciality_id=architect.architect_speciality.id
+        )
         serializer = NeedSerializer(needs, many=True)
 
-        return True,serializer.data
-            
-        
+        return True, serializer.data
+
     @classmethod
     def get_realizations_by_category(cls, request, id):
         """
@@ -142,8 +150,6 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
-            
-
 
     @classmethod
     def get_realizations_by_architect(cls, request, id):
@@ -190,7 +196,6 @@ class RealizationService:
                 )
 
         return True, "Realization images updated successfully"
-        
 
     @classmethod
     def get_realizations(cls, request, id):
@@ -207,22 +212,26 @@ class RealizationService:
         try:
             # Filter realizations based on project category
             realizations = Realization.objects.all()
-            
+
             # Filter realizations by architects with a gold badge
             gold_realization_ids = []
             for realization in realizations:
                 architect = realization.architect
                 serializer = ArchitectSerializer(architect)
-                
+
                 # Check if the architect has a gold badge
                 if serializer.get_badge(architect) == GOLD:
                     gold_realization_ids.append(realization.id)
 
             # Get a queryset for filtered realizations
-            gold_realizations_queryset = Realization.objects.filter(id__in=gold_realization_ids)
-            
+            gold_realizations_queryset = Realization.objects.filter(
+                id__in=gold_realization_ids
+            )
+
             # Apply additional filters using RealizationFilter
-            filtered_queryset = RealizationFilter(request.GET, queryset=gold_realizations_queryset).qs
+            filtered_queryset = RealizationFilter(
+                request.GET, queryset=gold_realizations_queryset
+            ).qs
             paginator = cls.pagination_class()
             page = paginator.paginate_queryset(filtered_queryset, request)
             if page is not None:
@@ -237,7 +246,7 @@ class RealizationService:
             raise NotFound(detail="Realizations not found.")
         except Exception as e:
             raise APIException(detail=str(e))
-        
+
     @classmethod
     def get_architect_realizations(cls, request, id):
         """

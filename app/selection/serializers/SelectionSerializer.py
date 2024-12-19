@@ -8,7 +8,6 @@ Classes:
 
 from rest_framework import serializers
 from app.selection.models.Selection import Selection
-from app.selection.models.SelectionSettings import SelectionSettings
 from app.selection.serializers.PhaseSerializer import PhaseSerializer
 from app.selection.serializers.QuoteSerializer import QuoteSerializer
 from app.users.models import Architect
