@@ -8,12 +8,11 @@ Classes:
 
 """
 
-
+from django.db.models import Count
 from rest_framework.exceptions import APIException
 from django.utils import timezone
 from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
 from app.announcement.models.Announcement import Announcement
-from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer, AnnouncementSerializer
 from app.core.pagination import CustomPagination
 from app.selection.filters import SelectionFilter
 from app.selection.models.ActionLog import ActionLog
@@ -25,13 +24,13 @@ from app.selection.serializers.SelectionSerializer import SelectionSerializer,Se
 from app.users.models.Admin import Admin
 from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
-from rest_framework import serializers
 from datetime import datetime, timedelta
 from app.selection import BLOCK_PROJECT, CANCEL_PROJECT, CHANGE_DEADLINE, CONFIRM_DISCUSSION_PHASE, DECISION, DISCUSSION, NOT_SELECTED, QUOTES, REBROADCAST_PROJECT
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer
 
 
 class SelectionService:
@@ -533,20 +532,26 @@ class SelectionService:
     @transaction.atomic
     def cancel_selection(cls, selection_id,user):
         """
-        Confirms the completion of the discussion phase and progresses to phase 2.
+        Cancels a project selection, updates its phase to 'Decision' (phase 3), 
+        and logs the action performed by an admin.
 
-        - Updates the phase to 2.
+        - Updates the phase number to 3.
+        - Sets the phase name to 'Decision'.
         - Sets the start date to the current time.
-        - Sets the limit date based on the number of days defined in `SelectionSettings`.
+        - Calculates and sets the limit date based on the number of days defined 
+          in `SelectionSettings` for the 'Quotes' phase.
+        - Logs the cancellation action performed by the admin associated with the user.
 
         Args:
             selection_id (int): The ID of the selection to update.
+            user (User): The user performing the cancellation action.
 
         Returns:
-            tuple: (bool, dict) A success flag and the updated selection and phase data.
+            tuple: (bool, str) A success flag and a message indicating the project was canceled.
 
         Raises:
-            APIException: If the selection or its phase is not found, or if there is an issue.
+            APIException: If the selection does not have an associated phase, 
+                          or if any other issue occurs during the process.
         """
         
         selection = Selection.objects.select_for_update().get(id=selection_id)
@@ -573,3 +578,45 @@ class SelectionService:
             details={"selection_id": selection_id}
         )
         return True, "Project canceled"
+    
+    @classmethod
+    def get_quote_phase_selections(self, request):
+        """
+        Handle GET request and return paginated selections in the 'QUOTES' phase 
+        with no associated quotes and limited time remaining.
+
+        This method retrieves all selections that:
+        - Are in the 'QUOTES' phase.
+        - Have a limit date within the next `days_for_admin_display` days (as defined in `SelectionSettings`).
+        - Do not have any associated quotes (quote count is 0).
+
+        Pagination is applied to the filtered results based on the request parameters.
+
+        Args:
+            request (HttpRequest): The incoming HTTP request.
+
+        Returns:
+            Response: A paginated response containing the filtered selections with no quotes, 
+                    or an error message if the data retrieval fails.
+
+        Raises:
+            APIException: If there is an issue with data retrieval or processing.
+        """
+
+        selection_settings = self.get_selection_settings(name=QUOTES)
+        today = now().date()
+        selections = Selection.objects.annotate(
+            quote_count=Count('quotes')  # Annotate the count of related quotes
+        ).filter(
+            phase__name=QUOTES,
+            phase__limit_date__lte=today + timedelta(days=selection_settings.days_for_admin_display),
+            # quote_count=0  
+        ).order_by("phase__start_date")
+        
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(selections, request)
+        if page is not None:
+            serializer = SelectionSerializer(page, many=True,context={'selection_settings': selection_settings})
+            return paginator.get_paginated_response(serializer.data)
+        
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)

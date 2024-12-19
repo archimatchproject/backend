@@ -14,14 +14,14 @@ Functions:
 
 """
 
+from app.selection import QUOTES
 from background_task import background
 
 
 from app.email_templates.utils import schedule_email_trigger
-from app.selection import DISCUSSION
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.selection.utils import send_reminder_discussion_email, send_reminder_email
+from app.selection.utils import send_reminder_discussion_email
 from collections import namedtuple
 
 EmailTriggerParams = namedtuple(
@@ -54,8 +54,11 @@ def generate_email_triggers(settings: SelectionSettings):
             filter_field="phase__start_date",
             offset_days=settings.days_before_call_email - 1,
             action_callback=send_reminder_discussion_email,
-            extra_conditions={"phase__number": 1},
-            email_template="architect_discussion_before_call.html",
+            extra_conditions={
+                "phase__number": 2,
+                "quotes__isnull": True,
+            },
+            email_template="architect_quote_before_call.html",
             extra_action=None,
         ),
         EmailTriggerParams(
@@ -63,8 +66,11 @@ def generate_email_triggers(settings: SelectionSettings):
             filter_field="phase__start_date",
             offset_days=settings.days_before_call_email,
             action_callback=send_reminder_discussion_email,
-            extra_conditions={"phase__number": 1},
-            email_template="architect_discussion_call.html",
+            extra_conditions={
+                "phase__number": 2,
+                "quotes__isnull": True,
+            },
+            email_template="architect_quote_before_call.html",
             extra_action=None,
         ),
         EmailTriggerParams(
@@ -72,41 +78,23 @@ def generate_email_triggers(settings: SelectionSettings):
             filter_field="phase__start_date",
             offset_days=settings.days_before_call_email + 2,
             action_callback=send_reminder_discussion_email,
-            extra_conditions={"phase__number": 1},
-            email_template="architect_discussion_before_call.html",
+            extra_conditions={
+                "phase__number": 2,
+                "quotes__isnull": True,
+            },
+            email_template="architect_phase_after_call.html",
             extra_action=None,
-        ),
-        EmailTriggerParams(
-            model=Selection,
-            filter_field="phase__start_date",
-            offset_days=settings.phase_days,
-            action_callback=send_reminder_email,
-            extra_conditions={"phase__number": 1},
-            email_template="architect_discussion_block_email.html",
-            extra_action=bloc_selection,
         ),
     ]
 
 
-def bloc_selection(selection: Selection):
-    """
-    Blocks an selection instance.
-
-    Args:
-        selection (Selection): The selection instance to block.
-
-    """
-    selection.is_blocked = True
-    selection.save()
-
-
 @background(schedule=0)
-def process_email_discussion_triggers():
+def process_email_quote_triggers():
     """
     Periodically checks and triggers email notifications based on date conditions.
     """
     try:
-        settings = SelectionSettings.objects.filter(name=DISCUSSION).first()
+        settings = SelectionSettings.objects.filter(name=QUOTES).first()
         if not settings:
             print("No SelectionSettings found. Exiting...")
             return

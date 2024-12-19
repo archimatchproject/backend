@@ -5,10 +5,6 @@ This module contains the AppConfig class for configuring the 'app.announcement' 
 from django.apps import AppConfig
 
 
-
-
-
-
 class SelectionConfig(AppConfig):
     """
     AppConfig for the 'app.selection' Django application.
@@ -20,7 +16,7 @@ class SelectionConfig(AppConfig):
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "app.selection"
-    
+
     def ready(self):
         # Schedule the task if not already scheduled
         from background_task.models import Task
@@ -28,10 +24,21 @@ class SelectionConfig(AppConfig):
 
         import pytz
         from app.selection.tasks.selection_phase_tasks import process_email_triggers
-        timezone = pytz.timezone('UTC')
+
+        timezone = pytz.timezone("UTC")
         now = datetime.now(timezone)
-        next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-        if not Task.objects.filter(task_name='app.selection.tasks.selection_phase_tasks.process_email_triggers').exists():
+        next_midnight = (now + timedelta(days=1)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        if not Task.objects.filter(
+            task_name="app.selection.tasks.selection_phase_tasks.process_email_triggers"
+        ).exists():
             process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)
-        if not Task.objects.filter(task_name='app.selection.tasks.selection_phase_tasks.process_email_discussion_triggers').exists():
+        if not Task.objects.filter(
+            task_name="app.selection.tasks.selection_phase_tasks.process_email_discussion_triggers"
+        ).exists():
+            process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)
+        if not Task.objects.filter(
+            task_name="app.selection.tasks.selection_phase_tasks.process_email_quote_triggers"
+        ).exists():
             process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)

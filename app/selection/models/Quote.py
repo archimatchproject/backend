@@ -17,9 +17,9 @@ Attributes:
 
 from django.db import models
 from app.core.models.BaseModel import BaseModel
-from app.selection.models.Selection import Selection 
-from app.selection import QUOTE_PENDING,QUOTE_STATUS_CHOICES
-from django.core.exceptions import ValidationError
+from app.selection.models.Selection import Selection
+from app.selection import QUOTE_PENDING, QUOTE_STATUS_CHOICES
+
 
 class Quote(BaseModel):
     """
@@ -31,15 +31,14 @@ class Quote(BaseModel):
         file (FileField): The uploaded PDF file for the quote.
         created_at (DateTimeField): The timestamp when the quote was created.
     """
-    
-    selection = models.ForeignKey(Selection, on_delete=models.CASCADE, related_name='quotes')
-    file = models.FileField(upload_to='quotes/')  # PDF validation
-    status = models.CharField(
-        max_length=10,
-        choices=QUOTE_STATUS_CHOICES,
-        default=QUOTE_PENDING
+
+    selection = models.ForeignKey(
+        Selection, on_delete=models.CASCADE, related_name="quotes"
     )
-    
+    file = models.FileField(upload_to="quotes/")  # PDF validation
+    status = models.CharField(
+        max_length=10, choices=QUOTE_STATUS_CHOICES, default=QUOTE_PENDING
+    )
 
     def __str__(self):
         return f"Quote {self.id} for Selection {self.selection.id}"

@@ -99,4 +99,9 @@ selection_urlpatterns = [
         SelectionViewSet.as_view({"post": "cancel_selection"}),
         name="cancel-selection",
     ),
+    path(
+        "get-quote-phase-selections/",
+        SelectionViewSet.as_view({"get": "get_quote_phase_selections"}),
+        name="get-quote-phase-selections",
+    ),
 ]
