@@ -441,7 +441,7 @@ class SelectionService:
         )
 
         if not logs.exists():
-            raise APIException(detail="No logs found for this selection.")
+            return True, []
         serializer = ActionLogSerializer(logs, many=True)
         return True, serializer.data
 
