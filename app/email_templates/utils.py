@@ -68,12 +68,18 @@ def render_to_pdf(template_src, context_dict):
     return None
 
 
-
-
-def schedule_email_trigger(model, filter_field, offset_days, action_callback,email_template, extra_conditions=None,extra_action=None):
+def schedule_email_trigger(
+    model,
+    filter_field,
+    offset_days,
+    action_callback,
+    email_template,
+    extra_conditions=None,
+    extra_action=None,
+):
     """
     Generalized function to trigger actions on a specific day with dynamic conditions.
-    
+
     Args:
         model (Model): The Django model to query.
         filter_field (str): The field in the model to compare with today (e.g., 'suggested_at').
@@ -100,9 +106,8 @@ def schedule_email_trigger(model, filter_field, offset_days, action_callback,ema
 
         # Execute the action for each object
         for obj in objects_to_process:
-            action_callback(obj,email_template)
+            action_callback(obj, email_template)
             if extra_action:
                 extra_action(obj)
     except Exception as e:
         print(f"Error in schedule_email_trigger: {e}")
-

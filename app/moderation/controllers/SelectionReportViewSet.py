@@ -9,23 +9,24 @@ from rest_framework.permissions import IsAuthenticated
 from app.moderation.controllers.ManageReportingPermission import (
     ManageReportingPermission,
 )
-from app.moderation.models.ArchitectReport import ArchitectReport
-from app.moderation.serializers.ArchitectReportSerializer import (
-    ArchitectReportSerializer,
-)
-from app.moderation.services.ArchitectReportService import ArchitectReportService
+
+from app.moderation.services.SelectionReportService import SelectionReportService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
+from app.moderation.models.SelectionReport import SelectionReport
+from app.moderation.serializers.SelectionReportSerializer import (
+    SelectionReportSerializer,
+)
 
 
-class ArchitectReportViewSet(viewsets.ModelViewSet):
+class SelectionReportViewSet(viewsets.ModelViewSet):
     """
     ViewSet for the ArchitectReport model.
     """
 
-    queryset = ArchitectReport.objects.all()
-    serializer_class = ArchitectReportSerializer
+    queryset = SelectionReport.objects.all()
+    serializer_class = SelectionReportSerializer
 
     def get_permissions(self):
         """
@@ -54,15 +55,15 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         Override the list method to return grouped ArchitectReport objects.
         """
-        return ArchitectReportService.get_grouped_architect_reports(request)
+        return SelectionReportService.get_grouped_selection_reports(request)
 
     @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
-        Override the create method to use ArchitectReportService for handling the creation
+        Override the create method to use SelectionReportService for handling the creation
         of an ArchitectReport.
         """
-        success, data = ArchitectReportService.create_architect_report(request)
+        success, data = SelectionReportService.create_selection_report(request)
         return build_response(
             success=success, data=data, status=status.HTTP_201_CREATED
         )
@@ -73,7 +74,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        success, data = ArchitectReportService.get_decisions()
+        success, data = SelectionReportService.get_decisions()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False)
@@ -82,16 +83,16 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        success, data = ArchitectReportService.get_reasons()
+        success, data = SelectionReportService.get_reasons()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True)
     @handle_service_exceptions
     def change_status(self, request, pk=None):
         """
-        Change the status of an ArchitectReport.
+        Change the status of an SelectionReport.
         """
-        success, data = ArchitectReportService.change_architect_report_status(
+        success, data = SelectionReportService.change_selection_report_status(
             request, pk
         )
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
@@ -104,7 +105,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
 
         This method processes the decision for the provided report IDs.
         """
-        success, message = ArchitectReportService.execute_decision(request)
+        success, message = SelectionReportService.execute_decision(request)
         return build_response(
             success=success, message=message, status=status.HTTP_200_OK
         )

@@ -1,6 +1,18 @@
+ARCHITECT = "Architect"
+PROEJCT = "Project"
+REVIEW = "Review"
+SELECTION = "Selection"
+
 REPORT_TYPES = [
-    ("Architect", "Architect"),
-    ("Project", "Project"),
-    ("Review", "Review"),
+    (ARCHITECT, ARCHITECT),
+    (PROEJCT, PROEJCT),
+    (REVIEW, REVIEW),
+    (SELECTION, SELECTION),
 ]
-STATUS_CHOICES = [("Not Treated", "Not Treated"), ("Treated", "Treated")]
+
+TREATED = "Treated"
+NOT_TREATED = "Not Treated"
+STATUS_CHOICES = [
+    (NOT_TREATED, NOT_TREATED),
+    (TREATED, TREATED),
+]

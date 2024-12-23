@@ -6,13 +6,16 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
+from app.moderation.controllers.ManageReportingPermission import (
+    ManageReportingPermission,
+)
 from app.moderation.models.ProjectReport import ProjectReport
 from app.moderation.serializers.ProjectReportSerializer import ProjectReportSerializer
 from app.moderation.services.ProjectReportService import ProjectReportService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
+
 
 class ProjectReportViewSet(viewsets.ModelViewSet):
     """
@@ -50,9 +53,10 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         Override the create method to use ProjectReportService for handling the creation
         of a ProjectReport.
         """
-        success,data = ProjectReportService.create_project_report(request)
-        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
+        success, data = ProjectReportService.create_project_report(request)
+        return build_response(
+            success=success, data=data, status=status.HTTP_201_CREATED
+        )
 
     @action(detail=False)
     @handle_service_exceptions
@@ -60,9 +64,8 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        success,data = ProjectReportService.get_decisions()
+        success, data = ProjectReportService.get_decisions()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=False)
     @handle_service_exceptions
@@ -70,9 +73,8 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        success,data = ProjectReportService.get_reasons()
+        success, data = ProjectReportService.get_reasons()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True)
     @handle_service_exceptions
@@ -80,9 +82,8 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         Change the status of an ProjectReport.
         """
-        success,data = ProjectReportService.change_architect_report_status(request, pk)
+        success, data = ProjectReportService.change_architect_report_status(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True)
     @handle_service_exceptions
@@ -92,9 +93,11 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
 
         This method processes the decision for the provided report IDs.
         """
-        success,message = ProjectReportService.execute_decision(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ProjectReportService.execute_decision(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @handle_service_exceptions
-    def list(self,request):
+    def list(self, request):
         return ProjectReportService.project_reports_get_all(request)

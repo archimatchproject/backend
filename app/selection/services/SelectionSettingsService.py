@@ -1,7 +1,7 @@
 """
 Module: Selection Settings Service
 
-This module defines the `SelectionSettingsService` class that handles operations 
+This module defines the `SelectionSettingsService` class that handles operations
 related to `SelectionSettings`, such as retrieving and updating the selection settings.
 
 Classes:
@@ -12,7 +12,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.exceptions import APIException
 from django.db import transaction
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.selection.serializers.SelectionSettingsSerializer import SelectionSettingsSerializer
+from app.selection.serializers.SelectionSettingsSerializer import (
+    SelectionSettingsSerializer,
+)
 from app.selection import (
     PHASE_DAYS_CHOICES,
     DAYS_BEFORE_CALL_EMAIL_CHOICES,
@@ -24,6 +26,7 @@ from app.selection import (
     DAYS_FOR_ADMIN_MANAGEMENT_CHOICES,
 )
 
+
 class SelectionSettingsService:
     """
     Service class for handling operations related to `SelectionSettings`.
@@ -32,7 +35,7 @@ class SelectionSettingsService:
     """
 
     @classmethod
-    def get_selection_settings(cls, request,pk):
+    def get_selection_settings(cls, request, pk):
         """
         Retrieve the selection settings.
 
@@ -40,7 +43,8 @@ class SelectionSettingsService:
             request (HttpRequest): The HTTP request object.
 
         Returns:
-            tuple: A tuple containing a success flag (bool) and the serialized selection settings data (dict).
+            tuple: A tuple containing a success flag (bool) and the serialized selection settings
+            data (dict).
 
         Raises:
             APIException: If no `SelectionSettings` instance exists.
@@ -48,7 +52,7 @@ class SelectionSettingsService:
         settings = SelectionSettings.objects.get(id=pk)
         if not settings:
             raise APIException("Selection settings not configured.")
-        
+
         serializer = SelectionSettingsSerializer(settings)
         return True, serializer.data
 
@@ -59,11 +63,13 @@ class SelectionSettingsService:
         Update a specific selection setting.
 
         Args:
-            data (dict): A dictionary containing the field name (`name`) and its updated value (`value`).
+            data (dict): A dictionary containing the field name (`name`) and its updated value
+            (`value`).
             pk (int): The primary key of the SelectionSettings instance to update.
 
         Returns:
-            tuple: A tuple containing a success flag (bool) and the updated serialized selection settings data (dict).
+            tuple: A tuple containing a success flag (bool) and the updated serialized selection
+            settings data (dict).
 
         Raises:
             ValidationError: If validation fails for the updated field.
@@ -74,14 +80,16 @@ class SelectionSettingsService:
             settings = SelectionSettings.objects.get(id=pk)
         except SelectionSettings.DoesNotExist:
             raise APIException("Selection settings not configured.")
-        
+
         field_name = data.get("name")
-        
+
         new_value = data.get("value")
 
         if not hasattr(settings, field_name):
-            raise ValidationError(detail=f"Field '{field_name}' does not exist in SelectionSettings.")
-        
+            raise ValidationError(
+                detail=f"Field '{field_name}' does not exist in SelectionSettings."
+            )
+
         # Dynamically update the field value
         setattr(settings, field_name, new_value)
 
@@ -92,7 +100,6 @@ class SelectionSettingsService:
         serializer = SelectionSettingsSerializer(settings)
         return True, serializer.data
 
-    
     @classmethod
     def get_selection_settings_choices(cls, request):
         """
@@ -102,7 +109,8 @@ class SelectionSettingsService:
             request (HttpRequest): The HTTP request object.
 
         Returns:
-            tuple: A tuple containing a success flag (bool) and the serialized selection settings data (dict).
+            tuple: A tuple containing a success flag (bool) and the serialized selection settings
+            data (dict).
 
         Raises:
             APIException: If no `SelectionSettings` instance exists.
@@ -117,4 +125,4 @@ class SelectionSettingsService:
             "times_to_unlock_project": TIMES_TO_UNLOCK_PROJECT_CHOICES,
             "days_for_admin_management": DAYS_FOR_ADMIN_MANAGEMENT_CHOICES,
         }
-        return True,data
+        return True, data

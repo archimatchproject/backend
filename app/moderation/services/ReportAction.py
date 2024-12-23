@@ -13,6 +13,8 @@ from datetime import date
 from datetime import timedelta
 
 from app.moderation.models.Warning import Warning
+from project_core.django import base as settings
+from app.email_templates.signals import api_success_signal
 
 
 class BaseAction(ABC):
@@ -201,6 +203,66 @@ class ConservationProjet(BaseAction):
 
 
 # -------------------------------------------------------------------------------------------------
+# Actions for Selection Reports
+# -------------------------------------------------------------------------------------------------
+class AddressWarningArchitect(BaseAction):
+    """
+    Action to address a warning to an architect.
+
+    This class implements the logic to issue a warning to an architect based on a review report.
+    """
+
+    def execute(reported, admin):
+        """
+        Execute the action to address a warning to an architect.
+        """
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        architect = reported.architect
+        signal_data = {
+            "template_name": "architect_warning_email.html",
+            "context": {
+                "first_name": architect.user.first_name,
+                "last_name": architect.user.last_name,
+                "email": architect.user.email,
+            },
+            "to_email": architect.user.email,
+            "subject": "Warning: Architect Project Selection",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=None, data=signal_data)
+        Warning.objects.create(issued_by=admin, issued_for=reported.architect.user)
+
+
+class BlockSelection(BaseAction):
+    """
+    Action to block a selection.
+
+    This class implements the logic to block a selection based on a report.
+    """
+
+    def execute(reported, admin):
+        """
+        Execute the action to block a selection.
+        """
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        architect = reported.architect
+        signal_data = {
+            "template_name": "architect_block_project_email.html",
+            "context": {
+                "first_name": architect.user.first_name,
+                "last_name": architect.user.last_name,
+                "email": architect.user.email,
+            },
+            "to_email": architect.user.email,
+            "subject": "Warning: Architect Project Selection",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=None, data=signal_data)
+        reported.isBlocked = True
+        reported.save()
+
+
+# -------------------------------------------------------------------------------------------------
 # No Action
 # -------------------------------------------------------------------------------------------------
 
@@ -237,4 +299,9 @@ PROJECT_DECISION_ACTION_MAP = {
     10: SuppressionProjet,
     11: ConservationProjet,
     12: NoAction,
+}
+
+SELECTION_DECISION_ACTION_MAP = {
+    13: AddressWarningArchitect,
+    14: BlockSelection,
 }
