@@ -39,7 +39,9 @@ class ProjectReportService:
     Methods:
         create_project_report(request): Handles validation and creation of a new ProjectReport.
     """
+
     pagination_class = CustomPagination
+
     @classmethod
     def create_project_report(cls, request):
         """
@@ -68,11 +70,13 @@ class ProjectReportService:
                 )
                 project_report.reasons.set(reasons)
                 project_report.save()
-                return True,ProjectReportSerializer(project_report).data
+                return True, ProjectReportSerializer(project_report).data
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
-                    {"detail": "A report for this project by this architect already exists."}
+                    {
+                        "detail": "A report for this project by this architect already exists."
+                    }
                 )
             raise APIException(detail=f"Error creating project report: {str(e)}")
         except Architect.DoesNotExist:
@@ -93,7 +97,7 @@ class ProjectReportService:
         """
         decisions = Decision.objects.filter(report_type="Project")
         serialized_decisions = DecisionSerializer(decisions, many=True)
-        return True,serialized_decisions.data
+        return True, serialized_decisions.data
 
     @classmethod
     def get_reasons(cls):
@@ -106,7 +110,7 @@ class ProjectReportService:
         """
         reasons = Reason.objects.filter(report_type="Project")
         serialized_reasons = ReasonSerializer(reasons, many=True)
-        return True,serialized_reasons.data
+        return True, serialized_reasons.data
 
     @classmethod
     def change_architect_report_status(cls, request, pk):
@@ -128,8 +132,8 @@ class ProjectReportService:
 
         report.status = new_status
         report.save()
-        return True,ProjectReportSerializer(report).data
-    
+        return True, ProjectReportSerializer(report).data
+
     @classmethod
     def execute_decision(cls, request):
         """
@@ -146,9 +150,10 @@ class ProjectReportService:
         decision_id = request.data.get("decision_id")
         user = request.user
 
-
         if not report_ids or not decision_id:
-            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
+            raise serializers.ValidationError(
+                detail="Report IDs and Decision ID are required."
+            )
 
         action = PROJECT_DECISION_ACTION_MAP.get(decision_id)
         if not action:
@@ -162,7 +167,7 @@ class ProjectReportService:
             decision_date=timezone.now(),
         )
 
-        return True,"Decision Executed Successfully."
+        return True, "Decision Executed Successfully."
 
     @classmethod
     def project_reports_get_all(cls, request):

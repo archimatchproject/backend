@@ -5,3 +5,4 @@ from app.moderation.models.ProjectReport import ProjectReport
 from app.moderation.models.Reason import Reason
 from app.moderation.models.ReviewReport import ReviewReport
 from app.moderation.models.Warning import Warning
+from app.moderation.models.SelectionReport import SelectionReport

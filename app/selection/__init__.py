@@ -1,3 +1,4 @@
+import app.announcement
 from app.selection.utils import generate_choices
 
 ACCEPTED = "Accepted"
@@ -56,4 +57,12 @@ ACTION_CHOICES = [
     (BLOCK_PROJECT, BLOCK_PROJECT),
     (REBROADCAST_PROJECT, REBROADCAST_PROJECT),
     (CONFIRM_DISCUSSION_PHASE, CONFIRM_DISCUSSION_PHASE),
+]
+
+PENDING = "Pending"
+
+UNLOCK_REQUEST_STATUS_CHOICES = [
+    (ACCEPTED, ACCEPTED),
+    (PENDING, PENDING),
+    (REFUSED, REFUSED),
 ]

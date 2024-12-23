@@ -69,3 +69,15 @@
   fields:
     name: "None"
     report_type: "Project"
+
+- model: moderation.Decision
+  pk: 13
+  fields:
+    name: "Adresser un avertissement"
+    report_type: "Selection"
+
+- model: moderation.Decision
+  pk: 14
+  fields:
+    name: "Bloquer le projet"
+    report_type: "Selection"

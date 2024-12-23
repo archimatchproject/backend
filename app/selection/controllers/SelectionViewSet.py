@@ -26,7 +26,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
 
     Attributes:
         queryset (QuerySet): The queryset used for retrieving selections.
-        serializer_class (Type[serializers.ModelSerializer]): The serializer class used for selection data.
+        serializer_class (Type[serializers.ModelSerializer]): The serializer class used for
+        selection data.
     """
 
     queryset = Selection.objects.all()
@@ -61,11 +62,12 @@ class SelectionViewSet(viewsets.ModelViewSet):
 
         Args:
             request (Request): The request object containing any necessary data for the update.
-            pk (int, optional): The primary key of the announcement for which selections are retrieved.
+            pk (int, optional): The primary key of the announcement for which selections are
+            retrieved.
 
         Returns:
-            Response: The response object indicating success and containing the data of the selections,
-                    or an error message if the operation fails.
+            Response: The response object indicating success and containing the data of the
+            selections, or an error message if the operation fails.
         """
         success, data = SelectionService.get_announcement_selections(pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
@@ -108,7 +110,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
     @handle_service_exceptions
     def confirm_discussion_phase(self, request, pk=None):
         """
-        Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress
+        to phase 2.
 
         Args:
             pk (int): The ID of the selection to update.
@@ -170,7 +173,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             request (HttpRequest): The incoming HTTP request.
 
         Returns:
-            Response: A paginated response containing not selected announcements objects or an error message.
+            Response: A paginated response containing not selected announcements objects or an
+            error message.
         """
 
         return SelectionService.get_not_selected_announcements(request)
@@ -200,7 +204,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
         Handle GET request and return paginated not selected announcements objects.
 
         This method retrieves all not selected announcements objects that are in the
-        'DISCUSSION' phase and have 3, 2, 1, or 0 days left until the limit date. Pagination is applied
+        'DISCUSSION' phase and have 3, 2, 1, or 0 days left until the limit date. Pagination
+        is applied
         based on the parameters in the request.
 
         Args:
@@ -303,7 +308,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
     @handle_service_exceptions
     def confirm_discussion_phase_admin(self, request, pk=None):
         """
-        Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress
+        to phase 2.
 
         Args:
             pk (int): The ID of the selection to update.
@@ -323,7 +329,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
     @handle_service_exceptions
     def cancel_selection(self, request, pk=None):
         """
-        Endpoint to confirm the completion of the discussion phase (phase 1) and progress to phase 2.
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress
+        to phase 2.
 
         Args:
             pk (int): The ID of the selection to update.
@@ -348,7 +355,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
 
         This method retrieves all selections that:
         - Are in the 'QUOTES' phase.
-        - Have a limit date within the next `days_for_admin_display` days (as defined in `SelectionSettings`).
+        - Have a limit date within the next `days_for_admin_display` days
+        (as defined in `SelectionSettings`).
         - Do not have any associated quotes (quote count is 0).
 
         Pagination is applied to the filtered results based on the request parameters.

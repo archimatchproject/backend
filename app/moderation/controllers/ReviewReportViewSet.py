@@ -6,13 +6,16 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
+from app.moderation.controllers.ManageReportingPermission import (
+    ManageReportingPermission,
+)
 from app.moderation.models.ReviewReport import ReviewReport
 from app.moderation.serializers.ReviewReportSerializer import ReviewReportSerializer
 from app.moderation.services.ReviewReportService import ReviewReportService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
+
 
 class ReviewReportViewSet(viewsets.ModelViewSet):
     """
@@ -50,9 +53,10 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         Override the create method to use ReviewReportService for handling the creation
         of a ReviewReport.
         """
-        success,data = ReviewReportService.create_review_report(request)
-        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
+        success, data = ReviewReportService.create_review_report(request)
+        return build_response(
+            success=success, data=data, status=status.HTTP_201_CREATED
+        )
 
     @action(detail=False)
     @handle_service_exceptions
@@ -60,7 +64,7 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible decisions for the corresponding type.
         """
-        success,data = ReviewReportService.get_decisions()
+        success, data = ReviewReportService.get_decisions()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False)
@@ -69,7 +73,7 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve all possible reasons for the corresponding type.
         """
-        success,data = ReviewReportService.get_reasons()
+        success, data = ReviewReportService.get_reasons()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True)
@@ -78,9 +82,8 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         """
         Change the status of an ReviewReport.
         """
-        success,data = ReviewReportService.change_architect_report_status(request, pk)
+        success, data = ReviewReportService.change_architect_report_status(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True)
     @handle_service_exceptions
@@ -88,9 +91,9 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         """
         Execute decision of an ReviewReport.
         """
-        success,data = ReviewReportService.execute_decision(request, pk)
+        success, data = ReviewReportService.execute_decision(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
-    def list(self,request):
+    def list(self, request):
         return ReviewReportService.review_reports_get_all(request)

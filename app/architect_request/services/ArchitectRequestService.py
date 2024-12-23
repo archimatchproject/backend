@@ -13,12 +13,14 @@ from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
-from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
+)
+from app.announcement.serializers.ProjectCategorySerializer import (
+    ProjectCategorySerializer,
+)
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.architect_request import AWAITING_DECISION, AWAITING_DEMO, TIME_SLOT_CHOICES
@@ -27,11 +29,15 @@ from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
     ArchitectRequestRescheduleSerializer,
 )
-from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
+from app.architect_request.serializers.ArchitectRequestSerializer import (
+    ArchitectAcceptSerializer,
+)
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
 )
-from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
+from app.architect_request.serializers.ArchitectRequestSerializer import (
+    ArchitectRequestSerializer,
+)
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.Note import Note
@@ -51,9 +57,10 @@ from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
 from django.utils import timezone
 from django.db.models import Q
-from django.utils import timezone
-from rest_framework import serializers
+
 from datetime import datetime
+
+
 class ArchitectRequestService:
     """
     Service class for ArchitectRequest operations.
@@ -81,7 +88,9 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             architect_speciality_id = data.get("architect_speciality")
-            architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
+            architect_speciality = ArchitectSpeciality.objects.get(
+                pk=architect_speciality_id
+            )
 
             field_names = [
                 "first_name",
@@ -120,8 +129,7 @@ class ArchitectRequestService:
             }
             api_success_signal.send(sender=cls, data=signal_data)
 
-            return True,ArchitectRequestSerializer(architect_request).data
-
+            return True, ArchitectRequestSerializer(architect_request).data
 
     @classmethod
     def admin_accept_architect_request(cls, architect_request_id, request):
@@ -139,7 +147,9 @@ class ArchitectRequestService:
         architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
 
         # Calculate the scheduled datetime for the architect request
-        meeting_naive_datetime = datetime.combine(architect_request.date, architect_request.time_slot)
+        meeting_naive_datetime = datetime.combine(
+            architect_request.date, architect_request.time_slot
+        )
         meeting_aware_datetime = timezone.make_aware(
             meeting_naive_datetime, timezone.get_current_timezone()
         )
@@ -208,7 +218,6 @@ class ArchitectRequestService:
             api_success_signal.send(sender=cls, data=signal_data)
 
             return True, ArchitectSerializer(architect).data
-                
 
     @classmethod
     def admin_refuse_architect_request(cls, pk):
@@ -239,8 +248,8 @@ class ArchitectRequestService:
         }
         api_success_signal.send(sender=cls, data=signal_data)
 
-        return True,ArchitectRequestSerializer(architect_request).data
-        
+        return True, ArchitectRequestSerializer(architect_request).data
+
     @classmethod
     def admin_assign_responsable(cls, pk, admin_id):
         """
@@ -259,9 +268,11 @@ class ArchitectRequestService:
         architect_request.meeting_responsable = admin
         architect_request.save()
 
-        return True,ArchitectRequestSerializer(architect_request).data,
-            
-        
+        return (
+            True,
+            ArchitectRequestSerializer(architect_request).data,
+        )
+
     @classmethod
     def add_note_to_architect_request(cls, architect_request_id, data):
         """
@@ -286,16 +297,16 @@ class ArchitectRequestService:
             content_object=architect_request,
         )
 
-        return True,NoteSerializer(note).data
-        
+        return True, NoteSerializer(note).data
+
     @classmethod
     def architect_request_paginated(cls, request):
         """
         Handle GET request and return paginated ArchitectRequest objects filtered by status.
 
-        This method retrieves ArchitectRequest objects with status 'Awaiting Demo' or 
-        'Awaiting Decision', applies pagination based on the parameters in the request, 
-        and returns the paginated results. If pagination is not applied correctly, it 
+        This method retrieves ArchitectRequest objects with status 'Awaiting Demo' or
+        'Awaiting Decision', applies pagination based on the parameters in the request,
+        and returns the paginated results. If pagination is not applied correctly, it
         returns a 400 Bad Request response.
 
         Args:
@@ -307,21 +318,18 @@ class ArchitectRequestService:
         cls.update_request_statuses()
         queryset = ArchitectRequest.objects.filter(
             status__in=[AWAITING_DEMO, AWAITING_DECISION]
-        ).order_by('date', 'time_slot')
+        ).order_by("date", "time_slot")
 
         filtered_queryset = ArchitectRequestFilter(request.GET, queryset=queryset).qs
-        
+
         paginator = cls.pagination_class()
 
-       
         page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
             serializer = ArchitectRequestSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-       
         return Response([], status=status.HTTP_400_BAD_REQUEST)
-
 
     @classmethod
     def get_all_project_categories(cls):
@@ -337,7 +345,7 @@ class ArchitectRequestService:
         """
         categories = ProjectCategory.objects.all()
         serializer = ProjectCategorySerializer(categories, many=True)
-        return True,serializer.data
+        return True, serializer.data
 
     @classmethod
     def get_all_property_types(cls):
@@ -353,7 +361,7 @@ class ArchitectRequestService:
         """
         property_types = PropertyType.objects.all()
         serializer = PropertyTypeSerializer(property_types, many=True)
-        return True,serializer.data
+        return True, serializer.data
 
     @classmethod
     def get_all_work_types(cls):
@@ -369,7 +377,7 @@ class ArchitectRequestService:
         """
         work_types = WorkType.objects.all()
         serializer = WorkTypeSerializer(work_types, many=True)
-        return True,serializer.data
+        return True, serializer.data
 
     @classmethod
     def get_all_architectural_styles(cls):
@@ -385,8 +393,8 @@ class ArchitectRequestService:
         """
         styles = ArchitecturalStyle.objects.all()
         serializer = ArchitecturalStyleSerializer(styles, many=True)
-        return True,serializer.data
-    
+        return True, serializer.data
+
     @classmethod
     def reschedule_architect_request(cls, architect_request_id, data):
         """
@@ -403,31 +411,30 @@ class ArchitectRequestService:
         serializer = ArchitectRequestRescheduleSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-
         architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
         with transaction.atomic():
             architect_request.date = serializer.validated_data.get("date")
             architect_request.time_slot = serializer.validated_data.get("time_slot")
             architect_request.clean()
             architect_request.save()
-            
+
             email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
             signal_data = {
-            "template_name": "refuse_architect_request.html",
-            "context": {
-                "first_name": architect_request.first_name,
-                "last_name": architect_request.last_name,
-                "email": architect_request.email,
-                "date" : architect_request.date,
-                "time_slot" : architect_request.time_slot
-            },
-            "to_email": architect_request.email,
-            "subject": "Rescheduling Architect Request",
-            "images": email_images,
+                "template_name": "refuse_architect_request.html",
+                "context": {
+                    "first_name": architect_request.first_name,
+                    "last_name": architect_request.last_name,
+                    "email": architect_request.email,
+                    "date": architect_request.date,
+                    "time_slot": architect_request.time_slot,
+                },
+                "to_email": architect_request.email,
+                "subject": "Rescheduling Architect Request",
+                "images": email_images,
             }
             api_success_signal.send(sender=cls, data=signal_data)
             return True, ArchitectRequestSerializer(architect_request).data
-        
+
     @classmethod
     def get_all_time_slots(cls):
         """
@@ -437,9 +444,10 @@ class ArchitectRequestService:
             Response: A Response object containing the list of time slots.
         """
         time_slots = [
-            {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
+            {"time": slot[0].strftime("%H:%M"), "label": slot[1]}
+            for slot in TIME_SLOT_CHOICES
         ]
-        return True,time_slots
+        return True, time_slots
 
     @classmethod
     def get_all_project_complexities(cls):
@@ -453,7 +461,7 @@ class ArchitectRequestService:
             {"value": complexity[0], "label": complexity[1]}
             for complexity in PROJECT_COMPLEXITY_CHOICES
         ]
-        return True,project_complexities
+        return True, project_complexities
 
     @classmethod
     def get_all_years_experience(cls):
@@ -467,16 +475,17 @@ class ArchitectRequestService:
             {"value": year_experience[0], "label": year_experience[1]}
             for year_experience in YEARS_EXPERIENCE_CHOICES
         ]
-        return True,years_experience
+        return True, years_experience
 
     @classmethod
     def update_request_statuses(cls):
         """
         Update the status of ArchitectRequest instances based on the current date and time.
-        Requests that have a meeting date and time that has passed will be updated to 'Awaiting Decision'.
+        Requests that have a meeting date and time that has passed will be updated to
+        'Awaiting Decision'.
         """
         now = timezone.now()
-        
+
         # Filter requests that are still in 'Awaiting Demo' or 'Awaiting Decision' status
         requests_to_update = ArchitectRequest.objects.filter(
             Q(date__lt=now.date()) | (Q(date=now.date()) & Q(time_slot__lt=now.time()))
