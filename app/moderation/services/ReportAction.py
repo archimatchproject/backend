@@ -244,6 +244,8 @@ class BlockSelection(BaseAction):
         """
         Execute the action to block a selection.
         """
+        reported.is_blocked = True
+        reported.save()
         email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
         architect = reported.architect
         signal_data = {
@@ -258,8 +260,6 @@ class BlockSelection(BaseAction):
             "images": email_images,
         }
         api_success_signal.send(sender=None, data=signal_data)
-        reported.isBlocked = True
-        reported.save()
 
 
 # -------------------------------------------------------------------------------------------------
