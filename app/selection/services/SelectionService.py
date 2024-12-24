@@ -155,7 +155,7 @@ class SelectionService:
         selections = Selection.objects.filter(announcement_id=announcement_id)
 
         if not selections.exists():
-            raise APIException("No selections found for this announcement.")
+            return True, []
 
         # Serialize the selections
         return True, SelectionSerializer(selections, many=True, context={}).data
