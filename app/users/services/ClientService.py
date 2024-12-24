@@ -12,11 +12,8 @@ Classes:
 from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
-from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
-
 from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
@@ -58,9 +55,7 @@ class ClientService:
 
         user = ArchimatchUser.objects.get(email=email_req)
         has_password = user.password != ""
-        return True,{"has_password": has_password}
-
-
+        return True, {"has_password": has_password}
 
     @classmethod
     def client_send_reset_password_link(cls, request):
@@ -96,16 +91,14 @@ class ClientService:
             "images": email_images,
         }
         api_success_signal.send(sender=cls, data=signal_data)
-        return True,"email sent successfully"
-        
-        
+        return True, "email sent successfully"
 
     @classmethod
     def client_validate_password_token(cls, request):
         """
         validate password token
         """
-        
+
         data = request.data
         token = data.get("token", False)
         if not token:
@@ -116,7 +109,7 @@ class ClientService:
             raise APIException(detail=error)
         client = Client.objects.get(user__id=user_id)
         serializer = ClientSerializer(client)
-        return True,serializer.data
+        return True, serializer.data
 
     @classmethod
     def client_validate_email_token(cls, request):
@@ -136,7 +129,7 @@ class ClientService:
         client.is_verified = True
         client.save()
         serializer = ClientSerializer(client)
-        return True,serializer.data
+        return True, serializer.data
 
     @classmethod
     def client_get_profile(cls, request):
@@ -155,8 +148,8 @@ class ClientService:
         user_id = request.user.id
         client = Client.objects.get(user__id=user_id)
         client_serializer = ClientSerializer(client)
-        return True,client_serializer.data
-    
+        return True, client_serializer.data
+
     @classmethod
     def client_validate_email_first_login(cls, request):
         """
@@ -175,20 +168,22 @@ class ClientService:
         client.is_verified = True
         client.save()
         serializer = ClientSerializer(client)
-        return True,serializer.data
-    
-    
+        return True, serializer.data
+
     @classmethod
     def client_regenerate_verification_code(cls, request):
         """
-        validate password token
+        Validate password token and regenerate verification code if expired.
         """
-        data = request.data
         user_id = request.user.id
         user = ArchimatchUser.objects.get(id=user_id)
         email_images = settings.CLIENT_FIRST_CONNECTION_IMAGES
-        code = VerificationCode.objects.get(user=user)
-                
+
+        # Check if the existing code is expired and regenerate if necessary
+        code, created = VerificationCode.objects.get_or_create(user=user)
+        if code.is_expired():
+            code = VerificationCode.create_or_regenerate_code(user)
+
         context = {
             "first_name": user.first_name,
             "last_name": user.last_name,
@@ -203,4 +198,4 @@ class ClientService:
             "images": email_images,
         }
         api_success_signal.send(sender=cls, data=signal_data)
-        return True,"A verification code is sent by email, Please check your email"
+        return True, "A verification code is sent by email, Please check your email"
