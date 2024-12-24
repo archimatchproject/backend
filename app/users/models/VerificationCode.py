@@ -1,16 +1,20 @@
 """
 Module: Verification Code Model
 
-This module defines the VerificationCode model, used for managing client account verification in the Archimatch application. 
-Each client can have a single, active 4-digit verification code that expires after 5 minutes. This model provides functionality 
+This module defines the VerificationCode model, used for managing client account verification
+in the Archimatch application.
+Each client can have a single, active 4-digit verification code that expires after 5 minutes.
+This model provides functionality
 for generating, regenerating, and checking the expiration of verification codes.
 
 Classes:
-    VerificationCode: Model representing a 4-digit verification code for a client with an expiration time.
+    VerificationCode: Model representing a 4-digit verification code for a client with an
+    expiration time.
 
 Functions:
     generate_code(): Generates a random 4-digit code.
-    create_or_regenerate_code(client): Creates a new verification code for a client, replacing any existing one.
+    create_or_regenerate_code(client): Creates a new verification code for a client, replacing
+    any existing one.
 """
 
 from django.db import models
@@ -31,7 +35,9 @@ class VerificationCode(BaseModel):
         created_at (DateTimeField): Timestamp when the code was created.
     """
 
-    user = models.OneToOneField("ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code")
+    user = models.OneToOneField(
+        "ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code"
+    )
     code = models.CharField(max_length=4)
 
     def is_expired(self):
@@ -48,7 +54,7 @@ class VerificationCode(BaseModel):
         """Create or regenerate a verification code for the given client."""
         # Delete any existing code for this client
         cls.objects.filter(user=user).delete()
-        
+
         # Create a new code
         return cls.objects.create(user=user, code=cls.generate_code())
 

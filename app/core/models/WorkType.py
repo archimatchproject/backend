@@ -19,6 +19,7 @@ class WorkType(models.Model):
 
     header = models.CharField(max_length=255, default="")
     description = models.CharField(max_length=255, default="")
+    icon = models.ImageField(upload_to="icons/WorkTypeIcons/", null=True, blank=True)
 
     def __str__(self) -> str:
         """
