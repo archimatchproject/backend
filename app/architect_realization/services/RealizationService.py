@@ -172,7 +172,7 @@ class RealizationService:
                 return paginator.get_paginated_response(serializer.data)
             serializer = RealizationOutputSerializer(realizations, many=True)
             return Response(
-                serializer.data,
+                [],
                 status=status.HTTP_200_OK,
             )
         except Realization.DoesNotExist:

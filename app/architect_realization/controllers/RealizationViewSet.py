@@ -15,13 +15,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from app.architect_realization.models.Realization import Realization
-from app.architect_realization.serializers.RealizationSerializer import RealizationPOSTSerializer
-from app.architect_realization.serializers.RealizationSerializer import RealizationSerializer
+from app.architect_realization.serializers.RealizationSerializer import (
+    RealizationPOSTSerializer,
+)
+from app.architect_realization.serializers.RealizationSerializer import (
+    RealizationSerializer,
+)
 from app.architect_realization.services.RealizationService import RealizationService
 from app.core.pagination import CustomPagination
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class RealizationViewSet(viewsets.ModelViewSet):
@@ -55,7 +58,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
             "get_realizations_by_category",
             "retrieve",
             "get_realizations_by_architect",
-            "get_realizations"
+            "get_realizations",
         ]:
             self.permission_classes = []
         return super().get_permissions()
@@ -87,7 +90,9 @@ class RealizationViewSet(viewsets.ModelViewSet):
 
         # If pagination is not applied correctly, return a 400 Bad Request response
         serializer = RealizationSerializer(queryset, many=True)
-        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(
         detail=False,
@@ -100,8 +105,10 @@ class RealizationViewSet(viewsets.ModelViewSet):
         """
         Creating new realization
         """
-        success,data = RealizationService.realization_create(request)
-        return build_response(success=success, data=data, status=status.HTTP_201_CREATED) 
+        success, data = RealizationService.realization_create(request)
+        return build_response(
+            success=success, data=data, status=status.HTTP_201_CREATED
+        )
 
     @action(
         detail=False,
@@ -121,9 +128,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of work types.
         """
-        success,data = RealizationService.get_architect_speciality_needs(request)
+        success, data = RealizationService.get_architect_speciality_needs(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-    
 
     @action(
         detail=False,
@@ -143,9 +149,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing list of architectural styles.
         """
-        success,data = RealizationService.get_architectural_styles()
+        success, data = RealizationService.get_architectural_styles()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(
         detail=True,
@@ -166,8 +171,6 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_realizations_by_category(request, pk)
-        
-
 
     @action(
         detail=True,
@@ -188,7 +191,6 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified architect.
         """
         return RealizationService.get_realizations_by_architect(request, pk)
-        
 
     @action(
         detail=True,
@@ -201,9 +203,8 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Updating existing realization
         """
         instance = self.get_object()
-        success,data = RealizationService.update_realization_images(instance, request)
+        success, data = RealizationService.update_realization_images(instance, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(
         detail=True,
@@ -224,8 +225,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_realizations(request, pk)
-    
-    
+
     @action(
         detail=True,
         methods=["POST"],
@@ -245,5 +245,3 @@ class RealizationViewSet(viewsets.ModelViewSet):
             Response: The response object containing the realizations for the specified category.
         """
         return RealizationService.get_architect_realizations(request, pk)
-    
-    
