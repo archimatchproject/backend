@@ -12,10 +12,7 @@ Classes:
 from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
-from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
@@ -35,7 +32,9 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
-from app.users.serializers.ArchitectSerializer import ArchitectUpdatePreferencesSerializer
+from app.users.serializers.ArchitectSerializer import (
+    ArchitectUpdatePreferencesSerializer,
+)
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -83,8 +82,6 @@ class ArchitectService:
         api_success_signal.send(sender=cls, data=signal_data)
         return True, "email sent successfully"
 
-
-
     @classmethod
     def architect_validate_password_token(cls, request):
         """
@@ -100,9 +97,7 @@ class ArchitectService:
             raise APIException(detail=error)
         architect = Architect.objects.get(user__id=user_id)
         serializer = ArchitectSerializer(architect)
-        return True,serializer.data
-
-
+        return True, serializer.data
 
     @classmethod
     def architect_get_profile(cls, request):
@@ -121,9 +116,7 @@ class ArchitectService:
         user_id = request.user.id
         architect = Architect.objects.get(user__id=user_id)
         architect_serializer = ArchitectSerializer(architect)
-        return True,architect_serializer.data
-
-
+        return True, architect_serializer.data
 
     @classmethod
     def architect_update_base_details(cls, request):
@@ -140,9 +133,8 @@ class ArchitectService:
             APIException: If there are errors during architect profile update.
         """
 
-
         data = transform_querydict_keys(request.data)
-        
+
         user_id = request.user.id
         serializer = ArchitectBaseDetailsSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -161,12 +153,7 @@ class ArchitectService:
         )
         architect.save()
 
-        response_data = {
-            "message": "Architect successfully updated",
-        }
-        return True,"Architect successfully updated"
-
-
+        return True, "Architect successfully updated"
 
     @classmethod
     def architect_update_company_details(cls, request):
@@ -194,8 +181,7 @@ class ArchitectService:
             setattr(architect, attr, value)
         architect.save()
 
-        return True,"Architect successfully updated"
-
+        return True, "Architect successfully updated"
 
     @classmethod
     def architect_update_needs(cls, request):
@@ -222,8 +208,7 @@ class ArchitectService:
         architect.needs.set(needs)
         architect.save()
 
-        return True,"Architect successfully updated"
-
+        return True, "Architect successfully updated"
 
     @classmethod
     def architect_update_preferences(cls, request):
@@ -236,7 +221,6 @@ class ArchitectService:
         serializer = ArchitectUpdatePreferencesSerializer(architect, data=data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
 
         many_to_many_fields = [
             "preferred_locations",
@@ -252,9 +236,10 @@ class ArchitectService:
                 getattr(architect, field).set(validated_data.pop(field))
 
         architect.save()
-        return True, "Architect preferences updated successfully",
-        
-        
+        return (
+            True,
+            "Architect preferences updated successfully",
+        )
 
     @classmethod
     def architect_update_profile_image(cls, request):
@@ -282,7 +267,7 @@ class ArchitectService:
         user.image = profile_image
         user.save()
 
-        return True,"Architect profile image successfully updated"
+        return True, "Architect profile image successfully updated"
 
     @classmethod
     def architect_update_presentation_video(cls, request):
@@ -308,8 +293,7 @@ class ArchitectService:
         architect.presentation_video = presentation_video
         architect.save()
 
-        return True,"Architect presentation video successfully updated"
-
+        return True, "Architect presentation video successfully updated"
 
     @classmethod
     def get_architect_work_types(cls):
@@ -324,11 +308,9 @@ class ArchitectService:
             Response: Response containing list of announcement work types.
         """
 
-
         work_types = WorkType.objects.all()
         serializer = WorkTypeSerializer(work_types, many=True)
-        return True,serializer.data
-        
+        return True, serializer.data
 
     @classmethod
     def get_property_types(cls):
@@ -340,8 +322,7 @@ class ArchitectService:
 
         property_types = PropertyType.objects.all()
         serializer = PropertyTypeSerializer(property_types, many=True)
-        return True,serializer.data
-       
+        return True, serializer.data
 
     @classmethod
     def get_terrain_surfaces(cls):
@@ -353,8 +334,7 @@ class ArchitectService:
 
         terrain_surfaces = TerrainSurface.objects.all()
         serializer = TerrainSurfaceSerializer(terrain_surfaces, many=True)
-        return True,serializer.data
-        
+        return True, serializer.data
 
     @classmethod
     def get_work_surfaces(cls):
@@ -366,8 +346,7 @@ class ArchitectService:
 
         work_surfaces = WorkSurface.objects.all()
         serializer = WorkSurfaceSerializer(work_surfaces, many=True)
-        return True,serializer.data
-        
+        return True, serializer.data
 
     @classmethod
     def get_budgets(cls):
@@ -379,8 +358,7 @@ class ArchitectService:
 
         budgets = Budget.objects.all()
         serializer = BudgetSerializer(budgets, many=True)
-        return True,serializer.data
-
+        return True, serializer.data
 
     @classmethod
     def get_locations(cls):
@@ -391,10 +369,8 @@ class ArchitectService:
         """
         locations = PreferredLocation.objects.all()
         serializer = PreferredLocationSerializer(locations, many=True)
-        return True,serializer.data
+        return True, serializer.data
 
-
-    
     @classmethod
     def architect_update_about(cls, request):
         """
@@ -413,7 +389,7 @@ class ArchitectService:
         data = request.data
         user_id = request.user.id
         presentation_video = data.get("presentation_video", None)
-        bio = data.get("bio",None)
+        bio = data.get("bio", None)
         if bio is None:
             raise serializers.ValidationError(detail="biois required")
 
@@ -422,6 +398,31 @@ class ArchitectService:
             architect.presentation_video = presentation_video
         architect.bio = bio
         architect.save()
-        return True,"architect presentation video successfully updated"
-        
+        return True, "architect presentation video successfully updated"
 
+    @classmethod
+    def architect_update_company_logo(cls, request):
+        """
+        Updates a architect's Profie Image such as bio or other preferences.
+
+        Args:
+            request (Request): Django request object containing architect's settings data.
+
+        Returns:
+            Response: Response object indicating success or failure of the settings update.
+
+        Raises:
+            APIException: If there are errors during architect settings update.
+        """
+
+        data = request.data
+        user_id = request.user.id
+        company_logo = data.get("company_logo", None)
+        if company_logo is None:
+            raise serializers.ValidationError(detail="profile image is required")
+
+        architect = Architect.objects.get(user__id=user_id)
+        architect.company_logo = company_logo
+        architect.save()
+
+        return True, "Supplier profile image successfully updated"

@@ -18,6 +18,7 @@ from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
 
+
 class ArchitectViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Architect model, providing CRUD operations and additional actions.
@@ -62,8 +63,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of sending the reset password link.
         """
-        success,message = ArchitectService.architect_send_reset_password_link(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_send_reset_password_link(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -84,7 +87,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the token validation.
         """
-        success,data = ArchitectService.architect_validate_password_token(request)
+        success, data = ArchitectService.architect_validate_password_token(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -106,9 +109,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,architect_data = ArchitectService.architect_get_profile(request)
-        return build_response(success=success, data=architect_data, status=status.HTTP_200_OK)
-
+        success, architect_data = ArchitectService.architect_get_profile(request)
+        return build_response(
+            success=success, data=architect_data, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -129,9 +133,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the base details update.
         """
-        success,message = ArchitectService.architect_update_base_details(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
-
+        success, message = ArchitectService.architect_update_base_details(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -152,8 +157,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the company details update.
         """
-        success,message = ArchitectService.architect_update_company_details(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_update_company_details(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -174,8 +181,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the needs update.
         """
-        success,message = ArchitectService.architect_update_needs(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_update_needs(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -196,8 +205,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the preferences update.
         """
-        success,message = ArchitectService.architect_update_preferences(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_update_preferences(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -218,9 +229,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the profile image update.
         """
-        success,message = ArchitectService.architect_update_profile_image(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
-
+        success, message = ArchitectService.architect_update_profile_image(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -241,8 +253,10 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the presentation video update.
         """
-        success,message = ArchitectService.architect_update_profile_image(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_update_profile_image(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
     @action(
         detail=False,
@@ -263,7 +277,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_architect_work_types()
+        success, data = ArchitectService.get_architect_work_types()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -285,7 +299,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_property_types()
+        success, data = ArchitectService.get_property_types()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -307,7 +321,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_terrain_surfaces()
+        success, data = ArchitectService.get_terrain_surfaces()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -329,7 +343,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_work_surfaces()
+        success, data = ArchitectService.get_work_surfaces()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -351,7 +365,7 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_budgets()
+        success, data = ArchitectService.get_budgets()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -373,9 +387,9 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        success,data = ArchitectService.get_locations()
+        success, data = ArchitectService.get_locations()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-    
+
     @action(
         detail=False,
         methods=["POST"],
@@ -395,6 +409,29 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response object indicating the result of the needs update.
         """
-        success,message = ArchitectService.architect_update_about(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = ArchitectService.architect_update_about(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
+    @action(
+        detail=False,
+        methods=["PUT"],
+        url_path="update-company_logo",
+    )
+    @handle_service_exceptions
+    def architect_update_company_logo(self, request):
+        """
+        Allows a Architect to update their profile image using a custom action.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object containing bio settings update data.
+
+        Returns:
+            Response: Response indicating success or failure of the bio settings update attempt.
+        """
+        success, message = ArchitectService.architect_update_company_logo(request)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
