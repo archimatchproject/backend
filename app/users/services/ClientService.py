@@ -145,8 +145,8 @@ class ClientService:
         Raises:
             APIException: If there are errors during the process.
         """
-        user_id = request.user.id
-        client = Client.objects.get(user__id=user_id)
+        user = request.user
+        client = Client.objects.get(user=user.id)
         client_serializer = ClientSerializer(client)
         return True, client_serializer.data
 
