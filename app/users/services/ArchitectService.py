@@ -138,6 +138,7 @@ class ArchitectService:
         user_id = request.user.id
         serializer = ArchitectBaseDetailsSerializer(data=data)
         serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data)
         architect = Architect.objects.get(user__id=user_id)
         user = architect.user
         validated_data = serializer.validated_data

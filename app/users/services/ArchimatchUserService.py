@@ -10,27 +10,31 @@ Classes:
 """
 
 from rest_framework import serializers
-from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.core.services.SMS.SMSVerificationService import SMSVerificationService
 from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
-from app.core.validation.exceptions import InvalidPhoneNumberException
-from app.core.validation.exceptions import SMSException
 from app.core.validation.validate_data import is_valid_phone_number
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )
-from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
-from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
-from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserEmailPhoneSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import (
+    ArchimatchUserCreatePWSerializer,
+)
+from app.users.serializers.ArchimatchUserPWSerializer import (
+    ArchimatchUserResetPWSerializer,
+)
+from app.users.serializers.ArchimatchUserSerializer import (
+    ArchimatchUserEmailPhoneSerializer,
+)
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
+from app.users.serializers.ArchimatchUserSerializer import (
+    ArchimatchUserSimpleSerializer,
+)
 
 
 class ArchimatchUserService:
@@ -67,7 +71,7 @@ class ArchimatchUserService:
         Returns:
             Response: Response object with a message indicating the status of the password update.
         """
-        
+
         data = request.data
         serializer = ArchimatchUserCreatePWSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -91,12 +95,10 @@ class ArchimatchUserService:
 
             # Generate tokens for the user
             tokens = cls.generate_tokens_for_user(email, password)
-            return True,tokens,"Password successfully updated"
-            
+            return True, tokens, "Password successfully updated"
+
         else:
             raise ValidationError(detail="Passwords do not match")
-
-
 
     @classmethod
     def archimatch_user_reset_password(cls, request):
@@ -126,11 +128,9 @@ class ArchimatchUserService:
         if new_password == confirm_new_password:
             user.set_password(new_password)
             user.save()
-            return True,"Password successfully updated"
+            return True, "Password successfully updated"
         else:
             raise ValidationError(detail="New passwords do not match")
-
-        
 
     @classmethod
     def archimatch_user_update_data(cls, request):
@@ -141,13 +141,13 @@ class ArchimatchUserService:
         user = request.user
         data = request.data
         if not data:
-            raise ValidationError(detail="At least one field must be provided for update.")
+            raise ValidationError(
+                detail="At least one field must be provided for update."
+            )
         serializer = ArchimatchUserSimpleSerializer(user, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return True, serializer.data,"User data successfully updated"
-            
-        
+        return True, serializer.data, "User data successfully updated"
 
     @classmethod
     def archimatch_user_get_user_data(cls, request):
@@ -162,9 +162,7 @@ class ArchimatchUserService:
         """
 
         user = request.user
-        return True,ArchimatchUserSerializer(user).data
-        
-        
+        return True, ArchimatchUserSerializer(user).data
 
     @classmethod
     def send_verification_code(cls, request):
@@ -178,7 +176,7 @@ class ArchimatchUserService:
             Response: Response object indicating whether the verification code was
             sent successfully.
         """
-        
+
         data = request.data
         phone_number = data.get("phone_number")
         if phone_number is None:
@@ -189,8 +187,6 @@ class ArchimatchUserService:
         # if not sid:
         #     raise serializers.ValidationError(detail="Failed to send verification code.")
         return True, "Verification code sent successfully."
-        
-
 
     @classmethod
     def verify_verification_code(cls, request):
@@ -221,9 +217,7 @@ class ArchimatchUserService:
         #     raise serializers.ValidationError(detail="Invalid verification code")
         if not verification_code == "000000":
             raise serializers.ValidationError(detail="Invalid verification code")
-        return True,"Verification code verified successfully."
-
-
+        return True, "Verification code verified successfully."
 
     @classmethod
     def archimatch_user_is_found(cls, request):
@@ -259,6 +253,4 @@ class ArchimatchUserService:
         if ArchitectRequest.objects.filter(email=validated_data.get("email")).exists():
             raise APIException(detail="email already exists")
 
-        return True,"phone number and email address are valid"
-
-        
+        return True, "phone number and email address are valid"

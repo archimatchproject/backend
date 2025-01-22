@@ -13,10 +13,16 @@ Classes:
 from rest_framework import serializers
 
 from app.announcement.models.Need import Need
-from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
-from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ArchitectSpecialitySerializer import (
+    ArchitectSpecialitySerializer,
+)
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
+)
 from app.announcement.serializers.NeedSerializer import NeedSerializer
-from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectCategorySerializer import (
+    ProjectCategorySerializer,
+)
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.architect_realization.models.Realization import Realization
@@ -32,11 +38,11 @@ from app.core.serializers.TerrainSurfaceSerializer import TerrainSurfaceSerializ
 from app.core.serializers.WorkSurfaceSerializer import WorkSurfaceSerializer
 from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
     ArchitectSelectedSubscriptionPlanSerializer,
-    SelectedSubscriptionPlanSerializer,
 )
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users import GOLD,SILVER,EMPTY,BRONZE
+from app.users import GOLD, SILVER, EMPTY, BRONZE
+
 
 class ArchitectSerializer(serializers.ModelSerializer):
     """
@@ -70,7 +76,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
     profile_completion = serializers.SerializerMethodField()
     badge = serializers.SerializerMethodField()
     realization_count = serializers.SerializerMethodField()
-    
+
     class Meta:
         """
         Meta class for ArchitectSerializer.
@@ -82,7 +88,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
 
         model = Architect
         fields = "__all__"
-    
+
     def get_profile_completion(self, obj):
         """
         Calculate and return the profile completion percentage for the architect.
@@ -124,7 +130,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
         for badge_range, badge in badge_map.items():
             if percentage in badge_range:
                 return badge
-    
+
     def get_realization_count(self, obj):
         """
         Get the number of realizations associated with the architect.
@@ -136,6 +142,7 @@ class ArchitectSerializer(serializers.ModelSerializer):
             int: The count of realizations.
         """
         return Realization.objects.filter(architect=obj).count()
+
 
 class ArchitectBaseDetailsSerializer(serializers.ModelSerializer):
     """
@@ -223,7 +230,9 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
     property_types = serializers.PrimaryKeyRelatedField(
         queryset=PropertyType.objects.all(), many=True
     )
-    work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True)
+    work_types = serializers.PrimaryKeyRelatedField(
+        queryset=WorkType.objects.all(), many=True
+    )
     terrain_surfaces = serializers.PrimaryKeyRelatedField(
         queryset=TerrainSurface.objects.all(), many=True
     )
@@ -233,7 +242,9 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
     preferred_locations = serializers.PrimaryKeyRelatedField(
         queryset=PreferredLocation.objects.all(), many=True
     )
-    budgets = serializers.PrimaryKeyRelatedField(queryset=Budget.objects.all(), many=True)
+    budgets = serializers.PrimaryKeyRelatedField(
+        queryset=Budget.objects.all(), many=True
+    )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
 
     class Meta:
