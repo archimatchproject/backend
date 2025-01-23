@@ -8,7 +8,6 @@ Classes:
 
 """
 
-
 from django.core.exceptions import ValidationError
 from app.selection.models.Selection import Selection
 from app.selection.models.Quote import Quote
@@ -16,14 +15,16 @@ from rest_framework.exceptions import APIException
 
 from app.selection.serializers.QuoteSerializer import QuoteSerializer
 from django.db import transaction
-from app.selection import QUOTE_ACCEPTED,QUOTE_REFUSED,ACCEPTED
+from app.selection import QUOTE_ACCEPTED, QUOTE_REFUSED, ACCEPTED
+
+
 class QuoteService:
     """
     Service class for handling quote-related operations.
     """
 
     @classmethod
-    def create_quote(cls, selection_id, file,architect):
+    def create_quote(cls, selection_id, file, architect):
         """
         Creates a quote associated with a specific selection.
 
@@ -37,18 +38,16 @@ class QuoteService:
         Raises:
             APIException: If there are any issues during quote creation.
         """
-        
 
         selection = Selection.objects.get(id=selection_id)
-        if selection.architect != architect :
-            raise APIException(detail="you must be the owner of the project to upload a Quote")
-        
+        if selection.architect != architect:
+            raise APIException(
+                detail="you must be the owner of the project to upload a Quote"
+            )
+
         cls._validate_pdf_file(file)
-        
-        quote = Quote.objects.create(
-            selection=selection,
-            file=file
-        )
+
+        quote = Quote.objects.create(selection=selection, file=file)
 
         return True, QuoteSerializer(quote).data
 
@@ -63,10 +62,9 @@ class QuoteService:
         Raises:
             ValidationError: If the file is not a PDF.
         """
-        if not file.name.endswith('.pdf'):
+        if not file.name.endswith(".pdf"):
             raise ValidationError("Only PDF files are allowed for quotes.")
 
-    
     @classmethod
     @transaction.atomic
     def accept_quote(cls, quote_id):
@@ -82,7 +80,7 @@ class QuoteService:
         Raises:
             APIException: If the quote is already accepted or there is an issue.
         """
-        
+
         quote = Quote.objects.select_for_update().get(id=quote_id)
 
         if quote.status == QUOTE_ACCEPTED:
@@ -91,8 +89,8 @@ class QuoteService:
         quote.status = QUOTE_ACCEPTED
         quote.save()
         selection = quote.selection
-        
-        if selection.status != ACCEPTED :
+
+        if selection.status != ACCEPTED:
             selection.status = ACCEPTED
             selection.save()
 
@@ -100,7 +98,7 @@ class QuoteService:
 
     @classmethod
     @transaction.atomic
-    def refuse_quote(cls, quote_id,is_client_interested):
+    def refuse_quote(cls, quote_id, is_client_interested):
         """
         Refuses a quote by setting its status to 'Refused'.
 
@@ -115,9 +113,7 @@ class QuoteService:
         """
 
         quote = Quote.objects.select_for_update().get(id=quote_id)
-        
-        
-        
+
         if quote.status == QUOTE_REFUSED:
             raise APIException("This quote has already been refused.")
 
