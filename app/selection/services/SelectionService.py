@@ -174,6 +174,7 @@ class SelectionService:
         architect = Architect.objects.get(user=request.user)
         # Retrieve selections for the given architect
         selections = Selection.objects.filter(architect=architect)
+        print(selections)
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
@@ -658,3 +659,49 @@ class SelectionService:
         return Response(
             {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
         )
+
+    @classmethod
+    @transaction.atomic
+    def architect_cancel_selection(cls, selection_id):
+        """
+        Cancels a project selection, updates its phase to 'Decision' (phase 3),
+        and logs the action performed by an admin.
+
+        - Updates the phase number to 3.
+        - Sets the phase name to 'Decision'.
+        - Sets the start date to the current time.
+        - Calculates and sets the limit date based on the number of days defined
+          in `SelectionSettings` for the 'Quotes' phase.
+        - Logs the cancellation action performed by the admin associated with the user.
+
+        Args:
+            selection_id (int): The ID of the selection to update.
+
+        Returns:
+            tuple: (bool, str) A success flag and a message indicating the project was canceled.
+
+        Raises:
+            APIException: If the selection does not have an associated phase,
+                          or if any other issue occurs during the process.
+        """
+
+        selection = Selection.objects.select_for_update().get(id=selection_id)
+
+        if not selection.phase:
+            raise APIException(detail="Phase not associated with the selection.")
+
+        phase = selection.phase
+
+        phase_settings = cls.get_selection_settings(name=QUOTES)
+        phase_duration_days = phase_settings.phase_days
+        print(phase_settings)
+        phase.number = 3
+        phase.name = DECISION
+        phase.start_date = timezone.now()
+
+        phase.limit_date = phase.start_date + timezone.timedelta(
+            days=phase_duration_days
+        )
+        print(phase)
+        phase.save()
+        return True, "Project canceled"

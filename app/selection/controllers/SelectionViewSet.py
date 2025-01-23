@@ -373,3 +373,22 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         return SelectionService.get_quote_phase_selections(request)
+
+    @action(detail=True, methods=["POST"], url_path="architect-cancel-selection")
+    @handle_service_exceptions
+    def architect_cancel_selection(self, request, pk=None):
+        """
+        Endpoint to confirm the completion of the discussion phase (phase 1) and progress
+        to phase 2.
+
+        Args:
+            pk (int): The ID of the selection to update.
+
+        Returns:
+            Response: The updated selection and phase data or an error message.
+        """
+
+        success, message = SelectionService.architect_cancel_selection(selection_id=pk)
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
