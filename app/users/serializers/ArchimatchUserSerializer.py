@@ -14,7 +14,6 @@ from app.users.models import ArchimatchUser
 from fcm_django.models import FCMDevice
 
 
-
 class ArchimatchUserSerializer(serializers.ModelSerializer):
     """
     Detailed serializer for ArchimatchUser model.
@@ -30,7 +29,9 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
         image: Image associated with the user.
         user_type: Type of the user.
     """
+
     device_id = serializers.SerializerMethodField()
+
     class Meta:
         """
         Meta class for ArchimatchUserSerializer.
@@ -52,7 +53,7 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
             "is_suspended",
             "suspension_start_date",
             "suspension_end_date",
-            "device_id"
+            "device_id",
         ]
         extra_kwargs = {
             "username": {"read_only": True},
@@ -70,6 +71,7 @@ class ArchimatchUserSerializer(serializers.ModelSerializer):
         """
         fcm_device = FCMDevice.objects.filter(user=obj).first()
         return fcm_device.id if fcm_device else None
+
 
 class ArchimatchUserSimpleSerializer(serializers.ModelSerializer):
     """

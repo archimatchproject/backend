@@ -9,13 +9,7 @@ Classes:
 """
 
 from django.db import transaction
-
-from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
-
 from app.subscription.models.TokenPack import TokenPack
 from app.subscription.serializers.TokenPackSerializer import TokenPackSerializer
 from app.users.models.Architect import Architect
@@ -55,15 +49,17 @@ class TokenPackService:
             token_pack = TokenPack.objects.get(id=token_pack_id)
             architect = Architect.objects.get(user__id=user_id)
             current_plan = architect.subscription_plan
-            current_plan.remaining_tokens += token_pack.number_tokens + token_pack.number_free_tokens
+            current_plan.remaining_tokens += (
+                token_pack.number_tokens + token_pack.number_free_tokens
+            )
             current_plan.save()
             architect.save()
-            return True,"Token pack is successfully chosen"
-    
+            return True, "Token pack is successfully chosen"
+
     @classmethod
     def get_all_token_packs(cls):
         """
         gets all the architect token packs
         """
         subscription_plans = TokenPack.objects.all()
-        return True,TokenPackSerializer(subscription_plans,many=True).data
+        return True, TokenPackSerializer(subscription_plans, many=True).data

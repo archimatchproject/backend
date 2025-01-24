@@ -28,9 +28,6 @@ from app.users.serializers.ArchimatchUserPWSerializer import (
 from app.users.serializers.ArchimatchUserPWSerializer import (
     ArchimatchUserResetPWSerializer,
 )
-from app.users.serializers.ArchimatchUserSerializer import (
-    ArchimatchUserEmailPhoneSerializer,
-)
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ArchimatchUserSerializer import (
     ArchimatchUserSimpleSerializer,
@@ -242,15 +239,21 @@ class ArchimatchUserService:
         """
 
         data = request.data
-        serializer = ArchimatchUserEmailPhoneSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
-
-        if ArchitectRequest.objects.filter(
-            phone_number=validated_data.get("phone_number")
-        ).exists():
+        phone_number = data.get("phone_number", False)
+        email = data.get("email", False)
+        if not phone_number or not email:
+            raise serializers.ValidationError(
+                detail="phone number and email are required"
+            )
+        if (
+            ArchitectRequest.objects.filter(phone_number=phone_number).exists()
+            or ArchimatchUser.objects.filter(phone_number=phone_number).exists()
+        ):
             raise APIException(detail="phone number already exists")
-        if ArchitectRequest.objects.filter(email=validated_data.get("email")).exists():
+        if (
+            ArchitectRequest.objects.filter(email=email).exists()
+            or ArchimatchUser.objects.filter(email=email).exists()
+        ):
             raise APIException(detail="email already exists")
 
         return True, "phone number and email address are valid"
