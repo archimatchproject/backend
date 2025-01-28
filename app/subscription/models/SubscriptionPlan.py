@@ -7,8 +7,7 @@ from django.db import models
 from rest_framework import serializers
 from app.core.models.BaseModel import BaseModel
 from app.subscription.models.EventDiscount import EventDiscount
-from app.subscription.models.PlanService import PlanService
-from datetime import date
+
 
 class SubscriptionPlan(BaseModel):
     """
@@ -27,12 +26,16 @@ class SubscriptionPlan(BaseModel):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
-    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
+    discount_message = models.CharField(
+        max_length=255, default="", null=True, blank=True
+    )
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     most_popular = models.BooleanField(default=False)
-    event_discount = models.ForeignKey(EventDiscount, on_delete=models.SET_NULL, blank=True, null=True)
-    
+    event_discount = models.ForeignKey(
+        EventDiscount, on_delete=models.SET_NULL, blank=True, null=True
+    )
+
     def save(self, *args, **kwargs):
         """
         Custom save method to ensure the plan price is zero if the plan is free.
@@ -61,7 +64,7 @@ class SubscriptionPlan(BaseModel):
             self.start_date = None
             self.end_date = None
             self.discount_message = None
-        
+
     def get_effective_price(self):
         """
         Returns the effective price of the plan considering any active event discounts.
@@ -70,7 +73,7 @@ class SubscriptionPlan(BaseModel):
 
         # Apply event discount if applicable
         if self.event_discount:
-            price -= (price * self.event_discount.discount_percentage / 100)
+            price -= price * self.event_discount.discount_percentage / 100
         return price
 
     def get_annual_price(self):
@@ -85,10 +88,10 @@ class SubscriptionPlan(BaseModel):
 
         # Calculate annual price (12 months) and apply annual discount
         annual_price = effective_price * 12
-        annual_price -= (annual_price * annual_discount_percentage / 100)
+        annual_price -= annual_price * annual_discount_percentage / 100
 
         return annual_price
-    
+
     def __str__(self):
         """
         String representation of the SubscriptionPlan instance.
@@ -99,6 +102,7 @@ class SubscriptionPlan(BaseModel):
         """
         Meta class for SubscriptionPlan model.
         """
+
         abstract = True
         verbose_name = "Subscription Plan"
         verbose_name_plural = "Subscription Plans"

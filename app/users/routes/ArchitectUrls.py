@@ -99,4 +99,9 @@ architect_urlpatterns = [
         ArchitectViewSet.as_view({"put": "architect_update_company_logo"}),
         name="update-company_logo",
     ),
+    path(
+        "architect/get-architect-by-user/<int:pk>/",
+        ArchitectViewSet.as_view({"get": "architect_get_by_user"}),
+        name="get-architect-by-user",
+    ),
 ]

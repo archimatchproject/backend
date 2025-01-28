@@ -6,7 +6,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework import serializers
 from app.core.models.BaseModel import BaseModel
-from app.subscription.models.PlanService import PlanService
 
 
 class SelectedSubscriptionPlan(BaseModel):
@@ -48,7 +47,8 @@ class SelectedSubscriptionPlan(BaseModel):
                 or self.end_date is None
             ):
                 raise serializers.ValidationError(
-                    "The following fields are required: 'discount_percentage', 'start_date', and 'end_date'."
+                    """The following fields are required: 'discount_percentage', 'start_date', and
+                    'end_date'."""
                 )
         else:
             self.discount_percentage = None
@@ -65,6 +65,7 @@ class SelectedSubscriptionPlan(BaseModel):
         """
         Meta class for SelectedSubscriptionPlan model.
         """
+
         abstract = True
         verbose_name = "Selected Subscription Plan"
         verbose_name_plural = "Selected Subscription Plans"

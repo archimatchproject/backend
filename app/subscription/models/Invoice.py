@@ -11,7 +11,6 @@ Classes:
 from django.db import models
 
 from app.core.models.BaseModel import BaseModel
-from app.users.models.Architect import Architect
 
 
 class Invoice(BaseModel):
@@ -36,8 +35,12 @@ class Invoice(BaseModel):
     plan_name = models.CharField(max_length=255)
     plan_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.BooleanField(default=False)
-    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
+    discount_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    discount_message = models.CharField(
+        max_length=255, default="", null=True, blank=True
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
 
@@ -59,6 +62,7 @@ class Invoice(BaseModel):
             verbose_name (str): The name of the model in singular form.
             verbose_name_plural (str): The name of the model in plural form.
         """
+
         abstract = True
         verbose_name = "Invoice"
         verbose_name_plural = "Invoices"
