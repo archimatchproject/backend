@@ -427,3 +427,23 @@ class ArchitectService:
         architect.save()
 
         return True, "Supplier profile image successfully updated"
+
+    @classmethod
+    def architect_get_by_user(cls, request, user_id):
+        """
+        Retrieves architect information.
+
+        Args:
+            request (Request): Django request object containing user ID.
+            id (int): ID of the user.
+
+        Returns:
+            Response: Response object containing architect data.
+
+        Raises:
+            APIException: If there are errors during the process.
+        """
+
+        architect = Architect.objects.get(user__id=user_id)
+        architect_serializer = ArchitectSerializer(architect)
+        return True, architect_serializer.data

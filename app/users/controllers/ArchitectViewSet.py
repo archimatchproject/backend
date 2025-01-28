@@ -435,3 +435,28 @@ class ArchitectViewSet(viewsets.ModelViewSet):
         return build_response(
             success=success, message=message, status=status.HTTP_200_OK
         )
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-architect-by-user/(?P<pk>\\d+)",
+        url_name="get-architect-by-user",
+    )
+    @handle_service_exceptions
+    def architect_get_by_user(self, request, pk):
+        """
+        Retrieves Architect details.
+
+        Args:
+            self (ArchitectViewSet): Instance of the ArchitectViewSet class.
+            request (Request): HTTP request object.
+            pk (str): Primary key extracted from the URL.
+
+        Returns:
+            Response: Response containing Architect details.
+        """
+        success, architect_data = ArchitectService.architect_get_by_user(request, pk)
+        return build_response(
+            success=success, data=architect_data, status=status.HTTP_200_OK
+        )

@@ -16,11 +16,11 @@ class PlanService(BaseModel):
 
     description = models.CharField(max_length=255)
     special_identifier = models.CharField(
-        max_length=50, 
+        max_length=50,
         choices=ARCHITECT_SUBSCRIPTION_IDENTIFIERS,
     )
     permissions = models.ManyToManyField(Permission, blank=True)
-    
+
     def __str__(self):
         """
         String representation of the Service instance.
@@ -33,5 +33,6 @@ class PlanService(BaseModel):
 
         Provides verbose names for the model in the Django admin interface.
         """
+
         verbose_name = "Plan Serice"
         verbose_name_plural = "Plan Serices"

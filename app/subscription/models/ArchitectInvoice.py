@@ -9,8 +9,6 @@ Classes:
 """
 
 from django.db import models
-
-from app.core.models.BaseModel import BaseModel
 from app.subscription.models.Invoice import Invoice
 from app.users.models.Architect import Architect
 
@@ -24,7 +22,7 @@ class ArchitectInvoice(Invoice):
     """
 
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         """
         String representation of the Invoice instance.
@@ -43,8 +41,6 @@ class ArchitectInvoice(Invoice):
             verbose_name (str): The name of the model in singular form.
             verbose_name_plural (str): The name of the model in plural form.
         """
-        
+
         verbose_name = "ArchitectInvoice"
         verbose_name_plural = "ArchitectInvoices"
-
-    
