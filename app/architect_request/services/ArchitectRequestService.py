@@ -15,6 +15,7 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 
+from app.announcement import ACCEPTED, REFUSED
 from app.announcement.serializers.ArchitecturalStyleSerializer import (
     ArchitecturalStyleSerializer,
 )
@@ -173,6 +174,10 @@ class ArchitectRequestService:
         }
 
         with transaction.atomic():
+            if ArchimatchUser.objects.filter(email=architect_request.email).exists():
+                raise serializers.ValidationError(
+                    "An account with this email already exists."
+                )
             user = ArchimatchUser.objects.create(**user_data)
             user.save()
 
@@ -195,7 +200,7 @@ class ArchitectRequestService:
                 if items:
                     getattr(architect, field).set(items)
 
-            architect_request.status = "Accepted"
+            architect_request.status = ACCEPTED
             architect_request.save()
 
             email_images = settings.ACCEPT_ARCHITECT_REQUEST_IMAGES
@@ -232,7 +237,7 @@ class ArchitectRequestService:
         """
 
         architect_request = ArchitectRequest.objects.get(pk=pk)
-        architect_request.status = "Refused"
+        architect_request.status = REFUSED
         architect_request.save()
         email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
         signal_data = {
