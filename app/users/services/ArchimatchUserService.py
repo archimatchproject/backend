@@ -54,6 +54,7 @@ class ArchimatchUserService:
                 "password": password,
             }
         )
+        print(serializer)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 

@@ -163,6 +163,8 @@ class ArchitectBaseDetailsSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source="user.last_name")
     phone_number = serializers.CharField(source="user.phone_number")
     email = serializers.CharField(source="user.email")
+    company_name = serializers.CharField()
+    address = serializers.CharField()
 
     class Meta:
         """
@@ -182,6 +184,8 @@ class ArchitectBaseDetailsSerializer(serializers.ModelSerializer):
             "email",
             "bio",
             "presentation_video",
+            "company_name",
+            "address",
         )
 
 

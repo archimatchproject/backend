@@ -143,12 +143,21 @@ class ArchitectService:
         user = architect.user
         validated_data = serializer.validated_data
         # update user information
-        user_fields = ["first_name", "last_name", "email", "phone_number"]
+        user_fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+            "address",
+            "company_name",
+        ]
         for field in user_fields:
             if field in validated_data.get("user"):
                 setattr(user, field, validated_data.get("user").pop(field))
         user.save()
         architect.bio = validated_data.get("bio")
+        architect.company_name = validated_data.get("company_name")
+        architect.address = validated_data.get("address")
         architect.presentation_video = serializer.validated_data.get(
             "presentation_video", architect.presentation_video
         )
