@@ -1,0 +1,46 @@
+# selection_settings.yaml
+
+- model: selection.SelectionSettings
+  pk: 1
+  fields:
+    name: "Not Selected"
+    phase_days: 7 # Number of days for each phase
+    days_before_call_email: 2 # Number of days to send email before a phone call
+    days_to_phone_call: 3 # Number of days to make a phone call
+    days_after_call_email: 2 # Number of days to send email after the phone call
+    days_to_rediffuse: 8 # Number of days to re-publish the project
+    days_to_lock_project: 3 # Number of days after which the project is locked
+    times_to_unlock_project: 3 # Number of times the project can be unlocked
+    days_for_admin_management: 10 # Number of days the admin can manage the selection
+    email_sending_hour: "09:10:00" # Time of the day for sending email notifications
+    days_for_admin_display: 3
+
+- model: selection.SelectionSettings
+  pk: 2
+  fields:
+    name: "Discussion"
+    phase_days: 7
+    days_before_call_email: 2
+    days_to_phone_call: 3
+    days_after_call_email: 2
+    days_to_rediffuse: 8
+    days_to_lock_project: 3
+    times_to_unlock_project: 3
+    days_for_admin_management: 10
+    email_sending_hour: "09:00:00"
+    days_for_admin_display: 3
+
+- model: selection.SelectionSettings
+  pk: 3
+  fields:
+    name: "Quotes"
+    phase_days: 5
+    days_before_call_email: 2
+    days_to_phone_call: 3
+    days_after_call_email: 2
+    days_to_rediffuse: 30
+    days_to_lock_project: 15
+    times_to_unlock_project: 3
+    days_for_admin_management: 10
+    email_sending_hour: "09:00:00"
+    days_for_admin_display: 3

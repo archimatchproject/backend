@@ -44,4 +44,9 @@ admin_urlpatterns = [
         AdminViewSet.as_view({"post": "admin_validate_password_token"}),
         name="validate-password-token",
     ),
+    path(
+        "admin/get-admins-paginated/",
+        AdminViewSet.as_view({"get": "get_admins_paginated"}),
+        name="admins-paginated",
+    ),
 ]

@@ -52,26 +52,21 @@ class GuideArticleService:
         serializer = GuideArticleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                # Create GuideArticle instance
-                sections_data = validated_data.pop("sections", [])
-                guide_article = GuideArticle.objects.create(
-                    **validated_data, admin=request.user.admin
-                )
 
-                # Create related sections if provided
+        with transaction.atomic():
+            # Create GuideArticle instance
+            sections_data = validated_data.pop("sections", [])
+            guide_article = GuideArticle.objects.create(
+                **validated_data, admin=request.user.admin
+            )
 
-                for section_data in sections_data:
-                    GuideSection.objects.create(guide_article=guide_article, **section_data)
+            # Create related sections if provided
 
-                return Response(
-                    GuideArticleSerializer(guide_article).data, status=status.HTTP_201_CREATED
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating guide article: {str(e)}")
+            for section_data in sections_data:
+                GuideSection.objects.create(guide_article=guide_article, **section_data)
+
+            return True,GuideArticleSerializer(guide_article).data
+        
 
     @classmethod
     def update_guide_article(cls, instance, data):
@@ -100,51 +95,48 @@ class GuideArticleService:
         serializer = GuideArticleSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            with transaction.atomic():
-                instance.title = serializer.validated_data.get("title", instance.title)
-                instance.description = serializer.validated_data.get(
-                    "description", instance.description
+
+        with transaction.atomic():
+            instance.title = serializer.validated_data.get("title", instance.title)
+            instance.description = serializer.validated_data.get(
+                "description", instance.description
+            )
+            instance.guide_thematic = serializer.validated_data.get(
+                "guide_thematic", instance.guide_thematic
+            )
+            instance.date = serializer.validated_data.get("date", instance.date)
+            instance.rating = serializer.validated_data.get("rating", instance.rating)
+            instance.save()
+
+            # Update or create related sections
+            sections_data = data.get("sections", [])
+            section_ids_to_keep = []
+
+            for section_data in sections_data:
+                section_id = section_data.get("id")
+                section_instance = None
+                if section_id:
+                    try:
+                        section_instance = instance.guide_article_sections.get(id=section_id)
+                    except GuideSection.DoesNotExist:
+                        raise serializers.ValidationError(
+                            f"GuideSection with id {section_id} does not exist."
+                        )
+
+                section_serializer = GuideSectionSerializer(
+                    section_instance,
+                    data=section_data,
+                    partial=partial,
                 )
-                instance.guide_thematic = serializer.validated_data.get(
-                    "guide_thematic", instance.guide_thematic
-                )
-                instance.date = serializer.validated_data.get("date", instance.date)
-                instance.rating = serializer.validated_data.get("rating", instance.rating)
-                instance.save()
+                section_serializer.is_valid(raise_exception=True)
+                section_instance = section_serializer.save(guide_article=instance)
+                section_ids_to_keep.append(section_instance.id)
 
-                # Update or create related sections
-                sections_data = data.get("sections", [])
-                section_ids_to_keep = []
+            # Delete sections not mentioned in the request
+            instance.guide_article_sections.exclude(id__in=section_ids_to_keep).delete()
 
-                for section_data in sections_data:
-                    section_id = section_data.get("id")
-                    section_instance = None
-                    if section_id:
-                        try:
-                            section_instance = instance.guide_article_sections.get(id=section_id)
-                        except GuideSection.DoesNotExist:
-                            raise serializers.ValidationError(
-                                f"GuideSection with id {section_id} does not exist."
-                            )
-
-                    section_serializer = GuideSectionSerializer(
-                        section_instance,
-                        data=section_data,
-                        partial=partial,
-                    )
-                    section_serializer.is_valid(raise_exception=True)
-                    section_instance = section_serializer.save(guide_article=instance)
-                    section_ids_to_keep.append(section_instance.id)
-
-                # Delete sections not mentioned in the request
-                instance.guide_article_sections.exclude(id__in=section_ids_to_keep).delete()
-
-                return Response(GuideArticleSerializer(instance).data, status=status.HTTP_200_OK)
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating guide article: {str(e)}")
+            return True,GuideArticleSerializer(instance).data
+    
 
     @classmethod
     def change_visibility(cls, guide_id, request):
@@ -158,20 +150,15 @@ class GuideArticleService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        try:
-            visibility = request.data.get("visible")
-            if visibility is None:
-                raise serializers.ValidationError(detail="Visible field is required.")
-            guide = GuideArticle.objects.get(pk=guide_id)
-            guide.visible = visibility
-            guide.save()
-            return Response(GuideArticleSerializer(guide).data, status=status.HTTP_200_OK)
-        except serializers.ValidationError as e:
-            raise e
-        except GuideArticle.DoesNotExist:
-            raise NotFound(detail="GuideArticle not found.")
-        except Exception as e:
-            raise APIException(detail=f"Error changing visibility: {str(e)}")
+
+        visibility = request.data.get("visible")
+        if visibility is None:
+            raise serializers.ValidationError(detail="Visible field is required.")
+        guide = GuideArticle.objects.get(pk=guide_id)
+        guide.visible = visibility
+        guide.save()
+        return True,GuideArticleSerializer(guide).data
+    
 
     @classmethod
     def upload_media(cls, request):
@@ -184,64 +171,53 @@ class GuideArticleService:
         Returns:
             Response: The response object containing the result of the operation.
         """
-        try:
-            section_id = request.data.get("section_id")
-            image = request.FILES.get("image")
-            video = request.FILES.get("video")
-            slider_images = request.FILES.getlist("slider_images")
-            section = GuideSection.objects.get(id=section_id)
 
-            # Handle image section type
-            if section.section_type == "image":
-                if not image:
-                    raise serializers.ValidationError(
-                        detail="Image file is required for image section type."
-                    )
-                section.image = image
-                section.save()
-                guide_article = section.guide_article
-                return Response(
-                    GuideArticleSerializer(guide_article).data, status=status.HTTP_200_OK
-                )
-            # Handle video section type
-            if section.section_type == "video":
-                if not video:
-                    raise serializers.ValidationError(
-                        detail="Video file is required for video section type."
-                    )
-                section.video = video
-                section.save()
-                guide_article = section.guide_article
-                return Response(
-                    GuideArticleSerializer(guide_article).data, status=status.HTTP_200_OK
-                )
+        section_id = request.data.get("section_id")
+        image = request.FILES.get("image")
+        video = request.FILES.get("video")
+        slider_images = request.FILES.getlist("slider_images")
+        section = GuideSection.objects.get(id=section_id)
 
-            # Handle slider section type
-            elif section.section_type == "slider":
-                if not slider_images:
-                    raise serializers.ValidationError(
-                        "At least one slider image file is required for slider section type."
-                    )
-
-                # Create multiple SliderImage instances for the slider section
-                GuideSliderImage.objects.filter(
-                    section=section
-                ).delete()  # Clear existing slider images
-                for img in slider_images:
-                    GuideSliderImage.objects.create(section=section, image=img)
-
-                guide_article = section.guide_article
-                return Response(
-                    GuideArticleSerializer(guide_article).data, status=status.HTTP_200_OK
-                )
-
-            else:
+        # Handle image section type
+        if section.section_type == "image":
+            if not image:
                 raise serializers.ValidationError(
-                    detail="Invalid section type. Must be either image or slider."
+                    detail="Image file is required for image section type."
                 )
-        except GuideSection.DoesNotExist:
-            raise NotFound(detail="Section not found.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error uploading media: {str(e)}")
+            section.image = image
+            section.save()
+            guide_article = section.guide_article
+            return True,GuideArticleSerializer(guide_article).data
+        # Handle video section type
+        if section.section_type == "video":
+            if not video:
+                raise serializers.ValidationError(
+                    detail="Video file is required for video section type."
+                )
+            section.video = video
+            section.save()
+            guide_article = section.guide_article
+            return True,GuideArticleSerializer(guide_article).data
+
+        # Handle slider section type
+        elif section.section_type == "slider":
+            if not slider_images:
+                raise serializers.ValidationError(
+                    "At least one slider image file is required for slider section type."
+                )
+
+            # Create multiple SliderImage instances for the slider section
+            GuideSliderImage.objects.filter(
+                section=section
+            ).delete()  # Clear existing slider images
+            for img in slider_images:
+                GuideSliderImage.objects.create(section=section, image=img)
+
+            guide_article = section.guide_article
+            return True,GuideArticleSerializer(guide_article).data
+
+        else:
+            raise serializers.ValidationError(
+                detail="Invalid section type. Must be either image or slider."
+            )
+        

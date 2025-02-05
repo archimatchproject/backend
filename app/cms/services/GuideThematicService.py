@@ -18,7 +18,8 @@ from rest_framework.response import Response
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
-
+from app.core.pagination import CustomPagination
+from rest_framework.exceptions import ValidationError
 
 class GuideThematicService:
     """
@@ -32,6 +33,7 @@ class GuideThematicService:
         existing GuideThematic.
     """
 
+    pagination_class = CustomPagination
     @classmethod
     def create_guide_thematic(cls, request):
         """
@@ -47,21 +49,16 @@ class GuideThematicService:
         serializer = GuideThematicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                # Create GuideThematic instance
-                guide_thematic = GuideThematic.objects.create(
-                    **validated_data, admin=request.user.admin
-                )
 
-                return Response(
-                    GuideThematicSerializer(guide_thematic).data, status=status.HTTP_201_CREATED
-                )
+        with transaction.atomic():
+            # Create GuideThematic instance
+            guide_thematic = GuideThematic.objects.create(
+                **validated_data, admin=request.user.admin
+            )
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating guide thematic: {str(e)}")
+            return True,GuideThematicSerializer(guide_thematic).data
+
+        
 
     @classmethod
     def update_guide_thematic(cls, instance, data, partial=False):
@@ -79,19 +76,16 @@ class GuideThematicService:
         serializer = GuideThematicSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                fields = ["title", "sub_title", "visible", "icon"]
-                for field in fields:
-                    setattr(instance, field, validated_data.get(field, getattr(instance, field)))
-                instance.save()
 
-                return Response(GuideThematicSerializer(instance).data, status=status.HTTP_200_OK)
+        with transaction.atomic():
+            fields = ["title", "sub_title", "visible", "icon"]
+            for field in fields:
+                setattr(instance, field, validated_data.get(field, getattr(instance, field)))
+            instance.save()
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating guide thematic: {str(e)}")
+            return True,GuideThematicSerializer(instance).data
+
+        
 
     @classmethod
     def change_visibility(cls, guide_thematic_id, request):
@@ -105,17 +99,40 @@ class GuideThematicService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        try:
-            visibility = request.data.get("visible")
-            if visibility is None:
-                raise serializers.ValidationError(detail="Visible field is required.")
-            guide_thematic = GuideThematic.objects.get(pk=guide_thematic_id)
-            guide_thematic.visible = visibility
-            guide_thematic.save()
-            return Response(GuideThematicSerializer(guide_thematic).data, status=status.HTTP_200_OK)
-        except serializers.ValidationError as e:
-            raise e
-        except GuideThematic.DoesNotExist:
-            raise NotFound(detail="Guide not found.")
-        except Exception as e:
-            raise APIException(detail=f"Error changing visibility: {str(e)}")
+
+        visibility = request.data.get("visible")
+        if visibility is None:
+            raise serializers.ValidationError(detail="Visible field is required.")
+        guide_thematic = GuideThematic.objects.get(pk=guide_thematic_id)
+        guide_thematic.visible = visibility
+        guide_thematic.save()
+        return True,GuideThematicSerializer(guide_thematic).data
+        
+    @classmethod
+    def get_thematic_guides_paginated(cls, request):
+        """
+        Handle GET request and return paginated Supplier objects.
+        This method retrieves all Supplier objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or a 400 Bad Request response with an error message.
+        """
+        
+        target_user_type = request.query_params.get("target_user_type")
+        if not target_user_type:
+            raise ValidationError("The 'target_user_type' query parameter is required.")
+        queryset = GuideThematic.objects.filter(target_user_type=target_user_type).order_by("created_at")
+        paginator = cls.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = GuideThematicSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        serializer = GuideThematicSerializer(queryset, many=True)
+        return Response([], status=status.HTTP_200_OK)

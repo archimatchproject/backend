@@ -18,4 +18,4 @@ class ServiceSerializer(serializers.ModelSerializer):
         """
 
         model = PlanService
-        fields = ["id", "description", "permissions"]
+        fields = ["id", "description", "permissions","special_identifier"]

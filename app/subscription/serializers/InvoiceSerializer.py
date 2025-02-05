@@ -10,10 +10,12 @@ Classes:
 
 from rest_framework import serializers
 
+from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 from app.subscription.models.Invoice import Invoice
+from app.subscription.models.SupplierInvoice import SupplierInvoice
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class ArchitectInvoiceSerializer(serializers.ModelSerializer):
     """
     Serializer class for the Invoice model.
 
@@ -30,5 +32,26 @@ class InvoiceSerializer(serializers.ModelSerializer):
             fields (str): Specifies that all fields of the Invoice model should be included.
         """
 
-        model = Invoice
+        model = ArchitectInvoice
+        fields = "__all__"
+
+
+class SupplierInvoiceSerializer(serializers.ModelSerializer):
+    """
+    Serializer class for the Invoice model.
+
+    This class handles serialization and deserialization of Invoice instances,
+    converting them to and from JSON for API responses and requests.
+    """
+
+    class Meta:
+        """
+        Meta class for the InvoiceSerializer.
+
+        Attributes:
+            model (type): The model that this serializer class is based on.
+            fields (str): Specifies that all fields of the Invoice model should be included.
+        """
+
+        model = SupplierInvoice
         fields = "__all__"

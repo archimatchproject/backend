@@ -5,6 +5,7 @@ This module contains the Announcement class, which represents an announcement
 for a construction or renovation project in the application.
 """
 
+from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
@@ -25,6 +26,8 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.users.models.Client import Client
 from app.selection.models.Selection import Selection
+
+
 class Announcement(BaseModel):
     """
     Model representing an announcement for a construction or renovation project.
@@ -97,9 +100,19 @@ class Announcement(BaseModel):
     )
     number_floors = models.PositiveIntegerField(default=0)
     notes = GenericRelation(Note)
-    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
+    status = models.CharField(
+        max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING
+    )
     admin_note = models.CharField(max_length=500, null=True, blank=True)
-    architect = models.ForeignKey("users.Architect", on_delete=models.CASCADE,null=True, blank=True)
+    architect = models.ForeignKey(
+        "users.Architect", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    token_number = models.PositiveIntegerField(null=True, blank=True)
+    suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
+    is_blocked = models.BooleanField(default=False)
+    is_broadcasted = models.BooleanField(default=True)
+
     def __str__(self):
         """
         Return a string representation of the announcement.
@@ -108,22 +121,21 @@ class Announcement(BaseModel):
             str: String representation of the announcement, including its ID and associated client.
         """
         return f"Announcement {self.id} for {self.client}"
-    
 
     @property
     def interested_architects(self):
-        return self.selections.filter(status='interested').select_related('architect')
+        return self.selections.filter(status="interested").select_related("architect")
 
     @property
     def accepted_architect(self):
         """
         Return the architect with status 'accepted' for this announcement.
-        
+
         Returns:
             Architect or None: The accepted architect if one exists, otherwise None.
         """
         try:
-            return self.selections.get(status='accepted').architect
+            return self.selections.get(status="accepted").architect
         except Selection.DoesNotExist:
             return None
 

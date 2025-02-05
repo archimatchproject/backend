@@ -48,23 +48,18 @@ class BlogThematicService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        try:
-            with transaction.atomic():
-                # Create BlogThematic instance
-                blog_thematic = BlogThematic.objects.create(
-                    title=validated_data.get("title"),
-                    admin=user.admin,
-                    visible=validated_data.get("visible", False),
-                )
 
-                return Response(
-                    BlogThematicSerializer(blog_thematic).data, status=status.HTTP_201_CREATED
-                )
+        with transaction.atomic():
+            # Create BlogThematic instance
+            blog_thematic = BlogThematic.objects.create(
+                title=validated_data.get("title"),
+                admin=user.admin,
+                visible=validated_data.get("visible", False),
+            )
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating blog thematic: {str(e)}")
+            return True,BlogThematicSerializer(blog_thematic).data
+
+        
 
     @classmethod
     def update_blog_thematic(cls, instance, data, partial=False):
@@ -82,18 +77,15 @@ class BlogThematicService:
         serializer = BlogThematicSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            with transaction.atomic():
-                instance.title = serializer.validated_data.get("title", instance.title)
-                instance.visible = serializer.validated_data.get("visible", instance.visible)
-                instance.save()
 
-                return Response(BlogThematicSerializer(instance).data, status=status.HTTP_200_OK)
+        with transaction.atomic():
+            instance.title = serializer.validated_data.get("title", instance.title)
+            instance.visible = serializer.validated_data.get("visible", instance.visible)
+            instance.save()
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating blog thematic: {str(e)}")
+            return True,BlogThematicSerializer(instance).data
+
+        
 
     @classmethod
     def change_visibility(cls, blog_thematic_id, request):
@@ -107,17 +99,12 @@ class BlogThematicService:
         Returns:
             Response: The response object containing the updated instance data.
         """
-        try:
-            visibility = request.data.get("visible")
-            if visibility is None:
-                raise serializers.ValidationError(detail="Visible field is required.")
-            blog_thematic = BlogThematic.objects.get(pk=blog_thematic_id)
-            blog_thematic.visible = visibility
-            blog_thematic.save()
-            return Response(BlogThematicSerializer(blog_thematic).data, status=status.HTTP_200_OK)
-        except serializers.ValidationError as e:
-            raise e
-        except BlogThematic.DoesNotExist:
-            raise NotFound(detail="Blog not found.")
-        except Exception as e:
-            raise APIException(detail=f"Error changing visibility: {str(e)}")
+
+        visibility = request.data.get("visible")
+        if visibility is None:
+            raise serializers.ValidationError(detail="Visible field is required.")
+        blog_thematic = BlogThematic.objects.get(pk=blog_thematic_id)
+        blog_thematic.visible = visibility
+        blog_thematic.save()
+        return True,BlogThematicSerializer(blog_thematic).data
+    

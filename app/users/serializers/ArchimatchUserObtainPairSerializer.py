@@ -65,10 +65,8 @@ class ArchimatchUserObtainPairSerializer(TokenObtainPairSerializer):
         }
         if self.user.user_type == USER_TYPE_CHOICES[1][0]:
             is_verified = Client.objects.get(user=self.user).is_verified
-            if is_verified:
-                response_data["is_verified"] = is_verified
-            else:
-                response_data = {"is_verified": is_verified}
+            response_data["is_verified"] = is_verified
+            
 
         return response_data
 

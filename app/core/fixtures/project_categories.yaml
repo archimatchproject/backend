@@ -4,22 +4,22 @@
   pk: 1
   fields:
     label: "Projet résidentiel"
-    icon: "icons/ProjectCategoryIcons/img.png"
+    icon: "icons/ProjectCategoryIcons/construction.png"
 
 - model: core.ProjectCategory
   pk: 2
   fields:
     label: "Grand œuvre immobilier"
-    icon: "icons/ProjectCategoryIcons/img.png"
+    icon: "icons/ProjectCategoryIcons/major_estate.png"
 
 - model: core.ProjectCategory
   pk: 3
   fields:
     label: "Point de Vente et Commercial"
-    icon: "icons/ProjectCategoryIcons/img.png"
+    icon: "icons/ProjectCategoryIcons/commerce.png"
 
 - model: core.ProjectCategory
   pk: 4
   fields:
     label: "Projet Industriel"
-    icon: "icons/ProjectCategoryIcons/img.png"
+    icon: "icons/ProjectCategoryIcons/factory.png"

@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Nous vous informons que votre projet concernant [Nom et Prénom du client]
+      est actuellement bloqué. Vous avez 2 jours pour le débloquer en indiquant
+      le motif de retard.
+    </p>
+    <p>
+      Il est essentiel d'agir rapidement pour ne pas perdre cette opportunité.
+      Si vous avez besoin d'assistance ou avez des questions, n'hésitez pas à
+      nous contacter.
+    </p>
+    <p>Merci pour votre attention.</p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

@@ -47,17 +47,11 @@ class FAQQuestionService:
         serializer = FAQQuestionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
+        with transaction.atomic():
 
-                question = FAQQuestion.objects.create(**validated_data, admin=request.user.admin)
-                return Response(
-                    FAQQuestionSerializer(question).data, status=status.HTTP_201_CREATED
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating FAQ question: {e}")
+            question = FAQQuestion.objects.create(**validated_data, admin=request.user.admin)
+            return True,FAQQuestionSerializer(question).data
+        
 
     @classmethod
     def update_faq_question(cls, instance, request):
@@ -75,17 +69,14 @@ class FAQQuestionService:
         serializer = FAQQuestionSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                fields = ["question", "response", "faq_thematic", "guide_thematic", "guide_article"]
-                for field in fields:
-                    setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
-                instance.save()
+        with transaction.atomic():
+            fields = ["question", "response", "faq_thematic", "guide_thematic", "guide_article"]
+            for field in fields:
+                setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
-                return Response(FAQQuestionSerializer(instance).data, status=status.HTTP_200_OK)
+            instance.save()
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating FAQ question: {e}")
+            return True,FAQQuestionSerializer(instance).data
+
+        

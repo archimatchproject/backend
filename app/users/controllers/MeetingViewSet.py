@@ -16,6 +16,8 @@ from app.users.services.MeetingService import MeetingService
 
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import action
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 
 class MeetingViewSet(viewsets.ModelViewSet):
     """
@@ -30,29 +32,23 @@ class MeetingViewSet(viewsets.ModelViewSet):
     queryset = Meeting.objects.all()
     serializer_class = MeetingSerializer
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handles POST request to create a Meeting.
         Returns:
             Response: The response object with the created Meeting data.
         """
+        success,meeting = MeetingService.create_meeting(request.data,request.user)
+        return build_response(success=success, data=meeting, status=status.HTTP_201_CREATED) 
 
-        try:
-            meeting = MeetingService.create_meeting(request.data,request.user)
-            return Response(
-                MeetingSerializer(meeting).data,
-                status=status.HTTP_201_CREATED
-            )
-        except APIException as e:
-            raise e
-        except Exception as e :
-            raise APIException(detail=str(e))
     
     @action(
         detail=False,
         methods=["GET"],
         url_path="get-admin-meetings",
     )
+    @handle_service_exceptions
     def get_admin_meetings(self, request):
         """
         Custom action to get meetings by architect.
@@ -67,6 +63,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         url_path="get-daily-meetings",
     )
+    @handle_service_exceptions
     def get_daily_meetings(self, request):
         """
         Custom action to get meetings by architect.

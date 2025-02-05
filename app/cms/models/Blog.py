@@ -6,6 +6,7 @@ This module contains the Blog class, which represents a blog post in the applica
 
 from django.db import models
 
+from app.cms import TARGET_USER_TYPE
 from app.cms.models.BlogTag import BlogTag
 from app.cms.models.BlogThematic import BlogThematic
 from app.core.models.BaseModel import BaseModel
@@ -42,6 +43,9 @@ class Blog(BaseModel):
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     popular = models.BooleanField(default=False)
+    target_user_type = models.CharField(
+        max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
+    )
 
     class Meta:
         """

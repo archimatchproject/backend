@@ -47,18 +47,15 @@ class FAQThematicService:
         serializer = FAQThematicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
+        target_user_type = request.data.get("targetUserType",False)
+        if not target_user_type:
+            raise serializers.ValidationError(detail="target user type is required")
 
-                thematic = FAQThematic.objects.create(**validated_data, admin=request.user.admin)
-                return Response(
-                    FAQThematicSerializer(thematic).data, status=status.HTTP_201_CREATED
-                )
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating FAQ thematic: {e}")
+        with transaction.atomic():
 
+            thematic = FAQThematic.objects.create(**validated_data,target_user_type=target_user_type, admin=request.user.admin)
+            return True,FAQThematicSerializer(thematic).data
+        
     @classmethod
     def update_faq_thematic(cls, instance, request):
         """
@@ -75,13 +72,9 @@ class FAQThematicService:
         serializer = FAQThematicSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                instance.title = validated_data.get("title", instance.title)
-                instance.save()
-                return Response(FAQThematicSerializer(instance).data, status=status.HTTP_200_OK)
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error updating FAQ thematic: {e}")
+        with transaction.atomic():
+            instance.title = validated_data.get("title", instance.title)
+            instance.save()
+            return True,FAQThematicSerializer(instance).data
+        

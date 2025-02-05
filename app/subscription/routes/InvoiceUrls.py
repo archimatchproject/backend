@@ -21,4 +21,9 @@ invoice_urlpatterns = [
         InvoiceViewSet.as_view({"get": "architect_get_invoices"}),
         name="get-invoices",
     ),
+    path(
+        "get-supplier-invoices/",
+        InvoiceViewSet.as_view({"get": "supplier_get_invoices"}),
+        name="get-invoices",
+    ),
 ]

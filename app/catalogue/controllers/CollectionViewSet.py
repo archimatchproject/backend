@@ -9,7 +9,9 @@ from rest_framework.permissions import IsAuthenticated
 from app.catalogue.models.Collection import Collection
 from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.catalogue.services.CollectionService import CollectionService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class CollectionViewSet(viewsets.ModelViewSet):
     """
@@ -52,14 +54,18 @@ class CollectionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Collection.objects.filter(supplier__user=user)
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Override the create method to use CollectionService for handling the creation
          of a Collection.
         """
-        return CollectionService.create_collection(request)
+        success,data = CollectionService.create_collection(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
+
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def update_order(self, request, pk=None):
         """
         Update the order of products within a collection.
@@ -72,10 +78,12 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
+        success,message =  CollectionService.update_product_order(request, pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
-        return CollectionService.update_product_order(request, pk)
 
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def update_display_status(self, request, pk=None):
         """
         Update the display status of a collection.
@@ -87,9 +95,12 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return CollectionService.update_display_status(request, pk)
+        success,message =  CollectionService.update_display_status(request, pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
     
     @action(detail=True, methods=["PUT"])
+    @handle_service_exceptions
     def update_visibility(self, request, pk=None):
         """
         Update the visibility of a collection.
@@ -101,7 +112,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return CollectionService.update_visibility(request, pk)
+        success,message =  CollectionService.update_visibility(request, pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
 
     def get(self, request):
         """
@@ -122,6 +135,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return CollectionService.get_collections(request)
     
     @action(detail=True, methods=["POST"])
+    @handle_service_exceptions
     def create_saved_collections(self, request):
         """
         Update the order of products within a collection.
@@ -134,5 +148,27 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
+        success,data = CollectionService.create_saved_collections(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
-        return CollectionService.create_saved_collections(request)
+    
+    @action(detail=True, methods=["GET"])
+    @handle_service_exceptions
+    def get_all_collections(self, request):
+        """
+        Retrieve all Collections.
+
+        This method allows retrieval of all Supplier objects from the database.
+        It delegates the actual retrieval to the `get_collections` class method
+        of `CollectionService`, which handles pagination and serialization.
+
+        Args:
+            self (SupplierViewSet): Instance of the SupplierViewSet class.
+            request (Request): HTTP GET request object.
+
+        Returns:
+            Response: A paginated response containing serialized Supplier objects
+                or an error response if there's a problem during retrieval.
+        """
+        success,data = CollectionService.get_all_collections(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

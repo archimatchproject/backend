@@ -17,6 +17,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.core.pagination import CustomPagination
 from app.moderation.models.ClientReview import ClientReview
 from app.moderation.serializers.ClientReviewSerializer import ClientReviewSerializer
 from app.users.models.Architect import Architect
@@ -32,7 +33,7 @@ class ClientReviewService:
     Methods:
         create_client_review(request): Handles validation and creation of a new ClientReview.
     """
-
+    pagination_class = CustomPagination
     @classmethod
     def create_client_review(cls, request):
         """
@@ -57,10 +58,8 @@ class ClientReviewService:
                     client=client, architect=validated_data.pop("architect_id"), **validated_data
                 )
 
-                return Response(
-                    ClientReviewSerializer(client_review).data,
-                    status=status.HTTP_201_CREATED,
-                )
+                return True,ClientReviewSerializer(client_review)
+                    
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -87,12 +86,9 @@ class ClientReviewService:
         """
         user = request.user
 
-        try:
-            architect = Architect.objects.get(user=user)
-            reviews = ClientReview.objects.filter(architect=architect)
-            serialized_reviews = ClientReviewSerializer(reviews, many=True)
-            return Response(serialized_reviews.data)
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except Exception as e:
-            raise APIException(detail=f"Error retrieving architect reviews: {str(e)}")
+
+        architect = Architect.objects.get(user=user)
+        reviews = ClientReview.objects.filter(architect=architect)
+        serialized_reviews = ClientReviewSerializer(reviews, many=True)
+        return True,serialized_reviews.data
+        

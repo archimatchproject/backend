@@ -17,6 +17,7 @@ from app.moderation.routes.ArchitectReportUrls import architect_report_urlpatter
 from app.moderation.routes.ClientReviewUrls import client_review_urlpatterns
 from app.moderation.routes.ProjectReportUrls import project_report_urlpatterns
 from app.moderation.routes.ReviewReportUrls import review_report_urlpatterns
+from app.moderation.routes.SelectionReportUrls import selection_report_urlpatterns
 
 
 router = routers.DefaultRouter()
@@ -27,4 +28,5 @@ urlpatterns = [
     *client_review_urlpatterns,
     *project_report_urlpatterns,
     *review_report_urlpatterns,
+    *selection_report_urlpatterns,
 ]

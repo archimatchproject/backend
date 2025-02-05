@@ -26,8 +26,6 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
     list_display = (
         "plan_name",
         "plan_price",
-        "number_tokens",
-        "number_free_tokens",
         "active",
         "free_plan",
         "discount",

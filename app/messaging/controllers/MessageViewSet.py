@@ -45,7 +45,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         Returns:
             Response: A serialized response containing the list of devices.
         """
-        return MessageService.get_user_devices(request)
+        return MessageService.get_user_contacts(request)
 
     @action(detail=False, methods=["GET"], url_path="conversation")
     def conversation(self, request):

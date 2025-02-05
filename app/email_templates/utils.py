@@ -18,6 +18,8 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 
 from project_core.django import base as settings
+from datetime import timedelta
+from django.utils.timezone import now
 
 
 def send_email_with_template(to_email, subject, body, images):
@@ -64,3 +66,48 @@ def render_to_pdf(template_src, context_dict):
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type="application/pdf")
     return None
+
+
+def schedule_email_trigger(
+    model,
+    filter_field,
+    offset_days,
+    action_callback,
+    email_template,
+    extra_conditions=None,
+    extra_action=None,
+):
+    """
+    Generalized function to trigger actions on a specific day with dynamic conditions.
+
+    Args:
+        model (Model): The Django model to query.
+        filter_field (str): The field in the model to compare with today (e.g., 'suggested_at').
+        offset_days (int): The number of days to add to the filter_field date.
+        action_callback (function): The function to call when the condition is met.
+        extra_conditions (dict, optional): Additional filter conditions to apply dynamically.
+    """
+    try:
+        # Calculate the target date
+        target_date = now().date()
+
+        # Base filter condition
+        filter_conditions = {
+            f"{filter_field}__isnull": False,
+            f"{filter_field}__date": target_date - timedelta(days=offset_days),
+        }
+
+        # Add extra conditions dynamically
+        if extra_conditions:
+            filter_conditions.update(extra_conditions)
+
+        # Query objects where the conditions are met
+        objects_to_process = model.objects.filter(**filter_conditions)
+
+        # Execute the action for each object
+        for obj in objects_to_process:
+            action_callback(obj, email_template)
+            if extra_action:
+                extra_action(obj)
+    except Exception as e:
+        print(f"Error in schedule_email_trigger: {e}")

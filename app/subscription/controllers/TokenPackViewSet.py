@@ -10,7 +10,9 @@ from app.subscription.controllers.ManageSubscriptionPermission import ManageSubs
 from app.subscription.models.TokenPack import TokenPack
 from app.subscription.serializers.TokenPackSerializer import TokenPackSerializer
 from app.subscription.services.TokenPackService import TokenPackService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class TokenPackViewSet(viewsets.ModelViewSet):
     """
@@ -39,6 +41,7 @@ class TokenPackViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @action(detail=False, methods=["post"], url_path="choose-pack", url_name="choose-pack")
+    @handle_service_exceptions
     def architect_choose_token_pack(self, request):
         """
         Custom action to choose a token pack for an architect.
@@ -49,4 +52,22 @@ class TokenPackViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        return TokenPackService.architect_choose_token_pack(request)
+        success,message = TokenPackService.architect_choose_token_pack(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @handle_service_exceptions
+    def list(self, request, *args, **kwargs):
+        """
+        Create a new SubscriptionPlan instance.
+
+        Args:
+            request (Request): The HTTP request object containing data to create
+            SubscriptionPlan instance.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: Serialized data of the created SubscriptionPlan instance.
+        """
+        success,data = TokenPackService.get_all_token_packs()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

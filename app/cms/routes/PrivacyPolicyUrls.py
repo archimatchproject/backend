@@ -36,4 +36,9 @@ privacy_policy_urlpatterns = [
         PrivacyPolicyViewSet.as_view({"delete": "destroy"}),
         name="privacy-policy-delete",
     ),
+    path(
+        "privacy-policy/get-by-admin",
+        PrivacyPolicyViewSet.as_view({"get": "get_policy_by_admin"}),
+        name="cgu-cgv-policy-by-admin",
+    ),
 ]

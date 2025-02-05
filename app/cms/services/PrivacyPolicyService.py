@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from app.cms.models.PrivacyPolicy import PrivacyPolicy
 from app.cms.serializers.PrivacyPolicySerializer import PrivacyPolicySerializer
+from app.users.models.Admin import Admin
 
 
 class PrivacyPolicyService:
@@ -37,14 +38,27 @@ class PrivacyPolicyService:
         serializer = PrivacyPolicySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        try:
-            with transaction.atomic():
-                policy = PrivacyPolicy.objects.create(**validated_data, admin=request.user.admin)
-                return Response(
-                    PrivacyPolicySerializer(policy).data, status=status.HTTP_201_CREATED
-                )
 
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating Privacy Policy: {e}")
+        with transaction.atomic():
+            policy = PrivacyPolicy.objects.create(**validated_data, admin=request.user.admin)
+            return True,PrivacyPolicySerializer(policy).data
+        
+    @classmethod
+    def get_policy_by_admin(cls, request):
+        """
+        Retrieve the PrivacyPolicy instance associated with the given admin.
+
+        Args:
+            admin (Admin): The admin instance.
+
+        Returns:
+            dict: The serialized data of the PrivacyPolicy instance.
+
+        Raises:
+            NotFound: If no policy is found for the admin.
+        """
+        user = request.user
+
+        admin = Admin.objects.get(user=user)
+        policy = PrivacyPolicy.objects.get(admin=admin)
+        return True,PrivacyPolicySerializer(policy).data

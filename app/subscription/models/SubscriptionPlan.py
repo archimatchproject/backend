@@ -1,30 +1,23 @@
 """
-Module containing the SubscriptionPlan model.
+Module containing the SubscriptionPlan model and its derived models.
 """
 
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
 from rest_framework import serializers
-
 from app.core.models.BaseModel import BaseModel
-from app.subscription.models.PlanService import PlanService
+from app.subscription.models.EventDiscount import EventDiscount
 
 
 class SubscriptionPlan(BaseModel):
     """
-    Model representing a subscription plan.
+    Base model representing a subscription plan.
     """
 
     plan_name = models.CharField(max_length=255)
     plan_price = models.DecimalField(max_digits=10, decimal_places=2)
-    number_tokens = models.PositiveIntegerField()
-    number_free_tokens = models.PositiveIntegerField()
     active = models.BooleanField(default=True)
     free_plan = models.BooleanField(default=False)
-    services = models.ManyToManyField(PlanService)
-
     discount = models.BooleanField(default=False)
     discount_percentage = models.DecimalField(
         max_digits=5,
@@ -33,9 +26,15 @@ class SubscriptionPlan(BaseModel):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
+    discount_message = models.CharField(
+        max_length=255, default="", null=True, blank=True
+    )
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
+    most_popular = models.BooleanField(default=False)
+    event_discount = models.ForeignKey(
+        EventDiscount, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     def save(self, *args, **kwargs):
         """
@@ -57,14 +56,41 @@ class SubscriptionPlan(BaseModel):
                 or not self.discount_message
             ):
                 raise serializers.ValidationError(
-                    "the following fields are required: 'discount_percentage', 'start_date', \
-                        'end_date', and 'discount_message'."
+                    "the following fields are required: 'discount_percentage', 'start_date', "
+                    "'end_date', and 'discount_message'."
                 )
         else:
             self.discount_percentage = None
             self.start_date = None
             self.end_date = None
             self.discount_message = None
+
+    def get_effective_price(self):
+        """
+        Returns the effective price of the plan considering any active event discounts.
+        """
+        price = self.plan_price
+
+        # Apply event discount if applicable
+        if self.event_discount:
+            price -= price * self.event_discount.discount_percentage / 100
+        return price
+
+    def get_annual_price(self):
+        """
+        Returns the annual price of the plan, considering the global annual discount percentage.
+        """
+        # Effective monthly price considering discounts
+        effective_price = self.get_effective_price()
+
+        # Get the annual discount percentage from settings
+        annual_discount_percentage = 5
+
+        # Calculate annual price (12 months) and apply annual discount
+        annual_price = effective_price * 12
+        annual_price -= annual_price * annual_discount_percentage / 100
+
+        return annual_price
 
     def __str__(self):
         """
@@ -77,5 +103,6 @@ class SubscriptionPlan(BaseModel):
         Meta class for SubscriptionPlan model.
         """
 
+        abstract = True
         verbose_name = "Subscription Plan"
         verbose_name_plural = "Subscription Plans"

@@ -15,7 +15,9 @@ from rest_framework.response import Response
 from app.users.services.UnavailabilityService import UnavailabilityService
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import action
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 class UnavailabilityViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing Unavailability instances.
@@ -29,6 +31,7 @@ class UnavailabilityViewSet(viewsets.ModelViewSet):
     queryset = Unavailability.objects.all()
     serializer_class = UnavailabilitySerializer
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handles POST request to create a Unavailability.
@@ -36,16 +39,10 @@ class UnavailabilityViewSet(viewsets.ModelViewSet):
             Response: The response object with the created Unavailability data.
         """
 
-        try:
-            unavailability = UnavailabilityService.create_unavailability(request.data,request.user)
-            return Response({
-                "message": "unavailability created successfully."},
-                status=status.HTTP_201_CREATED
-            )
-        except APIException as e:
-            raise e
-        except Exception as e :
-            raise APIException(detail=str(e))
+        
+        success,message = UnavailabilityService.create_unavailability(request.data,request.user)
+        return build_response(success=success, message=message, status=status.HTTP_201_CREATED)
+        
     
     @action(
         detail=True,
@@ -64,15 +61,10 @@ class UnavailabilityViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing Architect details.
         """
-        try:
-            available_time_slots = UnavailabilityService.get_available_time_slots(request)
-            return Response(available_time_slots,
-                status=status.HTTP_200_OK
-            )
-        except APIException as e:
-            raise e
-        except Exception as e :
-            raise APIException(detail=str(e))
+        
+        success,available_time_slots = UnavailabilityService.get_available_time_slots(request)
+        build_response(success=success, data=available_time_slots, status=status.HTTP_200_OK)
+
     
     
         

@@ -11,6 +11,8 @@ from app.cms.models.FAQQuestion import FAQQuestion
 from app.cms.models.FAQThematic import FAQThematic
 from app.cms.models.GuideArticle import GuideArticle
 from app.cms.models.GuideThematic import GuideThematic
+from app.cms.serializers.GuideArticleSerializer import GuideArticleSerializer
+from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
 
 
 class FAQQuestionSerializer(serializers.ModelSerializer):
@@ -20,14 +22,14 @@ class FAQQuestionSerializer(serializers.ModelSerializer):
     This class provides serialization and deserialization logic for the FAQQuestion model.
     """
 
-    guide_thematic = serializers.SlugRelatedField(read_only=True, slug_field="title")
+    guide_thematic = GuideThematicSerializer(read_only=True)
     guide_thematic_id = serializers.PrimaryKeyRelatedField(
         source="guide_thematic",
         queryset=GuideThematic.objects.all(),
         write_only=True,
         required=False,
     )
-    guide_article = serializers.SlugRelatedField(read_only=True, slug_field="title")
+    guide_article = GuideArticleSerializer(read_only=True)
     guide_article_id = serializers.PrimaryKeyRelatedField(
         source="guide_article", queryset=GuideArticle.objects.all(), write_only=True, required=False
     )

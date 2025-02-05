@@ -10,11 +10,11 @@ Classes:
 
 from django.contrib import admin
 
-from app.subscription.models.Invoice import Invoice
+from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 
 
-@admin.register(Invoice)
-class InvoiceAdmin(admin.ModelAdmin):
+@admin.register(ArchitectInvoice)
+class ArchitectInvoiceAdmin(admin.ModelAdmin):
     """
     Admin class for customizing the Invoice model's admin interface.
 

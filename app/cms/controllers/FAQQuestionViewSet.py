@@ -12,7 +12,9 @@ from app.cms.controllers.ManageFAQPermission import ManageFAQPermission
 from app.cms.models.FAQQuestion import FAQQuestion
 from app.cms.serializers.FAQQuestionSerializer import FAQQuestionSerializer
 from app.cms.services.FAQQuestionService import FAQQuestionService
-
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from rest_framework import status
 
 class FAQQuestionViewSet(viewsets.ModelViewSet):
     """
@@ -44,6 +46,7 @@ class FAQQuestionViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), ManageFAQPermission()]
         return super().get_permissions()
 
+    @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
         Handle the creation of a new FAQQuestion instance along with related FAQQuestion instances.
@@ -54,8 +57,11 @@ class FAQQuestionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        return FAQQuestionService.create_faq_question(request)
+        success,data = FAQQuestionService.create_faq_question(request)
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
+
+    @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
         Handle the update of an existing FAQQuestion instance along with related
@@ -69,4 +75,5 @@ class FAQQuestionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the updated instance data.
         """
-        return FAQQuestionService.update_faq_question(self.get_object(), request)
+        success,data = FAQQuestionService.update_faq_question(self.get_object(), request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

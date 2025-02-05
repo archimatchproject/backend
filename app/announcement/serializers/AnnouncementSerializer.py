@@ -6,6 +6,7 @@ and AnnouncementSerializer classes, which handle the serialization and deseriali
 of Announcement instances for API views.
 """
 
+from datetime import timedelta
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
@@ -14,11 +15,19 @@ from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
     AnnouncementPieceRenovateSerializer,
 )
-from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
-from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ArchitectSpecialitySerializer import (
+    ArchitectSpecialitySerializer,
+)
+from app.announcement.serializers.ArchitecturalStyleSerializer import (
+    ArchitecturalStyleSerializer,
+)
 from app.announcement.serializers.NeedSerializer import NeedSerializer
-from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
-from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
+from app.announcement.serializers.ProjectCategorySerializer import (
+    ProjectCategorySerializer,
+)
+from app.announcement.serializers.ProjectExtensionSerializer import (
+    ProjectExtensionSerializer,
+)
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
@@ -28,8 +37,11 @@ from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.serializers.NoteSerializer import NoteSerializer
+from app.selection.models.SelectionSettings import SelectionSettings
 from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.models.Architect import Architect
+from django.utils.timezone import now
+
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
@@ -48,8 +60,12 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all(), required=False
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    project_category = serializers.PrimaryKeyRelatedField(
+        queryset=ProjectCategory.objects.all()
+    )
+    property_type = serializers.PrimaryKeyRelatedField(
+        queryset=PropertyType.objects.all()
+    )
     work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
@@ -65,7 +81,9 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         required=False,
     )
     number_floors = serializers.IntegerField(required=False)
-    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(),required=False)
+    architect = serializers.PrimaryKeyRelatedField(
+        queryset=Architect.objects.all(), required=False
+    )
 
     class Meta:
         """
@@ -93,7 +111,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "project_extensions",
             "project_images",
             "number_floors",
-            "architect"
+            "architect",
         ]
 
 
@@ -113,8 +131,12 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
         queryset=ArchitecturalStyle.objects.all()
     )
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
+    project_category = serializers.PrimaryKeyRelatedField(
+        queryset=ProjectCategory.objects.all()
+    )
+    property_type = serializers.PrimaryKeyRelatedField(
+        queryset=PropertyType.objects.all()
+    )
     work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
@@ -179,6 +201,8 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     notes = NoteSerializer(many=True)
     interested_architects_count = serializers.SerializerMethodField(required=False)
     has_selected = serializers.SerializerMethodField(required=False)
+    days_remaining = serializers.SerializerMethodField()
+    admin_management_reached = serializers.SerializerMethodField()
 
     class Meta:
         model = Announcement
@@ -207,21 +231,27 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "admin_note",
             "interested_architects_count",  # Optional
             "has_selected",  # Optional
+            "token_number",
+            "days_remaining",
+            "architect",
+            "admin_management_reached",
+            "is_blocked",
+            "is_broadcasted",
         ]
 
     def get_interested_architects_count(self, obj):
         """
         Return the count of interested architects.
         """
-        return obj.selections.filter(status='Interested').count()
+        return obj.selections.all().count()
 
     def get_has_selected(self, obj):
         """
         Check if the architect has selected the announcement.
         """
-        request = self.context.get('request')
+        request = self.context.get("request")
 
-        if not request or not hasattr(request, 'user'):
+        if not request or not hasattr(request, "user"):
             return False
 
         user = request.user
@@ -232,6 +262,38 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             return False
 
         return obj.selections.filter(architect=architect).exists()
+
+    def get_days_remaining(self, obj):
+        """
+        Calculate the remaining days for the end of the phase.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return None
+
+            phase_days = settings.phase_days
+            end_of_phase_date = obj.suggested_at + timedelta(days=phase_days)
+            remaining_days = (end_of_phase_date - now()).days
+            return max(0, remaining_days)
+        except Exception:
+            return None
+
+    def get_admin_management_reached(self, obj):
+        """
+        Determine if the time from created_at to today has reached days_for_admin_management.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return False
+
+            admin_management_days = settings.days_for_admin_management
+            time_elapsed = (now() - obj.created_at).days
+            return time_elapsed >= admin_management_days
+        except Exception:
+            return False
+
 
 class AnnouncementSerializer(serializers.ModelSerializer):
     """
@@ -270,6 +332,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "project_images",
             "number_floors",
             "admin_note",
+            "token_number",
         ]
 
     def to_representation(self, instance):

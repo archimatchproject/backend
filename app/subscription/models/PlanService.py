@@ -6,6 +6,7 @@ from django.contrib.auth.models import Permission
 from django.db import models
 
 from app.core.models.BaseModel import BaseModel
+from app.subscription import ARCHITECT_SUBSCRIPTION_IDENTIFIERS
 
 
 class PlanService(BaseModel):
@@ -14,6 +15,10 @@ class PlanService(BaseModel):
     """
 
     description = models.CharField(max_length=255)
+    special_identifier = models.CharField(
+        max_length=50,
+        choices=ARCHITECT_SUBSCRIPTION_IDENTIFIERS,
+    )
     permissions = models.ManyToManyField(Permission, blank=True)
 
     def __str__(self):
