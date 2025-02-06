@@ -3,6 +3,7 @@ USER_TYPE_CHOICES = [
     ("Client", "Client"),
     ("Admin", "Admin"),
     ("Supplier", "Supplier"),
+    ("Office", "Office")
 ]
 
 PERMISSION_CODENAMES = {

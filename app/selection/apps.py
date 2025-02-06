@@ -27,9 +27,7 @@ class SelectionConfig(AppConfig):
 
         timezone = pytz.timezone("UTC")
         now = datetime.now(timezone)
-        next_midnight = (now + timedelta(days=1)).replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         if not Task.objects.filter(
             task_name="app.selection.tasks.selection_phase_tasks.process_email_triggers"
         ).exists():

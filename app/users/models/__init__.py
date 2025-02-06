@@ -9,3 +9,4 @@ from app.users.models.Unavailability import Unavailability
 from app.users.models.Meeting import Meeting
 from app.users.models.ShowRoom import ShowRoom
 from app.users.models.VerificationCode import VerificationCode
+from app.users.models.Office import Office
