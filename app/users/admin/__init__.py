@@ -9,3 +9,4 @@ from app.users.admin.TimeSlotAdmin import TimeSlotAdmin
 from app.users.admin.MeetingAdmin import MeetingAdmin
 from app.users.admin.ShowRoomAdmin import ShowRoomAdmin
 from app.users.admin.SupplierSocialMediaAdmin import SupplierSocialMediaAdmin
+from app.users.admin.OfficeAdmin import OfficeAdmin

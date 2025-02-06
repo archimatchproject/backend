@@ -15,10 +15,12 @@ from django.urls import path
 from rest_framework import routers
 
 from app.architect_request.routes.ArchitectRequestUrls import architect_request_urlpatterns
+from app.architect_request.routes.OfficeRequestUrls import office_request_urlpatterns
 
 
 router = routers.DefaultRouter()
 urlpatterns = [
     path("", include(router.urls)),
     *architect_request_urlpatterns,
+    *office_request_urlpatterns,
 ]
