@@ -223,25 +223,31 @@ class OfficeService:
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @classmethod
-    def office_resend_email(cls, pk):
+    def office_resend_email(cls, pk, request):
         """
-        Registers a new office in the system.
+        Resends the office invitation email.
 
         Args:
-            request (Request): Django request object containing office's email.
+            pk (int): Primary key of the office.
 
         Returns:
-            Response: Response object indicating success or failure of office registration.
+            Tuple[bool, str]: Response indicating success or failure of email resend.
         """
 
         office = Office.objects.get(id=pk)
         email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        token = generate_password_reset_token(office.user.id)
+        language_code = get_language_from_request(request)
+        url = f"{settings.BASE_FRONTEND_URL}/{language_code}"
+        reset_link = f"{url}/office/login/first-login-password/{token}"
+
         signal_data = {
             "template_name": "supplier_invite.html",
             "context": {
                 "first_name": office.office_name,
                 "last_name": office.office_name,
                 "email": office.user.email,
+                "reset_link": reset_link,
             },
             "to_email": office.user.email,
             "subject": "Archimatch Invite Office",

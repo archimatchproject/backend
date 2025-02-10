@@ -142,5 +142,5 @@ class OfficeViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success, message = OfficeService.office_resend_email(pk)
+        success, message = OfficeService.office_resend_email(pk, request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
