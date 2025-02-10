@@ -124,3 +124,23 @@ class OfficeViewSet(viewsets.ModelViewSet):
         """
         success, profile_data = OfficeService.office_validate_password_token(request)
         return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path="resend-email",
+    )
+    @handle_service_exceptions
+    def office_resend_email(self, request, pk=None):
+        """
+        Custom action to resend email to office
+
+        Args:
+            request (Request): The request object containing the input data.
+            pk (str): The primary key of the office object
+
+        Returns:
+            Response: The response object containing the result of the operation.
+        """
+        success, message = OfficeService.office_resend_email(pk)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

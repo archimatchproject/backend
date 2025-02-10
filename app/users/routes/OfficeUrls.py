@@ -34,4 +34,9 @@ office_urlpatterns = [
         OfficeViewSet.as_view({"post": "office_validate_password_token"}),
         name="validate-password-token",
     ),
+    path(
+        "office/resend-email/<int:pk>/",
+        OfficeViewSet.as_view({"post": "office_resend_email"}),
+        name="resend-email",
+    ),
 ]
