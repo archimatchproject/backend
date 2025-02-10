@@ -11,9 +11,9 @@ Classes:
 """
 
 import django_filters
-from django.db.models import Q
 
 from app.users.models.Supplier import Supplier
+
 
 class SupplierFilter(django_filters.FilterSet):
     """
@@ -45,7 +45,7 @@ class SupplierFilter(django_filters.FilterSet):
     company_address = django_filters.CharFilter(
         field_name="company_address", lookup_expr="icontains"
     )
-    
+
     company_name_exists = django_filters.BooleanFilter(method='filter_company_name_exists')
 
     class Meta:
@@ -58,11 +58,12 @@ class SupplierFilter(django_filters.FilterSet):
             "speciality_type", "company_name", "company_address",
             "company_name_exists"
         ]
+
     def filter_queryset(self, queryset):
-        
+
         queryset = queryset.order_by('created_at') 
         return super().filter_queryset(queryset)
-  
+
     def filter_company_name_exists(self, queryset, name, value):
         """
         Custom filter method to filter suppliers based on the existence of company_name.

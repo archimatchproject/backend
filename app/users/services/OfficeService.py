@@ -29,6 +29,7 @@ from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
+from app.users.controllers.OfficeFilter import OfficeFilter
 
 
 class OfficeService:
@@ -126,32 +127,31 @@ class OfficeService:
     @classmethod
     def office_get_all(cls, request):
         """
-        Handle GET request and return paginated Office objects.
-        This method retrieves all Office objects from the database, applies
-        pagination based on the parameters in the request, and returns the paginated
-        results. If the pagination parameters are not provided correctly or if an
-        error occurs during serialization or database access, it returns a 400 Bad
-        Request response with an appropriate error message.
+        Handle GET request and return paginated Office objects with related OfficeRequest data.
+
         Args:
             request (HttpRequest): The incoming HTTP request object containing
                 pagination parameters like page number, page size, etc.
+
         Returns:
-            Response: A paginated response containing serialized Office objects
-                or a 400 Bad Request response with an error message.
+            Response: A paginated response containing serialized combined
+            data of Office and OfficeRequest.
         """
 
         queryset = Office.objects.all().order_by("created_at")
+        # Apply filters using the SupplierFilter class
+        filtered_queryset = OfficeFilter(request.GET, queryset=queryset).qs
 
         # Instantiate the paginator
         paginator = cls.pagination_class()
 
         # Apply pagination to the filtered queryset
-        page = paginator.paginate_queryset(queryset, request)
+        page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
             serializer = OfficeSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        serializer = OfficeSerializer(queryset, many=True)
+        serializer = OfficeSerializer(filtered_queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @classmethod
@@ -188,3 +188,65 @@ class OfficeService:
         office = Office.objects.get(user__id=user_id)
         serializer = OfficeSerializer(office)
         return True, serializer.data
+
+    @classmethod
+    def office_get_accepted_list(cls, request):
+        """
+        Handle GET request and return paginated Office objects.
+        This method retrieves all Office objects from the database, applies
+        pagination based on the parameters in the request, and returns the paginated
+        results. If the pagination parameters are not provided correctly or if an
+        error occurs during serialization or database access, it returns a 400 Bad
+        Request response with an appropriate error message.
+        Args:
+            request (HttpRequest): The incoming HTTP request object containing
+                pagination parameters like page number, page size, etc.
+        Returns:
+            Response: A paginated response containing serialized Office objects
+                or a 400 Bad Request response with an error message.
+        """
+
+        queryset = Office.objects.exclude(profile_image__isnull=True).exclude(profile_image="")
+        # Apply filters using the OfficeFilter class
+        filtered_queryset = OfficeFilter(request.GET, queryset=queryset).qs
+
+        # Instantiate the paginator
+        paginator = cls.pagination_class()
+
+        # Apply pagination to the filtered queryset
+        page = paginator.paginate_queryset(filtered_queryset, request)
+        if page is not None:
+            serializer = OfficeSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = OfficeSerializer(filtered_queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def office_resend_email(cls, pk):
+        """
+        Registers a new office in the system.
+
+        Args:
+            request (Request): Django request object containing office's email.
+
+        Returns:
+            Response: Response object indicating success or failure of office registration.
+        """
+
+        office = Office.objects.get(id=pk)
+        email_images = settings.REFUSE_ARCHITECT_REQUEST_IMAGES
+        signal_data = {
+            "template_name": "supplier_invite.html",
+            "context": {
+                "first_name": office.office_name,
+                "last_name": office.office_name,
+                "email": office.user.email,
+            },
+            "to_email": office.user.email,
+            "subject": "Archimatch Invite Office",
+            "images": email_images,
+        }
+        api_success_signal.send(sender=cls, data=signal_data)
+
+        return True, "Email resent successfully"

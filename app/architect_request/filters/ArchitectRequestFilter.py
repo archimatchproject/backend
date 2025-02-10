@@ -12,6 +12,7 @@ Classes:
 import django_filters
 from app.architect_request.models import ArchitectRequest
 
+
 class ArchitectRequestFilter(django_filters.FilterSet):
     """
     Filter class for ArchitectRequest model to filter by status and meeting_responsable's email.

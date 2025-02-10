@@ -99,7 +99,7 @@ class OfficeRequest(BaseModel):
             timezone.get_current_timezone(),
         )
 
-        if meeting_aware_datetime <= now:
+        if meeting_aware_datetime <= now and self.status == "Awaiting Demo":
             raise ValidationError("The selected date and time must be in the future.")
 
     def __str__(self):
