@@ -23,7 +23,7 @@ from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Office import Office
 
-from app.users.serializers.OfficeSerializer import OfficeSerializer
+from app.users.serializers.OfficeSerializer import OfficeInputSerializer, OfficeSerializer
 
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
@@ -256,3 +256,54 @@ class OfficeService:
         api_success_signal.send(sender=cls, data=signal_data)
 
         return True, "Email resent successfully"
+
+    @classmethod
+    def office_first_connection(cls, request):
+        """
+        Updates an office's initial profile information including office details and address.
+
+        Args:
+            request (Request): Django request object containing office's profile data.
+
+        Returns:
+            Response: Response object indicating success or failure of the profile update.
+
+        Raises:
+            serializers.ValidationError: If there are errors during office profile update.
+        """
+
+        data = request.data
+        office_serializer = OfficeInputSerializer(data=data)
+        office_serializer.is_valid(raise_exception=True)
+
+        email = data.pop("email")
+        if not Office.objects.filter(user__email=email).exists():
+            raise NotFound(detail="Office not found.", code=status.HTTP_404_NOT_FOUND)
+
+        office = Office.objects.get(user__email=email)
+        phone_number = data.pop("phone_number")
+
+        # Update user data
+        user = office.user
+        user.phone_number = phone_number
+        user.save()
+
+        # Update office model fields
+        office_name = data.pop("office_name")
+        office_address = data.pop("office_address")
+        office_identifier = data.pop("office_identifier")
+        is_public = data.pop("is_public", True)
+        profile_image = data.pop("profile_image", None)
+
+        # Update office data
+        office.office_name = office_name
+        office.office_address = office_address
+        office.office_identifier = office_identifier
+        office.is_public = is_public
+        if profile_image:
+            office.profile_image = profile_image
+
+        # Save changes to office
+        office.save()
+
+        return True, "Office successfully updated."

@@ -10,6 +10,8 @@ from rest_framework.decorators import action
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
+
+
 class EventDiscountViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing EventDiscount instances.
@@ -31,12 +33,12 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
-        
+
         if start_date:
             queryset = queryset.filter(start_date__gte=start_date)
         if end_date:
             queryset = queryset.filter(end_date__lte=end_date)
-        
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -54,9 +56,10 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
                 or a 400 Bad Request response with an error message.
         """
         return EventDiscountService.event_discount_paginated(request)
-    
-    
-    @action(detail=True, methods=["get"], url_path="get-active-discount", url_name="get-active-discount")
+
+    @action(
+        detail=True, methods=["get"], url_path="get-active-discount", url_name="get-active-discount"
+    )
     @handle_service_exceptions
     def get_active_event_discount(self, request):
         """
@@ -68,5 +71,5 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         Returns:
             Response: A response containing serialized EventDiscount objects.
         """
-        success,data = EventDiscountService.get_active_event_discount()
+        success, data = EventDiscountService.get_active_event_discount()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

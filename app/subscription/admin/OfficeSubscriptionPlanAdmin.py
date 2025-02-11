@@ -1,15 +1,11 @@
-"""
-Admin registration module for the SubscriptionPlan model.
-"""
-
 from django.contrib import admin
 
-from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
+from app.subscription.models.OfficeSubscriptionPlan import OfficeSubscriptionPlan
 
 
-class SupplierSubscriptionPlanAdmin(admin.ModelAdmin):
+class OfficeSubscriptionPlanAdmin(admin.ModelAdmin):
     """
-    Admin interface for SubscriptionPlan.
+    Admin interface for OfficeSubscriptionPlan.
     """
     list_display = (
         "plan_name",
@@ -26,4 +22,4 @@ class SupplierSubscriptionPlanAdmin(admin.ModelAdmin):
     list_filter = ("active", "free_plan")
 
 
-admin.site.register(SupplierSubscriptionPlan, SupplierSubscriptionPlanAdmin)
+admin.site.register(OfficeSubscriptionPlan, OfficeSubscriptionPlanAdmin)

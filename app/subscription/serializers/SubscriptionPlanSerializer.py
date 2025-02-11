@@ -11,6 +11,7 @@ from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 from app.subscription.serializers.EventDiscountSerializer import EventDiscountSerializer
 from app.subscription.serializers.ServiceSerializer import ServiceSerializer
+from app.subscription.models.OfficeSubscriptionPlan import OfficeSubscriptionPlan
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -51,10 +52,11 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
     )
     effective_price = serializers.SerializerMethodField()
     event_discount_id = serializers.PrimaryKeyRelatedField(
-        queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
+        queryset=EventDiscount.objects.all(), write_only=True, many=False, required=False
     )
     event_discount = EventDiscountSerializer(read_only=True)
     annual_price = serializers.SerializerMethodField()
+
     class Meta:
         """
         Meta class for ArchitectSubscriptionPlanSerializer.
@@ -82,7 +84,7 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             "event_discount_id",
             "annual_price"
         ]
-        
+
     def get_services(self, obj):
         all_services = PlanService.objects.all()
         selected_services = obj.services.all()
@@ -93,22 +95,25 @@ class ArchitectSubscriptionPlanSerializer(serializers.ModelSerializer):
             }
             for service in all_services
         ]
-    
+
     def get_effective_price(self, obj):
         return obj.get_effective_price()
+
     def get_annual_price(self, obj):
         return obj.get_annual_price()
-        
+
+
 class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
     Serializer for the SupplierSubscriptionPlan model.
     """
     effective_price = serializers.SerializerMethodField()
     event_discount_id = serializers.PrimaryKeyRelatedField(
-        queryset=EventDiscount.objects.all(), write_only=True, many=False,required=False
+        queryset=EventDiscount.objects.all(), write_only=True, many=False, required=False
     )
     event_discount = EventDiscountSerializer(read_only=True)
     annual_price = serializers.SerializerMethodField()
+
     class Meta:
         """
         Meta class for SupplierSubscriptionPlanSerializer.
@@ -134,9 +139,60 @@ class SupplierSubscriptionPlanSerializer(serializers.ModelSerializer):
             "event_discount_id",
             "annual_price"
         ]
-    
+
     def get_effective_price(self, obj):
         return obj.get_effective_price()
-    
+
     def get_annual_price(self, obj):
+        return obj.get_annual_price()
+
+
+class OfficeSubscriptionPlanSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the OfficeSubscriptionPlan model.
+    """
+
+    effective_price = serializers.SerializerMethodField()
+    event_discount_id = serializers.PrimaryKeyRelatedField(
+        queryset=EventDiscount.objects.all(), write_only=True, many=False, required=False
+    )
+    event_discount = EventDiscountSerializer(read_only=True)
+    annual_price = serializers.SerializerMethodField()
+
+    class Meta:
+        """
+        Meta class for OfficeSubscriptionPlanSerializer.
+        """
+
+        model = OfficeSubscriptionPlan
+        fields = [
+            "id",
+            "plan_name",
+            "plan_price",
+            "active",
+            "free_plan",
+            "announces_number",
+            "architects_number_per_announce",
+            "discount",
+            "discount_percentage",
+            "start_date",
+            "end_date",
+            "discount_message",
+            "effective_price",
+            "most_popular",
+            "event_discount",
+            "event_discount_id",
+            "annual_price",
+        ]
+
+    def get_effective_price(self, obj):
+        """
+        Returns the effective price of the plan considering any active event discounts.
+        """
+        return obj.get_effective_price()
+
+    def get_annual_price(self, obj):
+        """
+        Returns the annual price of the plan, considering the global annual discount percentage.
+        """
         return obj.get_annual_price()

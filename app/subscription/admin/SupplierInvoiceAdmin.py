@@ -13,8 +13,6 @@ from django.contrib import admin
 from app.subscription.models.SupplierInvoice import SupplierInvoice
 
 
-
-
 @admin.register(SupplierInvoice)
 class SupplierInvoiceAdmin(admin.ModelAdmin):
     """

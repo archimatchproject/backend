@@ -39,6 +39,7 @@ class Office(BaseModel):
     )
     is_public = models.BooleanField(default=False)
     office_address = models.CharField(max_length=255, default="")
+    office_identifier = models.CharField(max_length=10, default="", null=True, blank=True)
     bio = models.TextField(max_length=500, default="")
     office_name = models.CharField(max_length=255, default="")
     social_links = models.OneToOneField(
@@ -49,13 +50,14 @@ class Office(BaseModel):
     )
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
 
-    # subscription_plan = models.ForeignKey(
-    #     "subscription.SupplierSelectedSubscriptionPlan",
-    #     on_delete=models.SET_NULL,
-    #     default=None,
-    #     null=True,
-    #     blank=True,
-    # )
+    subscription_plan = models.ForeignKey(
+        "subscription.OfficeSelectedSubscriptionPlan",
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
+    )
+
     def __str__(self):
         """
         Returns the email address of the associated user.

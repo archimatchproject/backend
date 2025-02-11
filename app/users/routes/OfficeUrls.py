@@ -39,4 +39,9 @@ office_urlpatterns = [
         OfficeViewSet.as_view({"post": "office_resend_email"}),
         name="resend-email",
     ),
+    path(
+        "office/first-connection/",
+        OfficeViewSet.as_view({"post": "office_first_cnx"}),
+        name="first-connection",
+    ),
 ]

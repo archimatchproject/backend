@@ -10,27 +10,23 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.subscription.controllers.ManageSubscriptionPermission import ManageSubscriptionPermission
-from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import (
-    SupplierSubscriptionPlanSerializer,
-)
-from app.subscription.services.SupplierSubscriptionPlanService import (
-    SupplierSubscriptionPlanService,
-)
+from app.subscription.models.OfficeSubscriptionPlan import OfficeSubscriptionPlan
+from app.subscription.serializers.SubscriptionPlanSerializer import OfficeSubscriptionPlanSerializer
+from app.subscription.services.OfficeSubscriptionPlanService import OfficeSubscriptionPlanService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from rest_framework import status
 
 
-class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
+class OfficeSubscriptionPlanViewSet(viewsets.ModelViewSet):
     """
-    A ViewSet for handling SubscriptionPlan instances.
+    A ViewSet for handling OfficeSubscriptionPlan instances.
 
-    This ViewSet provides endpoints for CRUD operations related to SubscriptionPlan instances.
+    This ViewSet provides endpoints for CRUD operations related to OfficeSubscriptionPlan instances.
     """
 
-    queryset = SupplierSubscriptionPlan.objects.all()
-    serializer_class = SupplierSubscriptionPlanSerializer
+    queryset = OfficeSubscriptionPlan.objects.all()
+    serializer_class = OfficeSubscriptionPlanSerializer
 
     def get_permissions(self):
         """
@@ -53,37 +49,37 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
     @handle_service_exceptions
     def create(self, request, *args, **kwargs):
         """
-        Create a new SubscriptionPlan instance.
+        Create a new OfficeSubscriptionPlan instance.
 
         Args:
             request (Request): The HTTP request object containing data to create
-            SubscriptionPlan instance.
+            OfficeSubscriptionPlan instance.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
 
         Returns:
-            Response: Serialized data of the created SubscriptionPlan instance.
+            Response: Serialized data of the created OfficeSubscriptionPlan instance.
         """
-        success, data = SupplierSubscriptionPlanService.create_subscription_plan(request.data)
+        success, data = OfficeSubscriptionPlanService.create_subscription_plan(request.data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
         """
-        Update an existing SubscriptionPlan instance.
+        Update an existing OfficeSubscriptionPlan instance.
 
         Args:
             request (Request): The HTTP request object containing data to update
-            SubscriptionPlan instance.
+            OfficeSubscriptionPlan instance.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
 
         Returns:
-            Response: Serialized data of the updated SubscriptionPlan instance.
+            Response: Serialized data of the updated OfficeSubscriptionPlan instance.
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success, data = SupplierSubscriptionPlanService.update_subscription_plan(
+        success, data = OfficeSubscriptionPlanService.update_subscription_plan(
             instance, request.data, partial=partial
         )
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
@@ -92,7 +88,7 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
     @handle_service_exceptions
     def get_upgradable_plans(self, request):
         """
-        Custom action to fetch upgradable subscription plans for an architect.
+        Custom action to fetch upgradable subscription plans for an office.
 
         Args:
             request (Request): The HTTP request object containing user data.
@@ -100,22 +96,19 @@ class SupplierSubscriptionPlanViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success, data = SupplierSubscriptionPlanService.supplier_get_upgradable_plans(request)
+        success, data = OfficeSubscriptionPlanService.office_get_upgradable_plans(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def list(self, request, *args, **kwargs):
         """
-        Create a new SubscriptionPlan instance.
+        List all OfficeSubscriptionPlan instances.
 
         Args:
-            request (Request): The HTTP request object containing data to create
-            SubscriptionPlan instance.
-            *args: Additional positional arguments.
-            **kwargs: Additional keyword arguments.
+            request (Request): The HTTP request object.
 
         Returns:
-            Response: Serialized data of the created SubscriptionPlan instance.
+            Response: Serialized data of all OfficeSubscriptionPlan instances.
         """
-        success, data = SupplierSubscriptionPlanService.get_all_supplier_subscription_plan()
+        success, data = OfficeSubscriptionPlanService.get_all_office_subscription_plans()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
