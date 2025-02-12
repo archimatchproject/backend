@@ -115,18 +115,14 @@ class OfficeSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the Office Selected Subscription Plan.
     """
 
-    services = serializers.SerializerMethodField()
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
-
     class Meta:
         model = OfficeSelectedSubscriptionPlan
         fields = [
             "id",
             "plan_name",
             "plan_price",
-            "remaining_tokens",
+            "announces_number",
+            "architects_number_per_announce",
             "active",
             "free_plan",
             "services",
