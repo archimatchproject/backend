@@ -8,6 +8,7 @@ Classes:
 """
 from django.db import models
 
+
 class ShowRoom(models.Model):
     """
     Model representing a showroom for a supplier.

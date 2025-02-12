@@ -144,3 +144,24 @@ class OfficeViewSet(viewsets.ModelViewSet):
         """
         success, message = OfficeService.office_resend_email(pk, request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        permission_classes=[],
+        url_path="first-connection",
+        serializer_class=UserAuthSerializer,
+    )
+    @handle_service_exceptions
+    def office_first_cnx(self, request):
+        """
+        Handles the first connection setup for an office using a custom action.
+
+        Args:
+            request (Request): HTTP request object containing first connection data.
+
+        Returns:
+            Response: Response indicating success or failure of the first connection attempt.
+        """
+        success, message = OfficeService.office_first_connection(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

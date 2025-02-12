@@ -9,3 +9,9 @@ from app.subscription.admin.SupplierPaymentAdmin import SupplierPaymentAdmin
 from app.subscription.admin.SupplierInvoiceAdmin import SupplierInvoiceAdmin
 from app.subscription.admin.EventDiscountAdmin import EventDiscountAdmin
 from app.subscription.admin.SupplierSelectedSubscriptionPlanAdmin import SupplierSelectedSubscriptionPlanAdmin
+from app.subscription.admin.OfficePaymentAdmin import OfficePaymentAdmin
+from app.subscription.admin.OfficeInvoiceAdmin import OfficeInvoiceAdmin
+from app.subscription.admin.OfficeSelectedSubscriptionPlanAdmin import (
+    OfficeSelectedSubscriptionPlanAdmin,
+)
+from app.subscription.admin.OfficeSubscriptionPlanAdmin import OfficeSubscriptionPlanAdmin

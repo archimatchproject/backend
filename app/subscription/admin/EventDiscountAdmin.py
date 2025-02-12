@@ -17,4 +17,5 @@ class EventDiscountAdmin(admin.ModelAdmin):
     ordering = ('start_date',)
     fields = ('event_name', 'discount_percentage', 'start_date', 'end_date')
 
+
 admin.site.register(EventDiscount, EventDiscountAdmin)

@@ -9,8 +9,7 @@ from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
 from app.subscription.services.InvoiceService import InvoiceService
 from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class InvoiceViewSet(viewsets.ModelViewSet):
     """
@@ -49,8 +48,13 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             Response: The response object containing the list of invoices or an error message.
         """
         return InvoiceService.architect_get_invoices(request)
-        
-    @action(detail=True, methods=["get"], url_path="get-supplier-invoices", url_name="get-supplier-invoices")
+
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="get-supplier-invoices",
+        url_name="get-supplier-invoices",
+    )
     @handle_service_exceptions
     def supplier_get_invoices(self, request):
         """
@@ -64,3 +68,20 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             Response: The response object containing the list of invoices or an error message.
         """
         return InvoiceService.supplier_get_invoices(request)
+
+    @action(
+        detail=True, methods=["get"], url_path="get-office-invoices", url_name="get-office-invoices"
+    )
+    @handle_service_exceptions
+    def office_get_invoices(self, request, pk=None):
+        """
+        Custom action to fetch invoices for a specific office.
+
+        Args:
+            request (Request): The HTTP request object containing user data.
+            pk (int): The primary key of the office whose invoices are to be fetched.
+
+        Returns:
+            Response: The response object containing the list of invoices or an error message.
+        """
+        return InvoiceService.office_get_invoices(request, pk)
