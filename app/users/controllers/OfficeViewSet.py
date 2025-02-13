@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from app.users.models.Office import Office
-from app.users.serializers.OfficeSerializer import OfficeSerializer
+from app.users.serializers.OfficeSerializer import OfficeInputSerializer, OfficeSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.OfficeService import OfficeService
 from rest_framework import status
@@ -164,4 +164,69 @@ class OfficeViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the first connection attempt.
         """
         success, message = OfficeService.office_first_connection(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile",
+    )
+    @handle_service_exceptions
+    def office_get_profile(self, request):
+        """
+        Retrieves office profile details.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing office details.
+        """
+        success, profile_data = OfficeService.office_get_profile(request)
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-profile",
+        serializer_class=OfficeInputSerializer,
+    )
+    @handle_service_exceptions
+    def office_update_profile(self, request):
+        """
+        Allows an office to update its profile information using a custom action.
+
+        Args:
+            self (OfficeViewSet): Instance of the OfficeViewSet class.
+            request (Request): HTTP request object containing profile update data.
+
+        Returns:
+            Response: Response indicating success or failure of the profile update attempt.
+        """
+        success, message = OfficeService.office_update_profile(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-links",
+    )
+    @handle_service_exceptions
+    def office_update_links(self, request):
+        """
+        Allows an office to update their social media links using a custom action.
+
+        Args:
+            self (OfficeViewSet): Instance of the OfficeViewSet class.
+            request (Request): HTTP request object containing social media links update data.
+
+        Returns:
+            Response: Response indicating success or failure of the social
+            media links update attempt.
+        """
+        success, message = OfficeService.office_update_social_links(request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)

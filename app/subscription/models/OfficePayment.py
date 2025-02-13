@@ -27,4 +27,4 @@ class OfficePayment(Payment):
     )
 
     def __str__(self):
-        return f"{self.office.name} - {self.subscription_plan.plan_name}"
+        return f"{self.office.office_name} - {self.subscription_plan.plan_name}"

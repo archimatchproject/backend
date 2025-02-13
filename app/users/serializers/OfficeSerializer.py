@@ -13,7 +13,6 @@ from rest_framework import serializers
 
 from app.users.models.Office import Office
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.ShowRoomSerializer import ShowRoomSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 
 
@@ -90,12 +89,9 @@ class OfficePersonalInformationSerializer(serializers.ModelSerializer):
 
     Fields:
         user_phone_number: Phone number from the ArchimatchUser associated with the office.
-        social_links: Nested serializer for the SupplierSocialMedia associated
-        with the office.
     """
 
     phone_number = serializers.CharField(source="user.phone_number")
-    showrooms = ShowRoomSerializer(many=True, read_only=True)
 
     class Meta:
         """
@@ -107,4 +103,12 @@ class OfficePersonalInformationSerializer(serializers.ModelSerializer):
         """
 
         model = Office
-        fields = ("id", "office_address", "phone_number", "office_name")
+        fields = (
+            "id",
+            "office_address",
+            "phone_number",
+            "office_name",
+            "profile_image",
+            "office_identifier",
+            "bio",
+        )
