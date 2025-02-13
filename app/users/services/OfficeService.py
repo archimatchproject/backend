@@ -23,13 +23,19 @@ from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Office import Office
 
-from app.users.serializers.OfficeSerializer import OfficeInputSerializer, OfficeSerializer
+from app.users.serializers.OfficeSerializer import (
+    OfficeInputSerializer,
+    OfficePersonalInformationSerializer,
+    OfficeSerializer,
+)
 
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
 from app.users.controllers.OfficeFilter import OfficeFilter
+from app.users.models.SupplierSocialMedia import SupplierSocialMedia
+from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 
 
 class OfficeService:
@@ -307,3 +313,98 @@ class OfficeService:
         office.save()
 
         return True, "Office successfully updated."
+
+    @classmethod
+    def office_update_profile(cls, request):
+        """
+        Updates an office's profile information, including profile image.
+
+        Args:
+            request (Request): Django request object containing office's profile data.
+
+        Returns:
+            tuple: (bool, str) indicating success or failure message.
+        """
+
+        data = request.data
+
+        # Validate the incoming data with the serializer
+        serializer = OfficePersonalInformationSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        user_id = request.user.id
+        office = Office.objects.get(user__id=user_id)
+        user_data = validated_data.pop("user")
+        phone_number = user_data.pop("phone_number")
+
+        # Update user data
+        user = office.user
+        user.phone_number = phone_number
+        user.save()
+
+        # Update office data
+        for attr, value in validated_data.items():
+            setattr(office, attr, value)
+
+        # Handle profile image upload
+        if "profile_image" in request.FILES:
+            office.profile_image = request.FILES["profile_image"]
+
+        office.save()
+
+        return True, "Office profile updated"
+
+    @classmethod
+    def office_update_social_links(cls, request):
+        """
+        Updates an office's social media links.
+
+        Args:
+            request (Request): Django request object containing office's social media data.
+
+        Returns:
+            tuple: (bool, str) indicating success or failure message for social media links update.
+
+        Raises:
+            APIException: If there are errors during social media links update.
+        """
+
+        data = request.data
+        user_id = request.user.id
+
+        # Validate incoming social media data
+        social_media_serializer = SupplierSocialMediaSerializer(data=data)
+        social_media_serializer.is_valid(raise_exception=True)
+
+        validated_data = social_media_serializer.validated_data
+
+        # Retrieve the office associated with the user
+        office = Office.objects.get(user__id=user_id)
+
+        # If the office does not have existing social media links, create them
+        if not office.social_links:
+            social_links, created = SupplierSocialMedia.objects.update_or_create(**validated_data)
+            office.social_links = social_links
+            office.save()
+        else:
+            # If the office already has social media links, update the existing record
+            social_links = office.social_links
+            SupplierSocialMedia.objects.filter(id=social_links.id).update(**validated_data)
+
+        return True, "Office social media links successfully updated"
+
+    @classmethod
+    def office_get_profile(cls, request):
+        """
+        Retrieves office information.
+
+        Returns:
+            Response: Response object containing office object.
+        """
+        user_id = request.user.id
+        if not Office.objects.filter(user__id=user_id).exists():
+            raise NotFound(detail="Office not found.", code=status.HTTP_404_NOT_FOUND)
+        office = Office.objects.get(user__id=user_id)
+        office_serializer = OfficeSerializer(office)
+        return True, office_serializer.data

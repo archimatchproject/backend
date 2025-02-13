@@ -44,4 +44,19 @@ office_urlpatterns = [
         OfficeViewSet.as_view({"post": "office_first_cnx"}),
         name="first-connection",
     ),
+    path(
+        "office/get-profile/",
+        OfficeViewSet.as_view({"get": "office_get_profile"}),
+        name="profile",
+    ),
+    path(
+        "office/update-profile/",
+        OfficeViewSet.as_view({"put": "office_update_profile"}),
+        name="update-profile",
+    ),
+    path(
+        "office/update-links/",
+        OfficeViewSet.as_view({"put": "office_update_links"}),
+        name="update-links",
+    ),
 ]
