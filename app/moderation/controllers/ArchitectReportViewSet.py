@@ -34,19 +34,20 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         Returns:
             list: List of permission instances.
         """
-        if self.action in ["create", "get_reasons"]:
-            return [IsAuthenticated()]
-        elif self.action in [
+        if self.action in [
             "update",
             "partial_update",
             "destroy",
             "list",
             "retrieve",
-            "get_decisions",
             "change_status",
             "execute_decision",
         ]:
+        
             return [IsAuthenticated(), ManageReportingPermission()]
+
+        elif self.action in ["get_decisions","get_reasons","create"]:
+            return []
         return super().get_permissions()
 
     @handle_service_exceptions

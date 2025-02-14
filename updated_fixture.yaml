@@ -1,0 +1,56 @@
+- fields:
+    description: Can access platform client projects
+    permissions:
+    - 180
+    special_identifier: access_platform_projects
+  model: subscription.PlanService
+  pk: 1
+- fields:
+    description: Can access profile client projects
+    permissions:
+    - 180
+    special_identifier: access_profile_projects
+  model: subscription.PlanService
+  pk: 2
+- fields:
+    description: Can view realizations on ArchiMatch
+    permissions:
+    - 208
+    special_identifier: view_realizations
+  model: subscription.PlanService
+  pk: 3
+- fields:
+    description: Can access partner suppliers
+    permissions:
+    - 68
+    special_identifier: access_partners
+  model: subscription.PlanService
+  pk: 4
+- fields:
+    description: Can access ArchiMatch support
+    permissions:
+    - 124
+    special_identifier: access_support
+  model: subscription.PlanService
+  pk: 5
+- fields:
+    description: Can receive project suggestions based on preferences
+    permissions:
+    - 180
+    special_identifier: receive_project_suggestions
+  model: subscription.PlanService
+  pk: 6
+- fields:
+    description: Can highlight profile on ArchiMatch
+    permissions:
+    - 180
+    special_identifier: highlight_profile
+  model: subscription.PlanService
+  pk: 7
+- fields:
+    description: Can generate quotes
+    permissions:
+    - 180
+    special_identifier: generate_quotes
+  model: subscription.PlanService
+  pk: 8
