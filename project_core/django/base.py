@@ -29,6 +29,7 @@ THIRD_PARTY_APPS = [
     "background_task",
     "fcm_django",
     "django_filters",
+    "django_elasticsearch_dsl",
 ]
 
 """
@@ -46,7 +47,8 @@ LOCAL_APPS = [
     "app.catalogue",
     "app.moderation",
     "app.messaging",
-    "app.selection"
+    "app.selection",
+    "app.recommendation",
 ]
 
 
@@ -165,6 +167,19 @@ DATABASES = {
 }
 
 """
+ElasticSearch Configuration
+"""
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": "https://localhost:9200",  # Use HTTPS
+        "http_auth": ("elastic", "changeme"),  # Use credentials from .env
+        "verify_certs": False,  # Disable certificate verification if using self-signed certs
+        # "timeout": 30,  # Increase timeout
+    },
+}
+
+
+"""
 Custom user model for authentication.
 """
 AUTH_USER_MODEL = "users.ArchimatchUser"
@@ -178,12 +193,7 @@ USE_TZ = True
 USE_I18N = True
 
 
-
-
-
 """
 Default primary key field type configuration.
 """
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-

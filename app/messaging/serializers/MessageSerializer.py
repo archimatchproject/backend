@@ -3,7 +3,6 @@ This module defines the serializers for the messaging system, converting Message
  to and from JSON format for API usage.
 """
 
-from fcm_django.models import FCMDevice
 from rest_framework import serializers
 
 from app.messaging.models.Message import Message

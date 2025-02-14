@@ -26,6 +26,7 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.users.models.Client import Client
 from app.selection.models.Selection import Selection
+from app.recommendation.fixtures.architect_generation import COORDINATES
 
 
 class Announcement(BaseModel):
@@ -112,6 +113,9 @@ class Announcement(BaseModel):
     suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
     is_blocked = models.BooleanField(default=False)
     is_broadcasted = models.BooleanField(default=True)
+    city_coordinates = models.JSONField(
+        default=dict, blank=True, null=True
+    )  # Store longitude and latitude
 
     def __str__(self):
         """
@@ -138,6 +142,30 @@ class Announcement(BaseModel):
             return self.selections.get(status="accepted").architect
         except Selection.DoesNotExist:
             return None
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to automatically update city coordinates
+        based on the selected city.
+        """
+        # Convert coordinates list to a dictionary
+        city_coord_dict = dict(COORDINATES)
+
+        if "(" in self.city:
+            # Extract city name properly in case it's a tuple (to handle choice fields)
+            city_name = self.city.strip("()").replace("'", "").split(",")[0].strip()
+        else:
+            city_name = self.city
+
+        # Check if the city exists in COORDINATES dictionary
+        if city_name in city_coord_dict.keys():
+            self.city_coordinates = {
+                "long": city_coord_dict[city_name][0],
+                "lat": city_coord_dict[city_name][1],
+            }
+
+        # Call the parent class save method
+        super().save(*args, **kwargs)
 
     class Meta:
         """

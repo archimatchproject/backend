@@ -1,0 +1,1 @@
+from app.recommendation.documents.ArchitectDocument import ArchitectDocument

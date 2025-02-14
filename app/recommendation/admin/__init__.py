@@ -1,0 +1,1 @@
+from app.recommendation.admin.ArchitectBoxAdmin import ArchitectBoxAdmin
