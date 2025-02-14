@@ -59,4 +59,9 @@ office_urlpatterns = [
         OfficeViewSet.as_view({"put": "office_update_links"}),
         name="update-links",
     ),
+    path(
+        "office/update-profile-image/",
+        OfficeViewSet.as_view({"put": "office_update_profile_image"}),
+        name="update-profile-image",
+    ),
 ]

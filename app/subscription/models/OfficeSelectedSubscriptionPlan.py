@@ -13,6 +13,7 @@ class OfficeSelectedSubscriptionPlan(SelectedSubscriptionPlan):
 
     announces_number = models.PositiveIntegerField()
     architects_number_per_announce = models.PositiveIntegerField()
+    remaining_announces = models.PositiveIntegerField()
 
     class Meta:
         """

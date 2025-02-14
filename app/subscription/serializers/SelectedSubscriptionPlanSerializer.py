@@ -123,10 +123,9 @@ class OfficeSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "plan_price",
             "announces_number",
             "architects_number_per_announce",
+            "remaining_announces",
             "active",
             "free_plan",
-            "services",
-            "plan_services",
             "start_date",
             "end_date",
         ]

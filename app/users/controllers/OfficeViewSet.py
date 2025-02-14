@@ -230,3 +230,24 @@ class OfficeViewSet(viewsets.ModelViewSet):
         """
         success, message = OfficeService.office_update_social_links(request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["PUT"],
+        permission_classes=[],
+        url_path="update-profile-image",
+        url_name="update-profile-image",
+    )
+    @handle_service_exceptions
+    def office_update_profile_image(self, request):
+        """
+        Updates office profile image.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response object indicating the result of the profile image update.
+        """
+        success, message = OfficeService.office_update_profile_image(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
