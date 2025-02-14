@@ -408,3 +408,29 @@ class OfficeService:
         office = Office.objects.get(user__id=user_id)
         office_serializer = OfficeSerializer(office)
         return True, office_serializer.data
+
+    @classmethod
+    def office_update_profile_image(cls, request):
+        """
+        Updates an Office's profile image.
+
+        Args:
+            request (Request): Django request object containing Office's profile image data.
+
+        Returns:
+            tuple: (success flag, message)
+        """
+        data = request.data
+        user_id = request.user.id
+        profile_image = data.get("profile_image", False)
+        if not profile_image:
+            raise serializers.ValidationError(detail="profile image is required")
+
+        office = Office.objects.get(user__id=user_id)
+        office.profile_image = profile_image
+        user = office.user
+        user.image = profile_image
+        user.save()
+        office.save()
+
+        return True, "Office profile image successfully updated"
