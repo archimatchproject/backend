@@ -1,25 +1,8 @@
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from app.users.models.Architect import Architect
-from app.recommendation.documents.ArchitectDocument import ArchitectDocument
 from app.announcement.models.Announcement import Announcement
 from app.recommendation.services.recommend_architects import compute_architect_score
 from app.recommendation.utils import handle_architect_box_assignment
-from app.selection.models.Selection import Selection
-from app.recommendation.models.ArchitectBox import ArchitectBox
-
-
-# Sync Elasticsearch when an Announcement is saved
-@receiver(post_save, sender=Architect)
-def index_architect(sender, instance, **kwargs):
-    ArchitectDocument().update(instance)
-
-
-# Remove from Elasticsearch when an Announcement is deleted
-@receiver(post_delete, sender=Architect)
-def delete_architect(sender, instance, **kwargs):
-    ArchitectDocument().delete(instance)
-
 
 @receiver(post_save, sender=Announcement)
 def handle_announcement_creation(sender, instance, created, **kwargs):
@@ -69,11 +52,4 @@ def handle_announcement_creation(sender, instance, created, **kwargs):
         handle_architect_box_assignment(instance, architects_results)
 
 
-@receiver(post_save, sender=Selection)
-def handle_selection_created(sender, instance, created, **kwargs):
-    """Remove announcement from architect's box when a selection is made."""
-    if created:
-        architect_box = ArchitectBox.objects.get(architect_id=instance.architect.id)
-        if instance.announcement in architect_box.announcements.all():
-            architect_box.announcements.remove(instance.announcement)
-            architect_box.save()
+
