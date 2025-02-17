@@ -1,7 +1,7 @@
 """
 Module: Quote ViewSet
 
-This module defines the `QuoteViewSet`, which provides the API endpoints to manage `Quote` resources 
+This module defines the `QuoteViewSet`, which provides the API endpoints to manage `Quote` resources
 associated with selections in the selection process.
 
 Classes:
@@ -10,12 +10,13 @@ Classes:
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from app.selection.services.QuoteService import QuoteService
 from app.users.models.Architect import Architect
 from django.core.exceptions import ValidationError
 from app.core.response_builder import build_response
 from rest_framework.exceptions import APIException
+
+
 class QuoteViewSet(viewsets.ModelViewSet):
     """
     ViewSet for handling quote-related actions.
@@ -30,7 +31,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         - create_quote: Handles the creation of a new quote for a specific selection.
     """
 
-    @action(detail=True, methods=['POST'], url_path='create-quote')
+    @action(detail=True, methods=["POST"], url_path="create-quote")
     def create_quote(self, request, pk=None):
         """
         Handles the creation of a new quote associated with a specific selection.
@@ -40,25 +41,33 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
         Args:
             request (Request): The request object containing the uploaded file.
-            pk (int): The ID of the selection for which the quote is being created (extracted from the URL).
+            pk (int): The ID of the selection for which the quote is being created (extracted from
+            the URL).
 
         Returns:
-            Response: The response object containing the created quote's details if successful, 
+            Response: The response object containing the created quote's details if successful,
                       or an error message if something went wrong.
-        
+
         Raises:
-            ValidationError: If the uploaded file is not a PDF or if the file is missing from the request.
+            ValidationError: If the uploaded file is not a PDF or if the file is missing from the
+            request.
         """
-        
-        file = request.FILES.get('file')
+
+        file = request.FILES.get("file")
         architect = Architect.objects.get(user=request.user)
         if not file:
-            raise ValidationError(detail="File is required.", status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(
+                detail="File is required.", status=status.HTTP_400_BAD_REQUEST
+            )
 
-        success, data = QuoteService.create_quote(selection_id=pk, file=file,architect=architect)
-        return build_response(data=data, status=status.HTTP_201_CREATED, success=success)
+        success, data = QuoteService.create_quote(
+            selection_id=pk, file=file, architect=architect
+        )
+        return build_response(
+            data=data, status=status.HTTP_201_CREATED, success=success
+        )
 
-    @action(detail=True, methods=['POST'], url_path='accept')
+    @action(detail=True, methods=["POST"], url_path="accept")
     def accept_quote(self, request, pk=None):
         """
         Endpoint to accept a quote and update the associated selection.
@@ -71,10 +80,11 @@ class QuoteViewSet(viewsets.ModelViewSet):
         """
 
         success, message = QuoteService.accept_quote(quote_id=pk)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
-    
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )
 
-    @action(detail=True, methods=['POST'], url_path='refuse')
+    @action(detail=True, methods=["POST"], url_path="refuse")
     def refuse_quote(self, request, pk=None):
         """
         Endpoint to refuse a quote.
@@ -85,8 +95,12 @@ class QuoteViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The updated quote data or an error message.
         """
-        is_client_interested = request.data.get("is_client_interested",None)
+        is_client_interested = request.data.get("is_client_interested", None)
         if is_client_interested is None:
             raise APIException("Choose an option to be able to refuse the quote")
-        success, message = QuoteService.refuse_quote(quote_id=pk,is_client_interested=is_client_interested)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+        success, message = QuoteService.refuse_quote(
+            quote_id=pk, is_client_interested=is_client_interested
+        )
+        return build_response(
+            success=success, message=message, status=status.HTTP_200_OK
+        )

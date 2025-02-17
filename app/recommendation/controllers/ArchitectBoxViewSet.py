@@ -50,7 +50,7 @@ class ArchitectBoxViewSet(viewsets.ModelViewSet):
         return Announcement.objects.filter(client__user=user)
 
     @handle_service_exceptions
-    def get(self, request):
+    def get_architect_score(self, request, pk):
         """
         Handle GET request and return paginated Announcement objects.
 
@@ -65,7 +65,7 @@ class ArchitectBoxViewSet(viewsets.ModelViewSet):
             Response: A paginated response containing Announcement objects or an error message.
         """
 
-        success, data = ArchitectBoxService.recommend_announcements(request)
+        success, data = ArchitectBoxService.compute_score(request, id=pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions

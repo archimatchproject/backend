@@ -82,13 +82,13 @@ class RecommendationSettingsSerializer(serializers.ModelSerializer):
                 "choices": PROJECT_CATEGORY_CHOICES,
             },
             {
-                "name": "property_types",
-                "label": "Property Types",
-                "value": obj.attributes.property_types,
+                "name": "property_type",
+                "label": "Property Type",
+                "value": obj.attributes.property_type,
                 "choices": PROPERTY_TYPES_CHOICES,
             },
             {
-                "name": "needs_per_match_weight",
+                "name": "needs_per_match",
                 "label": "Needs per Match",
                 "value": obj.attributes.needs_per_match,
                 "choices": NEEDS_PER_MATCH_CHOICES,
@@ -111,7 +111,7 @@ class RecommendationSettingsSerializer(serializers.ModelSerializer):
                 "choices": PERFECT_MATCH_WEIGHT_CHOICES,
             },
             {
-                "name": "on_going_projectst",
+                "name": "on_going_projects",
                 "label": "Ongoing Projects Weight",
                 "value": obj.on_going_projects,
                 "choices": ONGOING_PROJECTS_WEIGHT_CHOICES,

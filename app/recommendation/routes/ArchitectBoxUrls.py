@@ -12,9 +12,9 @@ from app.recommendation.controllers.ArchitectBoxViewSet import (
 
 box_urlpatterns = [
     path(
-        "get-announcements",
-        ArchitectBoxViewSet.as_view({"get": "get"}),
-        name="get-announcements",
+        "get-architect-score/<int:pk>",
+        ArchitectBoxViewSet.as_view({"post": "get_architect_score"}),
+        name="get-architect-score",
     ),
     path(
         "get-box-announcements",

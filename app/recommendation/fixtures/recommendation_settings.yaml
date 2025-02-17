@@ -1,0 +1,23 @@
+# recommendation_settings.yml
+# YML file to upload default settings for RecommendationSettings.
+
+- model: recommendation.AnnouncementWeights
+  pk: 1
+  fields:
+    architectural_style: 10
+    work_type: 8
+    project_category: 6
+    property_type: 5
+    needs_per_match: 2
+
+# General Recommendation Settings
+- model: recommendation.RecommendationSettings
+  pk: 1
+  fields:
+    distance: 25
+    perfect_match: 5
+    on_going_projects: 5
+    distance_limit: 200
+    score_percentage: 40
+    num_results: 30
+    attributes: 1

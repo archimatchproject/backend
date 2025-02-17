@@ -24,11 +24,11 @@ NUM_RESULTS_CHOICES = generate_recommendation_choices(
 
 # Choices for RecommendationSettings attributes with gaps
 ARCHITECTURAL_STYLE_CHOICES = generate_recommendation_choices(
-    1, 20, "{value} points", gap=2
+    1, 20, "{value} points", gap=1
 )
-WORK_TYPE_CHOICES = generate_recommendation_choices(1, 15, "{value} points", gap=3)
+WORK_TYPE_CHOICES = generate_recommendation_choices(1, 15, "{value} points", gap=1)
 PROJECT_CATEGORY_CHOICES = generate_recommendation_choices(
-    1, 15, "{value} points", gap=3
+    1, 15, "{value} points", gap=1
 )
-PROPERTY_TYPES_CHOICES = generate_recommendation_choices(1, 10, "{value} points", gap=2)
+PROPERTY_TYPES_CHOICES = generate_recommendation_choices(1, 10, "{value} points", gap=1)
 NEEDS_PER_MATCH_CHOICES = generate_recommendation_choices(1, 5, "{value} points", gap=1)
