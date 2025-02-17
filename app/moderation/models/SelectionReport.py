@@ -14,8 +14,8 @@ from app.core.models.BaseModel import BaseModel
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.Decision import Decision
 from app.moderation.models.Reason import Reason
-from app.users.models.Client import Client
 from app.selection.models.Selection import Selection
+from app.users.models.Client import Client
 
 
 class SelectionReport(BaseModel):
@@ -31,12 +31,8 @@ class SelectionReport(BaseModel):
     selection = models.ForeignKey(Selection, on_delete=models.CASCADE)
     reporting_client = models.ForeignKey(Client, on_delete=models.CASCADE)
     reasons = models.ManyToManyField(Reason, related_name="reason_selections_reports")
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0]
-    )
-    decision = models.ForeignKey(
-        Decision, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+    decision = models.ForeignKey(Decision, on_delete=models.SET_NULL, null=True, blank=True)
     decision_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):

@@ -8,37 +8,36 @@ Classes:
     ArchitectRequestService: Service class for ArchitectRequest operations.
 """
 
+from datetime import datetime
+
 from django.db import transaction
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.announcement import ACCEPTED, REFUSED
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
+from app.announcement import ACCEPTED
+from app.announcement import REFUSED
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.architect_request import AWAITING_DECISION, AWAITING_DEMO, TIME_SLOT_CHOICES
+from app.architect_request import AWAITING_DECISION
+from app.architect_request import AWAITING_DEMO
+from app.architect_request import TIME_SLOT_CHOICES
 from app.architect_request.filters.ArchitectRequestFilter import ArchitectRequestFilter
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
 from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
     ArchitectRequestRescheduleSerializer,
 )
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectAcceptSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import (
     ArchitectRequestInputSerializer,
 )
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectRequestSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.Note import Note
@@ -56,10 +55,6 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
-from django.utils import timezone
-from django.db.models import Q
-
-from datetime import datetime
 
 
 class ArchitectRequestService:
@@ -89,9 +84,7 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             architect_speciality_id = data.get("architect_speciality")
-            architect_speciality = ArchitectSpeciality.objects.get(
-                pk=architect_speciality_id
-            )
+            architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
 
             field_names = [
                 "first_name",
@@ -175,9 +168,7 @@ class ArchitectRequestService:
 
         with transaction.atomic():
             if ArchimatchUser.objects.filter(email=architect_request.email).exists():
-                raise serializers.ValidationError(
-                    "An account with this email already exists."
-                )
+                raise serializers.ValidationError("An account with this email already exists.")
             user = ArchimatchUser.objects.create(**user_data)
             user.save()
 
@@ -449,8 +440,7 @@ class ArchitectRequestService:
             Response: A Response object containing the list of time slots.
         """
         time_slots = [
-            {"time": slot[0].strftime("%H:%M"), "label": slot[1]}
-            for slot in TIME_SLOT_CHOICES
+            {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
         ]
         return True, time_slots
 

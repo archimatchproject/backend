@@ -3,16 +3,18 @@ Module containing the UnavailabilitySerializer.
 
 This module defines the UnavailabilitySerializer, which handles the serialization
 and deserialization of Unavailability instances, including validation and custom
-creation and update logic. The serializer is designed to work with time slots 
+creation and update logic. The serializer is designed to work with time slots
 represented as strings and supports whole-day unavailability.
 """
 
+from datetime import datetime
+
 from rest_framework import serializers
-from app.architect_request import TIME_SLOT_CHOICES
-from app.users.models.Unavailability import Unavailability
+
 from app.users.models.Admin import Admin
 from app.users.models.TimeSlot import TimeSlot
-from datetime import datetime
+from app.users.models.Unavailability import Unavailability
+
 
 class UnavailabilitySerializer(serializers.ModelSerializer):
     """
@@ -34,9 +36,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         to_representation(instance): Customizes the representation of the Unavailability instance.
     """
 
-    admin = serializers.PrimaryKeyRelatedField(
-        queryset=Admin.objects.all()
-    )
+    admin = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all())
     time_slots = serializers.ListField(
         child=serializers.CharField(),
         required=False,
@@ -45,16 +45,23 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
     whole_day = serializers.BooleanField(required=False)
 
     class Meta:
+        """
+        Meta class for the UnavailabilitySerializer.
+        Attributes:
+            model (type): The model class that is being serialized.
+            fields (list): A list of field names to be included in the serialization.
+        """
+
         model = Unavailability
-        fields = ['id', 'admin', 'date', 'time_slots', 'whole_day']
+        fields = ["id", "admin", "date", "time_slots", "whole_day"]
 
     def validate(self, data):
         """
         Override the validate method to ensure that `time_slots` is validated based on `whole_day`.
         """
         data = super().validate(data)
-        whole_day = data.get('whole_day', False)
-        time_slots = data.get('time_slots', None)
+        whole_day = data.get("whole_day", False)
+        time_slots = data.get("time_slots", None)
 
         if not whole_day and time_slots is None:
             raise serializers.ValidationError(
@@ -62,7 +69,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
             )
 
         if time_slots is not None:
-            data['time_slots'] = self.validate_time_slots(time_slots)
+            data["time_slots"] = self.validate_time_slots(time_slots)
 
         return data
 
@@ -74,8 +81,10 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
             return value
 
         valid_time_format = "%H:%M"
-        
-        valid_time_slots = [slot.time.strftime(valid_time_format) for slot in TimeSlot.objects.all()]
+
+        valid_time_slots = [
+            slot.time.strftime(valid_time_format) for slot in TimeSlot.objects.all()
+        ]
 
         invalid_slots = []
         for slot in value:
@@ -99,8 +108,8 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         """
         Create a new Unavailability instance and handle many-to-many relationships.
         """
-        time_slots = validated_data.pop('time_slots', [])
-        whole_day = validated_data.get('whole_day', False)
+        time_slots = validated_data.pop("time_slots", [])
+        whole_day = validated_data.get("whole_day", False)
 
         unavailability = Unavailability.objects.create(**validated_data)
 
@@ -116,11 +125,11 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         """
         Update an existing Unavailability instance and handle many-to-many relationships.
         """
-        time_slots = validated_data.pop('time_slots', [])
-        whole_day = validated_data.get('whole_day', False)
+        time_slots = validated_data.pop("time_slots", [])
+        whole_day = validated_data.get("whole_day", False)
 
-        instance.date = validated_data.get('date', instance.date)
-        instance.whole_day = validated_data.get('whole_day', instance.whole_day)
+        instance.date = validated_data.get("date", instance.date)
+        instance.whole_day = validated_data.get("whole_day", instance.whole_day)
 
         if whole_day:
             instance.time_slots.set(TimeSlot.objects.all())
@@ -136,5 +145,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         Customizes the representation of the Unavailability instance.
         """
         representation = super().to_representation(instance)
-        representation['time_slots'] = [slot.time.strftime('%H:%M') for slot in instance.time_slots.all()]
+        representation["time_slots"] = [
+            slot.time.strftime("%H:%M") for slot in instance.time_slots.all()
+        ]
         return representation

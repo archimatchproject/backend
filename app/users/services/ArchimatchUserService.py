@@ -22,16 +22,10 @@ from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserObtainPairSerializer import (
     ArchimatchUserObtainPairSerializer,
 )
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserCreatePWSerializer,
-)
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserResetPWSerializer,
-)
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.ArchimatchUserSerializer import (
-    ArchimatchUserSimpleSerializer,
-)
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
 
 class ArchimatchUserService:
@@ -139,9 +133,7 @@ class ArchimatchUserService:
         user = request.user
         data = request.data
         if not data:
-            raise ValidationError(
-                detail="At least one field must be provided for update."
-            )
+            raise ValidationError(detail="At least one field must be provided for update.")
         serializer = ArchimatchUserSimpleSerializer(user, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -243,9 +235,7 @@ class ArchimatchUserService:
         phone_number = data.get("phone_number", False)
         email = data.get("email", False)
         if not phone_number or not email:
-            raise serializers.ValidationError(
-                detail="phone number and email are required"
-            )
+            raise serializers.ValidationError(detail="phone number and email are required")
         if (
             ArchitectRequest.objects.filter(phone_number=phone_number).exists()
             or ArchimatchUser.objects.filter(phone_number=phone_number).exists()

@@ -8,23 +8,21 @@ Classes:
     SelectionSettingsService: Service class for `SelectionSettings` operations.
 """
 
-from rest_framework.exceptions import ValidationError
-from rest_framework.exceptions import APIException
 from django.db import transaction
+
+from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
+
+from app.selection import DAYS_AFTER_CALL_EMAIL_CHOICES
+from app.selection import DAYS_BEFORE_CALL_EMAIL_CHOICES
+from app.selection import DAYS_FOR_ADMIN_MANAGEMENT_CHOICES
+from app.selection import DAYS_TO_LOCK_PROJECT_CHOICES
+from app.selection import DAYS_TO_PHONE_CALL_CHOICES
+from app.selection import DAYS_TO_REDIFFUSE_CHOICES
+from app.selection import PHASE_DAYS_CHOICES
+from app.selection import TIMES_TO_UNLOCK_PROJECT_CHOICES
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.selection.serializers.SelectionSettingsSerializer import (
-    SelectionSettingsSerializer,
-)
-from app.selection import (
-    PHASE_DAYS_CHOICES,
-    DAYS_BEFORE_CALL_EMAIL_CHOICES,
-    DAYS_TO_PHONE_CALL_CHOICES,
-    DAYS_AFTER_CALL_EMAIL_CHOICES,
-    DAYS_TO_REDIFFUSE_CHOICES,
-    DAYS_TO_LOCK_PROJECT_CHOICES,
-    TIMES_TO_UNLOCK_PROJECT_CHOICES,
-    DAYS_FOR_ADMIN_MANAGEMENT_CHOICES,
-)
+from app.selection.serializers.SelectionSettingsSerializer import SelectionSettingsSerializer
 
 
 class SelectionSettingsService:

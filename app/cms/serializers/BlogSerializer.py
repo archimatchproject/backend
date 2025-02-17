@@ -46,12 +46,13 @@ class BlogSerializer(serializers.ModelSerializer):
             "visible",
             "popular",
             "updated_at",
-            "target_user_type"
+            "target_user_type",
         ]
         read_only_fields = ["blog_sections", "updated_at"]
         extra_kwargs = {
             "target_user_type": {"required": False},
         }
+
     def to_internal_value(self, data):
         """
         Method mapping tags and adding those who don't exist

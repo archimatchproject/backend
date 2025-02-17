@@ -1,7 +1,9 @@
 """
 Module containing the SelectedSubscriptionPlan model and its derived models.
 """
+
 from django.db import models
+
 from app.subscription.models.PlanService import PlanService
 from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
 
@@ -19,5 +21,6 @@ class ArchitectSelectedSubscriptionPlan(SelectedSubscriptionPlan):
         """
         Meta class for ArchitectSelectedSubscriptionPlan model.
         """
+
         verbose_name = "Architect Selected Subscription Plan"
         verbose_name_plural = "Architect Selected Subscription Plans"

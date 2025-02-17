@@ -20,7 +20,8 @@ class GuideSliderImageInline(admin.TabularInline):
 
     model = GuideSliderImage
     extra = 1
-    
+
+
 class GuideSectionInline(admin.StackedInline):
     """
     Inline admin configuration for BlogSection model with nested SliderImageInline.
@@ -48,6 +49,7 @@ class GuideSectionInline(admin.StackedInline):
             return [GuideSliderImageInline(self.model, self.admin_site)]
         return super().get_inline_instances(request, obj)
 
+
 class GuideSectionAdmin(admin.ModelAdmin):
     """
     Admin interface for managing GuideSection instances.
@@ -72,5 +74,6 @@ class GuideSectionAdmin(admin.ModelAdmin):
         if obj and obj.section_type == "slider":
             return [GuideSliderImageInline(self.model, self.admin_site)]
         return super().get_inline_instances(request, obj)
+
 
 admin.site.register(GuideSection, GuideSectionAdmin)

@@ -1,3 +1,3 @@
+from app.recommendation.admin.AnnouncementWeightsAdmin import AnnouncementWeights
 from app.recommendation.admin.ArchitectBoxAdmin import ArchitectBoxAdmin
 from app.recommendation.admin.RecommendationSettingsAdmin import RecommendationSettings
-from app.recommendation.admin.AnnouncementWeightsAdmin import AnnouncementWeights

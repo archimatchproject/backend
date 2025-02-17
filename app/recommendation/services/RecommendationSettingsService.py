@@ -5,28 +5,29 @@ related to `RecommendationSettings`, such as retrieving, updating, and listing a
 as well as updating attribute settings.
 """
 
-from rest_framework.exceptions import ValidationError, APIException
 from django.db import transaction
+
+from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
+
+from app.recommendation import ARCHITECTURAL_STYLE_CHOICES
+from app.recommendation import DISTANCE_LIMIT_CHOICES
+from app.recommendation import DISTANCE_WEIGHT_CHOICES
+from app.recommendation import NEEDS_PER_MATCH_CHOICES
+from app.recommendation import NUM_RESULTS_CHOICES
+from app.recommendation import ONGOING_PROJECTS_WEIGHT_CHOICES
+from app.recommendation import PERFECT_MATCH_WEIGHT_CHOICES
+from app.recommendation import PROJECT_CATEGORY_CHOICES
+from app.recommendation import PROPERTY_TYPES_CHOICES
+from app.recommendation import SCORE_PERCENTAGE_CHOICES
+from app.recommendation import WORK_TYPE_CHOICES
 from app.recommendation.models.AnnouncementWeights import AnnouncementWeights
 from app.recommendation.models.RecommendationSettings import RecommendationSettings
-from app.recommendation.serializers.RecommendationSettingsSerializer import (
-    RecommendationSettingsSerializer,
-)
 from app.recommendation.serializers.AnnouncementWeightsSerializer import (
     AnnouncementWeightsSerializer,
 )
-from app.recommendation import (
-    ARCHITECTURAL_STYLE_CHOICES,
-    WORK_TYPE_CHOICES,
-    PROJECT_CATEGORY_CHOICES,
-    PROPERTY_TYPES_CHOICES,
-    NEEDS_PER_MATCH_CHOICES,
-    DISTANCE_WEIGHT_CHOICES,
-    PERFECT_MATCH_WEIGHT_CHOICES,
-    ONGOING_PROJECTS_WEIGHT_CHOICES,
-    DISTANCE_LIMIT_CHOICES,
-    SCORE_PERCENTAGE_CHOICES,
-    NUM_RESULTS_CHOICES,
+from app.recommendation.serializers.RecommendationSettingsSerializer import (
+    RecommendationSettingsSerializer,
 )
 
 
@@ -117,7 +118,7 @@ class RecommendationSettingsService:
         setattr(attributes, field_name, new_value)
         attributes.full_clean()
         attributes.save()
-
+        print("aaaaaaaaaaaa")
         serializer = AnnouncementWeightsSerializer(attributes)
         return True, serializer.data
 

@@ -11,32 +11,43 @@ Classes:
 """
 
 from rest_framework import serializers
-from app.recommendation import (
-    ARCHITECTURAL_STYLE_CHOICES,
-    DISTANCE_LIMIT_CHOICES,
-    DISTANCE_WEIGHT_CHOICES,
-    NUM_RESULTS_CHOICES,
-    ONGOING_PROJECTS_WEIGHT_CHOICES,
-    PERFECT_MATCH_WEIGHT_CHOICES,
-    PROJECT_CATEGORY_CHOICES,
-    SCORE_PERCENTAGE_CHOICES,
-    WORK_TYPE_CHOICES,
-    PROPERTY_TYPES_CHOICES,
-    NEEDS_PER_MATCH_CHOICES,
-)
-from app.recommendation.models.RecommendationSettings import RecommendationSettings
+
+from app.recommendation import ARCHITECTURAL_STYLE_CHOICES
+from app.recommendation import DISTANCE_LIMIT_CHOICES
+from app.recommendation import DISTANCE_WEIGHT_CHOICES
+from app.recommendation import NEEDS_PER_MATCH_CHOICES
+from app.recommendation import NUM_RESULTS_CHOICES
+from app.recommendation import ONGOING_PROJECTS_WEIGHT_CHOICES
+from app.recommendation import PERFECT_MATCH_WEIGHT_CHOICES
+from app.recommendation import PROJECT_CATEGORY_CHOICES
+from app.recommendation import PROPERTY_TYPES_CHOICES
+from app.recommendation import SCORE_PERCENTAGE_CHOICES
+from app.recommendation import WORK_TYPE_CHOICES
 from app.recommendation.models.AnnouncementWeights import AnnouncementWeights
+from app.recommendation.models.RecommendationSettings import RecommendationSettings
 
 
 # Input Serializer for RecommendationSettings
 class RecommendationSettingsInputSerializer(serializers.ModelSerializer):
     """Input serializer for RecommendationSettings model."""
 
-    attributes = serializers.PrimaryKeyRelatedField(
-        queryset=AnnouncementWeights.objects.all()
-    )
+    attributes = serializers.PrimaryKeyRelatedField(queryset=AnnouncementWeights.objects.all())
 
     class Meta:
+        """
+        Meta class for the RecommendationSettingsSerializer.
+        Attributes:
+            model (RecommendationSettings): The model that is being serialized.
+            fields (list): A list of fields to be included in the serialization. The fields are:
+                - attributes: The attributes of the recommendation settings.
+                - distance: The distance parameter for recommendations.
+                - perfect_match: A flag indicating if a perfect match is required.
+                - on_going_projects: The ongoing projects related to the recommendation settings.
+                - distance_limit: The limit for the distance parameter.
+                - score_percentage: The percentage score for recommendations.
+                - num_results: The number of results to be returned.
+        """
+
         model = RecommendationSettings
         fields = [
             "attributes",
@@ -57,6 +68,13 @@ class RecommendationSettingsSerializer(serializers.ModelSerializer):
     attributes = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class for the RecommendationSettingsSerializer.
+        Attributes:
+            model (RecommendationSettings): The model that is being serialized.
+            fields (list): List of fields to be included in the serialization.
+        """
+
         model = RecommendationSettings
         fields = ["id", "attributes", "settings"]
 

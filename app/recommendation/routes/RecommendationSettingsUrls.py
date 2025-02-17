@@ -3,9 +3,11 @@ ViewSet: RecommendationSettingsViewSet
 """
 
 from django.urls import path
+
 from app.recommendation.controllers.RecommendationSettingsViewSet import (
     RecommendationSettingsViewSet,
 )
+
 
 recommendation_settings_urlpatterns = [
     path(

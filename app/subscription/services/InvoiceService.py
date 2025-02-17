@@ -11,15 +11,14 @@ Classes:
 from django.http import HttpResponse
 
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
 from app.email_templates.utils import render_to_pdf
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
-from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer, SupplierInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import SupplierInvoiceSerializer
 from app.users.models.Architect import Architect
 from app.users.models.Supplier import Supplier
 from project_core.django import base as settings
@@ -31,7 +30,7 @@ class InvoiceService:
 
     Handles business logic and exception handling for TokenPack creation and management.
     """
-    
+
     pagination_class = CustomPagination
 
     @classmethod
@@ -82,7 +81,7 @@ class InvoiceService:
 
         architect = Architect.objects.get(user__id=user_id)
         queryset = ArchitectInvoice.objects.filter(architect=architect)
-        
+
         paginator = cls.pagination_class()
 
         page = paginator.paginate_queryset(queryset, request)
@@ -93,8 +92,6 @@ class InvoiceService:
         serializer = ArchitectInvoiceSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    
     @classmethod
     def export_supplier_invoice(cls, request, id):
         """
@@ -143,7 +140,7 @@ class InvoiceService:
 
         supplier = Supplier.objects.get(user__id=user_id)
         invoices = SupplierInvoice.objects.filter(supplier=supplier)
-        
+
         paginator = cls.pagination_class()
 
         page = paginator.paginate_queryset(invoices, request)
@@ -153,5 +150,3 @@ class InvoiceService:
 
         serializer = SupplierInvoiceSerializer(invoices, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        
-

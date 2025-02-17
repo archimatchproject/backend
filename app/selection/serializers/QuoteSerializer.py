@@ -15,6 +15,7 @@ Attributes:
 """
 
 from rest_framework import serializers
+
 from app.selection.models.Quote import Quote
 
 
@@ -30,6 +31,14 @@ class QuoteSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
+        """
+        Meta class for the QuoteSerializer.
+        Attributes:
+            model (type): The model associated with the serializer, in this case, Quote.
+            fields (list): A list of fields to be included in the serialized output.
+                           The fields are "id", "selection", "file", "created_at", and "status".
+        """
+
         model = Quote
         fields = ["id", "selection", "file", "created_at", "status"]
 
@@ -48,7 +57,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         phase = value.phase
         if phase and phase.number <= 1:
             raise serializers.ValidationError(
-                """A quote can only be created for a 
+                """A quote can only be created for a
                 selection with a phase number higher than 1."""
             )
         return value

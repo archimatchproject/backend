@@ -10,9 +10,11 @@ Usage:
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from app.selection import PENDING, UNLOCK_REQUEST_STATUS_CHOICES
-from app.selection.models.Selection import Selection
+
 from app.core.models.BaseModel import BaseModel
+from app.selection import PENDING
+from app.selection import UNLOCK_REQUEST_STATUS_CHOICES
+from app.selection.models.Selection import Selection
 
 
 class UnlockRequest(BaseModel):
@@ -39,4 +41,11 @@ class UnlockRequest(BaseModel):
     )
 
     def __str__(self):
+        """
+        Returns a string representation of the UnlockRequest instance.
+        The string includes the architect associated with the selection and the status of the unlock request.
+        Returns:
+            str: A string in the format "UnlockRequest for <architect> - <status>".
+        """
+
         return f"UnlockRequest for {self.selection.architect} - {self.status}"

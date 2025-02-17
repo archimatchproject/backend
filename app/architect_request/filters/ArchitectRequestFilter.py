@@ -10,7 +10,9 @@ Classes:
 """
 
 import django_filters
+
 from app.architect_request.models import ArchitectRequest
+
 
 class ArchitectRequestFilter(django_filters.FilterSet):
     """
@@ -22,12 +24,19 @@ class ArchitectRequestFilter(django_filters.FilterSet):
           who is responsible for the meeting.
     """
 
-    status = django_filters.CharFilter(field_name='status', lookup_expr='icontains')
+    status = django_filters.CharFilter(field_name="status", lookup_expr="icontains")
     meeting_responsable_email = django_filters.CharFilter(
-        field_name='meeting_responsable__user__email', 
-        lookup_expr='icontains'
+        field_name="meeting_responsable__user__email", lookup_expr="icontains"
     )
 
     class Meta:
+        """
+        Meta class for ArchitectRequestFilter.
+        Attributes:
+            model (type): The model associated with the filter, in this case, ArchitectRequest.
+            fields (list): List of fields that can be used for filtering, including "status" and
+            "meeting_responsable_email".
+        """
+
         model = ArchitectRequest
-        fields = ['status', 'meeting_responsable_email']
+        fields = ["status", "meeting_responsable_email"]

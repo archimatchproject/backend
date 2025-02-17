@@ -3,6 +3,7 @@ Admin registration module for the SelectionReport model.
 """
 
 from django.contrib import admin
+
 from app.moderation.models.SelectionReport import SelectionReport
 
 

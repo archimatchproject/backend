@@ -22,9 +22,10 @@ from app.users.routes.AdminUrls import admin_urlpatterns
 from app.users.routes.ArchimatchUserUrls import archimatch_user_urlpatterns
 from app.users.routes.ArchitectUrls import architect_urlpatterns
 from app.users.routes.ClientUrls import client_urlpatterns
+from app.users.routes.MeetingUrls import meeting_urlpatterns
 from app.users.routes.SupplierUrls import supplier_urlpatterns
 from app.users.routes.UnavailabilityUrls import unavailability_urlpatterns
-from app.users.routes.MeetingUrls import meeting_urlpatterns
+
 
 router = routers.DefaultRouter()
 

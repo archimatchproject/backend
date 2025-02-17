@@ -8,13 +8,13 @@ Classes:
 
 """
 
-from app.core.pagination import CustomPagination
 from app.announcement.models.Announcement import Announcement
-from app.recommendation.services.recommend_architects import compute_architect_score
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
+from app.core.pagination import CustomPagination
 from app.recommendation.models.ArchitectBox import ArchitectBox
-from app.users.models.Architect import Architect
 from app.recommendation.models.RecommendationSettings import RecommendationSettings
+from app.recommendation.services.recommend_architects import compute_architect_score
+from app.users.models.Architect import Architect
 
 
 class ArchitectBoxService:

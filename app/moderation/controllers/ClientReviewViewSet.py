@@ -2,19 +2,17 @@
 ViewSet module for the ClientReview model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import (
-    ManageReportingPermission,
-)
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
 from app.moderation.models.ClientReview import ClientReview
 from app.moderation.serializers.ClientReviewSerializer import ClientReviewSerializer
 from app.moderation.services.ClientReviewService import ClientReviewService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class ClientReviewViewSet(viewsets.ModelViewSet):

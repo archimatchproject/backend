@@ -8,13 +8,16 @@ Classes:
     QuoteViewSet: A viewset that provides the actions for creating and managing quotes.
 """
 
-from rest_framework import status, viewsets
+from django.core.exceptions import ValidationError
+
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import APIException
+
+from app.core.response_builder import build_response
 from app.selection.services.QuoteService import QuoteService
 from app.users.models.Architect import Architect
-from django.core.exceptions import ValidationError
-from app.core.response_builder import build_response
-from rest_framework.exceptions import APIException
 
 
 class QuoteViewSet(viewsets.ModelViewSet):
@@ -56,16 +59,10 @@ class QuoteViewSet(viewsets.ModelViewSet):
         file = request.FILES.get("file")
         architect = Architect.objects.get(user=request.user)
         if not file:
-            raise ValidationError(
-                detail="File is required.", status=status.HTTP_400_BAD_REQUEST
-            )
+            raise ValidationError(detail="File is required.", status=status.HTTP_400_BAD_REQUEST)
 
-        success, data = QuoteService.create_quote(
-            selection_id=pk, file=file, architect=architect
-        )
-        return build_response(
-            data=data, status=status.HTTP_201_CREATED, success=success
-        )
+        success, data = QuoteService.create_quote(selection_id=pk, file=file, architect=architect)
+        return build_response(data=data, status=status.HTTP_201_CREATED, success=success)
 
     @action(detail=True, methods=["POST"], url_path="accept")
     def accept_quote(self, request, pk=None):
@@ -80,9 +77,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         """
 
         success, message = QuoteService.accept_quote(quote_id=pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="refuse")
     def refuse_quote(self, request, pk=None):
@@ -101,6 +96,4 @@ class QuoteViewSet(viewsets.ModelViewSet):
         success, message = QuoteService.refuse_quote(
             quote_id=pk, is_client_interested=is_client_interested
         )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

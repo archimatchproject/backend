@@ -7,14 +7,10 @@ from django.contrib import admin
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
 
 
-
-
-
 class SupplierSubscriptionPlanAdmin(admin.ModelAdmin):
     """
     Admin interface for SubscriptionPlan.
     """
-
 
     list_display = (
         "plan_name",

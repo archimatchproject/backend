@@ -67,9 +67,7 @@ class MessageService:
                 )
 
                 # Send notification to recipient’s device (if required)
-                recipient_device = FCMDevice.objects.filter(
-                    user=recipient, active=True
-                ).first()
+                recipient_device = FCMDevice.objects.filter(user=recipient, active=True).first()
                 if recipient_device:
                     fcm_message = FCMMessage(
                         data={"user_id": str(user.id)},
@@ -83,9 +81,7 @@ class MessageService:
                         recipient_device.send_message(fcm_message)
                     except Exception as fcm_error:
                         print(f"Error sending FCM message: {fcm_error}")
-                        raise APIException(
-                            detail="Error with FCM notification: " + str(fcm_error)
-                        )
+                        raise APIException(detail="Error with FCM notification: " + str(fcm_error))
 
                 return Response(
                     MessageSerializer(message).data,

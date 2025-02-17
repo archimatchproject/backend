@@ -17,11 +17,13 @@ Key Components:
   between these two dates is returned otherwise.
 """
 
-import app.selection
-from rest_framework import serializers
-from app.selection.models.Phase import Phase
 from datetime import datetime
 
+from rest_framework import serializers
+
+import app.selection
+
+from app.selection.models.Phase import Phase
 from app.selection.models.SelectionSettings import SelectionSettings
 
 
@@ -38,6 +40,13 @@ class PhaseSerializer(serializers.ModelSerializer):
     remaining_days = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class for PhaseSerializer.
+        Attributes:
+            model (django.db.models.Model): The model that is being serialized.
+            fields (list): A list of fields to be included in the serialization.
+        """
+
         model = Phase
         fields = [
             "id",
@@ -96,13 +105,9 @@ class PhaseSerializer(serializers.ModelSerializer):
         """
         if obj.name == app.selection.DECISION:
             phase_days = (
-                SelectionSettings.objects.filter(name=app.selection.QUOTES)
-                .first()
-                .phase_days
+                SelectionSettings.objects.filter(name=app.selection.QUOTES).first().phase_days
             )
         else:
-            phase_days = (
-                SelectionSettings.objects.filter(name=obj.name).first().phase_days
-            )
+            phase_days = SelectionSettings.objects.filter(name=obj.name).first().phase_days
         days_elapsed = self.get_days_elapsed(obj)
         return max(phase_days - days_elapsed, 0)

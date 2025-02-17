@@ -9,12 +9,14 @@ Classes:
 """
 
 from datetime import datetime
-from app.core.pagination import CustomPagination
-from app.users.models.Meeting import Meeting
-from app.users.serializers.MeetingSerializer import MeetingSerializer
+
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
+
+from app.core.pagination import CustomPagination
+from app.users.models.Meeting import Meeting
+from app.users.serializers.MeetingSerializer import MeetingSerializer
 
 
 class MeetingService:
@@ -95,9 +97,7 @@ class MeetingService:
 
         dates = dates_str.split(",")
         try:
-            dates = [
-                datetime.strptime(date.strip(), "%Y-%m-%d").date() for date in dates
-            ]
+            dates = [datetime.strptime(date.strip(), "%Y-%m-%d").date() for date in dates]
         except ValueError:
             raise serializers.ValidationError(
                 detail="Invalid date format. Use YYYY-MM-DD.",

@@ -7,9 +7,13 @@ Classes:
     AnnouncementDocument: Defines the Elasticsearch document for the Announcement model.
 """
 
-from django_elasticsearch_dsl import Document, Index, fields
+from django_elasticsearch_dsl import Document
+from django_elasticsearch_dsl import Index
+from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
+
 from app.announcement.models.Announcement import Announcement
+
 
 # Define Elasticsearch index
 announcement_index = Index("announcement")
@@ -74,9 +78,21 @@ class AnnouncementDocument(Document):
     status = fields.KeywordField()
 
     class Index:
+        """
+        Index class representing the index configuration for the "announcement" documents.
+        Attributes:
+            name (str): The name of the index.
+        """
+
         name = "announcement"
 
     class Django:
+        """
+        Django class for handling the Announcement model.
+        Attributes:
+            model (Announcement): The model associated with this class.
+        """
+
         model = Announcement
 
     def prepare_needs_ids(self, instance):

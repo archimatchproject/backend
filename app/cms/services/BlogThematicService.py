@@ -11,10 +11,6 @@ Classes:
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 from app.cms.models.BlogThematic import BlogThematic
 from app.cms.serializers.BlogThematicSerializer import BlogThematicSerializer
@@ -48,7 +44,6 @@ class BlogThematicService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-
         with transaction.atomic():
             # Create BlogThematic instance
             blog_thematic = BlogThematic.objects.create(
@@ -57,9 +52,7 @@ class BlogThematicService:
                 visible=validated_data.get("visible", False),
             )
 
-            return True,BlogThematicSerializer(blog_thematic).data
-
-        
+            return True, BlogThematicSerializer(blog_thematic).data
 
     @classmethod
     def update_blog_thematic(cls, instance, data, partial=False):
@@ -77,15 +70,12 @@ class BlogThematicService:
         serializer = BlogThematicSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-
         with transaction.atomic():
             instance.title = serializer.validated_data.get("title", instance.title)
             instance.visible = serializer.validated_data.get("visible", instance.visible)
             instance.save()
 
-            return True,BlogThematicSerializer(instance).data
-
-        
+            return True, BlogThematicSerializer(instance).data
 
     @classmethod
     def change_visibility(cls, blog_thematic_id, request):
@@ -106,5 +96,4 @@ class BlogThematicService:
         blog_thematic = BlogThematic.objects.get(pk=blog_thematic_id)
         blog_thematic.visible = visibility
         blog_thematic.save()
-        return True,BlogThematicSerializer(blog_thematic).data
-    
+        return True, BlogThematicSerializer(blog_thematic).data

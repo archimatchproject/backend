@@ -12,9 +12,9 @@ from abc import abstractmethod
 from datetime import date
 from datetime import timedelta
 
+from app.email_templates.signals import api_success_signal
 from app.moderation.models.Warning import Warning
 from project_core.django import base as settings
-from app.email_templates.signals import api_success_signal
 
 
 class BaseAction(ABC):

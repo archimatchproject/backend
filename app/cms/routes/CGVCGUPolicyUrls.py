@@ -6,6 +6,7 @@ providing separate paths for each CRUD operation.
 """
 
 from django.urls import path
+
 from app.cms.controllers.CGUCGVPolicyViewSet import CGUCGVPolicyViewSet
 
 

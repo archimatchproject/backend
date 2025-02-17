@@ -7,7 +7,9 @@ providing separate paths for each CRUD operation.
 
 from django.urls import path
 
-from app.subscription.controllers.SupplierSubscriptionPlanViewSet import SupplierSubscriptionPlanViewSet
+from app.subscription.controllers.SupplierSubscriptionPlanViewSet import (
+    SupplierSubscriptionPlanViewSet,
+)
 
 
 supplier_subscription_plan_urlpatterns = [

@@ -7,7 +7,8 @@ project management constraints.
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from app.selection import NOT_SELECTED, PHASE_NAME_CHOICES
+from app.selection import NOT_SELECTED
+from app.selection import PHASE_NAME_CHOICES
 
 
 class SelectionSettings(models.Model):
@@ -84,8 +85,21 @@ class SelectionSettings(models.Model):
     )
 
     class Meta:
+        """
+        Meta class to define the verbose names for the SelectionSettings model.
+        Attributes:
+            verbose_name (str): Human-readable name for the model.
+            verbose_name_plural (str): Human-readable plural name for the model.
+        """
+
         verbose_name = "Selection Settings"
         verbose_name_plural = "Selection Settings"
 
     def __str__(self):
+        """
+        Returns a string representation of the SelectionSettings object.
+        Returns:
+            str: A string that represents the SelectionSettings object.
+        """
+
         return "Selection Settings"

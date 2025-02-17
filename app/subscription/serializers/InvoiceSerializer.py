@@ -11,7 +11,6 @@ Classes:
 from rest_framework import serializers
 
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
-from app.subscription.models.Invoice import Invoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
 
 

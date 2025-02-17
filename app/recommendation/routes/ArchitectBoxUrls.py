@@ -5,9 +5,7 @@ viewset : AnnouncementViewSet
 
 from django.urls import path
 
-from app.recommendation.controllers.ArchitectBoxViewSet import (
-    ArchitectBoxViewSet,
-)
+from app.recommendation.controllers.ArchitectBoxViewSet import ArchitectBoxViewSet
 
 
 box_urlpatterns = [

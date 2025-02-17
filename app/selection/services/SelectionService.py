@@ -8,44 +8,42 @@ Classes:
 
 """
 
+from datetime import datetime
+from datetime import timedelta
+
+from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import Count
-from rest_framework.exceptions import APIException
 from django.utils import timezone
+from django.utils.timezone import now
+
+from rest_framework import status
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
+
 from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
 from app.announcement.models.Announcement import Announcement
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer
 from app.core.pagination import CustomPagination
+from app.selection import BLOCK_PROJECT
+from app.selection import CANCEL_PROJECT
+from app.selection import CHANGE_DEADLINE
+from app.selection import CONFIRM_DISCUSSION_PHASE
+from app.selection import DECISION
+from app.selection import DISCUSSION
+from app.selection import NOT_SELECTED
+from app.selection import QUOTES
+from app.selection import REBROADCAST_PROJECT
 from app.selection.filters import SelectionFilter
 from app.selection.models.ActionLog import ActionLog
 from app.selection.models.Phase import Phase
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
 from app.selection.serializers.ActionLogSerializer import ActionLogSerializer
-from app.selection.serializers.SelectionSerializer import (
-    SelectionSerializer,
-    SelectionPostSerializer,
-)
+from app.selection.serializers.SelectionSerializer import SelectionPostSerializer
+from app.selection.serializers.SelectionSerializer import SelectionSerializer
 from app.users.models.Admin import Admin
 from app.users.models.Architect import Architect
-from django.core.exceptions import ValidationError
-from datetime import datetime, timedelta
-from app.selection import (
-    BLOCK_PROJECT,
-    CANCEL_PROJECT,
-    CHANGE_DEADLINE,
-    CONFIRM_DISCUSSION_PHASE,
-    DECISION,
-    DISCUSSION,
-    NOT_SELECTED,
-    QUOTES,
-    REBROADCAST_PROJECT,
-)
-from django.db import transaction
-from rest_framework.response import Response
-from rest_framework import status
-from django.utils.timezone import now
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementOutputSerializer,
-)
 
 
 class SelectionService:
@@ -87,18 +85,12 @@ class SelectionService:
             raise APIException("Maximum of 4 selections reached for this announcement.")
 
         # Ensure only one accepted selection if status is 'accepted'
-        if Selection.objects.filter(
-            announcement=announcement, status="accepted"
-        ).exists():
-            raise APIException(
-                "Another architect has already been accepted for this announcement."
-            )
+        if Selection.objects.filter(announcement=announcement, status="accepted").exists():
+            raise APIException("Another architect has already been accepted for this announcement.")
 
         # Ensure the architect has enough tokens
         if architect.subscription_plan.remaining_tokens < 5:
-            raise APIException(
-                "You don't have the required tokens for this announcement."
-            )
+            raise APIException("You don't have the required tokens for this announcement.")
 
         # Create and save the new selection
         selection = Selection.objects.create(
@@ -178,9 +170,7 @@ class SelectionService:
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
-            serialized_selections = SelectionSerializer(
-                page, many=True, context={}
-            ).data
+            serialized_selections = SelectionSerializer(page, many=True, context={}).data
             return paginator.get_paginated_response(serialized_selections)
         return Response([], status=status.HTTP_200_OK)
 
@@ -247,9 +237,7 @@ class SelectionService:
         phase.name = QUOTES
         phase.start_date = timezone.now()
 
-        phase.limit_date = phase.start_date + timezone.timedelta(
-            days=phase_duration_days
-        )
+        phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
 
         phase.save()
 
@@ -279,9 +267,7 @@ class SelectionService:
             return paginator.get_paginated_response(serializer.data)
 
         serializer = SelectionSerializer(queryset, many=True, context={})
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     @transaction.atomic
@@ -326,9 +312,7 @@ class SelectionService:
         phase_days = selection_settings.phase_days
 
         phase_days = selection_settings.phase_days
-        days_before = now().date() + timedelta(
-            days=selection_settings.days_for_admin_display
-        )
+        days_before = now().date() + timedelta(days=selection_settings.days_for_admin_display)
         announcements = Announcement.objects.filter(
             selections__isnull=True,
             suggested_at__lte=days_before - timedelta(days=phase_days),
@@ -341,9 +325,7 @@ class SelectionService:
             serializer = AnnouncementOutputSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def get_selection_settings(cls, name: str):
@@ -414,9 +396,7 @@ class SelectionService:
             )
             return paginator.get_paginated_response(serializer.data)
 
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def get_selection_logs(cls, selection_id):
@@ -437,9 +417,7 @@ class SelectionService:
         Raises:
             APIException: If no logs are found for the given selection ID.
         """
-        logs = ActionLog.objects.filter(details__selection_id=selection_id).order_by(
-            "-timestamp"
-        )
+        logs = ActionLog.objects.filter(details__selection_id=selection_id).order_by("-timestamp")
 
         if not logs.exists():
             return True, []
@@ -597,9 +575,7 @@ class SelectionService:
         phase.name = DECISION
         phase.start_date = timezone.now()
 
-        phase.limit_date = phase.start_date + timezone.timedelta(
-            days=phase_duration_days
-        )
+        phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
 
         phase.save()
         admin = Admin.objects.get(user=user)
@@ -656,9 +632,7 @@ class SelectionService:
             )
             return paginator.get_paginated_response(serializer.data)
 
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     @transaction.atomic
@@ -699,9 +673,7 @@ class SelectionService:
         phase.name = DECISION
         phase.start_date = timezone.now()
 
-        phase.limit_date = phase.start_date + timezone.timedelta(
-            days=phase_duration_days
-        )
+        phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
         print(phase)
         phase.save()
         return True, "Project canceled"

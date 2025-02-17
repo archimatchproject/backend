@@ -2,9 +2,12 @@
 Module containing the SelectedSubscriptionPlan model and its derived models.
 """
 
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
+
 from rest_framework import serializers
+
 from app.core.models.BaseModel import BaseModel
 
 
@@ -41,11 +44,7 @@ class SelectedSubscriptionPlan(BaseModel):
         Custom validation method to ensure valid discount fields.
         """
         if self.discount:
-            if (
-                self.discount_percentage is None
-                or self.start_date is None
-                or self.end_date is None
-            ):
+            if self.discount_percentage is None or self.start_date is None or self.end_date is None:
                 raise serializers.ValidationError(
                     """The following fields are required: 'discount_percentage', 'start_date', and
                     'end_date'."""

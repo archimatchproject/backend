@@ -9,10 +9,6 @@ their related GuideSection instances.
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 from app.cms.models.GuideArticle import GuideArticle
 from app.cms.models.GuideSection import GuideSection
@@ -56,17 +52,14 @@ class GuideArticleService:
         with transaction.atomic():
             # Create GuideArticle instance
             sections_data = validated_data.pop("sections", [])
-            guide_article = GuideArticle.objects.create(
-                **validated_data, admin=request.user.admin
-            )
+            guide_article = GuideArticle.objects.create(**validated_data, admin=request.user.admin)
 
             # Create related sections if provided
 
             for section_data in sections_data:
                 GuideSection.objects.create(guide_article=guide_article, **section_data)
 
-            return True,GuideArticleSerializer(guide_article).data
-        
+            return True, GuideArticleSerializer(guide_article).data
 
     @classmethod
     def update_guide_article(cls, instance, data):
@@ -94,7 +87,6 @@ class GuideArticleService:
         partial = data.get("partial", False)
         serializer = GuideArticleSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
-
 
         with transaction.atomic():
             instance.title = serializer.validated_data.get("title", instance.title)
@@ -135,8 +127,7 @@ class GuideArticleService:
             # Delete sections not mentioned in the request
             instance.guide_article_sections.exclude(id__in=section_ids_to_keep).delete()
 
-            return True,GuideArticleSerializer(instance).data
-    
+            return True, GuideArticleSerializer(instance).data
 
     @classmethod
     def change_visibility(cls, guide_id, request):
@@ -157,8 +148,7 @@ class GuideArticleService:
         guide = GuideArticle.objects.get(pk=guide_id)
         guide.visible = visibility
         guide.save()
-        return True,GuideArticleSerializer(guide).data
-    
+        return True, GuideArticleSerializer(guide).data
 
     @classmethod
     def upload_media(cls, request):
@@ -187,7 +177,7 @@ class GuideArticleService:
             section.image = image
             section.save()
             guide_article = section.guide_article
-            return True,GuideArticleSerializer(guide_article).data
+            return True, GuideArticleSerializer(guide_article).data
         # Handle video section type
         if section.section_type == "video":
             if not video:
@@ -197,7 +187,7 @@ class GuideArticleService:
             section.video = video
             section.save()
             guide_article = section.guide_article
-            return True,GuideArticleSerializer(guide_article).data
+            return True, GuideArticleSerializer(guide_article).data
 
         # Handle slider section type
         elif section.section_type == "slider":
@@ -214,10 +204,9 @@ class GuideArticleService:
                 GuideSliderImage.objects.create(section=section, image=img)
 
             guide_article = section.guide_article
-            return True,GuideArticleSerializer(guide_article).data
+            return True, GuideArticleSerializer(guide_article).data
 
         else:
             raise serializers.ValidationError(
                 detail="Invalid section type. Must be either image or slider."
             )
-        

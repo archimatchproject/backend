@@ -9,13 +9,16 @@ Classes:
 """
 
 from django.core.exceptions import ValidationError
-from app.selection.models.Selection import Selection
-from app.selection.models.Quote import Quote
+from django.db import transaction
+
 from rest_framework.exceptions import APIException
 
+from app.selection import ACCEPTED
+from app.selection import QUOTE_ACCEPTED
+from app.selection import QUOTE_REFUSED
+from app.selection.models.Quote import Quote
+from app.selection.models.Selection import Selection
 from app.selection.serializers.QuoteSerializer import QuoteSerializer
-from django.db import transaction
-from app.selection import QUOTE_ACCEPTED, QUOTE_REFUSED, ACCEPTED
 
 
 class QuoteService:
@@ -41,9 +44,7 @@ class QuoteService:
 
         selection = Selection.objects.get(id=selection_id)
         if selection.architect != architect:
-            raise APIException(
-                detail="you must be the owner of the project to upload a Quote"
-            )
+            raise APIException(detail="you must be the owner of the project to upload a Quote")
 
         cls._validate_pdf_file(file)
 

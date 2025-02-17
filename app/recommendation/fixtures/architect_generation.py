@@ -1,5 +1,37 @@
-import yaml
+"""
+This script generates a YAML file containing data for 50 architects. Each architect has associated user data and
+specific fields related to their profession.
+Constants:
+    NUM_ARCHITECTS (int): Number of architects to generate.
+    START_ID (int): Starting ID for the architects.
+    CITIES (list): List of cities in Tunisia.
+    COORDINATES (dict): Dictionary mapping cities to their latitude and longitude coordinates.
+    PROJECT_COMPLEXITY (list): List of project complexity levels.
+    YEARS_EXPERIENCE (list): List of experience ranges.
+    TOTAL_ARCHITECTURAL_STYLES (int): Total number of architectural styles.
+    TOTAL_BUDGETS (int): Total number of budget categories.
+    TOTAL_PROJECT_CATEGORIES (int): Total number of project categories.
+    TOTAL_PROPERTY_TYPES (int): Total number of property types.
+    TOTAL_TERRAIN_SURFACES (int): Total number of terrain surfaces.
+    TOTAL_WORK_SURFACES (int): Total number of work surfaces.
+    TOTAL_WORK_TYPES (int): Total number of work types.
+    TOTAL_NEEDS (int): Total number of needs.
+Functions:
+    None
+Generates:
+    A YAML file named 'architects.yaml' in the 'app/recommendation/fixtures/' directory containing the generated data
+    for 50 architects.
+Example:
+    Run the script to generate the 'architects.yaml' file:
+        $ python architect_generation.py
+Output:
+    A message indicating successful generation of the 'architects.yaml' file.
+"""
+
 import random
+
+import yaml
+
 
 # Define constants
 NUM_ARCHITECTS = 50
@@ -109,14 +141,10 @@ for i in range(NUM_ARCHITECTS):
             "years_experience": random.choice(YEARS_EXPERIENCE),
             "city": city,
             "city_coordinates": {"latitude": latitude, "longitude": longitude},
-            "project_categories": random.sample(
-                range(1, TOTAL_PROJECT_CATEGORIES + 1), 2
-            ),
+            "project_categories": random.sample(range(1, TOTAL_PROJECT_CATEGORIES + 1), 2),
             "property_types": random.sample(range(1, TOTAL_PROPERTY_TYPES + 1), 2),
             "work_types": random.sample(range(1, TOTAL_WORK_TYPES + 1), 2),
-            "architectural_styles": random.sample(
-                range(1, TOTAL_ARCHITECTURAL_STYLES + 1), 2
-            ),
+            "architectural_styles": random.sample(range(1, TOTAL_ARCHITECTURAL_STYLES + 1), 2),
             "budgets": random.sample(range(1, TOTAL_BUDGETS + 1), 2),
             "preferred_locations": random.sample(range(1, 7), 2),
             "terrain_surfaces": random.sample(range(1, TOTAL_TERRAIN_SURFACES + 1), 2),
@@ -131,5 +159,3 @@ for i in range(NUM_ARCHITECTS):
 # Save to YAML file
 with open("app/recommendation/fixtures/architects.yaml", "w", encoding="utf-8") as file:
     yaml.dump(architects_data, file, allow_unicode=True, default_flow_style=False)
-
-print("✅ Successfully generated 'architects.yaml' with 50 architects!")

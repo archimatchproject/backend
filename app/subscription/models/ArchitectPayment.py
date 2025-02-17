@@ -9,6 +9,7 @@ Classes:
 """
 
 from django.db import models
+
 from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
     ArchitectSelectedSubscriptionPlan,
 )
@@ -28,4 +29,11 @@ class ArchitectPayment(Payment):
     )
 
     def __str__(self):
+        """
+        Returns a string representation of the ArchitectPayment instance.
+        The string representation includes the email of the architect's user and the name of the subscription plan.
+        Returns:
+            str: A string in the format "<architect's user email> - <subscription plan name>".
+        """
+
         return f"{self.architect.user.email} - {self.subscription_plan.plan_name}"

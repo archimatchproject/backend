@@ -10,6 +10,8 @@ Classes:
 
 from django.db import models
 
+from app.announcement import CITIES
+from app.announcement import COORDINATES
 from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
@@ -24,7 +26,6 @@ from app.core.models.WorkType import WorkType
 from app.users import PROJECT_COMPLEXITY_CHOICES
 from app.users import YEARS_EXPERIENCE_CHOICES
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.announcement import CITIES, COORDINATES
 
 
 class Architect(BaseModel):
@@ -62,9 +63,7 @@ class Architect(BaseModel):
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, default="")
-    architect_identifier = models.CharField(
-        max_length=10, default="", null=True, blank=True
-    )
+    architect_identifier = models.CharField(max_length=10, default="", null=True, blank=True)
     architect_speciality = models.ForeignKey(
         ArchitectSpeciality,
         on_delete=models.CASCADE,

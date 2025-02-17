@@ -14,7 +14,9 @@ from rest_framework import serializers
 from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
-from app.subscription.serializers.SelectedSubscriptionPlanSerializer import SupplierSelectedSubscriptionPlanSerializer
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
+    SupplierSelectedSubscriptionPlanSerializer,
+)
 from app.users.models.Supplier import Supplier
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.ShowRoomSerializer import ShowRoomSerializer
@@ -45,7 +47,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     supplier_cover_images = SupplierCoverImageSerializer(many=True, read_only=True)
     showrooms = ShowRoomSerializer(many=True)
     subscription_plan = SupplierSelectedSubscriptionPlanSerializer()
-    
+
     class Meta:
         """
         Meta class for SupplierSerializer.
@@ -117,7 +119,8 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
     """
 
     phone_number = serializers.CharField(source="user.phone_number")
-    showrooms = ShowRoomSerializer(many=True,read_only=True)
+    showrooms = ShowRoomSerializer(many=True, read_only=True)
+
     class Meta:
         """
         Meta class for SupplierSerializer.
@@ -128,4 +131,11 @@ class SupplierPersonalInformationSerializer(serializers.ModelSerializer):
         """
 
         model = Supplier
-        fields = ("id", "company_address", "company_speciality", "phone_number", "company_name","showrooms")
+        fields = (
+            "id",
+            "company_address",
+            "company_speciality",
+            "phone_number",
+            "company_name",
+            "showrooms",
+        )

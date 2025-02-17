@@ -12,8 +12,6 @@ from django.db import transaction
 
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.catalogue.models.Product import Product
@@ -35,8 +33,9 @@ class ProductService:
         update_product(instance, request, data): Handles validation and updating
         of an existing Product.
     """
+
     pagination_class = CustomPagination
-    
+
     @classmethod
     def create_product(cls, request):
         """
@@ -55,7 +54,6 @@ class ProductService:
 
         images_data = request.FILES.getlist("product_images")
 
-
         with transaction.atomic():
             # Create Product instance
             product = Product.objects.create(**validated_data)
@@ -63,8 +61,8 @@ class ProductService:
             for image_data in images_data:
                 ProductImage.objects.create(product=product, image=image_data)
 
-            return True,ProductSerializer(product).data
-                
+            return True, ProductSerializer(product).data
+
     @classmethod
     def update_product(cls, instance, request):
         """
@@ -83,10 +81,9 @@ class ProductService:
 
         images_data = request.FILES.getlist("product_images")
 
-
         with transaction.atomic():
             # Update Product instance
-            fields = ["name", "price", "collection", "description","visibility"]
+            fields = ["name", "price", "collection", "description", "visibility"]
             for field in fields:
                 setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
@@ -101,10 +98,8 @@ class ProductService:
                     ]
                     ProductImage.objects.bulk_create(new_images)
 
-            return True,ProductSerializer(instance).data
-                
+            return True, ProductSerializer(instance).data
 
-        
     @classmethod
     def update_display_status(cls, request, pk):
         """
@@ -129,8 +124,7 @@ class ProductService:
         product.display = display_status
         product.save()
 
-        return True,"Product display status updated successfully."
-        
+        return True, "Product display status updated successfully."
 
     @classmethod
     def update_visibility(cls, request, pk):
@@ -157,8 +151,7 @@ class ProductService:
         product.visibility = visibility
         product.save()
 
-        return True,"visibility updated successfully."
-        
+        return True, "visibility updated successfully."
 
     @classmethod
     def get_products(cls, request):

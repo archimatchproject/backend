@@ -9,6 +9,7 @@ Classes:
 """
 
 from django.db import models
+
 from app.subscription.models.Payment import Payment
 from app.subscription.models.SupplierSelectedSubscriptionPlan import (
     SupplierSelectedSubscriptionPlan,
@@ -27,4 +28,11 @@ class SupplierPayment(Payment):
     )
 
     def __str__(self):
+        """
+        Returns a string representation of the SupplierPayment instance.
+        The string includes the supplier's email and the subscription plan name.
+        Returns:
+            str: A string in the format "supplier_email - subscription_plan_name".
+        """
+
         return f"{self.supplier.user.email} - {self.subscription_plan.plan_name}"

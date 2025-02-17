@@ -2,9 +2,12 @@
 Module containing the SubscriptionPlan model and its derived models.
 """
 
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
+
 from rest_framework import serializers
+
 from app.core.models.BaseModel import BaseModel
 from app.subscription.models.EventDiscount import EventDiscount
 
@@ -26,9 +29,7 @@ class SubscriptionPlan(BaseModel):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
-    discount_message = models.CharField(
-        max_length=255, default="", null=True, blank=True
-    )
+    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     most_popular = models.BooleanField(default=False)

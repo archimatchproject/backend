@@ -1,3 +1,3 @@
+from app.recommendation.models.AnnouncementWeights import AnnouncementWeights
 from app.recommendation.models.ArchitectBox import ArchitectBox
 from app.recommendation.models.RecommendationSettings import RecommendationSettings
-from app.recommendation.models.AnnouncementWeights import AnnouncementWeights

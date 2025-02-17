@@ -5,8 +5,8 @@ This module defines the models for storing messages exchanged between devices us
 
 from django.db import models
 
-from fcm_django.models import FCMDevice
 from app.users.models.ArchimatchUser import ArchimatchUser
+
 
 class Message(models.Model):
     """

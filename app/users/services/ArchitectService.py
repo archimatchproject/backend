@@ -32,9 +32,7 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
-from app.users.serializers.ArchitectSerializer import (
-    ArchitectUpdatePreferencesSerializer,
-)
+from app.users.serializers.ArchitectSerializer import ArchitectUpdatePreferencesSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token

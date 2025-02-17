@@ -5,6 +5,7 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to BlogThematic instances via REST API endpoints.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +17,7 @@ from app.cms.serializers.BlogThematicSerializer import BlogThematicSerializer
 from app.cms.services.BlogThematicService import BlogThematicService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class BlogThematicViewSet(viewsets.ModelViewSet):
     """
@@ -75,7 +76,7 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created BlogThematic instance.
         """
-        success,data = BlogThematicService.create_blog_thematic(request.data, request.user)
+        success, data = BlogThematicService.create_blog_thematic(request.data, request.user)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @handle_service_exceptions
@@ -94,7 +95,9 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success,data = BlogThematicService.update_blog_thematic(instance, request.data, partial=partial)
+        success, data = BlogThematicService.update_blog_thematic(
+            instance, request.data, partial=partial
+        )
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PUT"])
@@ -110,6 +113,5 @@ class BlogThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
-        success,data = BlogThematicService.change_visibility(pk, request)
+        success, data = BlogThematicService.change_visibility(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-

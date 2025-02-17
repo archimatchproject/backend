@@ -2,9 +2,11 @@
 Module containing the EventDiscount model and related functionality.
 """
 
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
 from datetime import date
+
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
+from django.db import models
 
 
 class EventDiscount(models.Model):

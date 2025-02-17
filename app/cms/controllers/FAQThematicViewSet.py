@@ -5,6 +5,7 @@ This module contains the FAQThematicViewSet class, which provides
 view-level logic for the FAQThematic model, including creation and update operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +16,7 @@ from app.cms.serializers.FAQThematicSerializer import FAQThematicSerializer
 from app.cms.services.FAQThematicService import FAQThematicService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class FAQThematicViewSet(viewsets.ModelViewSet):
     """
@@ -76,9 +77,8 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        success,data = FAQThematicService.create_faq_thematic(request)
+        success, data = FAQThematicService.create_faq_thematic(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -94,6 +94,5 @@ class FAQThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the updated instance data.
         """
-        success,data =  FAQThematicService.update_faq_thematic(self.get_object(), request)
+        success, data = FAQThematicService.update_faq_thematic(self.get_object(), request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-

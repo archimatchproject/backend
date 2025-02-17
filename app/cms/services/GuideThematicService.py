@@ -12,14 +12,13 @@ from django.db import transaction
 
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from app.cms.models.GuideThematic import GuideThematic
 from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
 from app.core.pagination import CustomPagination
-from rest_framework.exceptions import ValidationError
+
 
 class GuideThematicService:
     """
@@ -34,6 +33,7 @@ class GuideThematicService:
     """
 
     pagination_class = CustomPagination
+
     @classmethod
     def create_guide_thematic(cls, request):
         """
@@ -56,9 +56,7 @@ class GuideThematicService:
                 **validated_data, admin=request.user.admin
             )
 
-            return True,GuideThematicSerializer(guide_thematic).data
-
-        
+            return True, GuideThematicSerializer(guide_thematic).data
 
     @classmethod
     def update_guide_thematic(cls, instance, data, partial=False):
@@ -83,9 +81,7 @@ class GuideThematicService:
                 setattr(instance, field, validated_data.get(field, getattr(instance, field)))
             instance.save()
 
-            return True,GuideThematicSerializer(instance).data
-
-        
+            return True, GuideThematicSerializer(instance).data
 
     @classmethod
     def change_visibility(cls, guide_thematic_id, request):
@@ -106,8 +102,8 @@ class GuideThematicService:
         guide_thematic = GuideThematic.objects.get(pk=guide_thematic_id)
         guide_thematic.visible = visibility
         guide_thematic.save()
-        return True,GuideThematicSerializer(guide_thematic).data
-        
+        return True, GuideThematicSerializer(guide_thematic).data
+
     @classmethod
     def get_thematic_guides_paginated(cls, request):
         """
@@ -124,11 +120,13 @@ class GuideThematicService:
             Response: A paginated response containing serialized Supplier objects
                 or a 400 Bad Request response with an error message.
         """
-        
+
         target_user_type = request.query_params.get("target_user_type")
         if not target_user_type:
             raise ValidationError("The 'target_user_type' query parameter is required.")
-        queryset = GuideThematic.objects.filter(target_user_type=target_user_type).order_by("created_at")
+        queryset = GuideThematic.objects.filter(target_user_type=target_user_type).order_by(
+            "created_at"
+        )
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:

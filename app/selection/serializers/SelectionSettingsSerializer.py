@@ -4,17 +4,16 @@ SelectionSettings model into a structured format suitable for API responses.
 """
 
 from rest_framework import serializers
-from app.selection import (
-    DAYS_AFTER_CALL_EMAIL_CHOICES,
-    DAYS_BEFORE_CALL_EMAIL_CHOICES,
-    DAYS_FOR_ADMIN_DISPLAY_CHOICES,
-    DAYS_FOR_ADMIN_MANAGEMENT_CHOICES,
-    DAYS_TO_LOCK_PROJECT_CHOICES,
-    DAYS_TO_PHONE_CALL_CHOICES,
-    DAYS_TO_REDIFFUSE_CHOICES,
-    PHASE_DAYS_CHOICES,
-    TIMES_TO_UNLOCK_PROJECT_CHOICES,
-)
+
+from app.selection import DAYS_AFTER_CALL_EMAIL_CHOICES
+from app.selection import DAYS_BEFORE_CALL_EMAIL_CHOICES
+from app.selection import DAYS_FOR_ADMIN_DISPLAY_CHOICES
+from app.selection import DAYS_FOR_ADMIN_MANAGEMENT_CHOICES
+from app.selection import DAYS_TO_LOCK_PROJECT_CHOICES
+from app.selection import DAYS_TO_PHONE_CALL_CHOICES
+from app.selection import DAYS_TO_REDIFFUSE_CHOICES
+from app.selection import PHASE_DAYS_CHOICES
+from app.selection import TIMES_TO_UNLOCK_PROJECT_CHOICES
 from app.selection.models.SelectionSettings import SelectionSettings
 
 
@@ -30,6 +29,13 @@ class SelectionSettingsSerializer(serializers.ModelSerializer):
     settings = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class for SelectionSettingsSerializer.
+        Attributes:
+            model (type): The model associated with the serializer.
+            fields (list): List of fields to be included in the serialized output.
+        """
+
         model = SelectionSettings
         fields = ["id", "settings"]
 

@@ -7,7 +7,9 @@ Classes:
 """
 
 from django.db import models
+
 from rest_framework.exceptions import ValidationError
+
 from app.recommendation.models.AnnouncementWeights import AnnouncementWeights
 
 
@@ -38,9 +40,7 @@ class RecommendationSettings(models.Model):
     def save(self, *args, **kwargs):
         """Ensure only one instance of RecommendationSettings exists (singleton pattern)."""
         if not self.pk and RecommendationSettings.objects.exists():
-            raise ValidationError(
-                "Only one RecommendationSettings instance is allowed."
-            )
+            raise ValidationError("Only one RecommendationSettings instance is allowed.")
         return super().save(*args, **kwargs)
 
     @classmethod

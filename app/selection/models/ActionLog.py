@@ -4,6 +4,7 @@ performed on projects, such as changing deadlines, canceling, blocking, or rebro
 """
 
 from django.db import models
+
 from app.selection import ACTION_CHOICES
 from app.users.models import Admin
 

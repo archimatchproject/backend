@@ -1,11 +1,28 @@
-from elasticsearch_dsl import Search, Q
+"""
+This module provides services for recommending architects based on various criteria using Elasticsearch.
+Functions:
+    generate_match_boost(field_name, value, boost):
+        Generates a function that boosts score if a specific field in the architect document contains a given value.
+    generate_distance_score(projet, weight=25):
+        Generates a function score that penalizes architects based on distance, using a weight to control its impact.
+    generate_ongoing_projects_penalty(weight=15, scale=3):
+    get_min_score_threshold(s, score_percentage):
+    compute_architect_score(
+        attribute_mapping=None,
+
+"""
+
+from elasticsearch_dsl import Q
+from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import FunctionScore
+
 from app.announcement.models.Announcement import Announcement
 
 
 def generate_match_boost(field_name, value, boost):
     """
-    Generates a function that boosts score if a specific field in the architect document contains a given value.
+    Generates a function that boosts score if a specific field in the architect document contains
+    a given value.
 
     :param field_name: The field storing a list of IDs in the architect's Elasticsearch document.
     :param value: The ID from the Announcement model to match.
@@ -14,11 +31,7 @@ def generate_match_boost(field_name, value, boost):
     """
     print(value)
     return {
-        "filter": {
-            "term": {
-                field_name: value
-            }  # Match single ID against architect's list field
-        },
+        "filter": {"term": {field_name: value}},  # Match single ID against architect's list field
         "weight": boost,  # Apply boost if there's a match
     }
 
@@ -33,7 +46,7 @@ def generate_distance_score(projet, weight=25):
             "script": {
                 "source": """
                     double distance_km = doc['city_coordinates'].arcDistance(params.lat, params.lon) / 1000;
-                    double distance_score = 1 / (1 + (distance_km / 50));  // Reduces score as distance increases
+                    double distance_score = 1 / (1 + (distance_km / 50));
                     return distance_score * params.weight;  // Apply weight multiplier
                 """,
                 "params": {
@@ -47,13 +60,24 @@ def generate_distance_score(projet, weight=25):
 
 
 def generate_ongoing_projects_penalty(weight=15, scale=3):
+    """
+    Generates a penalty for ongoing projects to be used in an Elasticsearch script score.
+    The penalty is calculated using a logarithmic function to ensure that the score does not drop to zero.
+    The formula used is: 1 / (1 + log(1 + on_going_projects) * scale * weight).
+    Args:
+        weight (int, optional): The weight factor for the penalty. Default is 15.
+        scale (int, optional): The scale factor for the penalty. Default is 3.
+    Returns:
+        dict: A dictionary representing the Elasticsearch script score with the penalty applied.
+    """
+
     return {
         "script_score": {
             "script": {
                 # Multiplicative penalty (prevents dropping score to 0)
                 "source": """
                     double penalty = Math.log(1 + doc['on_going_projects'].value) * params.scale * params.weight;
-                    return 1 / (1 + penalty);  
+                    return 1 / (1 + penalty);
                 """,
                 "params": {
                     "weight": weight,  # Default weight = 15
@@ -155,9 +179,7 @@ def compute_architect_score(
 
     # Distance Score (Weighted)
     if projet.city_coordinates:
-        functions.append(
-            generate_distance_score(projet, weight=weights.get("distance"))
-        )
+        functions.append(generate_distance_score(projet, weight=weights.get("distance")))
 
     # 🔹 Attribute-based Boosting
     attributes = attributes or ["architectural_style", "work_type", "project_category"]
@@ -166,9 +188,7 @@ def compute_architect_score(
         es_field = attribute_mapping.get(attr, attr)  # Use mapping if available
         value = getattr(projet, attr, None)
         if value:
-            functions.append(
-                generate_match_boost(es_field, value.id, boost=weights.get(attr, 5))
-            )
+            functions.append(generate_match_boost(es_field, value.id, boost=weights.get(attr, 5)))
 
     # 🔹 Perfect Match (Dynamic Version)
     perfect_match_conditions = []
@@ -191,9 +211,7 @@ def compute_architect_score(
         )
 
     # 🔹 Many-to-Many Relationship Matching (Generic)
-    many_to_many_fields = many_to_many_fields or [
-        "needs"
-    ]  # Default to 'needs' if not provided
+    many_to_many_fields = many_to_many_fields or ["needs"]  # Default to 'needs' if not provided
 
     for m2m_field in many_to_many_fields:
         related_objects = getattr(projet, m2m_field, None)

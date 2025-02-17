@@ -141,7 +141,7 @@ class RealizationOutputSerializer(serializers.ModelSerializer):
             "architectural_style",
             "realization_images",
             "property_type",
-            "created_at"
+            "created_at",
         ]
 
 
@@ -175,7 +175,7 @@ class RealizationSerializer(serializers.ModelSerializer):
             "architectural_style",
             "realization_images",
             "property_type",
-            "created_at"
+            "created_at",
         ]
 
     def to_representation(self, instance):

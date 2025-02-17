@@ -5,17 +5,17 @@ to manage `RecommendationSettings` resources, including retrieving, updating set
 and handling attribute updates.
 """
 
-from rest_framework import status, viewsets
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
+
 from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.recommendation.models.RecommendationSettings import RecommendationSettings
 from app.recommendation.serializers.RecommendationSettingsSerializer import (
     RecommendationSettingsSerializer,
 )
-from app.recommendation.services.RecommendationSettingsService import (
-    RecommendationSettingsService,
-)
-from app.core.response_builder import build_response
+from app.recommendation.services.RecommendationSettingsService import RecommendationSettingsService
 
 
 class RecommendationSettingsViewSet(viewsets.ViewSet):
@@ -84,7 +84,5 @@ class RecommendationSettingsViewSet(viewsets.ViewSet):
         Returns:
             Response: Serialized recommendation settings choices.
         """
-        success, data = (
-            RecommendationSettingsService.get_recommendation_settings_choices()
-        )
+        success, data = RecommendationSettingsService.get_recommendation_settings_choices()
         return build_response(data=data, status=status.HTTP_200_OK, success=success)

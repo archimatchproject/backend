@@ -4,13 +4,12 @@ Serializer module for the SelectionReport model.
 
 from rest_framework import serializers
 
-
-from app.moderation.models.SelectionReport import SelectionReport
 from app.moderation.models.Reason import Reason
+from app.moderation.models.SelectionReport import SelectionReport
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
-from app.users.serializers.ClientSerializer import ClientSerializer
 from app.selection.models.Selection import Selection
 from app.selection.serializers.SelectionSerializer import SelectionSerializer
+from app.users.serializers.ClientSerializer import ClientSerializer
 
 
 class SelectionReportSerializer(serializers.ModelSerializer):

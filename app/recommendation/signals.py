@@ -1,23 +1,62 @@
-from django.db.models.signals import post_save, post_delete
+"""
+This module contains signal handlers for the recommendation app. These handlers
+are triggered by Django's post_save and post_delete signals to perform actions
+such as syncing Elasticsearch, computing architect scores, and handling architect
+box assignments.
+Functions:
+    index_architect(sender, instance, **kwargs):
+        Sync Elasticsearch when an Architect is saved.
+    delete_architect(sender, instance, **kwargs):
+        Remove from Elasticsearch when an Architect is deleted.
+    handle_announcement_creation(sender, instance, created, **kwargs):
+        Perform actions when a new Announcement is created, such as computing
+        architect scores and handling architect box assignments.
+    handle_selection_created(sender, instance, created, **kwargs):
+        Remove announcement from architect's box when a selection is made.
+"""
+
+from django.db.models.signals import post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from app.users.models.Architect import Architect
-from app.recommendation.documents.ArchitectDocument import ArchitectDocument
+
 from app.announcement.models.Announcement import Announcement
+from app.recommendation.documents.ArchitectDocument import ArchitectDocument
+from app.recommendation.models.ArchitectBox import ArchitectBox
 from app.recommendation.services.recommend_architects import compute_architect_score
 from app.recommendation.utils import handle_architect_box_assignment
 from app.selection.models.Selection import Selection
-from app.recommendation.models.ArchitectBox import ArchitectBox
+from app.users.models.Architect import Architect
 
 
 # Sync Elasticsearch when an Announcement is saved
 @receiver(post_save, sender=Architect)
 def index_architect(sender, instance, **kwargs):
+    """
+    Signal handler to index an architect instance.
+    This function is triggered by a signal and updates the corresponding
+    ArchitectDocument with the given instance.
+    Args:
+        sender (Any): The sender of the signal.
+        instance (Any): The instance of the architect to be indexed.
+        **kwargs: Additional keyword arguments.
+    """
+
     ArchitectDocument().update(instance)
 
 
 # Remove from Elasticsearch when an Announcement is deleted
 @receiver(post_delete, sender=Architect)
 def delete_architect(sender, instance, **kwargs):
+    """
+    Signal handler to delete an architect document.
+    This function is triggered when an architect instance is deleted. It deletes
+    the corresponding document from the ArchitectDocument index.
+    Args:
+        sender (type): The model class that sent the signal.
+        instance (object): The actual instance being deleted.
+        **kwargs: Additional keyword arguments.
+    """
+
     ArchitectDocument().delete(instance)
 
 

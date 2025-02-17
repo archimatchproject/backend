@@ -13,12 +13,8 @@ from django.urls import path
 
 from rest_framework import routers
 
-from app.recommendation.routes.ArchitectBoxUrls import (
-    box_urlpatterns,
-)
-from app.recommendation.routes.RecommendationSettingsUrls import (
-    recommendation_settings_urlpatterns,
-)
+from app.recommendation.routes.ArchitectBoxUrls import box_urlpatterns
+from app.recommendation.routes.RecommendationSettingsUrls import recommendation_settings_urlpatterns
 
 
 router = routers.DefaultRouter()

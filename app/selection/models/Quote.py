@@ -16,9 +16,11 @@ Attributes:
 """
 
 from django.db import models
+
 from app.core.models.BaseModel import BaseModel
+from app.selection import QUOTE_PENDING
+from app.selection import QUOTE_STATUS_CHOICES
 from app.selection.models.Selection import Selection
-from app.selection import QUOTE_PENDING, QUOTE_STATUS_CHOICES
 
 
 class Quote(BaseModel):
@@ -32,13 +34,16 @@ class Quote(BaseModel):
         created_at (DateTimeField): The timestamp when the quote was created.
     """
 
-    selection = models.ForeignKey(
-        Selection, on_delete=models.CASCADE, related_name="quotes"
-    )
+    selection = models.ForeignKey(Selection, on_delete=models.CASCADE, related_name="quotes")
     file = models.FileField(upload_to="quotes/")  # PDF validation
-    status = models.CharField(
-        max_length=10, choices=QUOTE_STATUS_CHOICES, default=QUOTE_PENDING
-    )
+    status = models.CharField(max_length=10, choices=QUOTE_STATUS_CHOICES, default=QUOTE_PENDING)
 
     def __str__(self):
+        """
+        Returns a string representation of the Quote instance.
+        The string includes the quote's ID and the associated selection's ID.
+        Returns:
+            str: A formatted string representing the quote and its associated selection.
+        """
+
         return f"Quote {self.id} for Selection {self.selection.id}"

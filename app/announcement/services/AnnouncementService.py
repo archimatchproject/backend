@@ -10,6 +10,9 @@ Classes:
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
+from django.db.models import Count
+from django.db.models import Q
+
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import NotFound
@@ -26,35 +29,22 @@ from app.announcement import REFUSED
 from app.announcement import RENOVATION_WORKTYPES
 from app.announcement import TERRAIN_SURFACES
 from app.announcement import WORK_SURFACES
+from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
 from app.announcement.models.Announcement import Announcement
 from app.announcement.models.AnnouncementPieceRenovate import AnnouncementPieceRenovate
 from app.announcement.models.Need import Need
 from app.announcement.models.PieceRenovate import PieceRenovate
 from app.announcement.models.ProjectExtension import ProjectExtension
 from app.announcement.models.ProjectImage import ProjectImage
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementOutputSerializer,
-)
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementPOSTSerializer,
-)
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementPUTSerializer,
-)
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementOutputSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
@@ -71,10 +61,7 @@ from app.users.models import Client
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.VerificationCode import VerificationCode
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-
 from project_core.django import base as settings
-from app.announcement.filters.AnnouncementFilter import AnnouncementFilter
-from django.db.models import Count, Q
 
 
 class AnnouncementService:
@@ -114,9 +101,7 @@ class AnnouncementService:
                 user_instance = ArchimatchUser.objects.create(**user_data)
                 user_instance.set_password(password)
                 user_instance.save()
-                client_instance = Client.objects.create(
-                    user=user_instance, **client_data
-                )
+                client_instance = Client.objects.create(user=user_instance, **client_data)
 
                 # token = generate_password_reset_token(
                 #     client_instance.user.id, expires_in=3600
@@ -318,9 +303,7 @@ class AnnouncementService:
         if not ProjectCategory.objects.filter(id=project_category_id).exists():
             raise NotFound(detail="No project category found with the given ID")
 
-        property_types = PropertyType.objects.filter(
-            project_category_id=project_category_id
-        )
+        property_types = PropertyType.objects.filter(project_category_id=project_category_id)
         serializer = PropertyTypeSerializer(property_types, many=True)
 
         return True, serializer.data
@@ -361,15 +344,12 @@ class AnnouncementService:
         if not WorkType.objects.filter(id=work_type_id).exists():
             raise NotFound(detail="No work type found with the given ID")
 
-        renovation_pieces = PieceRenovate.objects.filter(
-            property_type_id=property_type_id
-        )
+        renovation_pieces = PieceRenovate.objects.filter(property_type_id=property_type_id)
         serializer = PieceRenovateSerializer(renovation_pieces, many=True)
         return True, {
             "data": serializer.data,
             "new_construction": int(work_type_id) not in RENOVATION_WORKTYPES,
-            "eliminate_step": int(property_type_id)
-            not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
+            "eliminate_step": int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
         }
 
     @classmethod
@@ -460,8 +440,7 @@ class AnnouncementService:
         )
         return True, {
             "data": serializer.data,
-            "eliminate_step": int(property_type_id)
-            not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
+            "eliminate_step": int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP6,
         }
 
     @classmethod
@@ -477,9 +456,7 @@ class AnnouncementService:
             raise NotFound(detail="No property type found with the given ID")
         if not WorkType.objects.filter(id=work_type_id).exists():
             raise NotFound(detail="No work type found with the given ID")
-        project_extensions = ProjectExtension.objects.filter(
-            property_type_id=property_type_id
-        )
+        project_extensions = ProjectExtension.objects.filter(property_type_id=property_type_id)
         serializer = ProjectExtensionSerializer(project_extensions, many=True)
         return (
             True,
@@ -540,9 +517,7 @@ class AnnouncementService:
             return paginator.get_paginated_response(serializer.data)
 
         serializer = AnnouncementOutputSerializer(queryset, many=True)
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def accept_announcement(cls, pk, request):
@@ -617,9 +592,7 @@ class AnnouncementService:
             Response: A paginated response containing Announcement objects or an error message.
         """
         user = request.user
-        queryset = Announcement.objects.filter(
-            architect__user=user, status=ACCEPTED
-        ).annotate(
+        queryset = Announcement.objects.filter(architect__user=user, status=ACCEPTED).annotate(
             interested_architects_count=Count(
                 "selections", filter=Q(selections__status="Interested")
             )
@@ -628,9 +601,7 @@ class AnnouncementService:
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(filtered_queryset, request)
         if page is not None:
-            serializer = AnnouncementOutputSerializer(
-                page, many=True, context={"request": request}
-            )
+            serializer = AnnouncementOutputSerializer(page, many=True, context={"request": request})
             return paginator.get_paginated_response(serializer.data)
 
         serializer = AnnouncementOutputSerializer(

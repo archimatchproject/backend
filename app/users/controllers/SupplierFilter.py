@@ -11,9 +11,9 @@ Classes:
 """
 
 import django_filters
-from django.db.models import Q
 
 from app.users.models.Supplier import Supplier
+
 
 class SupplierFilter(django_filters.FilterSet):
     """
@@ -39,30 +39,43 @@ class SupplierFilter(django_filters.FilterSet):
     speciality_type = django_filters.CharFilter(
         field_name="speciality_type__id", lookup_expr="icontains"
     )
-    company_name = django_filters.CharFilter(
-        field_name="company_name", lookup_expr="icontains"
-    )
+    company_name = django_filters.CharFilter(field_name="company_name", lookup_expr="icontains")
     company_address = django_filters.CharFilter(
         field_name="company_address", lookup_expr="icontains"
     )
-    
-    company_name_exists = django_filters.BooleanFilter(method='filter_company_name_exists')
+
+    company_name_exists = django_filters.BooleanFilter(method="filter_company_name_exists")
 
     class Meta:
         """
         Meta class for SupplierFilter.
         """
+
         model = Supplier
         fields = [
-            "first_name", "last_name", "email",
-            "speciality_type", "company_name", "company_address",
-            "company_name_exists"
+            "first_name",
+            "last_name",
+            "email",
+            "speciality_type",
+            "company_name",
+            "company_address",
+            "company_name_exists",
         ]
+
     def filter_queryset(self, queryset):
-        
-        queryset = queryset.order_by('created_at') 
+        """
+        Filters and orders the given queryset.
+        This method orders the queryset by the 'created_at' field in ascending order
+        and then applies any additional filtering defined in the superclass.
+        Args:
+          queryset (QuerySet): The initial queryset to be filtered and ordered.
+        Returns:
+          QuerySet: The filtered and ordered queryset.
+        """
+
+        queryset = queryset.order_by("created_at")
         return super().filter_queryset(queryset)
-  
+
     def filter_company_name_exists(self, queryset, name, value):
         """
         Custom filter method to filter suppliers based on the existence of company_name.
@@ -70,5 +83,5 @@ class SupplierFilter(django_filters.FilterSet):
         If value is False, include suppliers with empty company_name.
         """
         if value:
-            return queryset.exclude(company_name='').order_by("created_at")
-        return queryset.filter(company_name='').order_by("created_at")
+            return queryset.exclude(company_name="").order_by("created_at")
+        return queryset.filter(company_name="").order_by("created_at")

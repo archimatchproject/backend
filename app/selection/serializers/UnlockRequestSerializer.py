@@ -14,9 +14,9 @@ objects in the application.
 
 from rest_framework import serializers
 
+from app.selection.models.Selection import Selection
 from app.selection.models.UnlockRequest import UnlockRequest
 from app.selection.serializers.SelectionSerializer import SelectionSerializer
-from app.selection.models.Selection import Selection
 
 
 class UnlockRequestSerializer(serializers.ModelSerializer):
@@ -33,6 +33,13 @@ class UnlockRequestSerializer(serializers.ModelSerializer):
     selection = SelectionSerializer()
 
     class Meta:
+        """
+        Meta class for the UnlockRequestSerializer.
+        Attributes:
+            model (type): The model associated with the serializer.
+            fields (list): List of fields to be included in the serialized output.
+        """
+
         model = UnlockRequest
         fields = ["id", "selection", "message", "status", "created_at"]
 
@@ -51,5 +58,12 @@ class UnlockRequestPostSerializer(serializers.ModelSerializer):
     selection = serializers.PrimaryKeyRelatedField(queryset=Selection.objects.all())
 
     class Meta:
+        """
+        Meta class for UnlockRequestSerializer.
+        Attributes:
+            model (type): The model associated with the serializer, in this case, UnlockRequest.
+            fields (list): A list of fields to be included in the serialization process.
+        """
+
         model = UnlockRequest
         fields = ["id", "selection", "message", "status"]

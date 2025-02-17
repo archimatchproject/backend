@@ -5,39 +5,27 @@ This module defines the AnnouncementViewSet class, which is a viewset
 for viewing and editing Announcement instances using Django REST Framework.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.announcement.models.Announcement import Announcement
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementPOSTSerializer,
-)
-from app.announcement.serializers.AnnouncementSerializer import (
-    AnnouncementPUTSerializer,
-)
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPOSTSerializer
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementPUTSerializer
 from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.announcement.serializers.PieceRenovateSerializer import PieceRenovateSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.announcement.services.AnnouncementService import AnnouncementService
-from app.core.serializers.NoteSerializer import NoteSerializer
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+from app.core.serializers.NoteSerializer import NoteSerializer
 
 
 class AnnouncementViewSet(viewsets.ModelViewSet):
@@ -119,9 +107,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         Updating existing announcement
         """
-        success, data, message = AnnouncementService.update_announcement_images(
-            pk, request
-        )
+        success, data, message = AnnouncementService.update_announcement_images(pk, request)
         return build_response(
             success=success, data=data, message=message, status=status.HTTP_200_OK
         )
@@ -167,9 +153,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: Response containing list of needs related to the architect speciality.
         """
         architect_speciality_id = request.query_params.get("architect_speciality_id")
-        success, data = AnnouncementService.get_architect_speciality_needs(
-            architect_speciality_id
-        )
+        success, data = AnnouncementService.get_architect_speciality_needs(architect_speciality_id)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -238,9 +222,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: Response containing list of announcement work types.
         """
         property_type_id = request.query_params.get("property_type_id")
-        success, data = AnnouncementService.get_announcement_work_types(
-            property_type_id
-        )
+        success, data = AnnouncementService.get_announcement_work_types(property_type_id)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -264,9 +246,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         property_type_id = request.query_params.get("property_type_id")
         work_type_id = request.query_params.get("work_type_id")
-        success, data = AnnouncementService.get_renovation_pieces(
-            property_type_id, work_type_id
-        )
+        success, data = AnnouncementService.get_renovation_pieces(property_type_id, work_type_id)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -397,9 +377,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         """
         property_type_id = request.query_params.get("property_type_id")
         work_type_id = request.query_params.get("work_type_id")
-        success, data = AnnouncementService.get_project_extensions(
-            property_type_id, work_type_id
-        )
+        success, data = AnnouncementService.get_project_extensions(property_type_id, work_type_id)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(
@@ -458,9 +436,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the acceptance operation.
         """
         success, message = AnnouncementService.accept_announcement(pk, request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -481,9 +457,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the refusal operation.
         """
         success, message = AnnouncementService.refuse_announcement(pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -539,9 +513,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the refusal operation.
         """
         success, message = AnnouncementService.revoke_announcement(pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,

@@ -1,11 +1,15 @@
 from app.subscription.admin.ArchitectInvoiceAdmin import ArchitectInvoiceAdmin
 from app.subscription.admin.ArchitectPaymentAdmin import ArchitectPaymentAdmin
-from app.subscription.admin.PlanServiceAdmin import PlanServiceAdmin
-from app.subscription.admin.ArchitectSelectedSubscriptionPlanAdmin import ArchitectSelectedSubscriptionPlanAdmin
+from app.subscription.admin.ArchitectSelectedSubscriptionPlanAdmin import (
+    ArchitectSelectedSubscriptionPlanAdmin,
+)
 from app.subscription.admin.ArchitectSubscriptionPlanAdmin import ArchitectSubscriptionPlanAdmin
-from app.subscription.admin.TokenPackAdmin import TokenPackAdmin
-from app.subscription.admin.SupplierSubscriptionPlanAdmin import SupplierSubscriptionPlanAdmin
-from app.subscription.admin.SupplierPaymentAdmin import SupplierPaymentAdmin
-from app.subscription.admin.SupplierInvoiceAdmin import SupplierInvoiceAdmin
 from app.subscription.admin.EventDiscountAdmin import EventDiscountAdmin
-from app.subscription.admin.SupplierSelectedSubscriptionPlanAdmin import SupplierSelectedSubscriptionPlanAdmin
+from app.subscription.admin.PlanServiceAdmin import PlanServiceAdmin
+from app.subscription.admin.SupplierInvoiceAdmin import SupplierInvoiceAdmin
+from app.subscription.admin.SupplierPaymentAdmin import SupplierPaymentAdmin
+from app.subscription.admin.SupplierSelectedSubscriptionPlanAdmin import (
+    SupplierSelectedSubscriptionPlanAdmin,
+)
+from app.subscription.admin.SupplierSubscriptionPlanAdmin import SupplierSubscriptionPlanAdmin
+from app.subscription.admin.TokenPackAdmin import TokenPackAdmin
