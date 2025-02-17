@@ -76,9 +76,7 @@ class Command(BaseCommand):
 
         # Load permissions
         permissions = Permission.objects.all()
-        permission_mapping = {
-            f"{perm.content_type.app_label}.{perm.codename}": perm.pk for perm in permissions
-        }
+        permission_mapping = {f"{perm.content_type.app_label}.{perm.codename}": perm.pk for perm in permissions}
         # Read fixture file
         with open(fixture_path, "r") as file:
             fixture_data = yaml.safe_load(file)
@@ -87,8 +85,7 @@ class Command(BaseCommand):
         for item in fixture_data:
             if "fields" in item and "permissions" in item["fields"]:
                 item["fields"]["permissions"] = [
-                    permission_mapping.get(codename, codename)
-                    for codename in item["fields"]["permissions"]
+                    permission_mapping.get(codename, codename) for codename in item["fields"]["permissions"]
                 ]
 
         # Write updated fixture to a temporary file
@@ -99,8 +96,6 @@ class Command(BaseCommand):
         # Load the updated fixture
         try:
             call_command("loaddata", temp_fixture_path)
-            self.stdout.write(
-                self.style.SUCCESS("Successfully loaded fixture data with permission mappings")
-            )
+            self.stdout.write(self.style.SUCCESS("Successfully loaded fixture data with permission mappings"))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error loading fixture data: {e}"))

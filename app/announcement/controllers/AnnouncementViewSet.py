@@ -74,9 +74,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Creating new announcement
         """
         success, data, message = AnnouncementService.create_announcement(request)
-        return build_response(
-            success=success, data=data, message=message, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, message=message, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
@@ -90,12 +88,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Updating existing announcement
         """
         instance = Announcement.objects.get(id=pk)
-        success, data, message = AnnouncementService.update_announcement(
-            instance=instance, data=request.data
-        )
-        return build_response(
-            success=success, data=data, message=message, status=status.HTTP_200_OK
-        )
+        success, data, message = AnnouncementService.update_announcement(instance=instance, data=request.data)
+        return build_response(success=success, data=data, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -108,9 +102,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         Updating existing announcement
         """
         success, data, message = AnnouncementService.update_announcement_images(pk, request)
-        return build_response(
-            success=success, data=data, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=data, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,

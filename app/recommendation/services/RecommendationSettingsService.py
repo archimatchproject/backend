@@ -23,12 +23,8 @@ from app.recommendation import SCORE_PERCENTAGE_CHOICES
 from app.recommendation import WORK_TYPE_CHOICES
 from app.recommendation.models.AnnouncementWeights import AnnouncementWeights
 from app.recommendation.models.RecommendationSettings import RecommendationSettings
-from app.recommendation.serializers.AnnouncementWeightsSerializer import (
-    AnnouncementWeightsSerializer,
-)
-from app.recommendation.serializers.RecommendationSettingsSerializer import (
-    RecommendationSettingsSerializer,
-)
+from app.recommendation.serializers.AnnouncementWeightsSerializer import AnnouncementWeightsSerializer
+from app.recommendation.serializers.RecommendationSettingsSerializer import RecommendationSettingsSerializer
 
 
 class RecommendationSettingsService:
@@ -76,9 +72,7 @@ class RecommendationSettingsService:
         new_value = data.get("value")
 
         if not hasattr(settings, field_name):
-            raise ValidationError(
-                detail=f"Field '{field_name}' does not exist in RecommendationSettings."
-            )
+            raise ValidationError(detail=f"Field '{field_name}' does not exist in RecommendationSettings.")
 
         setattr(settings, field_name, new_value)
         settings.full_clean()
@@ -111,9 +105,7 @@ class RecommendationSettingsService:
         new_value = data.get("value")
 
         if not hasattr(attributes, field_name):
-            raise ValidationError(
-                detail=f"Field '{field_name}' does not exist in AnnouncementWeights."
-            )
+            raise ValidationError(detail=f"Field '{field_name}' does not exist in AnnouncementWeights.")
 
         setattr(attributes, field_name, new_value)
         attributes.full_clean()

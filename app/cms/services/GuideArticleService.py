@@ -90,12 +90,8 @@ class GuideArticleService:
 
         with transaction.atomic():
             instance.title = serializer.validated_data.get("title", instance.title)
-            instance.description = serializer.validated_data.get(
-                "description", instance.description
-            )
-            instance.guide_thematic = serializer.validated_data.get(
-                "guide_thematic", instance.guide_thematic
-            )
+            instance.description = serializer.validated_data.get("description", instance.description)
+            instance.guide_thematic = serializer.validated_data.get("guide_thematic", instance.guide_thematic)
             instance.date = serializer.validated_data.get("date", instance.date)
             instance.rating = serializer.validated_data.get("rating", instance.rating)
             instance.save()
@@ -111,9 +107,7 @@ class GuideArticleService:
                     try:
                         section_instance = instance.guide_article_sections.get(id=section_id)
                     except GuideSection.DoesNotExist:
-                        raise serializers.ValidationError(
-                            f"GuideSection with id {section_id} does not exist."
-                        )
+                        raise serializers.ValidationError(f"GuideSection with id {section_id} does not exist.")
 
                 section_serializer = GuideSectionSerializer(
                     section_instance,
@@ -171,9 +165,7 @@ class GuideArticleService:
         # Handle image section type
         if section.section_type == "image":
             if not image:
-                raise serializers.ValidationError(
-                    detail="Image file is required for image section type."
-                )
+                raise serializers.ValidationError(detail="Image file is required for image section type.")
             section.image = image
             section.save()
             guide_article = section.guide_article
@@ -181,9 +173,7 @@ class GuideArticleService:
         # Handle video section type
         if section.section_type == "video":
             if not video:
-                raise serializers.ValidationError(
-                    detail="Video file is required for video section type."
-                )
+                raise serializers.ValidationError(detail="Video file is required for video section type.")
             section.video = video
             section.save()
             guide_article = section.guide_article
@@ -192,14 +182,10 @@ class GuideArticleService:
         # Handle slider section type
         elif section.section_type == "slider":
             if not slider_images:
-                raise serializers.ValidationError(
-                    "At least one slider image file is required for slider section type."
-                )
+                raise serializers.ValidationError("At least one slider image file is required for slider section type.")
 
             # Create multiple SliderImage instances for the slider section
-            GuideSliderImage.objects.filter(
-                section=section
-            ).delete()  # Clear existing slider images
+            GuideSliderImage.objects.filter(section=section).delete()  # Clear existing slider images
             for img in slider_images:
                 GuideSliderImage.objects.create(section=section, image=img)
 
@@ -207,6 +193,4 @@ class GuideArticleService:
             return True, GuideArticleSerializer(guide_article).data
 
         else:
-            raise serializers.ValidationError(
-                detail="Invalid section type. Must be either image or slider."
-            )
+            raise serializers.ValidationError(detail="Invalid section type. Must be either image or slider.")

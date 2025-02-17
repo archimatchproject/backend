@@ -64,9 +64,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         time_slots = data.get("time_slots", None)
 
         if not whole_day and time_slots is None:
-            raise serializers.ValidationError(
-                "If `whole_day` is not true, `time_slots` must be provided."
-            )
+            raise serializers.ValidationError("If `whole_day` is not true, `time_slots` must be provided.")
 
         if time_slots is not None:
             data["time_slots"] = self.validate_time_slots(time_slots)
@@ -82,9 +80,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
 
         valid_time_format = "%H:%M"
 
-        valid_time_slots = [
-            slot.time.strftime(valid_time_format) for slot in TimeSlot.objects.all()
-        ]
+        valid_time_slots = [slot.time.strftime(valid_time_format) for slot in TimeSlot.objects.all()]
 
         invalid_slots = []
         for slot in value:
@@ -99,9 +95,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
                 invalid_slots.append(slot)
 
         if invalid_slots:
-            raise serializers.ValidationError(
-                f"Invalid time slots or format: {', '.join(invalid_slots)}"
-            )
+            raise serializers.ValidationError(f"Invalid time slots or format: {', '.join(invalid_slots)}")
         return value
 
     def create(self, validated_data):
@@ -145,7 +139,5 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         Customizes the representation of the Unavailability instance.
         """
         representation = super().to_representation(instance)
-        representation["time_slots"] = [
-            slot.time.strftime("%H:%M") for slot in instance.time_slots.all()
-        ]
+        representation["time_slots"] = [slot.time.strftime("%H:%M") for slot in instance.time_slots.all()]
         return representation

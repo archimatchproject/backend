@@ -128,9 +128,7 @@ class AnnouncementService:
                 api_success_signal.send(sender=cls, data=signal_data)
             else:
                 if isinstance(user, AnonymousUser):
-                    raise serializers.ValidationError(
-                        detail="You must be a valid client to create an announcement"
-                    )
+                    raise serializers.ValidationError(detail="You must be a valid client to create an announcement")
                 client_instance = Client.objects.get(user=user)
             announcement = Announcement.objects.create(
                 client=client_instance, **validated_data, is_broadcasted=is_broadcasted
@@ -462,9 +460,7 @@ class AnnouncementService:
             True,
             {
                 "data": serializer.data,
-                "eliminate_step": (
-                    int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP10
-                ),
+                "eliminate_step": (int(property_type_id) not in NOT_ELIMINATE_STEP_PROPERTIES_STEP10),
             },
         )
 
@@ -571,9 +567,7 @@ class AnnouncementService:
 
         announcement = Announcement.objects.get(pk=pk)
 
-        serializer = AnnouncementOutputSerializer(
-            announcement, many=False, context={"request": request}
-        )
+        serializer = AnnouncementOutputSerializer(announcement, many=False, context={"request": request})
         return True, serializer.data
 
     @classmethod
@@ -593,9 +587,7 @@ class AnnouncementService:
         """
         user = request.user
         queryset = Announcement.objects.filter(architect__user=user, status=ACCEPTED).annotate(
-            interested_architects_count=Count(
-                "selections", filter=Q(selections__status="Interested")
-            )
+            interested_architects_count=Count("selections", filter=Q(selections__status="Interested"))
         )
         filtered_queryset = AnnouncementFilter(request.GET, queryset=queryset).qs
         paginator = cls.pagination_class()
@@ -604,9 +596,7 @@ class AnnouncementService:
             serializer = AnnouncementOutputSerializer(page, many=True, context={"request": request})
             return paginator.get_paginated_response(serializer.data)
 
-        serializer = AnnouncementOutputSerializer(
-            filtered_queryset, many=True, context={"request": request}
-        )
+        serializer = AnnouncementOutputSerializer(filtered_queryset, many=True, context={"request": request})
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,

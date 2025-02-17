@@ -104,9 +104,7 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success, data = GuideThematicService.update_guide_thematic(
-            instance, request.data, partial=partial
-        )
+        success, data = GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PUT"])

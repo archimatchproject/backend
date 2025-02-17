@@ -117,18 +117,10 @@ class AdminSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         if instance.super_user:
             data["rights"] = [
-                {"right": right, "color": PERMISSION_CODENAMES[right]["color"]}
-                for right in PERMISSION_CODENAMES
+                {"right": right, "color": PERMISSION_CODENAMES[right]["color"]} for right in PERMISSION_CODENAMES
             ]
         else:
             permissions = instance.permissions.values_list("codename", flat=True)
-            rights_set = {
-                CODENAME_TO_RIGHTS[codename]
-                for codename in permissions
-                if codename in CODENAME_TO_RIGHTS
-            }
-            data["rights"] = [
-                {"right": right, "color": PERMISSION_CODENAMES[right]["color"]}
-                for right in rights_set
-            ]
+            rights_set = {CODENAME_TO_RIGHTS[codename] for codename in permissions if codename in CODENAME_TO_RIGHTS}
+            data["rights"] = [{"right": right, "color": PERMISSION_CODENAMES[right]["color"]} for right in rights_set]
         return data

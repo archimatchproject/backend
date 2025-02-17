@@ -13,17 +13,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.architect_request.controllers.ManageArchitectRequestPermission import (
-    ManageArchitectRequestPermission,
-)
+from app.architect_request.controllers.ManageArchitectRequestPermission import ManageArchitectRequestPermission
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
-from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
-    ArchitectRequestRescheduleSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import ArchitectRequestRescheduleSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectRequestInputSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestInputSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.architect_request.services.ArchitectRequestService import ArchitectRequestService
 from app.core.exception_handler import handle_service_exceptions

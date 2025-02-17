@@ -72,3 +72,24 @@ class PaymentViewSet(viewsets.ModelViewSet):
         """
         success, data = PaymentService.create_supplier_payment(request, request.data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_name="office-payment-create",
+        url_path="office-payment-create",
+    )
+    @handle_service_exceptions
+    def create_office_payment(self, request, pk=None):
+        """
+        Custom action to create a payment for a specific office.
+
+        Args:
+            request (Request): The HTTP request object containing payment data.
+            pk (int): The primary key of the office where the payment is associated.
+
+        Returns:
+            Response: The response object containing the created payment or an error message.
+        """
+        success, data = PaymentService.create_office_payment(request, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

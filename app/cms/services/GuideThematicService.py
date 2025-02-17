@@ -52,9 +52,7 @@ class GuideThematicService:
 
         with transaction.atomic():
             # Create GuideThematic instance
-            guide_thematic = GuideThematic.objects.create(
-                **validated_data, admin=request.user.admin
-            )
+            guide_thematic = GuideThematic.objects.create(**validated_data, admin=request.user.admin)
 
             return True, GuideThematicSerializer(guide_thematic).data
 
@@ -124,9 +122,7 @@ class GuideThematicService:
         target_user_type = request.query_params.get("target_user_type")
         if not target_user_type:
             raise ValidationError("The 'target_user_type' query parameter is required.")
-        queryset = GuideThematic.objects.filter(target_user_type=target_user_type).order_by(
-            "created_at"
-        )
+        queryset = GuideThematic.objects.filter(target_user_type=target_user_type).order_by("created_at")
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:

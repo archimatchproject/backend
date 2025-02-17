@@ -20,9 +20,7 @@ class ClientReviewSerializer(serializers.ModelSerializer):
         comment (TextField): Review comment provided by the client (read/write).
     """
 
-    architect_id = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), write_only=True
-    )
+    architect_id = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), write_only=True)
     client = ClientSerializer(read_only=True)
 
     class Meta:

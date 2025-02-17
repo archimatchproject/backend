@@ -25,14 +25,10 @@ class SelectionReportSerializer(serializers.ModelSerializer):
         decision (SlugRelatedField): Decision related to the report (read-only).
     """
 
-    selection_id = serializers.PrimaryKeyRelatedField(
-        queryset=Selection.objects.all(), write_only=True
-    )
+    selection_id = serializers.PrimaryKeyRelatedField(queryset=Selection.objects.all(), write_only=True)
     selection = SelectionSerializer(read_only=True)
     reporting_client = ClientSerializer(read_only=True)
-    report_reasons = serializers.PrimaryKeyRelatedField(
-        queryset=Reason.objects.all(), many=True, write_only=True
-    )
+    report_reasons = serializers.PrimaryKeyRelatedField(queryset=Reason.objects.all(), many=True, write_only=True)
     reasons = ReasonSerializer(read_only=True, many=True)
     decision = serializers.SlugRelatedField(read_only=True, slug_field="name")
 

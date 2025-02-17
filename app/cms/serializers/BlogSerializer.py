@@ -21,9 +21,7 @@ class BlogSerializer(serializers.ModelSerializer):
     blog_thematic_id = serializers.PrimaryKeyRelatedField(
         source="blog_thematic", queryset=BlogThematic.objects.all(), write_only=True
     )
-    tags = serializers.SlugRelatedField(
-        many=True, queryset=BlogTag.objects.all(), slug_field="name"
-    )
+    tags = serializers.SlugRelatedField(many=True, queryset=BlogTag.objects.all(), slug_field="name")
     admin = serializers.EmailField(source="admin.user.email", read_only=True)
 
     class Meta:

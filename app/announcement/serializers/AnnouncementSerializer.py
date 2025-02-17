@@ -15,9 +15,7 @@ from rest_framework import serializers
 from app.announcement.models import Announcement
 from app.announcement.models.Need import Need
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
-    AnnouncementPieceRenovateSerializer,
-)
+from app.announcement.serializers.AnnouncementPieceRenovateSerializer import AnnouncementPieceRenovateSerializer
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
@@ -47,12 +45,8 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
 
     client = ClientSerializer(required=False)
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all(), required=False)
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
@@ -112,12 +106,8 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
 
     """
 
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())

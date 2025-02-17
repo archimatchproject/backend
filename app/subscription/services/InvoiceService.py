@@ -16,10 +16,13 @@ from rest_framework.response import Response
 from app.core.pagination import CustomPagination
 from app.email_templates.utils import render_to_pdf
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
+from app.subscription.models.OfficeInvoice import OfficeInvoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
 from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import OfficeInvoiceSerializer
 from app.subscription.serializers.InvoiceSerializer import SupplierInvoiceSerializer
 from app.users.models.Architect import Architect
+from app.users.models.Office import Office
 from app.users.models.Supplier import Supplier
 from project_core.django import base as settings
 
@@ -149,4 +152,63 @@ class InvoiceService:
             return paginator.get_paginated_response(serializer.data)
 
         serializer = SupplierInvoiceSerializer(invoices, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def export_office_invoice(cls, request, id):
+        """
+        Export office invoices to pdf format.
+        """
+        invoice = OfficeInvoice.objects.get(pk=id)
+        context = {
+            "archimatch_img": settings.GLOBAL_PATH + "/architect_logo.png",
+            "office_first_name": invoice.office.office_name,
+            "office_last_name": invoice.office.office_name,
+            "office_phone_number": invoice.office.user.phone_number,
+            "office_email": invoice.office.user.email,
+            "company_name": invoice.office.office_name,
+            "billing_address": invoice.office.office_address,
+            "invoice_number": invoice.invoice_number,
+            "issue_date": invoice.date.strftime("%d/%m/%Y") if invoice.date else "",
+            "plan_name": invoice.plan_name,
+            "plan_price": invoice.plan_price,
+            "discount": invoice.discount,
+            "discount_percentage": invoice.discount_percentage,
+            "amount": invoice.amount,
+        }
+        template_name = "invoice.html"
+        pdf = render_to_pdf(template_name, context)
+        if pdf:
+            response = HttpResponse(pdf, content_type="application/pdf")
+            response["Content-Disposition"] = f'attachment; filename="invoice_{id}.pdf"'
+            return response
+        return HttpResponse("file or pdf not found!")
+
+    @classmethod
+    def office_get_invoices(cls, request):
+        """
+        Retrieves office invoices.
+
+        Args:
+            request (Request): Django request object containing user ID.
+
+        Returns:
+            Response: Response object containing office data.
+
+        Raises:
+            APIException: If there are errors during the process.
+        """
+        user_id = request.user.id
+
+        office = Office.objects.get(user__id=user_id)
+        invoices = OfficeInvoice.objects.filter(office=office)
+
+        paginator = cls.pagination_class()
+
+        page = paginator.paginate_queryset(invoices, request)
+        if page is not None:
+            serializer = OfficeInvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = OfficeInvoiceSerializer(invoices, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

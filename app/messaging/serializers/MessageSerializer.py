@@ -28,9 +28,7 @@ class MessageSerializer(serializers.ModelSerializer):
     generated.
     """
 
-    recipient_id = serializers.PrimaryKeyRelatedField(
-        queryset=ArchimatchUser.objects.all(), write_only=True
-    )
+    recipient_id = serializers.PrimaryKeyRelatedField(queryset=ArchimatchUser.objects.all(), write_only=True)
     sender = serializers.EmailField(source="sender.email", read_only=True)
     recipient = serializers.EmailField(source="recipient.email", read_only=True)
 

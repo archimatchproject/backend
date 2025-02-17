@@ -19,12 +19,8 @@ class Message(models.Model):
     - timestamp (DateTimeField): The timestamp when the message was sent.
     """
 
-    sender = models.ForeignKey(
-        ArchimatchUser, related_name="sent_messages", on_delete=models.CASCADE
-    )
-    recipient = models.ForeignKey(
-        ArchimatchUser, related_name="received_messages", on_delete=models.CASCADE
-    )
+    sender = models.ForeignKey(ArchimatchUser, related_name="sent_messages", on_delete=models.CASCADE)
+    recipient = models.ForeignKey(ArchimatchUser, related_name="received_messages", on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 

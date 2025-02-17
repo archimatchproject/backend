@@ -33,9 +33,7 @@ class SubscriptionPlan(BaseModel):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     most_popular = models.BooleanField(default=False)
-    event_discount = models.ForeignKey(
-        EventDiscount, on_delete=models.SET_NULL, blank=True, null=True
-    )
+    event_discount = models.ForeignKey(EventDiscount, on_delete=models.SET_NULL, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """

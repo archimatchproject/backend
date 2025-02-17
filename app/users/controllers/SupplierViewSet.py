@@ -204,9 +204,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing the speciality types.
         """
         success, speciality_types_data = SupplierService.get_speciality_types()
-        return build_response(
-            success=success, data=speciality_types_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=speciality_types_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,

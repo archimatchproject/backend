@@ -76,9 +76,7 @@ class CollectionService:
             raise serializers.ValidationError(detail="Product IDs are required.")
         collection = Collection.objects.get(pk=pk)
         if collection.supplier.user != request.user:
-            raise serializers.ValidationError(
-                detail="You do not have permission to modify this collection."
-            )
+            raise serializers.ValidationError(detail="You do not have permission to modify this collection.")
 
         with transaction.atomic():
             for index, product_id in enumerate(product_ids):
@@ -104,9 +102,7 @@ class CollectionService:
             raise serializers.ValidationError(detail="Display status is required.")
         collection = Collection.objects.get(pk=pk)
         if collection.supplier.user != request.user:
-            raise serializers.ValidationError(
-                detail="You do not have permission to modify this collection."
-            )
+            raise serializers.ValidationError(detail="You do not have permission to modify this collection.")
 
         collection.display = display_status
         collection.save()
@@ -131,9 +127,7 @@ class CollectionService:
             raise serializers.ValidationError(detail="visibility is required.")
         collection = Collection.objects.get(pk=pk)
         if collection.supplier.user != request.user:
-            raise serializers.ValidationError(
-                detail="You do not have permission to modify this collection."
-            )
+            raise serializers.ValidationError(detail="You do not have permission to modify this collection.")
 
         collection.visibility = visibility
         collection.save()
@@ -191,9 +185,7 @@ class CollectionService:
 
         collections_data = request.data.get("collections", [])
         if not isinstance(collections_data, list):
-            raise serializers.ValidationError(
-                {"collections": "This field must be a list of collections."}
-            )
+            raise serializers.ValidationError({"collections": "This field must be a list of collections."})
 
         created_collections = []
 

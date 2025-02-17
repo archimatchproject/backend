@@ -3,6 +3,7 @@ from app.users.admin.ArchimatchUserAdmin import ArchimatchUserAdmin
 from app.users.admin.ArchitectAdmin import ArchitectAdmin
 from app.users.admin.ClientAdmin import ClientAdmin
 from app.users.admin.MeetingAdmin import MeetingAdmin
+from app.users.admin.OfficeAdmin import OfficeAdmin
 from app.users.admin.ShowRoomAdmin import ShowRoomAdmin
 from app.users.admin.SupplierAdmin import SupplierAdmin
 from app.users.admin.SupplierSocialMediaAdmin import SupplierSocialMediaAdmin

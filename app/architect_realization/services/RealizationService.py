@@ -217,9 +217,7 @@ class RealizationService:
             gold_realizations_queryset = Realization.objects.filter(id__in=gold_realization_ids)
 
             # Apply additional filters using RealizationFilter
-            filtered_queryset = RealizationFilter(
-                request.GET, queryset=gold_realizations_queryset
-            ).qs
+            filtered_queryset = RealizationFilter(request.GET, queryset=gold_realizations_queryset).qs
             paginator = cls.pagination_class()
             page = paginator.paginate_queryset(filtered_queryset, request)
             if page is not None:

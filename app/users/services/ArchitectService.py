@@ -156,9 +156,7 @@ class ArchitectService:
         architect.bio = validated_data.get("bio")
         architect.company_name = validated_data.get("company_name")
         architect.address = validated_data.get("address")
-        architect.presentation_video = serializer.validated_data.get(
-            "presentation_video", architect.presentation_video
-        )
+        architect.presentation_video = serializer.validated_data.get("presentation_video", architect.presentation_video)
         architect.save()
 
         return True, "Architect successfully updated"

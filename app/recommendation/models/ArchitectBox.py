@@ -26,9 +26,7 @@ class ArchitectBox(BaseModel):
         updated_at (DateTimeField): The timestamp when the box was last updated.
     """
 
-    architect = models.OneToOneField(
-        Architect, on_delete=models.CASCADE, related_name="architect_box"
-    )
+    architect = models.OneToOneField(Architect, on_delete=models.CASCADE, related_name="architect_box")
     announcements = models.ManyToManyField(Announcement, related_name="architect_boxes", blank=True)
 
     def __str__(self):

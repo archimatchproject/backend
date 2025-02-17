@@ -27,9 +27,7 @@ class RecommendationSettings(models.Model):
         num_results (int): Number of results to return for recommendations.
     """
 
-    attributes = models.OneToOneField(
-        AnnouncementWeights, on_delete=models.CASCADE, related_name="settings"
-    )
+    attributes = models.OneToOneField(AnnouncementWeights, on_delete=models.CASCADE, related_name="settings")
     distance = models.IntegerField(default=25)
     perfect_match = models.IntegerField(default=5)
     on_going_projects = models.IntegerField(default=5)

@@ -12,9 +12,7 @@ from django.db import transaction
 
 from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
 from app.subscription.models.SupplierSubscriptionPlan import SupplierSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import (
-    SupplierSubscriptionPlanSerializer,
-)
+from app.subscription.serializers.SubscriptionPlanSerializer import SupplierSubscriptionPlanSerializer
 from app.users.models.Supplier import Supplier
 
 
@@ -49,13 +47,9 @@ class SupplierSubscriptionPlanService:
 
         with transaction.atomic():
             if most_popular:
-                SupplierSubscriptionPlan.objects.filter(most_popular=True).update(
-                    most_popular=False
-                )
+                SupplierSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
             # Create SubscriptionPlan instance
-            subscription_plan = SupplierSubscriptionPlan.objects.create(
-                **validated_data, event_discount=event_discount
-            )
+            subscription_plan = SupplierSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
 
             return True, SupplierSubscriptionPlanSerializer(subscription_plan).data
 
@@ -82,9 +76,7 @@ class SupplierSubscriptionPlanService:
 
         with transaction.atomic():
             if most_popular:
-                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(
-                    most_popular=False
-                )
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.event_discount = event_discount

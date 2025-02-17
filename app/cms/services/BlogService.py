@@ -86,13 +86,9 @@ class BlogService:
 
         with transaction.atomic():
             instance.title = serializer.validated_data.get("title", instance.title)
-            instance.cover_photo = serializer.validated_data.get(
-                "cover_photo", instance.cover_photo
-            )
+            instance.cover_photo = serializer.validated_data.get("cover_photo", instance.cover_photo)
             instance.sub_title = serializer.validated_data.get("sub_title", instance.sub_title)
-            instance.blog_thematic = serializer.validated_data.get(
-                "blog_thematic", instance.blog_thematic
-            )
+            instance.blog_thematic = serializer.validated_data.get("blog_thematic", instance.blog_thematic)
             instance.visible = serializer.validated_data.get("visible", instance.visible)
             instance.save()
 
@@ -190,9 +186,7 @@ class BlogService:
         # Handle image section type
         if section.section_type == "image":
             if not image:
-                raise serializers.ValidationError(
-                    detail="Image file is required for image section type."
-                )
+                raise serializers.ValidationError(detail="Image file is required for image section type.")
             section.image = image
             section.save()
             blog = section.blog
@@ -201,9 +195,7 @@ class BlogService:
         # Handle slider section type
         elif section.section_type == "slider":
             if not slider_images:
-                raise serializers.ValidationError(
-                    "At least one slider image file is required for slider section type."
-                )
+                raise serializers.ValidationError("At least one slider image file is required for slider section type.")
 
             # Create multiple SliderImage instances for the slider section
             SliderImage.objects.filter(section=section).delete()  # Clear existing slider images
@@ -214,9 +206,7 @@ class BlogService:
             return True, BlogSerializer(blog).data
 
         else:
-            raise serializers.ValidationError(
-                detail="Invalid section type. Must be either image or slider."
-            )
+            raise serializers.ValidationError(detail="Invalid section type. Must be either image or slider.")
 
     @classmethod
     def list_tags(cls):

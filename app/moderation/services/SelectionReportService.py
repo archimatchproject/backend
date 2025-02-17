@@ -112,9 +112,7 @@ class SelectionReportService:
             if page is not None:
                 serializer = SelectionReportSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)
-            return Response(
-                {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             raise APIException(f"Error retrieving selection reports: {str(e)}")
 

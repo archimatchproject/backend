@@ -23,6 +23,7 @@ from app.users.routes.ArchimatchUserUrls import archimatch_user_urlpatterns
 from app.users.routes.ArchitectUrls import architect_urlpatterns
 from app.users.routes.ClientUrls import client_urlpatterns
 from app.users.routes.MeetingUrls import meeting_urlpatterns
+from app.users.routes.OfficeUrls import office_urlpatterns
 from app.users.routes.SupplierUrls import supplier_urlpatterns
 from app.users.routes.UnavailabilityUrls import unavailability_urlpatterns
 
@@ -40,6 +41,7 @@ urlpatterns = [
     *architect_urlpatterns,
     *unavailability_urlpatterns,
     *meeting_urlpatterns,
+    *office_urlpatterns,
     path(
         "login-email/",
         ArchimatchUserObtainPairView.as_view(),

@@ -250,9 +250,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: a success or an error message.
         """
 
-        success, message = SelectionService.broadcast_selection_announcement(
-            selection_id=pk, user=request.user
-        )
+        success, message = SelectionService.broadcast_selection_announcement(selection_id=pk, user=request.user)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="block-selection")
@@ -303,9 +301,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: The updated selection and phase data or an error message.
         """
 
-        success, message = SelectionService.confirm_discussion_phase_admin(
-            selection_id=pk, user=request.user
-        )
+        success, message = SelectionService.confirm_discussion_phase_admin(selection_id=pk, user=request.user)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="cancel-selection")

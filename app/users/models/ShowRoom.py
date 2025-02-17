@@ -22,9 +22,7 @@ class ShowRoom(models.Model):
 
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
-    supplier = models.ForeignKey(
-        "users.Supplier", related_name="showrooms", on_delete=models.CASCADE
-    )
+    supplier = models.ForeignKey("users.Supplier", related_name="showrooms", on_delete=models.CASCADE)
 
     def __str__(self):
         """

@@ -10,9 +10,7 @@ Classes:
 
 from django.db import models
 
-from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
-    ArchitectSelectedSubscriptionPlan,
-)
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
 from app.subscription.models.Payment import Payment
 from app.users.models.Architect import Architect
 
@@ -24,9 +22,7 @@ class ArchitectPayment(Payment):
     """
 
     architect = models.ForeignKey(Architect, on_delete=models.CASCADE)
-    subscription_plan = models.ForeignKey(
-        ArchitectSelectedSubscriptionPlan, on_delete=models.CASCADE
-    )
+    subscription_plan = models.ForeignKey(ArchitectSelectedSubscriptionPlan, on_delete=models.CASCADE)
 
     def __str__(self):
         """

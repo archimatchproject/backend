@@ -19,7 +19,7 @@ pip install pipenv
 Inside your project directory, use `pipenv` to create a virtual environment and install project dependencies:
 
 ```sh
-pipenv install
+pipenv install --dev
 ```
 
 ### Activate the Virtual Environment
@@ -73,7 +73,6 @@ Create a `.env` file in the project root directory and add the following content
 ```env
 SECRET_KEY=**************************
 
-
 DB_NAME=your_db_name
 DB_USER=your_db_user
 DB_PASSWORD=your_password
@@ -88,3 +87,55 @@ Start the Django development server with the specified settings:
 ```sh
 python manage.py runserver --settings=project_core.django.dev
 ```
+
+## Code Quality and Pre-commit Hooks
+
+This project uses `pre-commit`, `black`, `isort`, and `flake8` to enforce coding standards.
+
+### Install Pre-commit Hooks
+
+Before committing code, ensure pre-commit is installed and set up:
+
+```sh
+pre-commit install
+```
+
+To manually run pre-commit on all files:
+
+```sh
+pre-commit run --all-files
+```
+
+### Formatting with Black
+
+To format all Python files using `black`, run:
+
+```sh
+pipenv run black .
+```
+
+### Sorting Imports with isort
+
+To sort imports properly:
+
+```sh
+pipenv run isort .
+```
+
+### Linting with Flake8
+
+To check for linting issues:
+
+```sh
+pipenv run flake8 .
+```
+
+### Running All Checks Together
+
+You can format and lint your code in one command:
+
+```sh
+pipenv run black . && pipenv run isort . && pipenv run flake8 .
+```
+
+Make sure your code passes all these checks before committing changes to the repository.

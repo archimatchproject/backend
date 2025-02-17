@@ -36,9 +36,7 @@ class Phase(BaseModel):
         verbose_name=_("Limit Date"),
         help_text=_("The date by which this phase should be completed."),
     )
-    start_date = models.DateField(
-        verbose_name=_("Start Date"), help_text=_("The date when the phase starts.")
-    )
+    start_date = models.DateField(verbose_name=_("Start Date"), help_text=_("The date when the phase starts."))
 
     class Meta:
         """

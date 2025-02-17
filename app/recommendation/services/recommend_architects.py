@@ -201,11 +201,7 @@ def compute_architect_score(
     if perfect_match_conditions:
         functions.append(
             {
-                "filter": {
-                    "bool": {
-                        "must": perfect_match_conditions  # Dynamically generated must conditions
-                    }
-                },
+                "filter": {"bool": {"must": perfect_match_conditions}},  # Dynamically generated must conditions
                 "weight": weights.get("perfect_match", 1),
             }
         )
@@ -220,16 +216,12 @@ def compute_architect_score(
                 functions.append(
                     {
                         "filter": {"term": {m2m_field: related_item.id}},
-                        "weight": weights.get(
-                            "needs_per_match", 2
-                        ),  # Default weight for M2M matching
+                        "weight": weights.get("needs_per_match", 2),  # Default weight for M2M matching
                     }
                 )
 
     # 🔹 Ongoing Projects Penalty
-    on_going_project = generate_ongoing_projects_penalty(
-        weight=weights["on_going_projects"], scale=1
-    )
+    on_going_project = generate_ongoing_projects_penalty(weight=weights["on_going_projects"], scale=1)
 
     # 🔹 Apply FunctionScore Query (Sum Attributes)
     s = s.query(

@@ -92,10 +92,7 @@ class ProductService:
             if images_data:
                 with transaction.atomic():
                     instance.product_images.all().delete()
-                    new_images = [
-                        ProductImage(product=instance, image=image_data)
-                        for image_data in images_data
-                    ]
+                    new_images = [ProductImage(product=instance, image=image_data) for image_data in images_data]
                     ProductImage.objects.bulk_create(new_images)
 
             return True, ProductSerializer(instance).data
@@ -117,9 +114,7 @@ class ProductService:
             raise serializers.ValidationError(detail="Display status is required.")
         product = Product.objects.get(pk=pk)
         if product.collection.supplier.user != request.user:
-            raise serializers.ValidationError(
-                detail="You do not have permission to modify this product."
-            )
+            raise serializers.ValidationError(detail="You do not have permission to modify this product.")
 
         product.display = display_status
         product.save()
@@ -144,9 +139,7 @@ class ProductService:
             raise serializers.ValidationError(detail="visibility is required.")
         product = Product.objects.get(pk=pk)
         if product.collection.supplier.user != request.user:
-            raise serializers.ValidationError(
-                detail="You do not have permission to modify this product."
-            )
+            raise serializers.ValidationError(detail="You do not have permission to modify this product.")
 
         product.visibility = visibility
         product.save()

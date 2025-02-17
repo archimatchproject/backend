@@ -206,9 +206,7 @@ def handle_service_exceptions(func):
             else:
                 detail = str(ex)
 
-            formatted_message = error_info["message"].format(
-                error=detail
-            )  # Format the message with the error detail
+            formatted_message = error_info["message"].format(error=detail)  # Format the message with the error detail
             logger.error(f"{formatted_message} - Details: {str(ex)}", exc_info=True)
 
             # Raise custom API exception with status_code
@@ -221,9 +219,7 @@ def handle_service_exceptions(func):
             resource_name = get_resource_name_from_exception(ex)
             detail = f"{resource_name} not found."
             logger.error(f"{detail} - Details: {str(ex)}", exc_info=True)
-            raise CustomAPIException(
-                detail=detail, code="not_found", status_code=status.HTTP_404_NOT_FOUND
-            )
+            raise CustomAPIException(detail=detail, code="not_found", status_code=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             logger.error("Unhandled Exception: %s", str(ex), exc_info=True)
             raise CustomAPIException(

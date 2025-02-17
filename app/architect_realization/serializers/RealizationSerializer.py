@@ -30,9 +30,7 @@ class RealizationPOSTSerializer(serializers.ModelSerializer):
 
     """
 
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all())
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
@@ -72,9 +70,7 @@ class RealizationPUTSerializer(serializers.ModelSerializer):
 
     """
 
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all())
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())

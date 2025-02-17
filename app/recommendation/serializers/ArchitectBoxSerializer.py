@@ -28,9 +28,7 @@ class ArchitectBoxPostSerializer(serializers.ModelSerializer):
     """
 
     architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all())
-    announcements = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), many=True, required=False
-    )
+    announcements = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), many=True, required=False)
 
     class Meta:
         """

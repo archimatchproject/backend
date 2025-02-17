@@ -36,13 +36,9 @@ class SupplierFilter(django_filters.FilterSet):
     first_name = django_filters.CharFilter(field_name="user__first_name", lookup_expr="icontains")
     last_name = django_filters.CharFilter(field_name="user__last_name", lookup_expr="icontains")
     email = django_filters.CharFilter(field_name="user__email", lookup_expr="icontains")
-    speciality_type = django_filters.CharFilter(
-        field_name="speciality_type__id", lookup_expr="icontains"
-    )
+    speciality_type = django_filters.CharFilter(field_name="speciality_type__id", lookup_expr="icontains")
     company_name = django_filters.CharFilter(field_name="company_name", lookup_expr="icontains")
-    company_address = django_filters.CharFilter(
-        field_name="company_address", lookup_expr="icontains"
-    )
+    company_address = django_filters.CharFilter(field_name="company_address", lookup_expr="icontains")
 
     company_name_exists = django_filters.BooleanFilter(method="filter_company_name_exists")
 

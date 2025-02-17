@@ -180,9 +180,7 @@ class SelectionSerializer(serializers.ModelSerializer):
         # Remove the last pending quote from the quotes list if it exists
         if last_pending_quote:
             representation["quotes"] = [
-                quote
-                for quote in representation["quotes"]
-                if quote["id"] != last_pending_quote["id"]
+                quote for quote in representation["quotes"] if quote["id"] != last_pending_quote["id"]
             ]
 
         return representation
@@ -198,12 +196,8 @@ class SelectionPostSerializer(serializers.ModelSerializer):
         status: The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
-    announcement = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), write_only=True
-    )
-    architect = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), write_only=True, required=False
-    )
+    announcement = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), write_only=True)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), write_only=True, required=False)
 
     class Meta:
         """
@@ -227,12 +221,8 @@ class SelectionPutSerializer(serializers.ModelSerializer):
         status: The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
-    announcement = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), write_only=True
-    )
-    architect = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), write_only=True, required=False
-    )
+    announcement = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), write_only=True)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), write_only=True, required=False)
     status = serializers.ChoiceField(choices=SELECTION_STATUS_CHOICES, default="interested")
 
     class Meta:

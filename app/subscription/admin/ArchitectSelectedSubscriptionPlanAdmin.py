@@ -4,9 +4,7 @@ Admin registration module for the SelectedSubscriptionPlan model.
 
 from django.contrib import admin
 
-from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
-    ArchitectSelectedSubscriptionPlan,
-)
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
 
 
 class ArchitectSelectedSubscriptionPlanAdmin(admin.ModelAdmin):

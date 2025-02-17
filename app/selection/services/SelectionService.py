@@ -384,16 +384,13 @@ class SelectionService:
         today = now().date()
         selections = Selection.objects.filter(
             phase__name=DISCUSSION,
-            phase__limit_date__lte=today
-            + timedelta(days=selection_settings.days_for_admin_display),
+            phase__limit_date__lte=today + timedelta(days=selection_settings.days_for_admin_display),
         ).order_by("phase__start_date")
 
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
-            serializer = SelectionSerializer(
-                page, many=True, context={"selection_settings": selection_settings}
-            )
+            serializer = SelectionSerializer(page, many=True, context={"selection_settings": selection_settings})
             return paginator.get_paginated_response(serializer.data)
 
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -470,9 +467,7 @@ class SelectionService:
         selection.is_blocked = True
         selection.save()
 
-        ActionLog.objects.create(
-            admin=admin, action=BLOCK_PROJECT, details={"selection_id": selection_id}
-        )
+        ActionLog.objects.create(admin=admin, action=BLOCK_PROJECT, details={"selection_id": selection_id})
 
         return True, "the broadcast of the announcement is successfull"
 
@@ -500,9 +495,7 @@ class SelectionService:
         phase.save()
         selection.save()
 
-        ActionLog.objects.create(
-            admin=admin, action=CHANGE_DEADLINE, details={"selection_id": selection_id}
-        )
+        ActionLog.objects.create(admin=admin, action=CHANGE_DEADLINE, details={"selection_id": selection_id})
 
         return True, "the broadcast of the announcement is successfull"
 
@@ -579,9 +572,7 @@ class SelectionService:
 
         phase.save()
         admin = Admin.objects.get(user=user)
-        ActionLog.objects.create(
-            admin=admin, action=CANCEL_PROJECT, details={"selection_id": selection_id}
-        )
+        ActionLog.objects.create(admin=admin, action=CANCEL_PROJECT, details={"selection_id": selection_id})
         return True, "Project canceled"
 
     @classmethod
@@ -612,13 +603,10 @@ class SelectionService:
         selection_settings = self.get_selection_settings(name=QUOTES)
         today = now().date()
         selections = (
-            Selection.objects.annotate(
-                quote_count=Count("quotes")  # Annotate the count of related quotes
-            )
+            Selection.objects.annotate(quote_count=Count("quotes"))  # Annotate the count of related quotes
             .filter(
                 phase__name=QUOTES,
-                phase__limit_date__lte=today
-                + timedelta(days=selection_settings.days_for_admin_display),
+                phase__limit_date__lte=today + timedelta(days=selection_settings.days_for_admin_display),
                 # quote_count=0
             )
             .order_by("phase__start_date")
@@ -627,9 +615,7 @@ class SelectionService:
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
-            serializer = SelectionSerializer(
-                page, many=True, context={"selection_settings": selection_settings}
-            )
+            serializer = SelectionSerializer(page, many=True, context={"selection_settings": selection_settings})
             return paginator.get_paginated_response(serializer.data)
 
         return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)

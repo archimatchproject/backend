@@ -4,14 +4,11 @@ Serializer module for the SelectedSubscriptionPlan model.
 
 from rest_framework import serializers
 
-from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
-    ArchitectSelectedSubscriptionPlan,
-)
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
+from app.subscription.models.OfficeSelectedSubscriptionPlan import OfficeSelectedSubscriptionPlan
 from app.subscription.models.PlanService import PlanService
 from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
-from app.subscription.models.SupplierSelectedSubscriptionPlan import (
-    SupplierSelectedSubscriptionPlan,
-)
+from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 from app.subscription.serializers.ServiceSerializer import ServiceSerializer
 
 
@@ -20,9 +17,7 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
+    plan_services = serializers.PrimaryKeyRelatedField(queryset=PlanService.objects.all(), write_only=True, many=True)
 
     class Meta:
         """
@@ -50,9 +45,7 @@ class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
 
     services = serializers.SerializerMethodField()
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
+    plan_services = serializers.PrimaryKeyRelatedField(queryset=PlanService.objects.all(), write_only=True, many=True)
 
     class Meta:
         """
@@ -112,6 +105,31 @@ class SupplierSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "plan_price",
             "collection_number",
             "product_number_per_collection",
+            "active",
+            "free_plan",
+            "start_date",
+            "end_date",
+        ]
+
+
+class OfficeSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Office Selected Subscription Plan.
+    """
+
+    class Meta:
+        """
+        Meta class for OfficeSelectedSubscriptionPlanSerializer.
+        """
+
+        model = OfficeSelectedSubscriptionPlan
+        fields = [
+            "id",
+            "plan_name",
+            "plan_price",
+            "announces_number",
+            "architects_number_per_announce",
+            "remaining_announces",
             "active",
             "free_plan",
             "start_date",

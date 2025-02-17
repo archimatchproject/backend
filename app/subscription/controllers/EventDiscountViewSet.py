@@ -59,7 +59,10 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         return EventDiscountService.event_discount_paginated(request)
 
     @action(
-        detail=True, methods=["get"], url_path="get-active-discount", url_name="get-active-discount"
+        detail=True,
+        methods=["get"],
+        url_path="get-active-discount",
+        url_name="get-active-discount",
     )
     @handle_service_exceptions
     def get_active_event_discount(self, request):

@@ -96,24 +96,18 @@ class Announcement(BaseModel):
         null=True,
         blank=True,
     )
-    project_extensions = models.ManyToManyField(
-        ProjectExtension, related_name="project_extensions_announcements"
-    )
+    project_extensions = models.ManyToManyField(ProjectExtension, related_name="project_extensions_announcements")
     number_floors = models.PositiveIntegerField(default=0)
     notes = GenericRelation(Note)
     status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
     admin_note = models.CharField(max_length=500, null=True, blank=True)
-    architect = models.ForeignKey(
-        "users.Architect", on_delete=models.SET_NULL, null=True, blank=True
-    )
+    architect = models.ForeignKey("users.Architect", on_delete=models.SET_NULL, null=True, blank=True)
 
     token_number = models.PositiveIntegerField(null=True, blank=True)
     suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
     is_blocked = models.BooleanField(default=False)
     is_broadcasted = models.BooleanField(default=True)
-    city_coordinates = models.JSONField(
-        default=dict, blank=True, null=True
-    )  # Store longitude and latitude
+    city_coordinates = models.JSONField(default=dict, blank=True, null=True)  # Store longitude and latitude
 
     def __str__(self):
         """

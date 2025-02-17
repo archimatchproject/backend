@@ -60,9 +60,7 @@ class UnavailabilityService:
 
             # If an existing unavailability is found, update it, otherwise create a new one
             if existing_unavailability:
-                serializer = UnavailabilitySerializer(
-                    existing_unavailability, data=data, partial=True
-                )
+                serializer = UnavailabilitySerializer(existing_unavailability, data=data, partial=True)
             else:
                 serializer = UnavailabilitySerializer(data=data)
 

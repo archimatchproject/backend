@@ -26,9 +26,7 @@ class AnnouncementFilter(django_filters.FilterSet):
     specialty type, and keywords.
     """
 
-    property_type = django_filters.CharFilter(
-        field_name="property_type__id", lookup_expr="icontains"
-    )
+    property_type = django_filters.CharFilter(field_name="property_type__id", lookup_expr="icontains")
     work_type = django_filters.CharFilter(field_name="work_type__id", lookup_expr="icontains")
 
     city = django_filters.CharFilter(field_name="city", lookup_expr="icontains")

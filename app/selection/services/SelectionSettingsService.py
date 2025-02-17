@@ -84,9 +84,7 @@ class SelectionSettingsService:
         new_value = data.get("value")
 
         if not hasattr(settings, field_name):
-            raise ValidationError(
-                detail=f"Field '{field_name}' does not exist in SelectionSettings."
-            )
+            raise ValidationError(detail=f"Field '{field_name}' does not exist in SelectionSettings.")
 
         # Dynamically update the field value
         setattr(settings, field_name, new_value)

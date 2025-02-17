@@ -30,13 +30,9 @@ from app.architect_request import AWAITING_DEMO
 from app.architect_request import TIME_SLOT_CHOICES
 from app.architect_request.filters.ArchitectRequestFilter import ArchitectRequestFilter
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
-from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
-    ArchitectRequestRescheduleSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import ArchitectRequestRescheduleSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectRequestInputSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestInputSerializer
 from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
@@ -141,18 +137,12 @@ class ArchitectRequestService:
         architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
 
         # Calculate the scheduled datetime for the architect request
-        meeting_naive_datetime = datetime.combine(
-            architect_request.date, architect_request.time_slot
-        )
-        meeting_aware_datetime = timezone.make_aware(
-            meeting_naive_datetime, timezone.get_current_timezone()
-        )
+        meeting_naive_datetime = datetime.combine(architect_request.date, architect_request.time_slot)
+        meeting_aware_datetime = timezone.make_aware(meeting_naive_datetime, timezone.get_current_timezone())
 
         # Check if the current time is before the scheduled date and time
         if timezone.now() < meeting_aware_datetime:
-            raise serializers.ValidationError(
-                "You cannot accept this request before the scheduled date and time."
-            )
+            raise serializers.ValidationError("You cannot accept this request before the scheduled date and time.")
 
         serializer = ArchitectAcceptSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -312,9 +302,9 @@ class ArchitectRequestService:
             Response: A paginated response containing ArchitectRequest objects or an error message.
         """
         cls.update_request_statuses()
-        queryset = ArchitectRequest.objects.filter(
-            status__in=[AWAITING_DEMO, AWAITING_DECISION]
-        ).order_by("date", "time_slot")
+        queryset = ArchitectRequest.objects.filter(status__in=[AWAITING_DEMO, AWAITING_DECISION]).order_by(
+            "date", "time_slot"
+        )
 
         filtered_queryset = ArchitectRequestFilter(request.GET, queryset=queryset).qs
 
@@ -439,9 +429,7 @@ class ArchitectRequestService:
         Returns:
             Response: A Response object containing the list of time slots.
         """
-        time_slots = [
-            {"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES
-        ]
+        time_slots = [{"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES]
         return True, time_slots
 
     @classmethod
@@ -453,8 +441,7 @@ class ArchitectRequestService:
             Response: A Response object containing the list of time slots.
         """
         project_complexities = [
-            {"value": complexity[0], "label": complexity[1]}
-            for complexity in PROJECT_COMPLEXITY_CHOICES
+            {"value": complexity[0], "label": complexity[1]} for complexity in PROJECT_COMPLEXITY_CHOICES
         ]
         return True, project_complexities
 
@@ -467,8 +454,7 @@ class ArchitectRequestService:
             Response: A Response object containing the list of years of experience.
         """
         years_experience = [
-            {"value": year_experience[0], "label": year_experience[1]}
-            for year_experience in YEARS_EXPERIENCE_CHOICES
+            {"value": year_experience[0], "label": year_experience[1]} for year_experience in YEARS_EXPERIENCE_CHOICES
         ]
         return True, years_experience
 

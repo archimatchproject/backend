@@ -29,12 +29,8 @@ class Selection(models.Model):
     Model representing the selection of architects for an announcement.
     """
 
-    announcement = models.ForeignKey(
-        "announcement.Announcement", on_delete=models.CASCADE, related_name="selections"
-    )
-    architect = models.ForeignKey(
-        "users.Architect", on_delete=models.CASCADE, related_name="selections"
-    )
+    announcement = models.ForeignKey("announcement.Announcement", on_delete=models.CASCADE, related_name="selections")
+    architect = models.ForeignKey("users.Architect", on_delete=models.CASCADE, related_name="selections")
     status = models.CharField(max_length=10, choices=SELECTION_STATUS_CHOICES, default=INTERESTED)
     # One-to-one relationship with Phase
     phase = models.OneToOneField(

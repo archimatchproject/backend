@@ -27,14 +27,10 @@ class ProjectReportSerializer(serializers.ModelSerializer):
         decision (SlugRelatedField): Decision related to the report (read-only).
     """
 
-    reported_project_id = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), write_only=True
-    )
+    reported_project_id = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), write_only=True)
     reported_project = AnnouncementSerializer(read_only=True)
     reporting_architect = ArchitectSerializer(read_only=True)
-    report_reasons = serializers.PrimaryKeyRelatedField(
-        queryset=Reason.objects.all(), many=True, write_only=True
-    )
+    report_reasons = serializers.PrimaryKeyRelatedField(queryset=Reason.objects.all(), many=True, write_only=True)
     reasons = ReasonSerializer(read_only=True, many=True)
     decision = serializers.SlugRelatedField(read_only=True, slug_field="name")
 

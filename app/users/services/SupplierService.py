@@ -69,9 +69,7 @@ class SupplierService:
             raise APIException(detail="Email is required", code="validation_error")
 
         if ArchimatchUser.objects.filter(email=email).exists():
-            raise APIException(
-                detail="User with this email already exists", code="validation_error"
-            )
+            raise APIException(detail="User with this email already exists", code="validation_error")
         user = ArchimatchUser.objects.create(
             email=email,
             username=email,
@@ -225,9 +223,7 @@ class SupplierService:
                 showroom.save()
             else:
                 # Create new showroom
-                ShowRoom.objects.create(
-                    address=address, phone_number=phone_number, supplier=supplier
-                )
+                ShowRoom.objects.create(address=address, phone_number=phone_number, supplier=supplier)
 
         return True, "Supplier profile and showrooms successfully updated"
 
@@ -665,9 +661,7 @@ class SupplierService:
                 or a 400 Bad Request response with an error message.
         """
 
-        queryset = queryset = Supplier.objects.exclude(company_name="").exclude(
-            company_name__isnull=True
-        )
+        queryset = queryset = Supplier.objects.exclude(company_name="").exclude(company_name__isnull=True)
         # Apply filters using the SupplierFilter class
         filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
 

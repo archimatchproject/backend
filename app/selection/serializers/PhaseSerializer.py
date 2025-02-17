@@ -104,9 +104,7 @@ class PhaseSerializer(serializers.ModelSerializer):
         Calculates the number of remaining days for the phase based on SelectionSettings.
         """
         if obj.name == app.selection.DECISION:
-            phase_days = (
-                SelectionSettings.objects.filter(name=app.selection.QUOTES).first().phase_days
-            )
+            phase_days = SelectionSettings.objects.filter(name=app.selection.QUOTES).first().phase_days
         else:
             phase_days = SelectionSettings.objects.filter(name=obj.name).first().phase_days
         days_elapsed = self.get_days_elapsed(obj)

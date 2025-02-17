@@ -115,9 +115,7 @@ class Architect(BaseModel):
         choices=CITIES,
         default=CITIES[0],
     )
-    city_coordinates = models.JSONField(
-        default=dict, blank=True, null=True
-    )  # Store longitude and latitude
+    city_coordinates = models.JSONField(default=dict, blank=True, null=True)  # Store longitude and latitude
 
     def save(self, *args, **kwargs):
         """

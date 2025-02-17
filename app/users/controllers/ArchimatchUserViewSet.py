@@ -16,9 +16,7 @@ from app.core.response_builder import build_response
 from app.users.controllers.NotDeletedPermission import NotDeletedPermission
 from app.users.controllers.NotSuspendedPermission import NotSuspendedPermission
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers.ArchimatchUserObtainPairSerializer import (
-    ArchimatchUserObtainPairSerializer,
-)
+from app.users.serializers.ArchimatchUserObtainPairSerializer import ArchimatchUserObtainPairSerializer
 from app.users.serializers.ArchimatchUserObtainPairSerializer import PhoneTokenObtainPairSerializer
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
 from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
@@ -105,9 +103,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of password creation.
         """
         success, token, message = ArchimatchUserService.archimatch_user_create_password(request)
-        return build_response(
-            success=success, message=message, data=token, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, data=token, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["POST"], url_path="reset-password")
     @handle_service_exceptions
@@ -137,9 +133,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of updating data.
         """
         success, user_data, message = ArchimatchUserService.archimatch_user_update_data(request)
-        return build_response(
-            success=success, message=message, data=user_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, data=user_data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="get-user-data")
     @handle_service_exceptions

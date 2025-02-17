@@ -29,9 +29,7 @@ class Unavailability(BaseModel):
         whole_day (BooleanField): Indicates whether the admin is unavailable for the entire day.
     """
 
-    admin = models.ForeignKey(
-        "users.Admin", on_delete=models.CASCADE, related_name="unavailabilities"
-    )
+    admin = models.ForeignKey("users.Admin", on_delete=models.CASCADE, related_name="unavailabilities")
     date = models.DateField()
     time_slots = models.ManyToManyField(TimeSlot, blank=True)
     whole_day = models.BooleanField(default=False)

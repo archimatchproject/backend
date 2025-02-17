@@ -37,9 +37,7 @@ class VerificationCode(BaseModel):
         created_at (DateTimeField): Timestamp when the code was created.
     """
 
-    user = models.OneToOneField(
-        "ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code"
-    )
+    user = models.OneToOneField("ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code")
     code = models.CharField(max_length=4)
 
     def is_expired(self):

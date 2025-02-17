@@ -11,9 +11,7 @@ Classes:
 from django.db import transaction
 
 from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import (
-    ArchitectSubscriptionPlanSerializer,
-)
+from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer
 from app.users.models.Architect import Architect
 
 
@@ -51,9 +49,7 @@ class SubscriptionPlanService:
         with transaction.atomic():
             # If the current subscription plan is marked as most popular, update all others
             if most_popular:
-                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(
-                    most_popular=False
-                )
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
 
             # Create SubscriptionPlan instance
             subscription_plan = ArchitectSubscriptionPlan.objects.create(
@@ -87,9 +83,7 @@ class SubscriptionPlanService:
 
         with transaction.atomic():
             if most_popular:
-                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(
-                    most_popular=False
-                )
+                ArchitectSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
 
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)

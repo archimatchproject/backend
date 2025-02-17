@@ -109,9 +109,7 @@ class ArchitectReportService:
             architect_reports[architect_email].append(ArchitectReportSerializer(report).data)
 
         # Convert defaultdict to a list of dictionaries for JSON serialization
-        grouped_reports = [
-            {architect_email: reports} for architect_email, reports in architect_reports.items()
-        ]
+        grouped_reports = [{architect_email: reports} for architect_email, reports in architect_reports.items()]
 
         # Instantiate the paginator
         paginator = cls.pagination_class()
