@@ -56,5 +56,4 @@ class CookiesPolicyService:
 
         admin = Admin.objects.get(user=user)
         policy = CookiesPolicy.objects.get(admin=admin)
-        return True,CookiesPolicySerializer(policy).data
-        
+        return True, CookiesPolicySerializer(policy).data

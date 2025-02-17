@@ -12,9 +12,9 @@ from abc import abstractmethod
 from datetime import date
 from datetime import timedelta
 
+from app.email_templates.signals import api_success_signal
 from app.moderation.models.Warning import Warning
 from project_core.django import base as settings
-from app.email_templates.signals import api_success_signal
 
 
 class BaseAction(ABC):
@@ -80,9 +80,7 @@ class SuspendreTemporairement(BaseAction):
         architect = reported.user
         architect.is_suspended = True
         architect.suspension_start_date = date.today()
-        architect.suspension_end_date = date.today() + timedelta(
-            days=30
-        )  # Example: 30 days suspension
+        architect.suspension_end_date = date.today() + timedelta(days=30)  # Example: 30 days suspension
         architect.save()
 
 

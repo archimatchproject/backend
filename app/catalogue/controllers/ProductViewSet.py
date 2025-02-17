@@ -2,6 +2,7 @@
 ViewSet module for the Product model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser
@@ -14,7 +15,7 @@ from app.catalogue.serializers.ProductSerializer import ProductSerializer
 from app.catalogue.services.ProductService import ProductService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -63,9 +64,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         Override the create method to use ProductService for handling the creation
         of a Product.
         """
-        success,data = ProductService.create_product(request)
+        success, data = ProductService.create_product(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -74,9 +74,8 @@ class ProductViewSet(viewsets.ModelViewSet):
           of a Product.
         """
         instance = self.get_object()
-        success,data = ProductService.update_product(instance, request)
+        success, data = ProductService.update_product(instance, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -91,9 +90,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,data = ProductService.update_display_status(request, pk)
+        success, data = ProductService.update_display_status(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-    
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -108,9 +106,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,data = ProductService.update_visibility(request, pk)
+        success, data = ProductService.update_visibility(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
- 
 
     def get(self, request):
         """

@@ -5,19 +5,17 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to SubscriptionPlan instances via REST API endpoints.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.subscription.controllers.ManageSubscriptionPermission import ManageSubscriptionPermission
-from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
-from app.subscription.serializers.SubscriptionPlanSerializer import (
-    ArchitectSubscriptionPlanSerializer,
-)
-from app.subscription.services.SubscriptionPlanService import SubscriptionPlanService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+from app.subscription.controllers.ManageSubscriptionPermission import ManageSubscriptionPermission
+from app.subscription.models.ArchitectSubscriptionPlan import ArchitectSubscriptionPlan
+from app.subscription.serializers.SubscriptionPlanSerializer import ArchitectSubscriptionPlanSerializer
+from app.subscription.services.SubscriptionPlanService import SubscriptionPlanService
 
 
 class SubscriptionPlanViewSet(viewsets.ModelViewSet):
@@ -81,12 +79,15 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success, data = SubscriptionPlanService.update_subscription_plan(
-            instance, request.data, partial=partial
-        )
+        success, data = SubscriptionPlanService.update_subscription_plan(instance, request.data, partial=partial)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="upgradable-plans", url_name="upgradable-plans")
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="upgradable-plans",
+        url_name="upgradable-plans",
+    )
     @handle_service_exceptions
     def get_upgradable_plans(self, request):
         """

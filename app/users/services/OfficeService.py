@@ -16,26 +16,20 @@ from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-
 from app.core.pagination import CustomPagination
-
 from app.email_templates.signals import api_success_signal
+from app.users.controllers.OfficeFilter import OfficeFilter
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Office import Office
-
-from app.users.serializers.OfficeSerializer import (
-    OfficeInputSerializer,
-    OfficePersonalInformationSerializer,
-    OfficeSerializer,
-)
-
+from app.users.models.SupplierSocialMedia import SupplierSocialMedia
+from app.users.serializers.OfficeSerializer import OfficeInputSerializer
+from app.users.serializers.OfficeSerializer import OfficePersonalInformationSerializer
+from app.users.serializers.OfficeSerializer import OfficeSerializer
+from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
 from project_core.django import base as settings
-from app.users.controllers.OfficeFilter import OfficeFilter
-from app.users.models.SupplierSocialMedia import SupplierSocialMedia
-from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 
 
 class OfficeService:
@@ -70,9 +64,7 @@ class OfficeService:
             raise APIException(detail="Email is required", code="validation_error")
 
         if ArchimatchUser.objects.filter(email=email).exists():
-            raise APIException(
-                detail="User with this email already exists", code="validation_error"
-            )
+            raise APIException(detail="User with this email already exists", code="validation_error")
         user = ArchimatchUser.objects.create(
             email=email,
             username=email,

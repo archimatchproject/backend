@@ -8,39 +8,31 @@ Classes:
     PaymentService: Service class for Payment operations.
 """
 
+from datetime import datetime
+from datetime import timedelta
 
 from django.db import transaction
-
 
 from app.subscription import PAYMENT_METHOD_CHOICES
 from app.subscription.models import ArchitectPayment
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
-from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
-    ArchitectSelectedSubscriptionPlan,
-)
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
+from app.subscription.models.OfficeInvoice import OfficeInvoice
+from app.subscription.models.OfficePayment import OfficePayment
+from app.subscription.models.OfficeSelectedSubscriptionPlan import OfficeSelectedSubscriptionPlan
 from app.subscription.models.SupplierInvoice import SupplierInvoice
 from app.subscription.models.SupplierPayment import SupplierPayment
-from app.subscription.models.SupplierSelectedSubscriptionPlan import (
-    SupplierSelectedSubscriptionPlan,
-)
-from app.subscription.serializers.InvoiceSerializer import (
-    ArchitectInvoiceSerializer,
-    SupplierInvoiceSerializer,
-)
-from app.subscription.serializers.PaymentSerializer import (
-    ArchitectPaymentPOSTSerializer,
-    ArchitectPaymentSerializer,
-    OfficePaymentPOSTSerializer,
-    SupplierPaymentPOSTSerializer,
-    SupplierPaymentSerializer,
-)
+from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
+from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import SupplierInvoiceSerializer
+from app.subscription.serializers.PaymentSerializer import ArchitectPaymentPOSTSerializer
+from app.subscription.serializers.PaymentSerializer import ArchitectPaymentSerializer
+from app.subscription.serializers.PaymentSerializer import OfficePaymentPOSTSerializer
+from app.subscription.serializers.PaymentSerializer import SupplierPaymentPOSTSerializer
+from app.subscription.serializers.PaymentSerializer import SupplierPaymentSerializer
 from app.users.models.Architect import Architect
-from app.users.models.Supplier import Supplier
-from datetime import datetime, timedelta
 from app.users.models.Office import Office
-from app.subscription.models.OfficeSelectedSubscriptionPlan import OfficeSelectedSubscriptionPlan
-from app.subscription.models.OfficePayment import OfficePayment
-from app.subscription.models.OfficeInvoice import OfficeInvoice
+from app.users.models.Supplier import Supplier
 
 
 class PaymentService:
@@ -83,14 +75,9 @@ class PaymentService:
         # Create the SelectedSubscriptionPlan
         selected_plan_data = {
             "plan_name": subscription_plan.plan_name,
-            "plan_price": (
-                subscription_plan.get_annual_price()
-                if annual
-                else subscription_plan.get_effective_price()
-            ),
+            "plan_price": (subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price()),
             "number_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
-            "remaining_tokens": subscription_plan.number_tokens
-            + subscription_plan.number_free_tokens,
+            "remaining_tokens": subscription_plan.number_tokens + subscription_plan.number_free_tokens,
             "active": subscription_plan.active,
             "free_plan": subscription_plan.free_plan,
             "start_date": start_date,
@@ -120,12 +107,8 @@ class PaymentService:
                 plan_name=selected_plan.plan_name,
                 plan_price=selected_plan.plan_price,
                 discount=selected_plan.discount,
-                discount_percentage=(
-                    selected_plan.discount_percentage if selected_plan.discount else None
-                ),
-                discount_message=(
-                    selected_plan.discount_message if selected_plan.discount else ""
-                ),
+                discount_percentage=(selected_plan.discount_percentage if selected_plan.discount else None),
+                discount_message=(selected_plan.discount_message if selected_plan.discount else ""),
             )
             invoice.save()
 
@@ -145,9 +128,7 @@ class PaymentService:
         Returns:
             Response: The response object containing the payment methods.
         """
-        payment_methods = [
-            {"label": label, "value": value} for value, label in PAYMENT_METHOD_CHOICES
-        ]
+        payment_methods = [{"label": label, "value": value} for value, label in PAYMENT_METHOD_CHOICES]
         return True, payment_methods
 
     @classmethod
@@ -176,11 +157,7 @@ class PaymentService:
         # Create the SelectedSubscriptionPlan
         selected_plan_data = {
             "plan_name": subscription_plan.plan_name,
-            "plan_price": (
-                subscription_plan.get_annual_price()
-                if annual
-                else subscription_plan.get_effective_price()
-            ),
+            "plan_price": (subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price()),
             "collection_number": subscription_plan.collection_number,
             "product_number_per_collection": subscription_plan.product_number_per_collection,
             "active": subscription_plan.active,
@@ -208,12 +185,8 @@ class PaymentService:
                 plan_name=selected_plan.plan_name,
                 plan_price=selected_plan.plan_price,
                 discount=selected_plan.discount,
-                discount_percentage=(
-                    selected_plan.discount_percentage if selected_plan.discount else None
-                ),
-                discount_message=(
-                    selected_plan.discount_message if selected_plan.discount else ""
-                ),
+                discount_percentage=(selected_plan.discount_percentage if selected_plan.discount else None),
+                discount_message=(selected_plan.discount_message if selected_plan.discount else ""),
             )
             invoice.save()
 
@@ -253,11 +226,7 @@ class PaymentService:
         # Create the SelectedSubscriptionPlan
         selected_plan_data = {
             "plan_name": subscription_plan.plan_name,
-            "plan_price": (
-                subscription_plan.get_annual_price()
-                if annual
-                else subscription_plan.get_effective_price()
-            ),
+            "plan_price": (subscription_plan.get_annual_price() if annual else subscription_plan.get_effective_price()),
             "active": subscription_plan.active,
             "announces_number": subscription_plan.announces_number,
             "architects_number_per_announce": subscription_plan.architects_number_per_announce,
@@ -285,9 +254,7 @@ class PaymentService:
                 plan_name=selected_plan.plan_name,
                 plan_price=selected_plan.plan_price,
                 discount=selected_plan.discount,
-                discount_percentage=(
-                    selected_plan.discount_percentage if selected_plan.discount else None
-                ),
+                discount_percentage=(selected_plan.discount_percentage if selected_plan.discount else None),
                 discount_message=(selected_plan.discount_message if selected_plan.discount else ""),
             )
             invoice.save()

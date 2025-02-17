@@ -7,7 +7,9 @@ content of the application, with a restriction that only one instance of this mo
 """
 
 from django.db import models
+
 from rest_framework.serializers import ValidationError
+
 from app.core.models.BaseModel import BaseModel
 from app.users.models.Admin import Admin
 
@@ -16,7 +18,7 @@ class CGUCGVPolicy(BaseModel):
     """
     Model representing the CGU and CGV policy content.
 
-    This model stores the combined content of both the CGU (Terms of Use) 
+    This model stores the combined content of both the CGU (Terms of Use)
     and CGV (Terms of Sale) and references the admin who created it.
     Only one instance of this model can exist in the database.
     """
@@ -42,5 +44,6 @@ class CGUCGVPolicy(BaseModel):
         """
         Meta class for CGUCGVPolicy model.
         """
+
         verbose_name = "CGU/CGV Policy"
         verbose_name_plural = "CGU/CGV Policies"

@@ -7,6 +7,7 @@ and profile management.
 """
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
@@ -18,7 +19,6 @@ from app.users.serializers.SupplierSerializer import SupplierInputSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.SupplierService import SupplierService
-from rest_framework import status
 
 
 class SupplierViewSet(viewsets.ModelViewSet):
@@ -54,9 +54,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the signup attempt.
         """
         success, message = SupplierService.supplier_signup(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, message=message, status=status.HTTP_201_CREATED)
 
     @action(
         detail=False,
@@ -78,9 +76,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the login attempt.
         """
         success, supplier_data = SupplierService.supplier_login(request)
-        return build_response(
-            success=success, data=supplier_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=supplier_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -102,9 +98,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the first connection attempt.
         """
         success, message = SupplierService.supplier_first_connection(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -126,9 +120,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the profile update attempt.
         """
         success, message = SupplierService.supplier_update_profile(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -148,9 +140,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_bio(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -170,9 +160,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_presentation_video(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -195,9 +183,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             update attempt.
         """
         success, message = SupplierService.supplier_update_links(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -218,9 +204,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing the speciality types.
         """
         success, speciality_types_data = SupplierService.get_speciality_types()
-        return build_response(
-            success=success, data=speciality_types_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=speciality_types_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -241,9 +225,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing the appearances.
         """
         success, appearances_data = SupplierService.get_appearances()
-        return build_response(
-            success=success, data=appearances_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=appearances_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -265,9 +247,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         success, profile_data = SupplierService.supplier_get_profile(request)
-        return build_response(
-            success=success, data=profile_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -290,9 +270,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         success, profile_data = SupplierService.get_profile_by_id(pk)
-        return build_response(
-            success=success, data=profile_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -314,9 +292,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing supplier details.
         """
         success, message = SupplierService.supplier_send_reset_password_link(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -336,9 +312,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_profile_image(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -358,9 +332,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_cover_image(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -380,9 +352,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_visibility(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -400,12 +370,8 @@ class SupplierViewSet(viewsets.ModelViewSet):
             self (SupplierViewSet): Instance of the SupplierViewSet class.
             request (Request): HTTP request object.
         """
-        success, profile_data = SupplierService.supplier_validate_password_token(
-            request
-        )
-        return build_response(
-            success=success, data=profile_data, status=status.HTTP_200_OK
-        )
+        success, profile_data = SupplierService.supplier_validate_password_token(request)
+        return build_response(success=success, data=profile_data, status=status.HTTP_200_OK)
 
     def get(self, request):
         """
@@ -443,9 +409,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: The response object containing the result of the operation.
         """
         success, message = SupplierService.supplier_resend_email(pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def delete(self, request, pk=None):
@@ -460,9 +424,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response object indicating success or failure of the supplier deletion.
         """
         success, message = SupplierService.delete_supplier(pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_204_NO_CONTENT
-        )
+        return build_response(success=success, message=message, status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,
@@ -482,9 +444,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the bio settings update attempt.
         """
         success, message = SupplierService.supplier_update_catalog_visibility(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -502,6 +462,4 @@ class SupplierViewSet(viewsets.ModelViewSet):
             Response: Response containing show room details.
         """
         success, message = SupplierService.delete_showroom(pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_204_NO_CONTENT
-        )
+        return build_response(success=success, message=message, status=status.HTTP_204_NO_CONTENT)

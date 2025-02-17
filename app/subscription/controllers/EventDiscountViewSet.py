@@ -2,23 +2,24 @@
 ViewSet for managing EventDiscounts.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
+
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.subscription.models.EventDiscount import EventDiscount
 from app.subscription.serializers.EventDiscountSerializer import EventDiscountSerializer
 from app.subscription.services.EventDiscountService import EventDiscountService
-from rest_framework.decorators import action
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class EventDiscountViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing EventDiscount instances.
 
-    This viewset provides `list`, `create`, `retrieve`, `update`, and `destroy` 
-    actions for the EventDiscount model. It can be used to manage discount events 
-    such as Black Friday, Eid, etc., where a percentage discount is applied to 
+    This viewset provides `list`, `create`, `retrieve`, `update`, and `destroy`
+    actions for the EventDiscount model. It can be used to manage discount events
+    such as Black Friday, Eid, etc., where a percentage discount is applied to
     subscription plans during a specified date range.
     """
 
@@ -31,8 +32,8 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         by filtering against `start_date` and `end_date` query parameters in the URL.
         """
         queryset = super().get_queryset()
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
 
         if start_date:
             queryset = queryset.filter(start_date__gte=start_date)
@@ -58,7 +59,10 @@ class EventDiscountViewSet(viewsets.ModelViewSet):
         return EventDiscountService.event_discount_paginated(request)
 
     @action(
-        detail=True, methods=["get"], url_path="get-active-discount", url_name="get-active-discount"
+        detail=True,
+        methods=["get"],
+        url_path="get-active-discount",
+        url_name="get-active-discount",
     )
     @handle_service_exceptions
     def get_active_event_discount(self, request):

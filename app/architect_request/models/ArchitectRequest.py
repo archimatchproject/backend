@@ -61,9 +61,7 @@ class ArchitectRequest(BaseModel):
     time_slot = models.TimeField(choices=TIME_SLOT_CHOICES)
 
     meeting_responsable = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
-    status = models.CharField(
-        max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo"
-    )
+    status = models.CharField(max_length=20, choices=ARCHITECT_REQUEST_STATUS_CHOICES, default="Awaiting Demo")
     city = models.CharField(
         max_length=50,
         choices=CITIES,
@@ -76,9 +74,9 @@ class ArchitectRequest(BaseModel):
         """
         Custom validation to ensure the time slot is not already taken for the same date.
         """
-        conflicting_requests = ArchitectRequest.objects.filter(
-            date=self.date, time_slot=self.time_slot
-        ).exclude(pk=self.pk)
+        conflicting_requests = ArchitectRequest.objects.filter(date=self.date, time_slot=self.time_slot).exclude(
+            pk=self.pk
+        )
 
         if conflicting_requests.exists():
             raise ValidationError("This time slot on the selected date is already taken.")

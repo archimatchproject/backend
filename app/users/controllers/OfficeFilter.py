@@ -51,6 +51,13 @@ class OfficeFilter(django_filters.FilterSet):
         ]
 
     def filter_queryset(self, queryset):
+        """
+        Filters the given queryset by ordering it based on the 'created_at' field.
+        Args:
+          queryset (QuerySet): The initial queryset to be filtered.
+        Returns:
+          QuerySet: The filtered queryset ordered by 'created_at'.
+        """
 
         queryset = queryset.order_by("created_at")
         return super().filter_queryset(queryset)

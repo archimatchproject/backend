@@ -8,18 +8,18 @@ It includes functionality to attach images inline within the HTML content of the
 
 import os
 
+from datetime import timedelta
 from email.mime.image import MIMEImage
 from io import BytesIO
 
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse
 from django.template.loader import get_template
+from django.utils.timezone import now
 
 from xhtml2pdf import pisa
 
 from project_core.django import base as settings
-from datetime import timedelta
-from django.utils.timezone import now
 
 
 def send_email_with_template(to_email, subject, body, images):

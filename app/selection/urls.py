@@ -13,12 +13,11 @@ from django.urls import path
 
 from rest_framework import routers
 
-from app.selection.routes.SelectionUrls import selection_urlpatterns
 from app.selection.routes.QuoteUrls import quote_urlpatterns
 from app.selection.routes.SelectionSettingsUrls import selectionSettings_urlpatterns
-from app.selection.routes.UnlockRequestUrl import (
-    urlpatterns as unlock_request_urlpatterns,
-)
+from app.selection.routes.SelectionUrls import selection_urlpatterns
+from app.selection.routes.UnlockRequestUrl import urlpatterns as unlock_request_urlpatterns
+
 
 router = routers.DefaultRouter()
 

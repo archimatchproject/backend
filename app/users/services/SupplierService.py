@@ -19,9 +19,7 @@ from rest_framework.response import Response
 from app.catalogue import APPEARANCES
 from app.core.models.SupplierSpeciality import SupplierSpeciality
 from app.core.pagination import CustomPagination
-from app.core.serializers.SupplierSpecialitySerializer import (
-    SupplierSpecialitySerializer,
-)
+from app.core.serializers.SupplierSpecialitySerializer import SupplierSpecialitySerializer
 from app.email_templates.signals import api_success_signal
 from app.users.controllers.SupplierFilter import SupplierFilter
 from app.users.models.ArchimatchUser import ArchimatchUser
@@ -30,13 +28,9 @@ from app.users.models.Supplier import Supplier
 from app.users.models.SupplierCoverImage import SupplierCoverImage
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 from app.users.serializers.SupplierSerializer import SupplierInputSerializer
-from app.users.serializers.SupplierSerializer import (
-    SupplierPersonalInformationSerializer,
-)
+from app.users.serializers.SupplierSerializer import SupplierPersonalInformationSerializer
 from app.users.serializers.SupplierSerializer import SupplierSerializer
-from app.users.serializers.SupplierSocialMediaSerializer import (
-    SupplierSocialMediaSerializer,
-)
+from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -75,9 +69,7 @@ class SupplierService:
             raise APIException(detail="Email is required", code="validation_error")
 
         if ArchimatchUser.objects.filter(email=email).exists():
-            raise APIException(
-                detail="User with this email already exists", code="validation_error"
-            )
+            raise APIException(detail="User with this email already exists", code="validation_error")
         user = ArchimatchUser.objects.create(
             email=email,
             username=email,
@@ -216,9 +208,7 @@ class SupplierService:
         incoming_showroom_ids = [sr.get("id") for sr in showrooms_data if sr.get("id")]
 
         # Delete showrooms that are not in the incoming request
-        ShowRoom.objects.filter(supplier=supplier).exclude(
-            id__in=incoming_showroom_ids
-        ).delete()
+        ShowRoom.objects.filter(supplier=supplier).exclude(id__in=incoming_showroom_ids).delete()
 
         # Handle showrooms update or creation
         for showroom_data in showrooms_data:
@@ -233,9 +223,7 @@ class SupplierService:
                 showroom.save()
             else:
                 # Create new showroom
-                ShowRoom.objects.create(
-                    address=address, phone_number=phone_number, supplier=supplier
-                )
+                ShowRoom.objects.create(address=address, phone_number=phone_number, supplier=supplier)
 
         return True, "Supplier profile and showrooms successfully updated"
 
@@ -320,16 +308,12 @@ class SupplierService:
         supplier = Supplier.objects.get(user__id=user_id)
 
         if not supplier.social_links:
-            social_links, created = SupplierSocialMedia.objects.update_or_create(
-                **validated_data
-            )
+            social_links, created = SupplierSocialMedia.objects.update_or_create(**validated_data)
             supplier.social_links = social_links
             supplier.save()
         else:
             social_links = supplier.social_links
-            SupplierSocialMedia.objects.filter(id=social_links.id).update(
-                **validated_data
-            )
+            SupplierSocialMedia.objects.filter(id=social_links.id).update(**validated_data)
 
         return True, "Supplier social links successfully updated"
 
@@ -436,9 +420,7 @@ class SupplierService:
         """
 
         speciality_types = SupplierSpeciality.objects.all()
-        speciality_types_data = SupplierSpecialitySerializer(
-            speciality_types, many=True
-        ).data
+        speciality_types_data = SupplierSpecialitySerializer(speciality_types, many=True).data
 
         return True, speciality_types_data
 
@@ -679,9 +661,7 @@ class SupplierService:
                 or a 400 Bad Request response with an error message.
         """
 
-        queryset = queryset = Supplier.objects.exclude(company_name="").exclude(
-            company_name__isnull=True
-        )
+        queryset = queryset = Supplier.objects.exclude(company_name="").exclude(company_name__isnull=True)
         # Apply filters using the SupplierFilter class
         filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
 

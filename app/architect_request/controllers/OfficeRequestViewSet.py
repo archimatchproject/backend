@@ -8,28 +8,18 @@ Classes:
     OfficeRequestViewSet: Viewset for the OfficeRequest model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-
 from app.architect_request.models.OfficeRequest import OfficeRequest
-
-
-from app.architect_request.serializers.OfficeRequestSerializer import (
-    OfficeRequestSerializer,
-)
-from app.architect_request.services.OfficeRequestService import (
-    OfficeRequestService,
-)
-from app.core.pagination import CustomPagination
-
+from app.architect_request.serializers.OfficeRequestRescheduleSerializer import OfficeRequestRescheduleSerializer
+from app.architect_request.serializers.OfficeRequestSerializer import OfficeRequestSerializer
+from app.architect_request.services.OfficeRequestService import OfficeRequestService
 from app.core.exception_handler import handle_service_exceptions
+from app.core.pagination import CustomPagination
 from app.core.response_builder import build_response
-from rest_framework import status
 from app.core.serializers.NoteSerializer import NoteSerializer
-from app.architect_request.serializers.OfficeRequestRescheduleSerializer import (
-    OfficeRequestRescheduleSerializer,
-)
 
 
 class OfficeRequestViewSet(viewsets.ModelViewSet):

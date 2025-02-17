@@ -33,9 +33,7 @@ class ArchitectRequestInputSerializer(serializers.ModelSerializer):
         fields (list): The fields to be included in the serialization.
     """
 
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
     date = serializers.DateField()
     time_slot = serializers.CharField(source="get_time_slot_display")
 
@@ -75,9 +73,7 @@ class ArchitectRequestSerializer(serializers.ModelSerializer):
     """
 
     architect_speciality = ArchitectSpecialitySerializer(read_only=True)
-    meeting_responsable = serializers.EmailField(
-        source="meeting_responsable.user.email", read_only=True
-    )
+    meeting_responsable = serializers.EmailField(source="meeting_responsable.user.email", read_only=True)
     notes = NoteSerializer(many=True)
 
     class Meta:
@@ -119,12 +115,8 @@ class ArchitectAcceptSerializer(serializers.Serializer):
     project_categories = serializers.PrimaryKeyRelatedField(
         queryset=ProjectCategory.objects.all(), many=True, required=True
     )
-    property_types = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all(), many=True, required=True
-    )
-    work_types = serializers.PrimaryKeyRelatedField(
-        queryset=WorkType.objects.all(), many=True, required=True
-    )
+    property_types = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all(), many=True, required=True)
+    work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True, required=True)
     architectural_styles = serializers.PrimaryKeyRelatedField(
         queryset=ArchitecturalStyle.objects.all(), many=True, required=True
     )

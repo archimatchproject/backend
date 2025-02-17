@@ -3,7 +3,7 @@ USER_TYPE_CHOICES = [
     ("Client", "Client"),
     ("Admin", "Admin"),
     ("Supplier", "Supplier"),
-    ("Office", "Office")
+    ("Office", "Office"),
 ]
 
 PERMISSION_CODENAMES = {
@@ -118,9 +118,7 @@ PERMISSION_CODENAMES = {
     },
 }
 CODENAME_TO_RIGHTS = {
-    codename: right
-    for right, data in PERMISSION_CODENAMES.items()
-    for codename in data["permissions"]
+    codename: right for right, data in PERMISSION_CODENAMES.items() for codename in data["permissions"]
 }
 
 

@@ -6,6 +6,7 @@ the Django admin interface for the Phase model.
 """
 
 from django.contrib import admin
+
 from app.selection.models import Phase
 
 
@@ -13,9 +14,10 @@ class PhaseAdmin(admin.ModelAdmin):
     """
     Admin configuration for the Phase model.
     """
-    list_display = ('id', 'name', 'number', 'start_date', 'limit_date')
-    search_fields = ('name',)
-    list_filter = ('number',)
+
+    list_display = ("id", "name", "number", "start_date", "limit_date")
+    search_fields = ("name",)
+    list_filter = ("number",)
 
 
 admin.site.register(Phase, PhaseAdmin)

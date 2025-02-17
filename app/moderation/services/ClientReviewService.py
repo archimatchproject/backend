@@ -12,10 +12,8 @@ from django.db import IntegrityError
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
 from app.moderation.models.ClientReview import ClientReview
@@ -33,7 +31,9 @@ class ClientReviewService:
     Methods:
         create_client_review(request): Handles validation and creation of a new ClientReview.
     """
+
     pagination_class = CustomPagination
+
     @classmethod
     def create_client_review(cls, request):
         """
@@ -55,11 +55,13 @@ class ClientReviewService:
             with transaction.atomic():
                 # Create ClientReview instance
                 client_review = ClientReview.objects.create(
-                    client=client, architect=validated_data.pop("architect_id"), **validated_data
+                    client=client,
+                    architect=validated_data.pop("architect_id"),
+                    **validated_data,
                 )
 
-                return True,ClientReviewSerializer(client_review)
-                    
+                return True, ClientReviewSerializer(client_review)
+
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -86,9 +88,7 @@ class ClientReviewService:
         """
         user = request.user
 
-
         architect = Architect.objects.get(user=user)
         reviews = ClientReview.objects.filter(architect=architect)
         serialized_reviews = ClientReviewSerializer(reviews, many=True)
-        return True,serialized_reviews.data
-        
+        return True, serialized_reviews.data

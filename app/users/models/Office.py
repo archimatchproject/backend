@@ -39,9 +39,7 @@ class Office(BaseModel):
     )
     is_public = models.BooleanField(default=False)
     office_address = models.CharField(max_length=255, default="")
-    office_identifier = models.CharField(
-        max_length=10, default="", null=True, blank=True, unique=True
-    )
+    office_identifier = models.CharField(max_length=10, default="", null=True, blank=True, unique=True)
     bio = models.TextField(max_length=500, default="")
     office_name = models.CharField(max_length=255, default="")
     social_links = models.OneToOneField(

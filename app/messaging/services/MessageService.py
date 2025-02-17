@@ -21,7 +21,6 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.messaging.models.Message import Message
-from app.messaging.serializers.DeviceSerializer import DeviceSerializer
 from app.messaging.serializers.MessageSerializer import MessageSerializer
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
@@ -76,14 +75,13 @@ class MessageService:
                             title=f"New Message from {str(user)}",
                             body=validated_data.get("content"),
                         ),
-                        token=recipient_device.registration_id
+                        token=recipient_device.registration_id,
                     )
                     try:
                         recipient_device.send_message(fcm_message)
                     except Exception as fcm_error:
                         print(f"Error sending FCM message: {fcm_error}")
                         raise APIException(detail="Error with FCM notification: " + str(fcm_error))
-                    
 
                 return Response(
                     MessageSerializer(message).data,
@@ -111,7 +109,8 @@ class MessageService:
         """
         user = request.user
 
-        # Get users who are either recipients of messages from the user or senders of messages to the user
+        # Get users who are either recipients of messages from the user or senders of messages
+        # to the user
         sent_users = ArchimatchUser.objects.filter(received_messages__sender=user)
         received_users = ArchimatchUser.objects.filter(sent_messages__recipient=user)
 
@@ -119,7 +118,9 @@ class MessageService:
         contacts = (sent_users | received_users).distinct()
 
         # Serialize the user contacts
-        serialized_users = ArchimatchUserSerializer(contacts, many=True)  # Replace UserSerializer with your actual serializer for users
+        serialized_users = ArchimatchUserSerializer(
+            contacts, many=True
+        )  # Replace UserSerializer with your actual serializer for users
         return Response(serialized_users.data)
 
     @classmethod

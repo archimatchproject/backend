@@ -5,6 +5,7 @@ This module contains the TermsAndConditionsViewSet class, which provides
 view-level logic for the TermsAndConditions model, including creation operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,7 +15,7 @@ from app.cms.serializers.TermsAndConditionsSerializer import TermsAndConditionsS
 from app.cms.services.TermsAndConditionsService import TermsAndConditionsService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class TermsAndConditionsViewSet(viewsets.ModelViewSet):
     """
@@ -55,5 +56,5 @@ class TermsAndConditionsViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        success,data = TermsAndConditionsService.create_terms_and_conditions(request)
+        success, data = TermsAndConditionsService.create_terms_and_conditions(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)

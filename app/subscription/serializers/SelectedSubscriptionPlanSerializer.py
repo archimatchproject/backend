@@ -4,16 +4,12 @@ Serializer module for the SelectedSubscriptionPlan model.
 
 from rest_framework import serializers
 
-from app.subscription.models.ArchitectSelectedSubscriptionPlan import (
-    ArchitectSelectedSubscriptionPlan,
-)
+from app.subscription.models.ArchitectSelectedSubscriptionPlan import ArchitectSelectedSubscriptionPlan
+from app.subscription.models.OfficeSelectedSubscriptionPlan import OfficeSelectedSubscriptionPlan
 from app.subscription.models.PlanService import PlanService
 from app.subscription.models.SelectedSubscriptionPlan import SelectedSubscriptionPlan
-from app.subscription.models.SupplierSelectedSubscriptionPlan import (
-    SupplierSelectedSubscriptionPlan,
-)
+from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 from app.subscription.serializers.ServiceSerializer import ServiceSerializer
-from app.subscription.models.OfficeSelectedSubscriptionPlan import OfficeSelectedSubscriptionPlan
 
 
 class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -21,9 +17,7 @@ class SelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     Serializer for the SubscriptionPlan model.
     """
 
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
+    plan_services = serializers.PrimaryKeyRelatedField(queryset=PlanService.objects.all(), write_only=True, many=True)
 
     class Meta:
         """
@@ -51,9 +45,7 @@ class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
 
     services = serializers.SerializerMethodField()
-    plan_services = serializers.PrimaryKeyRelatedField(
-        queryset=PlanService.objects.all(), write_only=True, many=True
-    )
+    plan_services = serializers.PrimaryKeyRelatedField(queryset=PlanService.objects.all(), write_only=True, many=True)
 
     class Meta:
         """
@@ -73,8 +65,18 @@ class ArchitectSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
         ]
-    
+
     def get_services(self, obj):
+        """
+        Retrieve all available services and indicate whether each service is included in the selected subscription plan.
+        Args:
+            obj: The subscription plan instance.
+        Returns:
+            list: A list of dictionaries, each containing:
+                - "service": Serialized data of the service.
+                - "included": Boolean indicating if the service is included in the selected subscription plan.
+        """
+
         all_services = PlanService.objects.all()
         selected_services = obj.services.all()
         return [
@@ -116,6 +118,10 @@ class OfficeSelectedSubscriptionPlanSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
+        """
+        Meta class for OfficeSelectedSubscriptionPlanSerializer.
+        """
+
         model = OfficeSelectedSubscriptionPlan
         fields = [
             "id",

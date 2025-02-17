@@ -13,16 +13,10 @@ Classes:
 from rest_framework import serializers
 
 from app.announcement.models.Need import Need
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
 from app.architect_realization.models.Realization import Realization
@@ -36,12 +30,13 @@ from app.core.serializers.BudgetSerializer import BudgetSerializer
 from app.core.serializers.PreferredLocationSerializer import PreferredLocationSerializer
 from app.core.serializers.TerrainSurfaceSerializer import TerrainSurfaceSerializer
 from app.core.serializers.WorkSurfaceSerializer import WorkSurfaceSerializer
-from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
-    ArchitectSelectedSubscriptionPlanSerializer,
-)
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import ArchitectSelectedSubscriptionPlanSerializer
+from app.users import BRONZE
+from app.users import EMPTY
+from app.users import GOLD
+from app.users import SILVER
 from app.users.models.Architect import Architect
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users import GOLD, SILVER, EMPTY, BRONZE
 
 
 class ArchitectSerializer(serializers.ModelSerializer):
@@ -231,24 +226,12 @@ class ArchitectUpdatePreferencesSerializer(serializers.ModelSerializer):
         architectural_styles: List of primary keys for associated architectural styles.
     """
 
-    property_types = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all(), many=True
-    )
-    work_types = serializers.PrimaryKeyRelatedField(
-        queryset=WorkType.objects.all(), many=True
-    )
-    terrain_surfaces = serializers.PrimaryKeyRelatedField(
-        queryset=TerrainSurface.objects.all(), many=True
-    )
-    work_surfaces = serializers.PrimaryKeyRelatedField(
-        queryset=WorkSurface.objects.all(), many=True
-    )
-    preferred_locations = serializers.PrimaryKeyRelatedField(
-        queryset=PreferredLocation.objects.all(), many=True
-    )
-    budgets = serializers.PrimaryKeyRelatedField(
-        queryset=Budget.objects.all(), many=True
-    )
+    property_types = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all(), many=True)
+    work_types = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all(), many=True)
+    terrain_surfaces = serializers.PrimaryKeyRelatedField(queryset=TerrainSurface.objects.all(), many=True)
+    work_surfaces = serializers.PrimaryKeyRelatedField(queryset=WorkSurface.objects.all(), many=True)
+    preferred_locations = serializers.PrimaryKeyRelatedField(queryset=PreferredLocation.objects.all(), many=True)
+    budgets = serializers.PrimaryKeyRelatedField(queryset=Budget.objects.all(), many=True)
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
 
     class Meta:

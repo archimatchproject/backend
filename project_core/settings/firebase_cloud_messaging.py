@@ -2,9 +2,11 @@
 Module-level constants for firebase_cloud_messaging configuration.
 """
 
-from firebase_admin import initialize_app
 from firebase_admin import credentials
+from firebase_admin import initialize_app
+
 from project_core.env import env
+
 
 GOOGLE_APPLICATION_CREDENTIALS = env("GOOGLE_APPLICATION_CREDENTIALS")
 # Path to your Firebase service account key file

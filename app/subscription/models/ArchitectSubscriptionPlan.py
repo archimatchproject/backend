@@ -3,6 +3,7 @@ Module containing the ArchitectSubscriptionPlan model and its derived models.
 """
 
 from django.db import models
+
 from app.subscription.models.PlanService import PlanService
 from app.subscription.models.SubscriptionPlan import SubscriptionPlan
 

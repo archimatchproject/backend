@@ -12,9 +12,6 @@ Classes:
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.response import Response
 
 from app.cms.models.FAQThematic import FAQThematic
 from app.cms.serializers.FAQThematicSerializer import FAQThematicSerializer
@@ -47,15 +44,18 @@ class FAQThematicService:
         serializer = FAQThematicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        target_user_type = request.data.get("targetUserType",False)
+        target_user_type = request.data.get("targetUserType", False)
         if not target_user_type:
             raise serializers.ValidationError(detail="target user type is required")
 
         with transaction.atomic():
+            thematic = FAQThematic.objects.create(
+                **validated_data,
+                target_user_type=target_user_type,
+                admin=request.user.admin,
+            )
+            return True, FAQThematicSerializer(thematic).data
 
-            thematic = FAQThematic.objects.create(**validated_data,target_user_type=target_user_type, admin=request.user.admin)
-            return True,FAQThematicSerializer(thematic).data
-        
     @classmethod
     def update_faq_thematic(cls, instance, request):
         """
@@ -76,5 +76,4 @@ class FAQThematicService:
         with transaction.atomic():
             instance.title = validated_data.get("title", instance.title)
             instance.save()
-            return True,FAQThematicSerializer(instance).data
-        
+            return True, FAQThematicSerializer(instance).data

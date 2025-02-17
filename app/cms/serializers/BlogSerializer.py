@@ -21,9 +21,7 @@ class BlogSerializer(serializers.ModelSerializer):
     blog_thematic_id = serializers.PrimaryKeyRelatedField(
         source="blog_thematic", queryset=BlogThematic.objects.all(), write_only=True
     )
-    tags = serializers.SlugRelatedField(
-        many=True, queryset=BlogTag.objects.all(), slug_field="name"
-    )
+    tags = serializers.SlugRelatedField(many=True, queryset=BlogTag.objects.all(), slug_field="name")
     admin = serializers.EmailField(source="admin.user.email", read_only=True)
 
     class Meta:
@@ -46,12 +44,13 @@ class BlogSerializer(serializers.ModelSerializer):
             "visible",
             "popular",
             "updated_at",
-            "target_user_type"
+            "target_user_type",
         ]
         read_only_fields = ["blog_sections", "updated_at"]
         extra_kwargs = {
             "target_user_type": {"required": False},
         }
+
     def to_internal_value(self, data):
         """
         Method mapping tags and adding those who don't exist

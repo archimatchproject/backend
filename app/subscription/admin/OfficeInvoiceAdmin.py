@@ -1,3 +1,10 @@
+"""
+This class customizes the Django admin interface for the OfficeInvoice model by specifying
+the fields to display in the list view, the fields to include in the search functionality,
+and the fields to include in the filter functionality.
+
+"""
+
 from django.contrib import admin
 
 from app.subscription.models.OfficeInvoice import OfficeInvoice

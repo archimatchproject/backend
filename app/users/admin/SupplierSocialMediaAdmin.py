@@ -12,8 +12,6 @@ and specifies basic configurations for managing Supplier instances.
 
 from django.contrib import admin
 
-from app.users.models import Supplier
-from app.users.models.SupplierCoverImage import SupplierCoverImage
 from app.users.models.SupplierSocialMedia import SupplierSocialMedia
 
 

@@ -2,22 +2,17 @@
 ViewSet module for the ArchitectReport model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import (
-    ManageReportingPermission,
-)
-
-from app.moderation.services.SelectionReportService import SelectionReportService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
 from app.moderation.models.SelectionReport import SelectionReport
-from app.moderation.serializers.SelectionReportSerializer import (
-    SelectionReportSerializer,
-)
+from app.moderation.serializers.SelectionReportSerializer import SelectionReportSerializer
+from app.moderation.services.SelectionReportService import SelectionReportService
 
 
 class SelectionReportViewSet(viewsets.ModelViewSet):
@@ -64,9 +59,7 @@ class SelectionReportViewSet(viewsets.ModelViewSet):
         of an ArchitectReport.
         """
         success, data = SelectionReportService.create_selection_report(request)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(detail=False)
     @handle_service_exceptions
@@ -92,9 +85,7 @@ class SelectionReportViewSet(viewsets.ModelViewSet):
         """
         Change the status of an SelectionReport.
         """
-        success, data = SelectionReportService.change_selection_report_status(
-            request, pk
-        )
+        success, data = SelectionReportService.change_selection_report_status(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True)
@@ -106,6 +97,4 @@ class SelectionReportViewSet(viewsets.ModelViewSet):
         This method processes the decision for the provided report IDs.
         """
         success, message = SelectionReportService.execute_decision(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

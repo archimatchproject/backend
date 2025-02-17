@@ -29,9 +29,7 @@ class GuideArticle(BaseModel):
 
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    guide_thematic = models.ForeignKey(
-        GuideThematic, on_delete=models.CASCADE, related_name="guide_thematic_articles"
-    )
+    guide_thematic = models.ForeignKey(GuideThematic, on_delete=models.CASCADE, related_name="guide_thematic_articles")
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     date = models.DateField(default=date.today, null=True, blank=True)

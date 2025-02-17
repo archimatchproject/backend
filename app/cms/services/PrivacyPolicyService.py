@@ -7,11 +7,6 @@ business logic for creating PrivacyPolicy instances.
 
 from django.db import transaction
 
-from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.response import Response
-
 from app.cms.models.PrivacyPolicy import PrivacyPolicy
 from app.cms.serializers.PrivacyPolicySerializer import PrivacyPolicySerializer
 from app.users.models.Admin import Admin
@@ -41,8 +36,8 @@ class PrivacyPolicyService:
 
         with transaction.atomic():
             policy = PrivacyPolicy.objects.create(**validated_data, admin=request.user.admin)
-            return True,PrivacyPolicySerializer(policy).data
-        
+            return True, PrivacyPolicySerializer(policy).data
+
     @classmethod
     def get_policy_by_admin(cls, request):
         """
@@ -61,4 +56,4 @@ class PrivacyPolicyService:
 
         admin = Admin.objects.get(user=user)
         policy = PrivacyPolicy.objects.get(admin=admin)
-        return True,PrivacyPolicySerializer(policy).data
+        return True, PrivacyPolicySerializer(policy).data

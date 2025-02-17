@@ -8,14 +8,15 @@ Classes:
     SelectionSettingsViewSet: A viewset that provides actions for managing selection settings.
 """
 
-from rest_framework import status, viewsets
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.selection.models.SelectionSettings import SelectionSettings
 from app.selection.serializers import SelectionSettingsSerializer
 from app.selection.services.SelectionSettingsService import SelectionSettingsService
-from app.core.response_builder import build_response
 
 
 class SelectionSettingsViewSet(viewsets.ViewSet):
@@ -73,9 +74,7 @@ class SelectionSettingsViewSet(viewsets.ViewSet):
             APIException: If no selection settings instance exists.
         """
 
-        success, data = SelectionSettingsService.update_selection_settings(
-            request.data, pk
-        )
+        success, data = SelectionSettingsService.update_selection_settings(request.data, pk)
         return build_response(data=data, status=status.HTTP_200_OK, success=success)
 
     @action(detail=False, methods=["GET"], url_path="get-settings-choises")

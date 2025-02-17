@@ -2,21 +2,17 @@
 ViewSet module for the ArchitectReport model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import (
-    ManageReportingPermission,
-)
-from app.moderation.models.ArchitectReport import ArchitectReport
-from app.moderation.serializers.ArchitectReportSerializer import (
-    ArchitectReportSerializer,
-)
-from app.moderation.services.ArchitectReportService import ArchitectReportService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
+from app.moderation.models.ArchitectReport import ArchitectReport
+from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
+from app.moderation.services.ArchitectReportService import ArchitectReportService
 
 
 class ArchitectReportViewSet(viewsets.ModelViewSet):
@@ -63,9 +59,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         of an ArchitectReport.
         """
         success, data = ArchitectReportService.create_architect_report(request)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(detail=False)
     @handle_service_exceptions
@@ -91,9 +85,7 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         """
         Change the status of an ArchitectReport.
         """
-        success, data = ArchitectReportService.change_architect_report_status(
-            request, pk
-        )
+        success, data = ArchitectReportService.change_architect_report_status(request, pk)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True)
@@ -105,6 +97,4 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
         This method processes the decision for the provided report IDs.
         """
         success, message = ArchitectReportService.execute_decision(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

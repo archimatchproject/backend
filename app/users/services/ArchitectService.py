@@ -32,9 +32,7 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
-from app.users.serializers.ArchitectSerializer import (
-    ArchitectUpdatePreferencesSerializer,
-)
+from app.users.serializers.ArchitectSerializer import ArchitectUpdatePreferencesSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -158,9 +156,7 @@ class ArchitectService:
         architect.bio = validated_data.get("bio")
         architect.company_name = validated_data.get("company_name")
         architect.address = validated_data.get("address")
-        architect.presentation_video = serializer.validated_data.get(
-            "presentation_video", architect.presentation_video
-        )
+        architect.presentation_video = serializer.validated_data.get("presentation_video", architect.presentation_video)
         architect.save()
 
         return True, "Architect successfully updated"

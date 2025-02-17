@@ -5,6 +5,7 @@ This module contains the FAQQuestionViewSet class, which provides
 view-level logic for the FAQQuestion model, including creation and update operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,7 +15,7 @@ from app.cms.serializers.FAQQuestionSerializer import FAQQuestionSerializer
 from app.cms.services.FAQQuestionService import FAQQuestionService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class FAQQuestionViewSet(viewsets.ModelViewSet):
     """
@@ -57,9 +58,8 @@ class FAQQuestionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        success,data = FAQQuestionService.create_faq_question(request)
+        success, data = FAQQuestionService.create_faq_question(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -75,5 +75,5 @@ class FAQQuestionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the updated instance data.
         """
-        success,data = FAQQuestionService.update_faq_question(self.get_object(), request)
+        success, data = FAQQuestionService.update_faq_question(self.get_object(), request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

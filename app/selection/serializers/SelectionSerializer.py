@@ -6,21 +6,21 @@ Classes:
     SelectionSerializer: Serializes the Selection model and enforces validation rules.
 """
 
+from django.utils.timezone import now
+
 from rest_framework import serializers
+
+from app.announcement.models import Announcement
+from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
+from app.selection import QUOTE_ACCEPTED
+from app.selection import QUOTE_PENDING
+from app.selection import QUOTE_REFUSED
+from app.selection import SELECTION_STATUS_CHOICES
 from app.selection.models.Selection import Selection
 from app.selection.serializers.PhaseSerializer import PhaseSerializer
 from app.selection.serializers.QuoteSerializer import QuoteSerializer
 from app.users.models import Architect
-from app.announcement.models import Announcement
-from app.announcement.serializers.AnnouncementSerializer import AnnouncementSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
-from app.selection import (
-    SELECTION_STATUS_CHOICES,
-    QUOTE_ACCEPTED,
-    QUOTE_REFUSED,
-    QUOTE_PENDING,
-)
-from django.utils.timezone import now
 
 
 class SelectionSerializer(serializers.ModelSerializer):
@@ -45,6 +45,28 @@ class SelectionSerializer(serializers.ModelSerializer):
     admin_management_reached = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class for the SelectionSerializer.
+        Attributes:
+            model (Model): The model that is being serialized.
+            fields (list): A list of fields to be included in the serialization.
+                - id (int): The unique identifier for the selection.
+                - announcement (str): The announcement related to the selection.
+                - architect (str): The architect associated with the selection.
+                - phase (str): The current phase of the selection.
+                - status (str): The status of the selection.
+                - quotes (list): A list of quotes related to the selection.
+                - is_last_quote_accepted (bool): Indicates if the last quote was accepted.
+                - is_last_quote_refused (bool): Indicates if the last quote was refused.
+                - name (str): The name of the selection.
+                - last_pending_quote (str): The last pending quote for the selection.
+                - is_client_interested (bool): Indicates if the client is interested.
+                - days_remaining (int): The number of days remaining for the selection.
+                - admin_management_reached (bool): Indicates if admin management has been reached.
+                - is_blocked (bool): Indicates if the selection is blocked.
+                - is_abandoned (bool): Indicates if the selection is abandoned.
+        """
+
         model = Selection
         fields = [
             "id",
@@ -100,9 +122,7 @@ class SelectionSerializer(serializers.ModelSerializer):
         Returns:
             dict: Serialized data of the last 'pending' quote, or None if no pending quote exists.
         """
-        last_pending_quote = (
-            obj.quotes.filter(status=QUOTE_PENDING).order_by("-created_at").first()
-        )
+        last_pending_quote = obj.quotes.filter(status=QUOTE_PENDING).order_by("-created_at").first()
         return QuoteSerializer(last_pending_quote).data if last_pending_quote else None
 
     def get_days_remaining(self, obj):
@@ -160,9 +180,7 @@ class SelectionSerializer(serializers.ModelSerializer):
         # Remove the last pending quote from the quotes list if it exists
         if last_pending_quote:
             representation["quotes"] = [
-                quote
-                for quote in representation["quotes"]
-                if quote["id"] != last_pending_quote["id"]
+                quote for quote in representation["quotes"] if quote["id"] != last_pending_quote["id"]
             ]
 
         return representation
@@ -178,14 +196,17 @@ class SelectionPostSerializer(serializers.ModelSerializer):
         status: The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
-    announcement = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), write_only=True
-    )
-    architect = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), write_only=True, required=False
-    )
+    announcement = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), write_only=True)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), write_only=True, required=False)
 
     class Meta:
+        """
+        Meta class for the SelectionSerializer.
+        Attributes:
+            model (type): The model that is being serialized.
+            fields (list): A list of fields to be included in the serialization.
+        """
+
         model = Selection
         fields = ["announcement", "architect"]
 
@@ -200,16 +221,17 @@ class SelectionPutSerializer(serializers.ModelSerializer):
         status: The status of the selection (e.g., 'Interested', 'Accepted', 'Rejected').
     """
 
-    announcement = serializers.PrimaryKeyRelatedField(
-        queryset=Announcement.objects.all(), write_only=True
-    )
-    architect = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), write_only=True, required=False
-    )
-    status = serializers.ChoiceField(
-        choices=SELECTION_STATUS_CHOICES, default="interested"
-    )
+    announcement = serializers.PrimaryKeyRelatedField(queryset=Announcement.objects.all(), write_only=True)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), write_only=True, required=False)
+    status = serializers.ChoiceField(choices=SELECTION_STATUS_CHOICES, default="interested")
 
     class Meta:
+        """
+        Meta class for the SelectionSerializer.
+        Attributes:
+            model (django.db.models.Model): The model that is being serialized.
+            fields (list): A list of fields to be included in the serialized output.
+        """
+
         model = Selection
         fields = ["announcement_id", "architect_id", "status"]

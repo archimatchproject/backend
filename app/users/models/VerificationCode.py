@@ -17,10 +17,12 @@ Functions:
     any existing one.
 """
 
+import random
+
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
-import random
 
 from app.core.models import BaseModel
 
@@ -35,9 +37,7 @@ class VerificationCode(BaseModel):
         created_at (DateTimeField): Timestamp when the code was created.
     """
 
-    user = models.OneToOneField(
-        "ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code"
-    )
+    user = models.OneToOneField("ArchimatchUser", on_delete=models.CASCADE, related_name="verification_code")
     code = models.CharField(max_length=4)
 
     def is_expired(self):
@@ -59,4 +59,11 @@ class VerificationCode(BaseModel):
         return cls.objects.create(user=user, code=cls.generate_code())
 
     def __str__(self):
+        """
+        Returns a string representation of the VerificationCode instance.
+        The string includes the user's email and the verification code.
+        Returns:
+            str: A formatted string containing the user's email and the verification code.
+        """
+
         return f"Verification Code for {self.user.email}: {self.code}"

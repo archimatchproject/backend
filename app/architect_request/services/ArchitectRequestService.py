@@ -8,37 +8,32 @@ Classes:
     ArchitectRequestService: Service class for ArchitectRequest operations.
 """
 
+from datetime import datetime
+
 from django.db import transaction
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import get_language_from_request
 
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.announcement import ACCEPTED, REFUSED
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
+from app.announcement import ACCEPTED
+from app.announcement import REFUSED
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
-from app.architect_request import AWAITING_DECISION, AWAITING_DEMO, TIME_SLOT_CHOICES
+from app.architect_request import AWAITING_DECISION
+from app.architect_request import AWAITING_DEMO
+from app.architect_request import TIME_SLOT_CHOICES
 from app.architect_request.filters.ArchitectRequestFilter import ArchitectRequestFilter
 from app.architect_request.models.ArchitectRequest import ArchitectRequest
-from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import (
-    ArchitectRequestRescheduleSerializer,
-)
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectAcceptSerializer,
-)
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectRequestInputSerializer,
-)
-from app.architect_request.serializers.ArchitectRequestSerializer import (
-    ArchitectRequestSerializer,
-)
+from app.architect_request.serializers.ArchitectRequestRescheduleSerializer import ArchitectRequestRescheduleSerializer
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectAcceptSerializer
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestInputSerializer
+from app.architect_request.serializers.ArchitectRequestSerializer import ArchitectRequestSerializer
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.Note import Note
@@ -56,10 +51,6 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 from app.users.utils import generate_password_reset_token
 from project_core.django import base as settings
-from django.utils import timezone
-from django.db.models import Q
-
-from datetime import datetime
 
 
 class ArchitectRequestService:
@@ -89,9 +80,7 @@ class ArchitectRequestService:
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             architect_speciality_id = data.get("architect_speciality")
-            architect_speciality = ArchitectSpeciality.objects.get(
-                pk=architect_speciality_id
-            )
+            architect_speciality = ArchitectSpeciality.objects.get(pk=architect_speciality_id)
 
             field_names = [
                 "first_name",
@@ -148,18 +137,12 @@ class ArchitectRequestService:
         architect_request = ArchitectRequest.objects.get(pk=architect_request_id)
 
         # Calculate the scheduled datetime for the architect request
-        meeting_naive_datetime = datetime.combine(
-            architect_request.date, architect_request.time_slot
-        )
-        meeting_aware_datetime = timezone.make_aware(
-            meeting_naive_datetime, timezone.get_current_timezone()
-        )
+        meeting_naive_datetime = datetime.combine(architect_request.date, architect_request.time_slot)
+        meeting_aware_datetime = timezone.make_aware(meeting_naive_datetime, timezone.get_current_timezone())
 
         # Check if the current time is before the scheduled date and time
         if timezone.now() < meeting_aware_datetime:
-            raise serializers.ValidationError(
-                "You cannot accept this request before the scheduled date and time."
-            )
+            raise serializers.ValidationError("You cannot accept this request before the scheduled date and time.")
 
         serializer = ArchitectAcceptSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -175,9 +158,7 @@ class ArchitectRequestService:
 
         with transaction.atomic():
             if ArchimatchUser.objects.filter(email=architect_request.email).exists():
-                raise serializers.ValidationError(
-                    "An account with this email already exists."
-                )
+                raise serializers.ValidationError("An account with this email already exists.")
             user = ArchimatchUser.objects.create(**user_data)
             user.save()
 
@@ -321,9 +302,9 @@ class ArchitectRequestService:
             Response: A paginated response containing ArchitectRequest objects or an error message.
         """
         cls.update_request_statuses()
-        queryset = ArchitectRequest.objects.filter(
-            status__in=[AWAITING_DEMO, AWAITING_DECISION]
-        ).order_by("date", "time_slot")
+        queryset = ArchitectRequest.objects.filter(status__in=[AWAITING_DEMO, AWAITING_DECISION]).order_by(
+            "date", "time_slot"
+        )
 
         filtered_queryset = ArchitectRequestFilter(request.GET, queryset=queryset).qs
 
@@ -448,10 +429,7 @@ class ArchitectRequestService:
         Returns:
             Response: A Response object containing the list of time slots.
         """
-        time_slots = [
-            {"time": slot[0].strftime("%H:%M"), "label": slot[1]}
-            for slot in TIME_SLOT_CHOICES
-        ]
+        time_slots = [{"time": slot[0].strftime("%H:%M"), "label": slot[1]} for slot in TIME_SLOT_CHOICES]
         return True, time_slots
 
     @classmethod
@@ -463,8 +441,7 @@ class ArchitectRequestService:
             Response: A Response object containing the list of time slots.
         """
         project_complexities = [
-            {"value": complexity[0], "label": complexity[1]}
-            for complexity in PROJECT_COMPLEXITY_CHOICES
+            {"value": complexity[0], "label": complexity[1]} for complexity in PROJECT_COMPLEXITY_CHOICES
         ]
         return True, project_complexities
 
@@ -477,8 +454,7 @@ class ArchitectRequestService:
             Response: A Response object containing the list of years of experience.
         """
         years_experience = [
-            {"value": year_experience[0], "label": year_experience[1]}
-            for year_experience in YEARS_EXPERIENCE_CHOICES
+            {"value": year_experience[0], "label": year_experience[1]} for year_experience in YEARS_EXPERIENCE_CHOICES
         ]
         return True, years_experience
 

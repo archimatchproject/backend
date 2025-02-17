@@ -22,17 +22,13 @@ from app.core.pagination import CustomPagination
 from app.moderation import STATUS_CHOICES
 from app.moderation.models.Decision import Decision
 from app.moderation.models.Reason import Reason
-from app.moderation.serializers.ArchitectReportSerializer import (
-    ArchitectReportSerializer,
-)
+from app.moderation.models.SelectionReport import SelectionReport
+from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
 from app.moderation.serializers.DecisionSerializer import DecisionSerializer
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
+from app.moderation.serializers.SelectionReportSerializer import SelectionReportSerializer
 from app.moderation.services.ReportAction import SELECTION_DECISION_ACTION_MAP
 from app.users.models.Client import Client
-from app.moderation.serializers.SelectionReportSerializer import (
-    SelectionReportSerializer,
-)
-from app.moderation.models.SelectionReport import SelectionReport
 
 
 class SelectionReportService:
@@ -81,9 +77,7 @@ class SelectionReportService:
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
-                    {
-                        "detail": "A report for this architect by this client already exists."
-                    }
+                    {"detail": "A report for this architect by this client already exists."}
                 )
             raise APIException(detail=f"Error creating architect report: {str(e)}")
         except Client.DoesNotExist:
@@ -118,9 +112,7 @@ class SelectionReportService:
             if page is not None:
                 serializer = SelectionReportSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)
-            return Response(
-                {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             raise APIException(f"Error retrieving selection reports: {str(e)}")
 
@@ -189,9 +181,7 @@ class SelectionReportService:
         user = request.user
         print("aaaaaaaaaaaaaaaaaaaaaa", report_ids, decision_id)
         if not report_ids or not decision_id:
-            raise serializers.ValidationError(
-                detail="Report IDs and Decision ID are required."
-            )
+            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
         action = SELECTION_DECISION_ACTION_MAP.get(decision_id)
         if not action:
             raise serializers.ValidationError("No valid action found for the decision.")

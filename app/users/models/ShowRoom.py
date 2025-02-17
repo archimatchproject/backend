@@ -6,6 +6,7 @@ This module defines the ShowRoom model, representing a ShowRoom in the Archimatc
 Classes:
     ShowRoom: Model representing a ShowRoom.
 """
+
 from django.db import models
 
 
@@ -18,6 +19,7 @@ class ShowRoom(models.Model):
         phone_number (CharField): The phone number of the showroom.
         supplier (ForeignKey): The supplier to whom the showroom belongs.
     """
+
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
     supplier = models.ForeignKey("users.Supplier", related_name="showrooms", on_delete=models.CASCADE)
@@ -39,5 +41,6 @@ class ShowRoom(models.Model):
             verbose_name (str): Singular name for the model used in the Django admin interface.
             verbose_name_plural (str): Plural name for the model used in the Django admin interface.
         """
+
         verbose_name = "Showroom"
         verbose_name_plural = "Showrooms"

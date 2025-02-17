@@ -6,6 +6,7 @@ which handles the serialization and deserialization of CGU/CGV policy data.
 """
 
 from rest_framework import serializers
+
 from app.cms.models.CGUCGVPolicy import CGUCGVPolicy
 
 

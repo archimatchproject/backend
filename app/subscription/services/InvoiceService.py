@@ -16,17 +16,15 @@ from rest_framework.response import Response
 from app.core.pagination import CustomPagination
 from app.email_templates.utils import render_to_pdf
 from app.subscription.models.ArchitectInvoice import ArchitectInvoice
+from app.subscription.models.OfficeInvoice import OfficeInvoice
 from app.subscription.models.SupplierInvoice import SupplierInvoice
-from app.subscription.serializers.InvoiceSerializer import (
-    ArchitectInvoiceSerializer,
-    OfficeInvoiceSerializer,
-    SupplierInvoiceSerializer,
-)
+from app.subscription.serializers.InvoiceSerializer import ArchitectInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import OfficeInvoiceSerializer
+from app.subscription.serializers.InvoiceSerializer import SupplierInvoiceSerializer
 from app.users.models.Architect import Architect
+from app.users.models.Office import Office
 from app.users.models.Supplier import Supplier
 from project_core.django import base as settings
-from app.subscription.models.OfficeInvoice import OfficeInvoice
-from app.users.models.Office import Office
 
 
 class InvoiceService:
