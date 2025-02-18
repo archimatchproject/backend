@@ -46,7 +46,8 @@ LOCAL_APPS = [
     "app.catalogue",
     "app.moderation",
     "app.messaging",
-    "app.selection"
+    "app.selection",
+    "app.officeOffer",
 ]
 
 
@@ -178,12 +179,7 @@ USE_TZ = True
 USE_I18N = True
 
 
-
-
-
 """
 Default primary key field type configuration.
 """
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
