@@ -40,6 +40,13 @@ class OfferPOSTSerializer(serializers.ModelSerializer):
         queryset=SoftwareSkill.objects.all(), many=True, required=False)
 
     class Meta:
+        """
+        Meta class for OfferPOSTSerializer.
+
+        Defines the model to be serialized (`Offer`) and the fields that should be included
+        in the serialized data. Fields include relationships (ForeignKeys and ManyToManyFields)
+        as well as additional attributes like the offer title, contract type, and description.
+        """
         model = Offer
         fields = [
             'office', 'architect_speciality', 'offer_title', 'contract_type', 
@@ -77,6 +84,13 @@ class OfferPUTSerializer(serializers.ModelSerializer):
         queryset=SoftwareSkill.objects.all(), many=True, required=False)
 
     class Meta:
+        """
+        Meta class for OfferPUTSerializer.
+
+        Defines the model to be serialized (`Offer`) and the fields that should be included
+        in the serialized data. This serializer is used for PUT requests to update existing
+        Offer instances.
+        """
         model = Offer
         fields = [
             'office', 'architect_speciality', 'offer_title', 'contract_type', 
@@ -85,7 +99,7 @@ class OfferPUTSerializer(serializers.ModelSerializer):
             'offer_description', 'searched_profile', 'technical_skills', 
             'software_skills', 'experience_required'
         ]
-    
+
     def validate_experience_required(self, value):
         """
         Custom validation for the 'experience_required' field.
@@ -94,7 +108,7 @@ class OfferPUTSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid experience required value.")
         return value
 
-    
+
 class OfferOutputSerializer(serializers.ModelSerializer):
     """
     Serializer for retrieving Offer instances.
@@ -110,6 +124,13 @@ class OfferOutputSerializer(serializers.ModelSerializer):
     software_skills = SoftwareSkillSerializer(many=True)
 
     class Meta:
+        """
+        Meta class for OfferOutputSerializer.
+
+        Defines the model to be serialized (`Offer`) and the fields that should be included
+        in the output data. This serializer is used for retrieving and displaying Offer
+        instances, including related data such as office, architectural styles, and skills.
+        """
         model = Offer
         fields = [
             'id', 'office', 'architect_speciality', 'offer_title', 'contract_type', 
@@ -118,4 +139,3 @@ class OfferOutputSerializer(serializers.ModelSerializer):
             'offer_description', 'searched_profile', 'technical_skills', 
             'software_skills', 'experience_required'
         ]
-

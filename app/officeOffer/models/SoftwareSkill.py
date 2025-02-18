@@ -13,7 +13,6 @@ class SoftwareSkill(models.Model):
     Model representing software skills of architects.
     """
 
-    # Champ pour le nom de la compétence logicielle
     label = models.CharField(max_length=100, unique=True)
 
     class Meta:

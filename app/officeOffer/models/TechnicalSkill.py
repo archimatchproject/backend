@@ -13,7 +13,6 @@ class TechnicalSkill(models.Model):
     Model representing technical skills of architects.
     """
 
-    # Champ pour le nom de la compétence technique
     label = models.CharField(max_length=100, unique=True)
 
     class Meta:
