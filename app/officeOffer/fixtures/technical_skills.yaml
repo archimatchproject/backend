@@ -1,0 +1,30 @@
+# Technical Skills
+- model: officeOffer.technicalskill
+  pk: 1
+  fields:
+    label: "AutoCAD"
+
+- model: officeOffer.technicalskill
+  pk: 2
+  fields:
+    label: "Revit"
+
+- model: officeOffer.technicalskill
+  pk: 3
+  fields:
+    label: "SketchUp"
+
+- model: officeOffer.technicalskill
+  pk: 4
+  fields:
+    label: "3ds Max"
+
+- model: officeOffer.technicalskill
+  pk: 5
+  fields:
+    label: "Archicad"
+
+- model: officeOffer.technicalskill
+  pk: 6
+  fields:
+    label: "Rhino"

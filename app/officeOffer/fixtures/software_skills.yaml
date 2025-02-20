@@ -1,0 +1,30 @@
+# Software Skills
+- model: officeOffer.softwareskill
+  pk: 1
+  fields:
+    label: "Photoshop"
+
+- model: officeOffer.softwareskill
+  pk: 2
+  fields:
+    label: "Illustrator"
+
+- model: officeOffer.softwareskill
+  pk: 3
+  fields:
+    label: "InDesign"
+
+- model: officeOffer.softwareskill
+  pk: 4
+  fields:
+    label: "Lumion"
+
+- model: officeOffer.softwareskill
+  pk: 5
+  fields:
+    label: "V-Ray"
+
+- model: officeOffer.softwareskill
+  pk: 6
+  fields:
+    label: "Blender"

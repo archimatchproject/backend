@@ -48,6 +48,7 @@ LOCAL_APPS = [
     "app.moderation",
     "app.messaging",
     "app.selection",
+    "app.officeOffer",
     "app.recommendation",
 ]
 
