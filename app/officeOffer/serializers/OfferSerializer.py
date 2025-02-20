@@ -1,24 +1,25 @@
 """
 Module defining the serializer for the Offer model.
 
-This module contains the OfferSerializer class, which serializes the data 
+This module contains the OfferSerializer class, which serializes the data
 for creating or updating a job offer in the application.
 """
 
 from rest_framework import serializers
-from app.officeOffer.models import Offer
-from app.users.models.Office import Office
-from app.core.models.ArchitectSpeciality import ArchitectSpeciality
-from app.core.models.ProjectCategory import ProjectCategory
-from app.core.models.ArchitecturalStyle import ArchitecturalStyle
-from app.officeOffer.models.TechnicalSkill import TechnicalSkill
-from app.officeOffer.models.SoftwareSkill import SoftwareSkill
-from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
-from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
+
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.core.models.ArchitectSpeciality import ArchitectSpeciality
+from app.core.models.ArchitecturalStyle import ArchitecturalStyle
+from app.core.models.ProjectCategory import ProjectCategory
 from app.officeOffer import EXPERIENCE_CHOICES
+from app.officeOffer.models import Offer
+from app.officeOffer.models.SoftwareSkill import SoftwareSkill
+from app.officeOffer.models.TechnicalSkill import TechnicalSkill
+from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
+from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.users.models.Office import Office
 
 
 class OfferPOSTSerializer(serializers.ModelSerializer):
@@ -29,13 +30,9 @@ class OfferPOSTSerializer(serializers.ModelSerializer):
     including validation and nested relations for creating or updating an offer.
     """
 
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False
-    )
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all(), required=False)
     technical_skills = serializers.PrimaryKeyRelatedField(
         queryset=TechnicalSkill.objects.all(), many=True, required=False
     )
@@ -88,13 +85,9 @@ class OfferPUTSerializer(serializers.ModelSerializer):
     """
 
     office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all())
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False
-    )
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all(), required=False)
     technical_skills = serializers.PrimaryKeyRelatedField(
         queryset=TechnicalSkill.objects.all(), many=True, required=False
     )

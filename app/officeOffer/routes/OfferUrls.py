@@ -3,9 +3,10 @@ exposed URLS for offer app
 viewset : OfferViewSet
 """
 
-
 from django.urls import path
+
 from app.officeOffer.controllers.OfferViewSet import OfferViewSet
+
 
 offer_urlpatterns = [
     path(
