@@ -18,26 +18,30 @@ from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSer
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.officeOffer import EXPERIENCE_CHOICES
 
 
 class OfferPOSTSerializer(serializers.ModelSerializer):
     """
     Serializer for the Offer model.
 
-    This class defines the structure for serializing the Offer model data, 
+    This class defines the structure for serializing the Offer model data,
     including validation and nested relations for creating or updating an offer.
     """
 
-    office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all())
     architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all())
+        queryset=ArchitectSpeciality.objects.all()
+    )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False)
+        queryset=ArchitecturalStyle.objects.all(), required=False
+    )
     technical_skills = serializers.PrimaryKeyRelatedField(
-        queryset=TechnicalSkill.objects.all(), many=True, required=False)
+        queryset=TechnicalSkill.objects.all(), many=True, required=False
+    )
     software_skills = serializers.PrimaryKeyRelatedField(
-        queryset=SoftwareSkill.objects.all(), many=True, required=False)
+        queryset=SoftwareSkill.objects.all(), many=True, required=False
+    )
 
     class Meta:
         """
@@ -47,20 +51,31 @@ class OfferPOSTSerializer(serializers.ModelSerializer):
         in the serialized data. Fields include relationships (ForeignKeys and ManyToManyFields)
         as well as additional attributes like the offer title, contract type, and description.
         """
+
         model = Offer
         fields = [
-            'office', 'architect_speciality', 'offer_title', 'contract_type', 
-            'contract_duration', 'work_location', 'start_date', 'salary_range', 
-            'project_category', 'architectural_style', 'office_description', 
-            'offer_description', 'searched_profile', 'technical_skills', 
-            'software_skills', 'experience_required'
+            "architect_speciality",
+            "offer_title",
+            "contract_type",
+            "contract_duration",
+            "work_location",
+            "start_date",
+            "salary_range",
+            "project_category",
+            "architectural_style",
+            "office_description",
+            "offer_description",
+            "searched_profile",
+            "technical_skills",
+            "software_skills",
+            "experience_required",
         ]
 
     def validate_experience_required(self, value):
         """
         Custom validation for the 'experience_required' field.
         """
-        if value and value not in dict(Offer.EXPERIENCE_CHOICES).keys():
+        if value and value not in dict(EXPERIENCE_CHOICES).keys():
             raise serializers.ValidationError("Invalid experience required value.")
         return value
 
@@ -74,14 +89,18 @@ class OfferPUTSerializer(serializers.ModelSerializer):
 
     office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all())
     architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all())
+        queryset=ArchitectSpeciality.objects.all()
+    )
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False)
+        queryset=ArchitecturalStyle.objects.all(), required=False
+    )
     technical_skills = serializers.PrimaryKeyRelatedField(
-        queryset=TechnicalSkill.objects.all(), many=True, required=False)
+        queryset=TechnicalSkill.objects.all(), many=True, required=False
+    )
     software_skills = serializers.PrimaryKeyRelatedField(
-        queryset=SoftwareSkill.objects.all(), many=True, required=False)
+        queryset=SoftwareSkill.objects.all(), many=True, required=False
+    )
 
     class Meta:
         """
@@ -91,20 +110,31 @@ class OfferPUTSerializer(serializers.ModelSerializer):
         in the serialized data. This serializer is used for PUT requests to update existing
         Offer instances.
         """
+
         model = Offer
         fields = [
-            'office', 'architect_speciality', 'offer_title', 'contract_type', 
-            'contract_duration', 'work_location', 'start_date', 'salary_range', 
-            'project_category', 'architectural_style', 'office_description', 
-            'offer_description', 'searched_profile', 'technical_skills', 
-            'software_skills', 'experience_required'
+            "architect_speciality",
+            "offer_title",
+            "contract_type",
+            "contract_duration",
+            "work_location",
+            "start_date",
+            "salary_range",
+            "project_category",
+            "architectural_style",
+            "office_description",
+            "offer_description",
+            "searched_profile",
+            "technical_skills",
+            "software_skills",
+            "experience_required",
         ]
 
     def validate_experience_required(self, value):
         """
         Custom validation for the 'experience_required' field.
         """
-        if value and value not in dict(Offer.EXPERIENCE_CHOICES).keys():
+        if value and value not in dict(EXPERIENCE_CHOICES).keys():
             raise serializers.ValidationError("Invalid experience required value.")
         return value
 
@@ -116,7 +146,6 @@ class OfferOutputSerializer(serializers.ModelSerializer):
     This serializer transforms the Offer instance data into a readable format for the client.
     """
 
-    office = serializers.StringRelatedField()
     architect_speciality = ArchitectSpecialitySerializer()
     architectural_style = ArchitecturalStyleSerializer()
     project_category = ProjectCategorySerializer()
@@ -131,11 +160,24 @@ class OfferOutputSerializer(serializers.ModelSerializer):
         in the output data. This serializer is used for retrieving and displaying Offer
         instances, including related data such as office, architectural styles, and skills.
         """
+
         model = Offer
         fields = [
-            'id', 'office', 'architect_speciality', 'offer_title', 'contract_type', 
-            'contract_duration', 'work_location', 'start_date', 'salary_range', 
-            'project_category', 'architectural_style', 'office_description', 
-            'offer_description', 'searched_profile', 'technical_skills', 
-            'software_skills', 'experience_required'
+            "id",
+            "office",
+            "architect_speciality",
+            "offer_title",
+            "contract_type",
+            "contract_duration",
+            "work_location",
+            "start_date",
+            "salary_range",
+            "project_category",
+            "architectural_style",
+            "office_description",
+            "offer_description",
+            "searched_profile",
+            "technical_skills",
+            "software_skills",
+            "experience_required",
         ]

@@ -53,4 +53,14 @@ offer_urlpatterns = [
         OfferViewSet.as_view({"get": "get_experience_levels"}),
         name="experience-levels",
     ),
+    path(
+        "technical-skills/",
+        OfferViewSet.as_view({"get": "get_technical_skills"}),
+        name="technical-skills",
+    ),
+    path(
+        "software-skills/",
+        OfferViewSet.as_view({"get": "get_software_skills"}),
+        name="software-skills",
+    ),
 ]

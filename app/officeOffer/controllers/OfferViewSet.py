@@ -8,6 +8,8 @@ from app.officeOffer.serializers import (
 from app.officeOffer.services.OfferService import OfferService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
+from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
 
 
 class OfferViewSet(viewsets.ModelViewSet):
@@ -18,7 +20,22 @@ class OfferViewSet(viewsets.ModelViewSet):
     """
     queryset = Offer.objects.all()
     serializer_class = OfferOutputSerializer
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Apply different permissions based on the action being executed.
+        Returns:
+            list: The list of permission classes.
+        """
+        if self.action in [
+            "update_offer",
+            "list_offers",
+            "offer_details",
+        ]:
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = []
+        return super().get_permissions()
 
     def get_queryset(self):
         """
@@ -111,4 +128,48 @@ class OfferViewSet(viewsets.ModelViewSet):
         Retrieve predefined experience levels.
         """
         success, data = OfferService.get_experience_levels()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="technical-skills",
+        url_name="technical-skills",
+        serializer_class=TechnicalSkillSerializer,
+    )
+    @handle_service_exceptions
+    def get_technical_skills(self, request):
+        """
+        Retrieves all technical skills.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of technical skills.
+        """
+        success, data = OfferService.get_technical_skills()
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="software-skills",
+        url_name="software-skills",
+        serializer_class=SoftwareSkillSerializer,
+    )
+    @handle_service_exceptions
+    def get_software_skills(self, request):
+        """
+        Retrieves all software skills.
+
+        Args:
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing list of software skills.
+        """
+        success, data = OfferService.get_software_skills()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

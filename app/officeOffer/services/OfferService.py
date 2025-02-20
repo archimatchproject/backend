@@ -13,8 +13,13 @@ from app.users.models.Office import Office
 from app.officeOffer.serializers.OfferSerializer import OfferPUTSerializer
 from rest_framework import serializers
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from app.core.pagination import CustomPagination
+from app.officeOffer.models.TechnicalSkill import TechnicalSkill
+from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.officeOffer.models.SoftwareSkill import SoftwareSkill
+from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
 
 
 class OfferService:
@@ -30,7 +35,15 @@ class OfferService:
         Create a new job offer.
         """
         data = request.data
-        user = request.user
+        email = data.pop("email")
+        if not Office.objects.filter(user__email=email).exists():
+            raise NotFound(detail="Office not found.", code=status.HTTP_404_NOT_FOUND)
+
+        office = Office.objects.get(user__email=email)
+
+        # Update user data
+        user = office.user
+        print(user)
 
         serializer = OfferPOSTSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -44,14 +57,14 @@ class OfferService:
                         detail="You must be a valid office to create an offer"
                     )
         office_instance = Office.objects.get(user=user)
-        
+
         with transaction.atomic():
             offer = Offer.objects.create(office=office_instance, **validated_data)
             offer.technical_skills.set(technical_skills_data)
             offer.software_skills.set(software_skills_data)
 
         return True, OfferOutputSerializer(offer).data, "Offer created successfully"
-    
+
     @classmethod
     def update_offer(cls, instance, data):
         """
@@ -81,7 +94,7 @@ class OfferService:
             instance.save()
 
         return True, OfferOutputSerializer(instance).data, "Offer updated successfully"
-    
+
     @classmethod
     def get_offers(cls, request):
         """
@@ -106,7 +119,7 @@ class OfferService:
 
         serializer = OfferOutputSerializer(queryset, many=True)
         return Response({"message": "Error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @classmethod
     def get_offer_details(cls, request, pk):
         """
@@ -120,10 +133,10 @@ class OfferService:
             tuple: (bool, dict) containing success status and offer details.
         """
         offer = Offer.objects.get(pk=pk)
-        
+
         serializer = OfferOutputSerializer(offer, many=False, context={'request': request})
         return True, serializer.data
-    
+
     @classmethod
     def get_contract_types(cls):
         """
@@ -179,3 +192,27 @@ class OfferService:
         experience_levels = [
             {"value": exp[0], "display_name": exp[1]} for exp in EXPERIENCE_CHOICES]
         return True, experience_levels
+
+    @classmethod
+    def get_technical_skills(cls):
+        """
+        Retrieves all technical skills.
+
+        Returns:
+            tuple: Success flag and serialized technical skills data.
+        """
+        technical_skills = TechnicalSkill.objects.all()
+        serializer = TechnicalSkillSerializer(technical_skills, many=True)
+        return True, serializer.data
+
+    @classmethod
+    def get_software_skills(cls):
+        """
+        Retrieves all software skills.
+
+        Returns:
+            tuple: Success flag and serialized software skills data.
+        """
+        software_skills = SoftwareSkill.objects.all()
+        serializer = SoftwareSkillSerializer(software_skills, many=True)
+        return True, serializer.data
