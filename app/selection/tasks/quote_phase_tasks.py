@@ -14,15 +14,16 @@ Functions:
 
 """
 
-from app.selection import QUOTES
+from collections import namedtuple
+
 from background_task import background
 
-
 from app.email_templates.utils import schedule_email_trigger
+from app.selection import QUOTES
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
 from app.selection.utils import send_reminder_discussion_email
-from collections import namedtuple
+
 
 EmailTriggerParams = namedtuple(
     "EmailTriggerParams",

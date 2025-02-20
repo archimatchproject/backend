@@ -1,13 +1,27 @@
-from rest_framework import viewsets, status
+"""
+Attributes:
+    queryset (QuerySet): The queryset of UnlockRequest objects.
+    serializer_class (Serializer): The serializer class for UnlockRequest objects.
+Methods:
+    list(request):
+    create(request):
+    accept(request, pk=None):
+    refuse(request, pk=None):
+
+Returns:_summary_
+    _type_: _description_
+"""
+
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
+
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
 from app.selection.models.UnlockRequest import UnlockRequest
-from app.selection.services.UnlockRequestService import UnlockRequestService
+from app.selection.serializers.UnlockRequestSerializer import UnlockRequestPostSerializer
 from app.selection.serializers.UnlockRequestSerializer import UnlockRequestSerializer
-from app.selection.serializers.UnlockRequestSerializer import (
-    UnlockRequestPostSerializer,
-)
+from app.selection.services.UnlockRequestService import UnlockRequestService
 
 
 class UnlockRequestViewSet(viewsets.ModelViewSet):
@@ -54,13 +68,9 @@ class UnlockRequestViewSet(viewsets.ModelViewSet):
         selection_id = serializer.validated_data.get("selection")
         message = serializer.validated_data.get("message")
 
-        success, message = UnlockRequestService.create_unlock_request(
-            selection_id, message
-        )
+        success, message = UnlockRequestService.create_unlock_request(selection_id, message)
 
-        return build_response(
-            success=success, message=message, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, message=message, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])
     @handle_service_exceptions

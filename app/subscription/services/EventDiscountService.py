@@ -9,6 +9,7 @@ Classes:
 """
 
 from django.utils import timezone
+
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -23,6 +24,7 @@ class EventDiscountService:
 
     Handles business logic and exception handling for EventDiscount creation and management.
     """
+
     pagination_class = CustomPagination
 
     @classmethod

@@ -20,6 +20,5 @@ device_urlpatterns = [
         "fcm-devices/destroy/<int:pk>/",
         CustomFCMDeviceViewSet.as_view({"delete": "destroy"}),
         name="message-create",
-    )
-    
+    ),
 ]

@@ -77,11 +77,7 @@ class Admin(BaseModel):
                         permissions_to_add.add(permission)
                     except Permission.DoesNotExist:
                         raise serializers.ValidationError(
-                            {
-                                "permissions": [
-                                    f"Permission with codename '{codename}' does not exist."
-                                ]
-                            }
+                            {"permissions": [f"Permission with codename '{codename}' does not exist."]}
                         )
             else:
                 raise serializers.ValidationError({"rights": [f"Right '{right}' is not valid."]})

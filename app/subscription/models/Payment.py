@@ -23,9 +23,7 @@ class Payment(BaseModel):
     Define the Payment model with fields and relationships for handling payments.
     """
 
-    admin_responsable = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    admin_responsable = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     payment_method = models.CharField(
         max_length=20,
         choices=PAYMENT_METHOD_CHOICES,
@@ -40,8 +38,21 @@ class Payment(BaseModel):
     notes = GenericRelation(Note)
 
     def __str__(self):
+        """
+        Returns a string representation of the Payment instance.
+        Returns:
+            str: The status of the payment.
+        """
+
         return f"{self.status}"
 
     class Meta:
+        """
+        Meta class for Payment model.
+        Attributes:
+            verbose_name (str): Human-readable name for the model in singular form.
+            verbose_name_plural (str): Human-readable name for the model in plural form.
+        """
+
         verbose_name = "Payment"
         verbose_name_plural = "Payments"

@@ -74,9 +74,7 @@ class ProjectReportService:
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
-                    {
-                        "detail": "A report for this project by this architect already exists."
-                    }
+                    {"detail": "A report for this project by this architect already exists."}
                 )
             raise APIException(detail=f"Error creating project report: {str(e)}")
         except Architect.DoesNotExist:
@@ -151,9 +149,7 @@ class ProjectReportService:
         user = request.user
 
         if not report_ids or not decision_id:
-            raise serializers.ValidationError(
-                detail="Report IDs and Decision ID are required."
-            )
+            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
 
         action = PROJECT_DECISION_ACTION_MAP.get(decision_id)
         if not action:

@@ -2,17 +2,17 @@
 ViewSet module for the Payment model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.subscription.controllers.ManagePaymentPermission import ManagePaymentPermission
 from app.subscription.models.Payment import Payment
 from app.subscription.serializers.PaymentSerializer import PaymentSerializer
 from app.subscription.services.PaymentService import PaymentService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
@@ -48,7 +48,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         """
         success, data = PaymentService.create_architect_payment(request, request.data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-        return 
+        return
 
     @action(detail=False, methods=["GET"])
     @handle_service_exceptions

@@ -32,7 +32,7 @@ class Product(models.Model):
     order = models.PositiveIntegerField(default=0)
     display = models.BooleanField(default=False)
     visibility = models.BooleanField(default=False)
-    
+
     def __str__(self):
         """
         String representation of the Product instance.

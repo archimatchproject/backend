@@ -32,9 +32,10 @@ def generate_choices(min_value: int, max_value: int, label_template: str) -> lis
 def send_email_with_template(to_email, subject, body, images):
     """Global function to send email with HTML template."""
     try:
-        from project_core.django import base as settings
         from django.core.mail import EmailMultiAlternatives
+
         from app.email_templates.utils import attach_email_icons
+        from project_core.django import base as settings
 
         from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "ghazichaftar@gmail.com")
         email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])

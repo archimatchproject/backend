@@ -6,8 +6,6 @@ business logic for creating CGU/CGV Policy instances.
 """
 
 from django.db import transaction
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from app.cms.models.CGUCGVPolicy import CGUCGVPolicy
 from app.cms.serializers.CGUCGVPolicySerializer import CGUCGVPolicySerializer
@@ -38,7 +36,7 @@ class CGUCGVPolicyService:
 
         with transaction.atomic():
             policy = CGUCGVPolicy.objects.create(**validated_data, admin=request.user.admin)
-            return True,CGUCGVPolicySerializer(policy).data
+            return True, CGUCGVPolicySerializer(policy).data
 
     @classmethod
     def get_policy_by_admin(cls, request):
@@ -58,4 +56,4 @@ class CGUCGVPolicyService:
 
         admin = Admin.objects.get(user=user)
         policy = CGUCGVPolicy.objects.get(admin=admin)
-        return True,CGUCGVPolicySerializer(policy).data
+        return True, CGUCGVPolicySerializer(policy).data

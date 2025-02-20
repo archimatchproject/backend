@@ -7,27 +7,20 @@ of Announcement instances for API views.
 """
 
 from datetime import timedelta
+
+from django.utils.timezone import now
+
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
 from app.announcement.models.Need import Need
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
-    AnnouncementPieceRenovateSerializer,
-)
-from app.announcement.serializers.ArchitectSpecialitySerializer import (
-    ArchitectSpecialitySerializer,
-)
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.AnnouncementPieceRenovateSerializer import AnnouncementPieceRenovateSerializer
+from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
-from app.announcement.serializers.ProjectCategorySerializer import (
-    ProjectCategorySerializer,
-)
-from app.announcement.serializers.ProjectExtensionSerializer import (
-    ProjectExtensionSerializer,
-)
+from app.announcement.serializers.ProjectCategorySerializer import ProjectCategorySerializer
+from app.announcement.serializers.ProjectExtensionSerializer import ProjectExtensionSerializer
 from app.announcement.serializers.ProjectImageSerializer import ProjectImageSerializer
 from app.announcement.serializers.PropertyTypeSerializer import PropertyTypeSerializer
 from app.announcement.serializers.WorkTypeSerializer import WorkTypeSerializer
@@ -38,9 +31,8 @@ from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
 from app.core.serializers.NoteSerializer import NoteSerializer
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.models.Architect import Architect
-from django.utils.timezone import now
+from app.users.serializers.ClientSerializer import ClientSerializer
 
 
 class AnnouncementPOSTSerializer(serializers.ModelSerializer):
@@ -53,19 +45,11 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
     """
 
     client = ClientSerializer(required=False)
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all(), required=False
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all(), required=False)
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectCategory.objects.all()
-    )
-    property_type = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all()
-    )
+    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
     work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
@@ -81,9 +65,7 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         required=False,
     )
     number_floors = serializers.IntegerField(required=False)
-    architect = serializers.PrimaryKeyRelatedField(
-        queryset=Architect.objects.all(), required=False
-    )
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), required=False)
 
     class Meta:
         """
@@ -124,19 +106,11 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
 
     """
 
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
-    project_category = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectCategory.objects.all()
-    )
-    property_type = serializers.PrimaryKeyRelatedField(
-        queryset=PropertyType.objects.all()
-    )
+    project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
+    property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
     work_type = serializers.PrimaryKeyRelatedField(queryset=WorkType.objects.all())
     pieces_renovate = serializers.ListField(
         child=serializers.DictField(
@@ -205,6 +179,43 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     admin_management_reached = serializers.SerializerMethodField()
 
     class Meta:
+        """
+        Meta class for AnnouncementSerializer.
+        Attributes:
+            model (type): The model associated with the serializer.
+            fields (list): List of fields to be included in the serialized output.
+                - id (int): Unique identifier for the announcement.
+                - client (str): Client associated with the announcement.
+                - architect_speciality (str): Speciality of the architect.
+                - needs (str): Needs specified in the announcement.
+                - project_category (str): Category of the project.
+                - property_type (str): Type of the property.
+                - work_type (str): Type of work to be done.
+                - pieces_renovate (str): Pieces to be renovated.
+                - address (str): Address of the project.
+                - city (str): City where the project is located.
+                - terrain_surface (float): Surface area of the terrain.
+                - work_surface (float): Surface area of the work.
+                - budget (float): Budget for the project.
+                - description (str): Description of the project.
+                - architectural_style (str): Architectural style of the project.
+                - project_extensions (str): Extensions of the project.
+                - project_images (list): List of images related to the project.
+                - number_floors (int): Number of floors in the project.
+                - notes (str): Additional notes.
+                - created_at (datetime): Creation timestamp of the announcement.
+                - status (str): Status of the announcement.
+                - admin_note (str): Notes from the admin.
+                - interested_architects_count (int, optional): Count of interested architects.
+                - has_selected (bool, optional): Indicates if an architect has been selected.
+                - token_number (str): Token number associated with the announcement.
+                - days_remaining (int): Number of days remaining for the project.
+                - architect (str): Architect associated with the project.
+                - admin_management_reached (bool): Indicates if admin management has been reached.
+                - is_blocked (bool): Indicates if the announcement is blocked.
+                - is_broadcasted (bool): Indicates if the announcement is broadcasted.
+        """
+
         model = Announcement
         fields = [
             "id",

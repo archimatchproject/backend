@@ -11,15 +11,15 @@ Classes:
 from django.db import transaction
 
 from app.subscription.models.OfficeSubscriptionPlan import OfficeSubscriptionPlan
-from app.users.models.Office import Office
 from app.subscription.serializers.SubscriptionPlanSerializer import OfficeSubscriptionPlanSerializer
+from app.users.models.Office import Office
 
 
 class OfficeSubscriptionPlanService:
     """
     Service class for handling OfficeSubscriptionPlan operations.
 
-    Handles business logic and exception handling for 
+    Handles business logic and exception handling for
     OfficeSubscriptionPlan creation and management.
 
     Methods:
@@ -52,8 +52,7 @@ class OfficeSubscriptionPlanService:
             if most_popular:
                 OfficeSubscriptionPlan.objects.filter(most_popular=True).update(most_popular=False)
             # Create OfficeSubscriptionPlan instance
-            subscription_plan = OfficeSubscriptionPlan.objects.create(
-                **validated_data, event_discount=event_discount)
+            subscription_plan = OfficeSubscriptionPlan.objects.create(**validated_data, event_discount=event_discount)
 
             return True, OfficeSubscriptionPlanSerializer(subscription_plan).data
 
@@ -105,9 +104,9 @@ class OfficeSubscriptionPlanService:
         with transaction.atomic():
             office = Office.objects.get(user__id=user_id)
             current_plan = office.subscription_plan
-            subscription_plans = OfficeSubscriptionPlan.objects.filter(
-                plan_price__gt=current_plan.plan_price
-            ).order_by("plan_price")
+            subscription_plans = OfficeSubscriptionPlan.objects.filter(plan_price__gt=current_plan.plan_price).order_by(
+                "plan_price"
+            )
 
             return True, OfficeSubscriptionPlanSerializer(subscription_plans, many=True).data
 

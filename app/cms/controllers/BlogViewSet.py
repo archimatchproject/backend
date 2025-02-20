@@ -5,6 +5,7 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to Blog instances via REST API endpoints.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser
@@ -17,7 +18,7 @@ from app.cms.serializers.BlogSerializer import BlogSerializer
 from app.cms.services.BlogService import BlogService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class BlogViewSet(viewsets.ModelViewSet):
     """
@@ -76,9 +77,8 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created Blog instance.
         """
-        success,data = BlogService.create_blog(request.data, request.user)
+        success, data = BlogService.create_blog(request.data, request.user)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -95,7 +95,7 @@ class BlogViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success,data = BlogService.update_blog(instance, request.data, partial=partial)
+        success, data = BlogService.update_blog(instance, request.data, partial=partial)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PUT"])
@@ -111,9 +111,8 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
-        success,data = BlogService.update_cover_photo(pk, request)
+        success, data = BlogService.update_cover_photo(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -128,9 +127,8 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
-        success,data = BlogService.change_visibility(pk, request)
+        success, data = BlogService.change_visibility(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=False, methods=["POST"])
     @handle_service_exceptions
@@ -144,9 +142,8 @@ class BlogViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog sections.
         """
-        success,data = BlogService.upload_media(request)
+        success, data = BlogService.upload_media(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=False, methods=["GET"])
     @handle_service_exceptions
@@ -154,5 +151,5 @@ class BlogViewSet(viewsets.ModelViewSet):
         """
         Retrieve all tags.
         """
-        success,data = BlogService.list_tags()
+        success, data = BlogService.list_tags()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

@@ -19,5 +19,4 @@ unavailability_urlpatterns = [
         UnavailabilityViewSet.as_view({"get": "get_available_time_slots"}),
         name="get-available-time-slots",
     ),
-    
 ]

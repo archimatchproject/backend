@@ -1,5 +1,7 @@
 import app.announcement
+
 from app.selection.utils import generate_choices
+
 
 ACCEPTED = "Accepted"
 REFUSED = "Refused"

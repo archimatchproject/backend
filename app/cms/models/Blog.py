@@ -36,16 +36,12 @@ class Blog(BaseModel):
         null=True,
     )
     sub_title = models.CharField(max_length=255, blank=True, null=True)
-    blog_thematic = models.ForeignKey(
-        BlogThematic, on_delete=models.CASCADE, related_name="blog_thematic_blogs"
-    )
+    blog_thematic = models.ForeignKey(BlogThematic, on_delete=models.CASCADE, related_name="blog_thematic_blogs")
     tags = models.ManyToManyField(BlogTag)
     admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True)
     visible = models.BooleanField(default=False)
     popular = models.BooleanField(default=False)
-    target_user_type = models.CharField(
-        max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0]
-    )
+    target_user_type = models.CharField(max_length=10, choices=TARGET_USER_TYPE, default=TARGET_USER_TYPE[0][0])
 
     class Meta:
         """

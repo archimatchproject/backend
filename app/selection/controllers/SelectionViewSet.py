@@ -8,15 +8,16 @@ Classes:
     SelectionViewSet: Provides the viewset for handling operations related to the Selection model.
 """
 
-from rest_framework.decorators import action
-from rest_framework import viewsets
-from app.selection.models.Selection import Selection
-from app.selection.serializers.SelectionSerializer import SelectionSerializer
 from rest_framework import status
-from app.selection.services.SelectionService import SelectionService
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.serializers import ValidationError
+
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework.serializers import ValidationError
+from app.selection.models.Selection import Selection
+from app.selection.serializers.SelectionSerializer import SelectionSerializer
+from app.selection.services.SelectionService import SelectionService
 
 
 class SelectionViewSet(viewsets.ModelViewSet):
@@ -46,9 +47,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         success, data = SelectionService.create_selection(request.data, request.user)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
@@ -121,9 +120,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         success, message = SelectionService.confirm_discussion_phase(selection_id=pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     def get(self, request):
         """
@@ -155,9 +152,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         success, message = SelectionService.abandon_selection(selection_id=pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["GET"], url_path="not-selected-announcements")
     @handle_service_exceptions
@@ -193,9 +188,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         success, message = SelectionService.broadcast_announcement(announcement_id=pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["GET"], url_path="not-selected-announcements")
     @handle_service_exceptions
@@ -257,12 +250,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: a success or an error message.
         """
 
-        success, message = SelectionService.broadcast_selection_announcement(
-            selection_id=pk, user=request.user
-        )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        success, message = SelectionService.broadcast_selection_announcement(selection_id=pk, user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="block-selection")
     @handle_service_exceptions
@@ -277,12 +266,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: a success or an error message.
         """
 
-        success, message = SelectionService.block_selection(
-            selection_id=pk, user=request.user
-        )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        success, message = SelectionService.block_selection(selection_id=pk, user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="change-selection-deadline")
     @handle_service_exceptions
@@ -300,9 +285,7 @@ class SelectionViewSet(viewsets.ModelViewSet):
         success, message = SelectionService.change_selection_deadline(
             selection_id=pk, user=request.user, data=request.data
         )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="confirm-discussion-phase-admin")
     @handle_service_exceptions
@@ -318,12 +301,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: The updated selection and phase data or an error message.
         """
 
-        success, message = SelectionService.confirm_discussion_phase_admin(
-            selection_id=pk, user=request.user
-        )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        success, message = SelectionService.confirm_discussion_phase_admin(selection_id=pk, user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="cancel-selection")
     @handle_service_exceptions
@@ -339,12 +318,8 @@ class SelectionViewSet(viewsets.ModelViewSet):
             Response: The updated selection and phase data or an error message.
         """
 
-        success, message = SelectionService.cancel_selection(
-            selection_id=pk, user=request.user
-        )
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        success, message = SelectionService.cancel_selection(selection_id=pk, user=request.user)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["GET"], url_path="quotes-phase-selections")
     @handle_service_exceptions
@@ -389,6 +364,4 @@ class SelectionViewSet(viewsets.ModelViewSet):
         """
 
         success, message = SelectionService.architect_cancel_selection(selection_id=pk)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

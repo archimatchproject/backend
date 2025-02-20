@@ -11,6 +11,7 @@ class SupplierSubscriptionPlanAdmin(admin.ModelAdmin):
     """
     Admin interface for SubscriptionPlan.
     """
+
     list_display = (
         "plan_name",
         "plan_price",

@@ -11,11 +11,6 @@ Classes:
 
 from django.db import transaction
 
-from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.response import Response
-
 from app.cms.models.FAQQuestion import FAQQuestion
 from app.cms.serializers.FAQQuestionSerializer import FAQQuestionSerializer
 
@@ -48,10 +43,8 @@ class FAQQuestionService:
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         with transaction.atomic():
-
             question = FAQQuestion.objects.create(**validated_data, admin=request.user.admin)
-            return True,FAQQuestionSerializer(question).data
-        
+            return True, FAQQuestionSerializer(question).data
 
     @classmethod
     def update_faq_question(cls, instance, request):
@@ -71,12 +64,16 @@ class FAQQuestionService:
         validated_data = serializer.validated_data
 
         with transaction.atomic():
-            fields = ["question", "response", "faq_thematic", "guide_thematic", "guide_article"]
+            fields = [
+                "question",
+                "response",
+                "faq_thematic",
+                "guide_thematic",
+                "guide_article",
+            ]
             for field in fields:
                 setattr(instance, field, validated_data.get(field, getattr(instance, field)))
 
             instance.save()
 
-            return True,FAQQuestionSerializer(instance).data
-
-        
+            return True, FAQQuestionSerializer(instance).data

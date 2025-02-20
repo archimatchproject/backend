@@ -11,12 +11,10 @@ Classes:
 
 from rest_framework import serializers
 
+from app.subscription.serializers.SelectedSubscriptionPlanSerializer import OfficeSelectedSubscriptionPlanSerializer
 from app.users.models.Office import Office
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 from app.users.serializers.SupplierSocialMediaSerializer import SupplierSocialMediaSerializer
-from app.subscription.serializers.SelectedSubscriptionPlanSerializer import (
-    OfficeSelectedSubscriptionPlanSerializer,
-)
 
 
 class OfficeSerializer(serializers.ModelSerializer):

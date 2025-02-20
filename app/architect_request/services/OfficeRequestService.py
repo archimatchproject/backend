@@ -9,38 +9,35 @@ Classes:
 """
 
 from datetime import datetime
+
 from django.db import transaction
-
-
-from app.architect_request.models.OfficeRequest import OfficeRequest
-from app.architect_request import AWAITING_DECISION, AWAITING_DEMO
-from app.architect_request.serializers.OfficeRequestSerializer import (
-    OfficeRequestInputSerializer,
-    OfficeRequestSerializer,
-)
-from app.announcement import REFUSED, ACCEPTED
-
-from app.core.pagination import CustomPagination
-from rest_framework import serializers
-from rest_framework import status
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import get_language_from_request
 
-from app.email_templates.signals import api_success_signal
-from django.utils import timezone
-from django.db.models import Q
-from project_core.django import base as settings
-from app.architect_request.filters.OfficeRequestFilter import OfficeRequestFilter
+from rest_framework import serializers
+from rest_framework import status
 from rest_framework.response import Response
-from app.core.serializers.NoteSerializer import NoteSerializer
+
+from app.announcement import ACCEPTED
+from app.announcement import REFUSED
+from app.architect_request import AWAITING_DECISION
+from app.architect_request import AWAITING_DEMO
+from app.architect_request.filters.OfficeRequestFilter import OfficeRequestFilter
+from app.architect_request.models.OfficeRequest import OfficeRequest
+from app.architect_request.serializers.OfficeRequestRescheduleSerializer import OfficeRequestRescheduleSerializer
+from app.architect_request.serializers.OfficeRequestSerializer import OfficeRequestInputSerializer
+from app.architect_request.serializers.OfficeRequestSerializer import OfficeRequestSerializer
 from app.core.models.Note import Note
-from app.architect_request.serializers.OfficeRequestRescheduleSerializer import (
-    OfficeRequestRescheduleSerializer,
-)
-from app.users.serializers.OfficeSerializer import OfficeSerializer
-from app.users.utils import generate_password_reset_token
+from app.core.pagination import CustomPagination
+from app.core.serializers.NoteSerializer import NoteSerializer
+from app.email_templates.signals import api_success_signal
+from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Office import Office
-from app.users.models.Admin import Admin
+from app.users.serializers.OfficeSerializer import OfficeSerializer
+from app.users.utils import generate_password_reset_token
+from project_core.django import base as settings
 
 
 class OfficeRequestService:
@@ -128,9 +125,9 @@ class OfficeRequestService:
         if account_exists == "true":
             queryset = OfficeRequest.objects.filter(status="Accepted").order_by("date", "time_slot")
         else:
-            queryset = OfficeRequest.objects.filter(
-                status__in=[AWAITING_DEMO, AWAITING_DECISION]
-            ).order_by("date", "time_slot")
+            queryset = OfficeRequest.objects.filter(status__in=[AWAITING_DEMO, AWAITING_DECISION]).order_by(
+                "date", "time_slot"
+            )
 
         filtered_queryset = OfficeRequestFilter(request.GET, queryset=queryset).qs
 
@@ -208,14 +205,10 @@ class OfficeRequestService:
         office_request = OfficeRequest.objects.get(pk=office_request_id)
 
         meeting_naive_datetime = datetime.combine(office_request.date, office_request.time_slot)
-        meeting_aware_datetime = timezone.make_aware(
-            meeting_naive_datetime, timezone.get_current_timezone()
-        )
+        meeting_aware_datetime = timezone.make_aware(meeting_naive_datetime, timezone.get_current_timezone())
 
         if timezone.now() < meeting_aware_datetime:
-            raise serializers.ValidationError(
-                "You cannot accept this request before the scheduled date and time."
-            )
+            raise serializers.ValidationError("You cannot accept this request before the scheduled date and time.")
 
         user_data = {
             "email": office_request.email,

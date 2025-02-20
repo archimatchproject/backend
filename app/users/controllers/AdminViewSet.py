@@ -5,17 +5,18 @@ Class: AdminViewSet
 
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.users.controllers.utils.IsSuperUser import IsSuperUser
 from app.users.models.Admin import Admin
 from app.users.serializers.AdminSerializer import AdminSerializer
 from app.users.services.AdminService import AdminService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class AdminViewSet(viewsets.ModelViewSet):
     """
@@ -37,7 +38,10 @@ class AdminViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["create", "update", "destroy"]:
             self.permission_classes = [IsAuthenticated, IsSuperUser]
-        elif self.action in ["admin_send_reset_password_link", "admin_validate_password_token"]:
+        elif self.action in [
+            "admin_send_reset_password_link",
+            "admin_validate_password_token",
+        ]:
             self.permission_classes = []
         else:
             self.permission_classes = [IsAuthenticated]
@@ -56,9 +60,8 @@ class AdminViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response indicating success or failure of admin creation.
         """
-        success,admin_data = AdminService.create_admin(request)
+        success, admin_data = AdminService.create_admin(request)
         return build_response(success=success, data=admin_data, status=status.HTTP_201_CREATED)
-        
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -73,11 +76,15 @@ class AdminViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of admin update.
         """
         instance = self.get_object()
-        success,admin_data = AdminService.update_admin(instance, request.data)
+        success, admin_data = AdminService.update_admin(instance, request.data)
         return build_response(success=success, data=admin_data, status=status.HTTP_200_OK)
 
-
-    @action(detail=False, methods=["GET"], url_path="get-permissions", name="get_permissions")
+    @action(
+        detail=False,
+        methods=["GET"],
+        url_path="get-permissions",
+        name="get_permissions",
+    )
     @handle_service_exceptions
     def get_admin_permissions(self, request):
         """
@@ -90,8 +97,8 @@ class AdminViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Response containing all permissions and their colors.
         """
-        success,permissions_data = AdminService.get_all_permissions()
-        return build_response(success=success, data=permissions_data, status=status.HTTP_200_OK) 
+        success, permissions_data = AdminService.get_all_permissions()
+        return build_response(success=success, data=permissions_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -109,9 +116,9 @@ class AdminViewSet(viewsets.ModelViewSet):
             self (adminViewSet): Instance of the adminViewSet class.
             request (Request): HTTP request object.
         """
-        success,message = AdminService.admin_send_reset_password_link(request)
-        return build_response(success=success, message=message, status=status.HTTP_200_OK) 
-        
+        success, message = AdminService.admin_send_reset_password_link(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
     @action(
         detail=False,
         methods=["POST"],
@@ -128,9 +135,9 @@ class AdminViewSet(viewsets.ModelViewSet):
             self (adminViewSet): Instance of the adminViewSet class.
             request (Request): HTTP request object.
         """
-        success,admin_data = AdminService.admin_validate_password_token(request)
-        return build_response(success=success, data=admin_data, status=status.HTTP_200_OK) 
-    
+        success, admin_data = AdminService.admin_validate_password_token(request)
+        return build_response(success=success, data=admin_data, status=status.HTTP_200_OK)
+
     @action(
         detail=False,
         methods=["GET"],
@@ -139,5 +146,13 @@ class AdminViewSet(viewsets.ModelViewSet):
         url_name="admins-paginated",
     )
     @handle_service_exceptions
-    def get_admins_paginated(self,request):
+    def get_admins_paginated(self, request):
+        """
+        Retrieve a paginated list of all admins.
+        Args:
+            request (HttpRequest): The HTTP request object containing query parameters for pagination.
+        Returns:
+            Response: A paginated list of admins.
+        """
+
         return AdminService.admins_get_all(request)

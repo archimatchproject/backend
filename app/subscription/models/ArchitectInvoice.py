@@ -9,6 +9,7 @@ Classes:
 """
 
 from django.db import models
+
 from app.subscription.models.Invoice import Invoice
 from app.users.models.Architect import Architect
 

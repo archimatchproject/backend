@@ -29,6 +29,7 @@ THIRD_PARTY_APPS = [
     "background_task",
     "fcm_django",
     "django_filters",
+    "django_elasticsearch_dsl",
 ]
 
 """
@@ -48,6 +49,7 @@ LOCAL_APPS = [
     "app.messaging",
     "app.selection",
     "app.officeOffer",
+    "app.recommendation",
 ]
 
 
@@ -69,9 +71,7 @@ INSTALLED_APPS = [
 Configuration for Django Rest Framework.
 """
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
         "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
@@ -164,6 +164,19 @@ DATABASES = {
         "PORT": env("DB_PORT"),
     }
 }
+
+"""
+ElasticSearch Configuration
+"""
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": "https://localhost:9200",  # Use HTTPS
+        "http_auth": ("elastic", "changeme"),  # Use credentials from .env
+        "verify_certs": False,  # Disable certificate verification if using self-signed certs
+        # "timeout": 30,  # Increase timeout
+    },
+}
+
 
 """
 Custom user model for authentication.

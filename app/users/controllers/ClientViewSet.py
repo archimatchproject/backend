@@ -5,16 +5,16 @@ This module provides view classes for interacting with Client instances
 using Django REST Framework, including custom login actions.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.users.models.Client import Client
 from app.users.serializers.ClientSerializer import ClientSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.services.ClientService import ClientService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -48,9 +48,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the login attempt.
         """
         success, client_data = ClientService.client_login_email(request)
-        return build_response(
-            success=success, data=client_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -69,9 +67,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         success, message = ClientService.client_send_reset_password_link(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -90,9 +86,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         success, client_data = ClientService.client_validate_password_token(request)
-        return build_response(
-            success=success, data=client_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -111,9 +105,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         success, client_data = ClientService.client_validate_email_token(request)
-        return build_response(
-            success=success, data=client_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -135,9 +127,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             Response: Response containing Client details.
         """
         success, client_data = ClientService.client_get_profile(request)
-        return build_response(
-            success=success, data=client_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def client_validate_email(self, request):
@@ -149,9 +139,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         success, client_data = ClientService.client_validate_email_first_login(request)
-        return build_response(
-            success=success, data=client_data, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, data=client_data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def client_regenerate_verification_code(self, request):
@@ -163,6 +151,4 @@ class ClientViewSet(viewsets.ModelViewSet):
             request (Request): HTTP request object.
         """
         success, message = ClientService.client_regenerate_verification_code(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

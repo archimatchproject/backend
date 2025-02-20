@@ -10,6 +10,7 @@ Classes:
 """
 
 import django_filters
+
 from app.architect_request.models.OfficeRequest import OfficeRequest
 
 
@@ -29,5 +30,12 @@ class OfficeRequestFilter(django_filters.FilterSet):
     )
 
     class Meta:
+        """
+        Meta class for the OfficeRequestFilter.
+        Attributes:
+            model (OfficeRequest): The model that this filter is based on.
+            fields (list): List of fields that can be filtered, including "status" and "meeting_responsable_email".
+        """
+
         model = OfficeRequest
         fields = ["status", "meeting_responsable_email"]

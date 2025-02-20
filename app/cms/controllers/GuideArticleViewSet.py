@@ -5,6 +5,7 @@ This module defines a ViewSet for handling CRUD operations and additional action
 related to GuideArticle instances via REST API endpoints.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser
@@ -17,7 +18,7 @@ from app.cms.serializers.GuideArticleSerializer import GuideArticleSerializer
 from app.cms.services.GuideArticleService import GuideArticleService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class GuideArticleViewSet(viewsets.ModelViewSet):
     """
@@ -74,9 +75,8 @@ class GuideArticleViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created GuideArticle instance.
         """
-        success,data =GuideArticleService.create_guide_article(request)
+        success, data = GuideArticleService.create_guide_article(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @handle_service_exceptions
     def update(self, request, *args, **kwargs):
@@ -96,9 +96,8 @@ class GuideArticleViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         data = request.data
         data["partial"] = partial
-        success,data =GuideArticleService.update_guide_article(instance, data)
+        success, data = GuideArticleService.update_guide_article(instance, data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -113,9 +112,8 @@ class GuideArticleViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated GuideArticle instance.
         """
-        success,data = GuideArticleService.change_visibility(pk, request)
+        success, data = GuideArticleService.change_visibility(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=False, methods=["POST"])
     @handle_service_exceptions
@@ -129,5 +127,5 @@ class GuideArticleViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog sections.
         """
-        success,data = GuideArticleService.upload_media(request)
+        success, data = GuideArticleService.upload_media(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

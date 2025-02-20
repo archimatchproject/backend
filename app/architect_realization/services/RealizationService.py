@@ -9,30 +9,24 @@ Classes:
 """
 
 from django.db import transaction
+
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.announcement.models.Need import Need
-from app.announcement.serializers.ArchitecturalStyleSerializer import (
-    ArchitecturalStyleSerializer,
-)
+from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
 from app.architect_realization.filters.RealizationFilter import RealizationFilter
 from app.architect_realization.models.Realization import Realization
 from app.architect_realization.models.RealizationImage import RealizationImage
-from app.architect_realization.serializers.RealizationSerializer import (
-    RealizationOutputSerializer,
-)
-from app.architect_realization.serializers.RealizationSerializer import (
-    RealizationPOSTSerializer,
-)
+from app.architect_realization.serializers.RealizationSerializer import RealizationOutputSerializer
+from app.architect_realization.serializers.RealizationSerializer import RealizationPOSTSerializer
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.pagination import CustomPagination
 from app.users import GOLD
 from app.users.models.Architect import Architect
-
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
 
 
@@ -58,9 +52,7 @@ class RealizationService:
         needs_data = validated_data.pop("needs")
         user_id = request.user.id
         if not Architect.objects.filter(user__id=user_id).exists():
-            raise NotFound(
-                detail="Architect not found.", code=status.HTTP_404_NOT_FOUND
-            )
+            raise NotFound(detail="Architect not found.", code=status.HTTP_404_NOT_FOUND)
 
         architect = Architect.objects.get(user__id=user_id)
         realization_images = validated_data.pop("realization_images", [])
@@ -114,9 +106,7 @@ class RealizationService:
         user_id = request.user.id
         architect = Architect.objects.get(user__id=user_id)
 
-        needs = Need.objects.filter(
-            architect_speciality_id=architect.architect_speciality.id
-        )
+        needs = Need.objects.filter(architect_speciality_id=architect.architect_speciality.id)
         serializer = NeedSerializer(needs, many=True)
 
         return True, serializer.data
@@ -224,14 +214,10 @@ class RealizationService:
                     gold_realization_ids.append(realization.id)
 
             # Get a queryset for filtered realizations
-            gold_realizations_queryset = Realization.objects.filter(
-                id__in=gold_realization_ids
-            )
+            gold_realizations_queryset = Realization.objects.filter(id__in=gold_realization_ids)
 
             # Apply additional filters using RealizationFilter
-            filtered_queryset = RealizationFilter(
-                request.GET, queryset=gold_realizations_queryset
-            ).qs
+            filtered_queryset = RealizationFilter(request.GET, queryset=gold_realizations_queryset).qs
             paginator = cls.pagination_class()
             page = paginator.paginate_queryset(filtered_queryset, request)
             if page is not None:

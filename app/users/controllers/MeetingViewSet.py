@@ -6,18 +6,16 @@ Classes:
     MeetingViewSet: Provides the viewset for handling operations related to the Meeting model.
 """
 
-from rest_framework import viewsets
-from app.users.models.Meeting import Meeting
-from app.users.models.Architect import Architect
-from app.users.serializers.MeetingSerializer import MeetingSerializer
 from rest_framework import status
-from rest_framework.response import Response
-from app.users.services.MeetingService import MeetingService
-
-from rest_framework.exceptions import APIException
+from rest_framework import viewsets
 from rest_framework.decorators import action
+
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
+from app.users.models.Meeting import Meeting
+from app.users.serializers.MeetingSerializer import MeetingSerializer
+from app.users.services.MeetingService import MeetingService
+
 
 class MeetingViewSet(viewsets.ModelViewSet):
     """
@@ -39,10 +37,9 @@ class MeetingViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object with the created Meeting data.
         """
-        success,meeting = MeetingService.create_meeting(request.data,request.user)
-        return build_response(success=success, data=meeting, status=status.HTTP_201_CREATED) 
+        success, meeting = MeetingService.create_meeting(request.data, request.user)
+        return build_response(success=success, data=meeting, status=status.HTTP_201_CREATED)
 
-    
     @action(
         detail=False,
         methods=["GET"],
@@ -57,7 +54,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
             Response: The list of meetings by architects.
         """
         return MeetingService.get_admin_meetings(request)
-    
+
     @action(
         detail=False,
         methods=["GET"],

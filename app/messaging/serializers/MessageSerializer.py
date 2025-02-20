@@ -3,7 +3,6 @@ This module defines the serializers for the messaging system, converting Message
  to and from JSON format for API usage.
 """
 
-from fcm_django.models import FCMDevice
 from rest_framework import serializers
 
 from app.messaging.models.Message import Message
@@ -29,9 +28,7 @@ class MessageSerializer(serializers.ModelSerializer):
     generated.
     """
 
-    recipient_id = serializers.PrimaryKeyRelatedField(
-        queryset=ArchimatchUser.objects.all(), write_only=True
-    )
+    recipient_id = serializers.PrimaryKeyRelatedField(queryset=ArchimatchUser.objects.all(), write_only=True)
     sender = serializers.EmailField(source="sender.email", read_only=True)
     recipient = serializers.EmailField(source="recipient.email", read_only=True)
 

@@ -67,6 +67,10 @@ urlpatterns = [
         include("app.selection.urls"),
     ),
     path(
+        f"{URL_PREFIX}recommendation/",
+        include("app.recommendation.urls"),
+    ),
+    path(
         f"{URL_PREFIX}swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",

@@ -11,7 +11,6 @@ Classes:
 from rest_framework import serializers
 
 from app.architect_request.models.OfficeRequest import OfficeRequest
-
 from app.core.serializers.NoteSerializer import NoteSerializer
 
 
@@ -62,9 +61,7 @@ class OfficeRequestSerializer(serializers.ModelSerializer):
         fields (list): The fields to be included in the serialization.
     """
 
-    meeting_responsable = serializers.EmailField(
-        source="meeting_responsable.user.email", read_only=True
-    )
+    meeting_responsable = serializers.EmailField(source="meeting_responsable.user.email", read_only=True)
     notes = NoteSerializer(many=True)
 
     class Meta:
