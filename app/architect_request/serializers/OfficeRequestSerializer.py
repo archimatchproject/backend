@@ -79,7 +79,6 @@ class OfficeRequestSerializer(serializers.ModelSerializer):
             "office_name",
             "phone_number",
             "office_address",
-            "office_identifier",
             "email",
             "date",
             "time_slot",

@@ -34,7 +34,6 @@ class OfficeRequest(BaseModel):
         office_name (CharField): The name of the office.
         phone_number (CharField): The phone number of the office, must be unique.
         office_address (CharField): The address of the office.
-        office_identifier (CharField): Identifier code specific to the office.
         email (EmailField): The email address of the architect.
         date (DateField): The date of the meeting.
         time_slot (CharField): The time slot of the meeting, selected from predefined
@@ -44,7 +43,6 @@ class OfficeRequest(BaseModel):
     office_name = models.CharField(max_length=255, default="")
     phone_number = models.CharField(max_length=20, unique=True)
     office_address = models.CharField(max_length=255, default="")
-    office_identifier = models.CharField(max_length=10, null=True, blank=True)
     email = models.EmailField(unique=True)
 
     date = models.DateField()
