@@ -1,23 +1,30 @@
-from rest_framework import viewsets, status
+"""
+OfferViewSet
+"""
+
+from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.officeOffer.models import Offer
-from app.officeOffer.serializers import (
-    OfferPOSTSerializer, OfferOutputSerializer, OfferPUTSerializer)
-from app.officeOffer.services.OfferService import OfferService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.officeOffer.models import Offer
+from app.officeOffer.serializers import OfferOutputSerializer
+from app.officeOffer.serializers import OfferPOSTSerializer
+from app.officeOffer.serializers import OfferPUTSerializer
 from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
+from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.officeOffer.services.OfferService import OfferService
 
 
 class OfferViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Offer model.
-    
+
     Provides endpoints for viewing, creating, updating, and retrieving job offers.
     """
+
     queryset = Offer.objects.all()
     serializer_class = OfferOutputSerializer
 
@@ -44,24 +51,16 @@ class OfferViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Offer.objects.filter(office__user=user)
 
-    @action(
-            detail=False, 
-            methods=["POST"], 
-            url_path="create-offer", 
-            serializer_class=OfferPOSTSerializer)
+    @action(detail=False, methods=["POST"], url_path="create-offer", serializer_class=OfferPOSTSerializer)
     @handle_service_exceptions
     def create_offer(self, request):
         """
         Create a new job offer.
         """
         success, data, message = OfferService.create_offer(request)
-        return build_response(
-            success=success, 
-            data=data, message=message, status=status.HTTP_201_CREATED)
+        return build_response(success=success, data=data, message=message, status=status.HTTP_201_CREATED)
 
-    @action(
-            detail=True, 
-            methods=["PUT"], url_path="update-offer", serializer_class=OfferPUTSerializer)
+    @action(detail=True, methods=["PUT"], url_path="update-offer", serializer_class=OfferPUTSerializer)
     @handle_service_exceptions
     def update_offer(self, request, pk=None):
         """
@@ -69,9 +68,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         """
         instance = Offer.objects.get(id=pk)
         success, data, message = OfferService.update_offer(instance=instance, data=request.data)
-        return build_response(
-            success=success, 
-            data=data, message=message, status=status.HTTP_200_OK)
+        return build_response(success=success, data=data, message=message, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="list-offers")
     @handle_service_exceptions

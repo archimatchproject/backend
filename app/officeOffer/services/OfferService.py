@@ -1,25 +1,30 @@
-from app.officeOffer import CONTRACT_TYPES
-from app.officeOffer import CONTRACT_DURATIONS
-from app.officeOffer import WORK_LOCATIONS
-from app.officeOffer import SALARY_RANGES
-from app.officeOffer import EXPERIENCE_CHOICES
+"""
+Offer Services
+"""
+
+from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
 
-from app.officeOffer.models import Offer
-
-from app.officeOffer.serializers import OfferPOSTSerializer, OfferOutputSerializer
-from django.contrib.auth.models import AnonymousUser
-from app.users.models.Office import Office
-from app.officeOffer.serializers.OfferSerializer import OfferPUTSerializer
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+
 from app.core.pagination import CustomPagination
-from app.officeOffer.models.TechnicalSkill import TechnicalSkill
-from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.officeOffer import CONTRACT_DURATIONS
+from app.officeOffer import CONTRACT_TYPES
+from app.officeOffer import EXPERIENCE_CHOICES
+from app.officeOffer import SALARY_RANGES
+from app.officeOffer import WORK_LOCATIONS
+from app.officeOffer.models import Offer
 from app.officeOffer.models.SoftwareSkill import SoftwareSkill
+from app.officeOffer.models.TechnicalSkill import TechnicalSkill
+from app.officeOffer.serializers import OfferOutputSerializer
+from app.officeOffer.serializers import OfferPOSTSerializer
+from app.officeOffer.serializers.OfferSerializer import OfferPUTSerializer
 from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
+from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
+from app.users.models.Office import Office
 
 
 class OfferService:
@@ -53,9 +58,7 @@ class OfferService:
         software_skills_data = validated_data.pop("software_skills", [])
 
         if isinstance(user, AnonymousUser):
-            raise serializers.ValidationError(
-                        detail="You must be a valid office to create an offer"
-                    )
+            raise serializers.ValidationError(detail="You must be a valid office to create an offer")
         office_instance = Office.objects.get(user=user)
 
         with transaction.atomic():
@@ -134,7 +137,7 @@ class OfferService:
         """
         offer = Offer.objects.get(pk=pk)
 
-        serializer = OfferOutputSerializer(offer, many=False, context={'request': request})
+        serializer = OfferOutputSerializer(offer, many=False, context={"request": request})
         return True, serializer.data
 
     @classmethod
@@ -189,8 +192,7 @@ class OfferService:
         Returns:
             tuple: (bool, list) containing success status and experience levels.
         """
-        experience_levels = [
-            {"value": exp[0], "display_name": exp[1]} for exp in EXPERIENCE_CHOICES]
+        experience_levels = [{"value": exp[0], "display_name": exp[1]} for exp in EXPERIENCE_CHOICES]
         return True, experience_levels
 
     @classmethod

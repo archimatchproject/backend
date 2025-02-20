@@ -4,22 +4,23 @@ Module defining the Offer model.
 This module contains the Offer class, which represents a job offer in the application.
 """
 
-from app.core.models.BaseModel import BaseModel
 from django.db import models
-from app.users.models.Office import Office
+
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
-from app.officeOffer import CONTRACT_TYPES
-from app.officeOffer import CONTRACT_DURATIONS
-from app.officeOffer import WORK_LOCATIONS
-from app.officeOffer import SALARY_RANGES
-from app.officeOffer import EXPERIENCE_CHOICES
-from app.officeOffer import CDI
-from app.officeOffer import FROM_1000_TO_2000
-from app.officeOffer import TN
-from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.ArchitecturalStyle import ArchitecturalStyle
-from app.officeOffer.models.TechnicalSkill import TechnicalSkill
+from app.core.models.BaseModel import BaseModel
+from app.core.models.ProjectCategory import ProjectCategory
+from app.officeOffer import CDI
+from app.officeOffer import CONTRACT_DURATIONS
+from app.officeOffer import CONTRACT_TYPES
+from app.officeOffer import EXPERIENCE_CHOICES
+from app.officeOffer import FROM_1000_TO_2000
+from app.officeOffer import SALARY_RANGES
+from app.officeOffer import TN
+from app.officeOffer import WORK_LOCATIONS
 from app.officeOffer.models.SoftwareSkill import SoftwareSkill
+from app.officeOffer.models.TechnicalSkill import TechnicalSkill
+from app.users.models.Office import Office
 
 
 class Offer(BaseModel):
@@ -32,7 +33,7 @@ class Offer(BaseModel):
         offer_title (CharField): The title of the job offer.
         contract_type (CharField): Type of the contract (e.g., CDI, CDD, etc.).
         contract_duration (CharField): Duration of the contract.
-        work_location (CharField): Location where the work will be performed 
+        work_location (CharField): Location where the work will be performed
         (e.g., country or online).
         start_date (DateField): The start date for the job.
         salary_range (CharField): The salary range for the position.
@@ -45,20 +46,14 @@ class Offer(BaseModel):
         software_skills (ManyToManyField): List of software skills required for the job.
         experience_required (CharField): Required experience level for the position.
     """
+
     office = models.ForeignKey(Office, on_delete=models.CASCADE)
     architect_speciality = models.ForeignKey(ArchitectSpeciality, on_delete=models.CASCADE)
     offer_title = models.CharField(max_length=255, blank=False, null=False)
-    contract_type = models.CharField(
-        max_length=20, choices=CONTRACT_TYPES, default=CDI, blank=False, null=False
-    )
+    contract_type = models.CharField(max_length=20, choices=CONTRACT_TYPES, default=CDI, blank=False, null=False)
     contract_duration = models.CharField(max_length=255, choices=CONTRACT_DURATIONS, blank=False)
-    work_location = models.CharField(
-        max_length=20, choices=WORK_LOCATIONS, default=TN, blank=False, null=False
-    )
-    start_date = models.DateField(
-        blank=False,
-        null=False
-    )
+    work_location = models.CharField(max_length=20, choices=WORK_LOCATIONS, default=TN, blank=False, null=False)
+    start_date = models.DateField(blank=False, null=False)
     salary_range = models.CharField(
         max_length=15, choices=SALARY_RANGES, default=FROM_1000_TO_2000, blank=False, null=False
     )

@@ -1,3 +1,5 @@
-from app.officeOffer.serializers.OfferSerializer import OfferOutputSerializer, OfferPOSTSerializer, OfferPUTSerializer
+from app.officeOffer.serializers.OfferSerializer import OfferOutputSerializer
+from app.officeOffer.serializers.OfferSerializer import OfferPOSTSerializer
+from app.officeOffer.serializers.OfferSerializer import OfferPUTSerializer
 from app.officeOffer.serializers.SoftwareSkillSerializer import SoftwareSkillSerializer
 from app.officeOffer.serializers.TechnicalSkillSerializer import TechnicalSkillSerializer
