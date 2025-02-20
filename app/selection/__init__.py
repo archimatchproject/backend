@@ -1,11 +1,10 @@
-import app.announcement
-
 from app.selection.utils import generate_choices
 
 
 ACCEPTED = "Accepted"
 REFUSED = "Refused"
 INTERESTED = "Interested"
+
 SELECTION_STATUS_CHOICES = [
     (ACCEPTED, ACCEPTED),
     (REFUSED, REFUSED),
