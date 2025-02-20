@@ -170,3 +170,21 @@ class OfferViewSet(viewsets.ModelViewSet):
         """
         success, data = OfferService.get_software_skills()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path="get-offers-by-office")
+    @handle_service_exceptions
+    def get_offers_by_office(self, request):
+        """
+        Retrieve job offers filtered by office.
+        """
+        success, data = OfferService.get_offers_by_office(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path="get-offers-by-architect")
+    @handle_service_exceptions
+    def get_offers_by_architect(self, request):
+        """
+        Retrieve job offers filtered by architect.
+        """
+        success, data = OfferService.get_offers_by_architect(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

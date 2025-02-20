@@ -289,14 +289,12 @@ class OfficeService:
         # Update office model fields
         office_name = data.pop("office_name")
         office_address = data.pop("office_address")
-        office_identifier = data.pop("office_identifier")
         is_public = data.pop("is_public", True)
         profile_image = data.pop("profile_image", None)
 
         # Update office data
         office.office_name = office_name
         office.office_address = office_address
-        office.office_identifier = office_identifier
         office.is_public = is_public
         if profile_image:
             office.profile_image = profile_image

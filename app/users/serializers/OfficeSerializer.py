@@ -111,6 +111,5 @@ class OfficePersonalInformationSerializer(serializers.ModelSerializer):
             "phone_number",
             "office_name",
             "profile_image",
-            "office_identifier",
             "bio",
         )
