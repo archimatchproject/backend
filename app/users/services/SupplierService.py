@@ -111,7 +111,7 @@ class SupplierService:
             Response: Response object with a message indicating if the supplier has set a password.
 
         Raises:
-            serializers.ValidationError: If there are errors during supplier authentication.
+            serializers.ValidationError: If there are errors for supplier authentication.
         """
 
         data = request.data
@@ -143,6 +143,7 @@ class SupplierService:
         """
 
         data = request.data
+
         supplier_serializer = SupplierInputSerializer(data=data)
         supplier_serializer.is_valid(raise_exception=True)
 
@@ -244,7 +245,7 @@ class SupplierService:
 
         data = request.data
         user_id = request.user.id
-        bio = data.get("bio", None)
+        bio = data.get("bio")
 
         if bio is None:
             raise serializers.ValidationError(detail="Bio is required")
@@ -271,7 +272,7 @@ class SupplierService:
         """
         data = request.data
         user_id = request.user.id
-        presentation_video = data.get("presentation_video", None)
+        presentation_video = data.get("presentation_video")
         if presentation_video is None:
             raise serializers.ValidationError(detail="presentation video is required")
 
@@ -334,7 +335,7 @@ class SupplierService:
 
         data = request.data
         user_id = request.user.id
-        profile_image = data.get("profile_image", None)
+        profile_image = data.get("profile_image")
         if profile_image is None:
             raise serializers.ValidationError(detail="profile image is required")
 
@@ -400,7 +401,7 @@ class SupplierService:
 
         data = request.data
         user_id = request.user.id
-        is_public = data.get("is_public", None)
+        is_public = data.get("is_public")
         if is_public is None:
             raise serializers.ValidationError(detail="is_public is required")
 
@@ -618,7 +619,7 @@ class SupplierService:
 
         data = request.data
         user = request.user
-        catalog_visibility = data.get("catalog_visibility", None)
+        catalog_visibility = data.get("catalog_visibility")
         if catalog_visibility is None:
             raise serializers.ValidationError(detail="catalog visibility is required")
 
@@ -661,7 +662,7 @@ class SupplierService:
                 or a 400 Bad Request response with an error message.
         """
 
-        queryset = queryset = Supplier.objects.exclude(company_name="").exclude(company_name__isnull=True)
+        queryset = Supplier.objects.exclude(company_name="").exclude(company_name__isnull=True)
         # Apply filters using the SupplierFilter class
         filtered_queryset = SupplierFilter(request.GET, queryset=queryset).qs
 
