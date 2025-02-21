@@ -221,28 +221,18 @@ class OfferService:
     def get_offers_by_office(cls, request):
         """
         Handle GET request and return paginated Offer objects filtered by office.
-
         Args:
             request (HttpRequest): The incoming HTTP request.
-
         Returns:
             Response: A paginated response containing Offer objects or an error message.
         """
-        data = request.data
-        email = data.pop("email")
-        if not Office.objects.filter(user__email=email).exists():
-            raise NotFound(detail="Office not found.", code=status.HTTP_404_NOT_FOUND)
-
-        office = Office.objects.get(user__email=email)
-
-        user = office.user
+        user = request.user
         queryset = Offer.objects.filter(office__user=user)
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
             serializer = OfferOutputSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
-
         serializer = OfferOutputSerializer(queryset, many=True)
         return Response(
             serializer.data,
