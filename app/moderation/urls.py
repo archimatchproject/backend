@@ -15,6 +15,7 @@ from rest_framework import routers
 
 from app.moderation.routes.ArchitectReportUrls import architect_report_urlpatterns
 from app.moderation.routes.ClientReviewUrls import client_review_urlpatterns
+from app.moderation.routes.OfficeReviewUrls import office_review_urlpatterns
 from app.moderation.routes.ProjectReportUrls import project_report_urlpatterns
 from app.moderation.routes.ReviewReportUrls import review_report_urlpatterns
 from app.moderation.routes.SelectionReportUrls import selection_report_urlpatterns
@@ -29,4 +30,5 @@ urlpatterns = [
     *project_report_urlpatterns,
     *review_report_urlpatterns,
     *selection_report_urlpatterns,
+    *office_review_urlpatterns,
 ]

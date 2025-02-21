@@ -177,8 +177,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         """
         Retrieve job offers filtered by office.
         """
-        success, data = OfferService.get_offers_by_office(request)
-        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+        return OfferService.get_offers_by_office(request)
 
     @action(detail=False, methods=["GET"], url_path="get-offers-by-architect")
     @handle_service_exceptions
