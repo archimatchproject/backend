@@ -48,7 +48,7 @@ class ClientService:
         """
 
         data = request.data
-        email_req = data.get("email", None)
+        email_req = data.get("email")
         if email_req is None:
             raise serializers.ValidationError(detail="Email is required")
         if not Client.objects.filter(user__email=email_req).exists():

@@ -32,7 +32,6 @@ def send_email_background_task(data):
 
         send_email_with_template(to_email, subject, html_content, images)
     except Exception as e:
-        print(f"Task failed with error: {e}")
         send_error_email(f"Task failed with error: {e}")
         raise
 
@@ -45,13 +44,11 @@ def send_error_email(error_message):
         error_message (str): Error message to include in the email body.
 
     """
-    try:
-        send_mail(
-            "Error in Background Task",
-            error_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [settings.EMAIL_HOST_USER],
-            fail_silently=False,
-        )
-    except Exception as e:
-        print(f"Failed to send error email: {e}")
+
+    send_mail(
+        "Error in Background Task",
+        error_message,
+        settings.DEFAULT_FROM_EMAIL,
+        [settings.EMAIL_HOST_USER],
+        fail_silently=False,
+    )

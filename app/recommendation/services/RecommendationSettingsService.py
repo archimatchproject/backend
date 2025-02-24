@@ -110,7 +110,6 @@ class RecommendationSettingsService:
         setattr(attributes, field_name, new_value)
         attributes.full_clean()
         attributes.save()
-        print("aaaaaaaaaaaa")
         serializer = AnnouncementWeightsSerializer(attributes)
         return True, serializer.data
 

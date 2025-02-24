@@ -49,4 +49,9 @@ admin_urlpatterns = [
         AdminViewSet.as_view({"get": "get_admins_paginated"}),
         name="admins-paginated",
     ),
+    path(
+        "admin/get-profile/",
+        AdminViewSet.as_view({"get": "admin_get_profile"}),
+        name="profile",
+    ),
 ]

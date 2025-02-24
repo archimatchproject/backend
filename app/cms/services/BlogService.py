@@ -97,7 +97,7 @@ class BlogService:
             updated_section_ids = []
 
             for section_data in sections_data:
-                section_id = section_data.get("id", None)
+                section_id = section_data.get("id")
 
                 if section_id:
                     # Update existing section

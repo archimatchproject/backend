@@ -90,7 +90,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The updated quote data or an error message.
         """
-        is_client_interested = request.data.get("is_client_interested", None)
+        is_client_interested = request.data.get("is_client_interested")
         if is_client_interested is None:
             raise APIException("Choose an option to be able to refuse the quote")
         success, message = QuoteService.refuse_quote(quote_id=pk, is_client_interested=is_client_interested)

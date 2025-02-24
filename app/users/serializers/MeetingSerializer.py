@@ -67,7 +67,7 @@ class MeetingSerializer(serializers.ModelSerializer):
         data = super().validate(data)
         admin = data.get("admin")
         date = data.get("date")
-        time_slot = data.get("time", None)
+        time_slot = data.get("time")
         if time_slot is None:
             raise ValidationError("time slot is required")
 

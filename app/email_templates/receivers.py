@@ -20,8 +20,4 @@ def run_background_task(sender, **kwargs):
 
     """
     data = kwargs.get("data")
-    try:
-        send_email_background_task(data)
-
-    except Exception as e:
-        print(f"Task failed after retries with error: {e}")
+    send_email_background_task(data)

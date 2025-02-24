@@ -129,7 +129,6 @@ def process_email_triggers():
     try:
         settings = SelectionSettings.objects.first()
         if not settings:
-            print("No SelectionSettings found. Exiting...")
             return
 
         email_triggers = generate_email_triggers(settings)
@@ -145,5 +144,5 @@ def process_email_triggers():
                 extra_action=trigger.extra_action,
             )
 
-    except Exception as e:
-        print(f"Error in process_email_triggers: {e}")
+    except Exception:
+        pass

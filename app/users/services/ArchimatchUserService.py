@@ -46,7 +46,6 @@ class ArchimatchUserService:
                 "password": password,
             }
         )
-        print(serializer)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 
@@ -190,8 +189,8 @@ class ArchimatchUserService:
             and their email.
         """
         data = request.data
-        phone_number = data.get("phone_number", None)
-        verification_code = data.get("verification_code", None)
+        phone_number = data.get("phone_number")
+        verification_code = data.get("verification_code")
         if verification_code is None or phone_number is None:
             raise serializers.ValidationError(detail="verification code and phone number are required")
 

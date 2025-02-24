@@ -136,7 +136,6 @@ class ArchitectService:
         user_id = request.user.id
         serializer = ArchitectBaseDetailsSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         architect = Architect.objects.get(user__id=user_id)
         user = architect.user
         validated_data = serializer.validated_data
@@ -394,8 +393,8 @@ class ArchitectService:
 
         data = request.data
         user_id = request.user.id
-        presentation_video = data.get("presentation_video", None)
-        bio = data.get("bio", None)
+        presentation_video = data.get("presentation_video")
+        bio = data.get("bio")
         if bio is None:
             raise serializers.ValidationError(detail="biois required")
 
@@ -423,7 +422,7 @@ class ArchitectService:
 
         data = request.data
         user_id = request.user.id
-        company_logo = data.get("company_logo", None)
+        company_logo = data.get("company_logo")
         if company_logo is None:
             raise serializers.ValidationError(detail="profile image is required")
 
