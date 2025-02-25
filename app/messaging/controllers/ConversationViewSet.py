@@ -21,12 +21,15 @@ class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
 
-    def create(self, request, *args, **kwargs):
+    @action(detail=False, methods=["GET"], url_path="client-conversation")
+    @handle_service_exceptions
+    def get_client_conversation(self, request, *args, **kwargs):
         """
         Override the create method to use MessageService for handling the creation
         of a new message.
         """
-        return ConversationService.create_conversation(request)
+        success, data = ConversationService.get_client_conversation(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="conversation")
     @handle_service_exceptions
@@ -102,4 +105,29 @@ class ConversationViewSet(viewsets.ModelViewSet):
             Response: A response indicating success or failure.
         """
         success, message = ConversationService.remove_self_from_conversation(request)
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path="conversation-messages")
+    @handle_service_exceptions
+    def get_conversation_messages(self, request, *args, **kwargs):
+        """
+        Override the create method to use MessageService for handling the creation
+        of a new message.
+        """
+        success, data = ConversationService.get_conversartion_messages(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["POST"], url_path="join-conversation")
+    @handle_service_exceptions
+    def join_conversation(self, request):
+        """
+        Removes the authenticated user from a conversation as an admin.
+
+        Args:
+            request (Request): The request object containing the conversation ID.
+
+        Returns:
+            Response: A response indicating success or failure.
+        """
+        success, message = ConversationService.join_conversation(request)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)

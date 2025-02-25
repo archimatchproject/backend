@@ -9,6 +9,7 @@ This module defines the Conversation model for the messaging application.
 from django.db import models
 
 from app.core.models.BaseModel import BaseModel
+from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 
 
@@ -23,7 +24,7 @@ class Conversation(BaseModel):
     """
 
     user = models.ForeignKey(ArchimatchUser, related_name="conversations", on_delete=models.CASCADE)
-    admins = models.ManyToManyField(ArchimatchUser, related_name="admin_conversations")
+    admins = models.ManyToManyField(Admin, related_name="admin_conversations")
 
     def __str__(self):
         """

@@ -10,6 +10,7 @@ from rest_framework import serializers
 from app.messaging.models.Message import Message
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -34,6 +35,7 @@ class MessageSerializer(serializers.ModelSerializer):
     recipient_id = serializers.PrimaryKeyRelatedField(queryset=ArchimatchUser.objects.all(), write_only=True)
     sender = serializers.EmailField(source="sender.email", read_only=True)
     recipient = serializers.EmailField(source="recipient.email", read_only=True)
+    recipient_user = ArchimatchUserSerializer(read_only=True)
 
     class Meta:
         """
@@ -45,7 +47,14 @@ class MessageSerializer(serializers.ModelSerializer):
         """
 
         model = Message
-        fields = ["sender", "recipient", "recipient_id", "content", "timestamp"]
+        fields = [
+            "sender",
+            "recipient",
+            "recipient_id",
+            "content",
+            "timestamp",
+            "recipient_user",
+        ]
 
 
 class ClientMessageSerializer(serializers.ModelSerializer):
