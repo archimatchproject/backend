@@ -62,7 +62,7 @@ class ArchitectReportService:
         user = request.user
         try:
             client = Client.objects.get(user=user)
-            reasons = validated_data.pop("reasons")
+            reasons = validated_data.pop("report_reasons")
             with transaction.atomic():
                 # Create ArchitectReport instance
                 architect_report = ArchitectReport.objects.create(

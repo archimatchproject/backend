@@ -63,3 +63,4 @@ class SelectionConfig(AppConfig):
             task_name="app.selection.tasks.selection_phase_tasks.process_email_quote_triggers"
         ).exists():
             process_email_triggers(repeat=24 * 60 * 60, schedule=next_midnight)
+
