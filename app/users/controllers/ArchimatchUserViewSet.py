@@ -147,7 +147,6 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object with the user data.
         """
-        print(request)
         success, data = ArchimatchUserService.archimatch_user_get_user_data(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 

@@ -2,10 +2,13 @@
 ViewSet module for the Message model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.messaging.models.Message import Message
 from app.messaging.serializers.MessageSerializer import MessageSerializer
 from app.messaging.services.MessageService import MessageService
@@ -60,3 +63,19 @@ class MessageViewSet(viewsets.ModelViewSet):
         """
 
         return MessageService.get_conversation(request)
+
+    @action(detail=False, methods=["GET"], url_path="conversation")
+    @handle_service_exceptions
+    def get_admin_client_messages(self, request):
+        """
+        Retrieve all messages between the authenticated user and a specified device.
+
+        Args:
+            request (Request): The request object containing the device ID.
+
+        Returns:
+            Response: A serialized response containing the list of messages.
+        """
+
+        success, data = MessageService.get_admin_client_messages(request)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)

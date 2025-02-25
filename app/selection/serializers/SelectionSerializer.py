@@ -153,7 +153,7 @@ class SelectionSerializer(serializers.ModelSerializer):
             bool: True if the duration since created_at equals or exceeds days_for_admin_management,
             False otherwise.
         """
-        selection_settings = self.context.get("selection_settings", None)
+        selection_settings = self.context.get("selection_settings")
         if selection_settings:
             days_for_admin_management = selection_settings.days_for_admin_management
             created_at = obj.phase.start_date

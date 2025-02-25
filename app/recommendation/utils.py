@@ -32,4 +32,4 @@ def handle_architect_box_assignment(announcement, architects_results):
                 architect_box.announcements.add(announcement)
                 architect_box.save()
         except IntegrityError:
-            print(f"Architect {architect_id} does not exist. Skipping.")
+            pass

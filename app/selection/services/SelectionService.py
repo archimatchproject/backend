@@ -166,7 +166,6 @@ class SelectionService:
         architect = Architect.objects.get(user=request.user)
         # Retrieve selections for the given architect
         selections = Selection.objects.filter(architect=architect)
-        print(selections)
         paginator = cls.pagination_class()
         page = paginator.paginate_queryset(selections, request)
         if page is not None:
@@ -484,12 +483,11 @@ class SelectionService:
             tuple: (bool, str) A success flag and a success message.
 
         """
-        days_number = data.get("days_number", None)
+        days_number = data.get("days_number")
         if days_number is None:
             raise APIException(detail="number of days has to be defined")
         admin = Admin.objects.get(user=user)
         selection = Selection.objects.select_for_update().get(id=selection_id)
-        print(selection.phase)
         phase = selection.phase
         phase.limit_date += timedelta(days=days_number)
         phase.save()
@@ -654,12 +652,10 @@ class SelectionService:
 
         phase_settings = cls.get_selection_settings(name=QUOTES)
         phase_duration_days = phase_settings.phase_days
-        print(phase_settings)
         phase.number = 3
         phase.name = DECISION
         phase.start_date = timezone.now()
 
         phase.limit_date = phase.start_date + timezone.timedelta(days=phase_duration_days)
-        print(phase)
         phase.save()
         return True, "Project canceled"

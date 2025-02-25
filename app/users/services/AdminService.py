@@ -120,7 +120,7 @@ class AdminService:
                     raise serializers.ValidationError("Email already exists.")
                 instance.user.email = email
 
-        if phone_number is not None:
+        elif phone_number is not None:
             instance.user.phone_number = phone_number
 
         # Update any other user fields from user_data
@@ -236,3 +236,35 @@ class AdminService:
 
         serializer = AdminSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def admin_get_profile(cls, request):
+        """
+        Retrieves admin information.
+        Args:
+            request (Request): Django request object containing user ID.
+        Returns:
+            Response: Response object containing admin data.
+        Raises:
+            APIException: If there are errors during the process.
+        """
+        user = request.user
+        admin = Admin.objects.get(user=user.id)
+        admin_serializer = AdminSerializer(admin)
+        return True, admin_serializer.data
+
+    @classmethod
+    def get_all_admins(cls):
+        """
+        Retrieves all admins information.
+        Args:
+            request (Request): Django request object containing user ID.
+        Returns:
+            Response: Response object containing admin data.
+        Raises:
+            APIException: If there are errors during the process.
+        """
+
+        admins = Admin.objects.all()
+        admin_serializer = AdminSerializer(admins, many=True)
+        return True, admin_serializer.data

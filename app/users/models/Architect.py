@@ -132,7 +132,7 @@ class Architect(BaseModel):
             city_name = self.city
 
         # Check if the city exists in COORDINATES dictionary
-        if city_name in city_coord_dict.keys():
+        if city_name in city_coord_dict:
             self.city_coordinates = {
                 "longitude": city_coord_dict[city_name][0],
                 "latitude": city_coord_dict[city_name][1],

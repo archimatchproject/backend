@@ -62,7 +62,7 @@ class SelectionReportService:
         try:
             client = Client.objects.get(user=user)
             reasons = validated_data.pop("report_reasons")
-            print("reasons", reasons)
+
             with transaction.atomic():
                 # Create SelectionReport instance
                 selection_report = SelectionReport.objects.create(
@@ -175,11 +175,11 @@ class SelectionReportService:
         Returns:
         - A Response object indicating the result of the operation.
         """
-        print(request.data)
+
         report_ids = request.data.get("report_ids", [])
         decision_id = request.data.get("decision_id")
         user = request.user
-        print("aaaaaaaaaaaaaaaaaaaaaa", report_ids, decision_id)
+
         if not report_ids or not decision_id:
             raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
         action = SELECTION_DECISION_ACTION_MAP.get(decision_id)

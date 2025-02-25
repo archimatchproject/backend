@@ -61,7 +61,7 @@ class UnavailabilitySerializer(serializers.ModelSerializer):
         """
         data = super().validate(data)
         whole_day = data.get("whole_day", False)
-        time_slots = data.get("time_slots", None)
+        time_slots = data.get("time_slots")
 
         if not whole_day and time_slots is None:
             raise serializers.ValidationError("If `whole_day` is not true, `time_slots` must be provided.")

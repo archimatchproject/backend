@@ -29,7 +29,6 @@ def generate_match_boost(field_name, value, boost):
     :param boost: The score boost applied if a match is found.
     :return: A dictionary representing the function score query.
     """
-    print(value)
     return {
         "filter": {"term": {field_name: value}},  # Match single ID against architect's list field
         "weight": boost,  # Apply boost if there's a match
@@ -103,20 +102,16 @@ def get_min_score_threshold(s, score_percentage):
     # Debugging max score before applying min score filter
     if response_max.hits:
         max_score = response_max.hits[0].meta.score
-        print(f"✅ Max Score: {max_score}")
+
     else:
         max_score = 0
-        print("⚠️ No results found, setting max_score to 0.")
 
     # Calculate Percentage Threshold
     min_score_threshold = max_score * (score_percentage / 100)
-    print(f"✅ Min Score Threshold: {min_score_threshold}")
 
     # 🔹 Apply `min_score`
     if min_score_threshold > 0:
         s = s.extra(min_score=min_score_threshold)
-    else:
-        print("⚠️ Skipping min score filter because max_score is 0.")
 
     return s
 
@@ -249,7 +244,6 @@ def compute_architect_score(
     s = s[:num_results]  # Fetch top `num_results`
     s = s.sort("_score")
     response = s.execute()
-    print(f"✅ Number of architects returned: {len(response.hits)}")
 
     # Return Results
     return [

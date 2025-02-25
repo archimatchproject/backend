@@ -94,24 +94,20 @@ def process_email_quote_triggers():
     """
     Periodically checks and triggers email notifications based on date conditions.
     """
-    try:
-        settings = SelectionSettings.objects.filter(name=QUOTES).first()
-        if not settings:
-            print("No SelectionSettings found. Exiting...")
-            return
 
-        email_triggers = generate_email_triggers(settings)
+    settings = SelectionSettings.objects.filter(name=QUOTES).first()
+    if not settings:
+        return
 
-        for trigger in email_triggers:
-            schedule_email_trigger(
-                model=trigger.model,
-                filter_field=trigger.filter_field,
-                offset_days=trigger.offset_days,
-                action_callback=trigger.action_callback,
-                extra_conditions=trigger.extra_conditions,
-                email_template=trigger.email_template,
-                extra_action=trigger.extra_action,
-            )
+    email_triggers = generate_email_triggers(settings)
 
-    except Exception as e:
-        print(f"Error in process_email_triggers: {e}")
+    for trigger in email_triggers:
+        schedule_email_trigger(
+            model=trigger.model,
+            filter_field=trigger.filter_field,
+            offset_days=trigger.offset_days,
+            action_callback=trigger.action_callback,
+            extra_conditions=trigger.extra_conditions,
+            email_template=trigger.email_template,
+            extra_action=trigger.extra_action,
+        )

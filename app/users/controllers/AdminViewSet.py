@@ -156,3 +156,47 @@ class AdminViewSet(viewsets.ModelViewSet):
         """
 
         return AdminService.admins_get_all(request)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-profile",
+        url_name="get-profile",
+    )
+    @handle_service_exceptions
+    def admin_get_profile(self, request):
+        """
+        Retrieves admin details.
+
+        Args:
+            self (adminViewSet): Instance of the adminViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing admin details.
+        """
+        success, admin_data = AdminService.admin_get_profile(request)
+        return build_response(success=success, data=admin_data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=[],
+        url_path="get-all-admins",
+        url_name="get-all-admins",
+    )
+    @handle_service_exceptions
+    def get_all_admins(self, request):
+        """
+        Retrieves admin details.
+
+        Args:
+            self (adminViewSet): Instance of the adminViewSet class.
+            request (Request): HTTP request object.
+
+        Returns:
+            Response: Response containing admin details.
+        """
+        success, admin_data = AdminService.get_all_admins(request)
+        return build_response(success=success, data=admin_data, status=status.HTTP_200_OK)

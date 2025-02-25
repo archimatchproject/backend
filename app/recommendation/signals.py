@@ -103,8 +103,7 @@ def handle_announcement_creation(sender, instance, created, **kwargs):
                 "property_type": "property_types",
             },
         )
-        print(f"Announcement {instance.id} created. Result: {architects_results}")
-        print(f"Architect search returned {len(architects_results)} results")
+
         handle_architect_box_assignment(instance, architects_results)
 
 

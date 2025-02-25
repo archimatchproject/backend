@@ -22,6 +22,7 @@ from rest_framework.response import Response
 
 from app.messaging.models.Message import Message
 from app.messaging.serializers.MessageSerializer import MessageSerializer
+from app.messaging.serializers.MessageSerializer import UserMessagesClientsSerializer
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
@@ -80,7 +81,6 @@ class MessageService:
                     try:
                         recipient_device.send_message(fcm_message)
                     except Exception as fcm_error:
-                        print(f"Error sending FCM message: {fcm_error}")
                         raise APIException(detail="Error with FCM notification: " + str(fcm_error))
 
                 return Response(
@@ -156,3 +156,15 @@ class MessageService:
             raise e
         except Exception as e:
             raise APIException(detail=f"Error retrieving conversation: {str(e)}")
+
+    @classmethod
+    def get_admin_client_messages(cls, request):
+        """
+        Retrieves clients who have exchanged messages with the authenticated user.
+        params: request
+        return: bool, dict
+        """
+        user = request.user
+
+        serializer = UserMessagesClientsSerializer(user, context={"user": user})
+        return True, serializer.data

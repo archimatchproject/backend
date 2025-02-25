@@ -10,6 +10,11 @@ from app.users.controllers.AdminViewSet import AdminViewSet
 
 admin_urlpatterns = [
     path(
+        "admin/get-all/",
+        AdminViewSet.as_view({"get": "get_all_admins"}),
+        name="admin-create",
+    ),
+    path(
         "admin/create/",
         AdminViewSet.as_view({"post": "create"}),
         name="admin-create",
@@ -48,5 +53,10 @@ admin_urlpatterns = [
         "admin/get-admins-paginated/",
         AdminViewSet.as_view({"get": "get_admins_paginated"}),
         name="admins-paginated",
+    ),
+    path(
+        "admin/get-profile/",
+        AdminViewSet.as_view({"get": "admin_get_profile"}),
+        name="profile",
     ),
 ]

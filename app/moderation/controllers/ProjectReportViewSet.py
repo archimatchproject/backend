@@ -38,11 +38,12 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
             "destroy",
             "list",
             "retrieve",
-            "get_decisions",
             "change_status",
             "execute_decision",
         ]:
             return [IsAuthenticated(), ManageReportingPermission()]
+        elif self.action in ["get_decisions"]:
+            return []
         return super().get_permissions()
 
     @handle_service_exceptions
@@ -54,7 +55,6 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         success, data = ProjectReportService.create_project_report(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False)
     @handle_service_exceptions
     def get_decisions(self, request):
         """
