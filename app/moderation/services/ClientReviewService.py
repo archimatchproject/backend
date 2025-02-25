@@ -7,9 +7,10 @@ related to ClientReview creation and management.
 Classes:
     ClientReviewService: Service class for ClientReview operations.
 """
-import json
-from django.core.serializers.json import DjangoJSONEncoder
 
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db import transaction
 
@@ -55,15 +56,14 @@ class ClientReviewService:
         try:
             client = Client.objects.get(user=user)
             with transaction.atomic():
+                if ClientReview.objects.filter(client=client, architect=validated_data["architect_id"]).exists():
+                    raise APIException(detail="A review for this architect by this client already exists.")
                 client_review = ClientReview.objects.create(
                     client=client,
                     architect=validated_data.pop("architect_id"),
-                    **{k: v for k, v in validated_data.items() if not isinstance(v, serializers.Field)}
+                    **{k: v for k, v in validated_data.items() if not isinstance(v, serializers.Field)},
                 )
-                return True, json.dumps(
-                    ClientReviewSerializer(client_review).data,
-                    cls=DjangoJSONEncoder
-                )
+                return True, json.dumps(ClientReviewSerializer(client_review).data, cls=DjangoJSONEncoder)
 
         except IntegrityError as e:
             if "unique constraint" in str(e):

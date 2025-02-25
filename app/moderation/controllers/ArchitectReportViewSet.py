@@ -39,10 +39,9 @@ class ArchitectReportViewSet(viewsets.ModelViewSet):
             "change_status",
             "execute_decision",
         ]:
-        
             return [IsAuthenticated(), ManageReportingPermission()]
 
-        elif self.action in ["get_decisions","get_reasons","create"]:
+        elif self.action in ["get_decisions", "get_reasons", "create"]:
             return []
         return super().get_permissions()
 
