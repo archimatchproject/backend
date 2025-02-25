@@ -252,3 +252,19 @@ class AdminService:
         admin = Admin.objects.get(user=user.id)
         admin_serializer = AdminSerializer(admin)
         return True, admin_serializer.data
+
+    @classmethod
+    def get_all_admins(cls):
+        """
+        Retrieves all admins information.
+        Args:
+            request (Request): Django request object containing user ID.
+        Returns:
+            Response: Response object containing admin data.
+        Raises:
+            APIException: If there are errors during the process.
+        """
+
+        admins = Admin.objects.all()
+        admin_serializer = AdminSerializer(admins, many=True)
+        return True, admin_serializer.data

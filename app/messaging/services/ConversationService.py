@@ -11,10 +11,6 @@ Classes:
 from django.db import models
 from django.db import transaction
 
-from fcm_django.models import FCMDevice
-from firebase_admin.messaging import Message as FCMMessage
-from firebase_admin.messaging import Notification
-from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
 
 from app.messaging.models.Conversation import Conversation
@@ -35,7 +31,7 @@ class ConversationService:
     """
 
     @classmethod
-    def create_conversation(cls, request):
+    def get_client_conversation(cls, request):
         """
         Handles validation and creation of a new Conversation and Message.
             tuple: A tuple containing a boolean indicating success and a string message.
@@ -43,47 +39,23 @@ class ConversationService:
             NotFound: If the admin user is not found.
             APIException: If there is an error with the FCM notification.
         """
-        data = request.data
+
         admin_user = ArchimatchUser.objects.filter(is_superuser=True).first()
         if not admin_user:
             raise NotFound(detail="Admin user not found.")
         admin = Admin.objects.get(user=admin_user)
-        data.update({"recipient_id": admin.user.id})
-        serializer = MessageSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
+
         user = request.user
+        # Check if the conversation already exists
+        conversation, created = Conversation.objects.get_or_create(user=user)
 
-        # Fetch the recipient user based on provided data
-        recipient = validated_data.get("recipient_id")
+        # If the conversation was newly created, assign the admin
+        if created:
+            with transaction.atomic():
+                conversation.admins.add(admin)
+                conversation.save()
 
-        # Begin transaction to save the message
-        with transaction.atomic():
-            Message.objects.create(
-                sender=user,
-                recipient=recipient,
-                content=validated_data.get("content"),
-            )
-
-            # Send notification to recipient’s device (if required)
-            recipient_device = FCMDevice.objects.filter(user=recipient, active=True).first()
-            if recipient_device:
-                fcm_message = FCMMessage(
-                    data={"user_id": str(user.id)},
-                    notification=Notification(
-                        title=f"New Message from {str(user)}",
-                        body=validated_data.get("content"),
-                    ),
-                    token=recipient_device.registration_id,
-                )
-                try:
-                    recipient_device.send_message(fcm_message)
-                except Exception as fcm_error:
-                    raise APIException(detail="Error with FCM notification: " + str(fcm_error))
-            conversation = Conversation.objects.create(user=user)
-            conversation.admins.add(admin)
-            conversation.save()
-            return True, "conversation added"
+        return True, ConversationSerializer(conversation).data
 
     @classmethod
     def get_admin_client_conversations(cls, request):
@@ -94,15 +66,20 @@ class ConversationService:
         """
         user = request.user
         admin = Admin.objects.get(user=user)
+
+        # Conversations where the current admin is included
         owned_conversations = Conversation.objects.filter(admins=admin)
 
-        superuser_conversations = (
-            Conversation.objects.filter(admins__user__is_superuser=True)
-            .annotate(num_superusers=models.Count("admins", filter=models.Q(admins__user__is_superuser=True)))
-            .filter(num_superusers=1)
+        # Conversations that contain only ONE superuser admin
+        superuser_conversations = Conversation.objects.filter(admins__user__is_superuser=True).exclude(
+            admins__user__is_superuser=False
         )
-        owned_conversations = owned_conversations | superuser_conversations
-        serializer = ConversationSerializer(owned_conversations, many=True)
+
+        # Combine the queries using union to maintain uniqueness
+        all_conversations = owned_conversations.union(superuser_conversations)
+
+        # Serialize results
+        serializer = ConversationSerializer(all_conversations, many=True)
         return True, serializer.data
 
     @classmethod
@@ -204,3 +181,60 @@ class ConversationService:
         conversation.admins.remove(admin)
 
         return True, "You have been removed from the conversation"
+
+    @classmethod
+    def get_conversartion_messages(cls, request):
+        """
+        Custom method to fetch all messages exchanged between the admins and the users in the conversation.
+        """
+        recipient_id = request.query_params.get("recipient_id")
+        is_admin = request.query_params.get("is_admin", "false").lower() == "true"
+        if recipient_id == "":
+            return True, []
+        if recipient_id is None:
+            raise NotFound(detail="client is required")
+        conversation = (
+            Conversation.objects.filter(user__id=recipient_id if is_admin else request.user.id)
+            .prefetch_related("admins__user")
+            .first()
+        )
+        user = conversation.user
+        admin_list = conversation.admins.all()
+        admin_users = [admin.user for admin in admin_list]
+        messages = Message.objects.filter(
+            (models.Q(sender=user) & models.Q(recipient__in=admin_users))
+            | (models.Q(sender__in=admin_users) & models.Q(recipient=user))
+        ).order_by("timestamp")
+
+        return True, MessageSerializer(messages, many=True).data
+
+    @classmethod
+    def join_conversation(cls, request):
+        """
+        Adds the authenticated user to a conversation as an admin if they are not already in it.
+
+        Args:
+            cls: The class instance.
+            request: The request object containing the conversation ID.
+
+        Raises:
+            NotFound: If the conversation ID is not provided or does not exist.
+
+        Returns:
+            tuple: A tuple containing a boolean indicating success and a message.
+        """
+        user = request.user
+        client_id = request.data.get("client")
+
+        if client_id is None:
+            raise NotFound(detail="client is required.")
+
+        admin = Admin.objects.get(user=user)
+        conversation = Conversation.objects.get(user_id=client_id)
+
+        # Check if the admin is already in the conversation
+        if not conversation.admins.filter(id=admin.id).exists():
+            conversation.admins.add(admin)
+            return True, "You have been added to the conversation."
+
+        return True, "You are already an admin in this conversation."
