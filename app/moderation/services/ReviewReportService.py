@@ -61,6 +61,11 @@ class ReviewReportService:
         try:
             architect = Architect.objects.get(user=user)
             reasons = validated_data.pop("report_reasons")
+            if ReviewReport.objects.filter(
+                reporting_architect=architect,
+                reported_review=validated_data.pop("reported_review_id"),
+            ).exists():
+                raise APIException(detail="A report for this review by this architect already exists.")
             with transaction.atomic():
                 # Create ReviewReport instance
                 review_report = ReviewReport.objects.create(

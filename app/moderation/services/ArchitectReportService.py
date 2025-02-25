@@ -62,6 +62,13 @@ class ArchitectReportService:
         user = request.user
         try:
             client = Client.objects.get(user=user)
+
+            if ArchitectReport.objects.filter(
+                reporting_client=client,
+                reported_architect_id=validated_data.pop("reported_architect_id"),
+            ).exists():
+                raise APIException(detail="A report for this architect by this client already exists.")
+
             reasons = validated_data.pop("report_reasons")
             with transaction.atomic():
                 # Create ArchitectReport instance
