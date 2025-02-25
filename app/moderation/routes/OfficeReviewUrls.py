@@ -17,12 +17,12 @@ office_review_urlpatterns = [
         name="office-review-list",
     ),
     path(
-        "office-review/architect-reviews",
+        "office-review/architect-reviews/<int:pk>/",
         OfficeReviewViewSet.as_view({"get": "architect_reviews"}),
         name="office-review-architect-reviews",
     ),
     path(
-        "office-review/architect-stats",
+        "office-review/architect-stats/<int:pk>/",
         OfficeReviewViewSet.as_view({"get": "architect_stats"}),
         name="office-review-architect-stats",
     ),
@@ -37,7 +37,7 @@ office_review_urlpatterns = [
         name="office-review-retrieve",
     ),
     path(
-        "office-review/update/<int:pk>/",
+        "office-review/<int:pk>/update/",
         OfficeReviewViewSet.as_view({"put": "update"}),
         name="office-review-update",
     ),
