@@ -1,0 +1,2 @@
+from app.moderation.serializers.ArchitectOfficeStatisticsSerializer import ArchitectOfficeStatisticsSerializer
+from app.moderation.serializers.OfficeReviewSerializer import OfficeReviewSerializer
