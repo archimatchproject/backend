@@ -25,9 +25,7 @@ from app.moderation import STATUS_CHOICES
 from app.moderation.models.ArchitectReport import ArchitectReport
 from app.moderation.models.Decision import Decision
 from app.moderation.models.Reason import Reason
-from app.moderation.serializers.ArchitectReportSerializer import (
-    ArchitectReportSerializer,
-)
+from app.moderation.serializers.ArchitectReportSerializer import ArchitectReportSerializer
 from app.moderation.serializers.DecisionSerializer import DecisionSerializer
 from app.moderation.serializers.ReasonSerializer import ReasonSerializer
 from app.moderation.services.ReportAction import ARCHITECT_DECISION_ACTION_MAP
@@ -79,9 +77,7 @@ class ArchitectReportService:
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
-                    {
-                        "detail": "A report for this architect by this client already exists."
-                    }
+                    {"detail": "A report for this architect by this client already exists."}
                 )
             raise APIException(detail=f"Error creating architect report: {str(e)}")
         except Client.DoesNotExist:
@@ -110,15 +106,10 @@ class ArchitectReportService:
         # Grouping reports by architect email
         for report in queryset:
             architect_email = report.reported_architect.user.email
-            architect_reports[architect_email].append(
-                ArchitectReportSerializer(report).data
-            )
+            architect_reports[architect_email].append(ArchitectReportSerializer(report).data)
 
         # Convert defaultdict to a list of dictionaries for JSON serialization
-        grouped_reports = [
-            {architect_email: reports}
-            for architect_email, reports in architect_reports.items()
-        ]
+        grouped_reports = [{architect_email: reports} for architect_email, reports in architect_reports.items()]
 
         # Instantiate the paginator
         paginator = cls.pagination_class()
@@ -196,9 +187,7 @@ class ArchitectReportService:
         user = request.user
 
         if not report_ids or not decision_id:
-            raise serializers.ValidationError(
-                detail="Report IDs and Decision ID are required."
-            )
+            raise serializers.ValidationError(detail="Report IDs and Decision ID are required.")
         action = ARCHITECT_DECISION_ACTION_MAP.get(decision_id)
         if not action:
             raise serializers.ValidationError("No valid action found for the decision.")

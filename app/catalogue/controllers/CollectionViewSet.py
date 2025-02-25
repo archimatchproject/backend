@@ -2,6 +2,7 @@
 ViewSet module for the Collection model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -11,7 +12,7 @@ from app.catalogue.serializers.CollectionSerializer import CollectionSerializer
 from app.catalogue.services.CollectionService import CollectionService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class CollectionViewSet(viewsets.ModelViewSet):
     """
@@ -60,9 +61,8 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Override the create method to use CollectionService for handling the creation
          of a Collection.
         """
-        success,data = CollectionService.create_collection(request)
+        success, data = CollectionService.create_collection(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -78,9 +78,8 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,message =  CollectionService.update_product_order(request, pk)
+        success, message = CollectionService.update_product_order(request, pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -95,10 +94,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,message =  CollectionService.update_display_status(request, pk)
+        success, message = CollectionService.update_display_status(request, pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
-    
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
     def update_visibility(self, request, pk=None):
@@ -112,9 +110,8 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,message =  CollectionService.update_visibility(request, pk)
+        success, message = CollectionService.update_visibility(request, pk)
         return build_response(success=success, message=message, status=status.HTTP_200_OK)
-
 
     def get(self, request):
         """
@@ -133,7 +130,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
                 or an error response if there's a problem during retrieval.
         """
         return CollectionService.get_collections(request)
-    
+
     @action(detail=True, methods=["POST"])
     @handle_service_exceptions
     def create_saved_collections(self, request):
@@ -148,10 +145,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the result of the operation.
         """
-        success,data = CollectionService.create_saved_collections(request)
+        success, data = CollectionService.create_saved_collections(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
-    
     @action(detail=True, methods=["GET"])
     @handle_service_exceptions
     def get_all_collections(self, request):
@@ -170,5 +166,5 @@ class CollectionViewSet(viewsets.ModelViewSet):
             Response: A paginated response containing serialized Supplier objects
                 or an error response if there's a problem during retrieval.
         """
-        success,data = CollectionService.get_all_collections(request)
+        success, data = CollectionService.get_all_collections(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

@@ -9,7 +9,9 @@ Classes:
 """
 
 from django.db import transaction
+
 from rest_framework.exceptions import NotFound
+
 from app.subscription.models.TokenPack import TokenPack
 from app.subscription.serializers.TokenPackSerializer import TokenPackSerializer
 from app.users.models.Architect import Architect
@@ -49,9 +51,7 @@ class TokenPackService:
             token_pack = TokenPack.objects.get(id=token_pack_id)
             architect = Architect.objects.get(user__id=user_id)
             current_plan = architect.subscription_plan
-            current_plan.remaining_tokens += (
-                token_pack.number_tokens + token_pack.number_free_tokens
-            )
+            current_plan.remaining_tokens += token_pack.number_tokens + token_pack.number_free_tokens
             current_plan.save()
             architect.save()
             return True, "Token pack is successfully chosen"

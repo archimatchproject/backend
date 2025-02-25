@@ -2,19 +2,17 @@
 ViewSet module for the ProjectReport model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import (
-    ManageReportingPermission,
-)
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
 from app.moderation.models.ProjectReport import ProjectReport
 from app.moderation.serializers.ProjectReportSerializer import ProjectReportSerializer
 from app.moderation.services.ProjectReportService import ProjectReportService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class ProjectReportViewSet(viewsets.ModelViewSet):
@@ -55,9 +53,7 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         of a ProjectReport.
         """
         success, data = ProjectReportService.create_project_report(request)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     
     @handle_service_exceptions
@@ -95,10 +91,16 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         This method processes the decision for the provided report IDs.
         """
         success, message = ProjectReportService.execute_decision(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def list(self, request):
+        """
+        Retrieve a list of all project reports.
+        Args:
+            request (HttpRequest): The HTTP request object.
+        Returns:
+            Response: A response object containing the list of all project reports.
+        """
+
         return ProjectReportService.project_reports_get_all(request)

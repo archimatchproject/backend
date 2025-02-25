@@ -26,4 +26,9 @@ message_urlpatterns = [
         MessageViewSet.as_view({"get": "conversation"}),
         name="message-conversation",
     ),
+    path(
+        "message/admin-client-messages/",
+        MessageViewSet.as_view({"get": "get_admin_client_messages"}),
+        name="admin-client-messages",
+    ),
 ]

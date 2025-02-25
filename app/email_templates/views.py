@@ -14,9 +14,7 @@ def home(request):
     """
     view when triggered will send an email example
     """
-    html_content = render_to_string(
-        template_name="architect_request.html", context={"reset_link": "google.com"}
-    )
+    html_content = render_to_string(template_name="architect_request.html", context={"reset_link": "google.com"})
     send_email_with_template(
         "ghazichaftar.pfe@gmail.com", "Architect Account Creation", html_content, base.COMMON_IMAGES
     )

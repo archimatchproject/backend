@@ -4,6 +4,7 @@ performed on projects, such as changing deadlines, canceling, blocking, or rebro
 """
 
 from django.db import models
+
 from app.selection import ACTION_CHOICES
 from app.users.models import Admin
 
@@ -26,12 +27,8 @@ class ActionLog(models.Model):
         choices=ACTION_CHOICES,
         help_text="The type of action performed (e.g., Change deadline, Cancel project).",
     )
-    timestamp = models.DateTimeField(
-        auto_now_add=True, help_text="The time when the action was performed."
-    )
-    details = models.JSONField(
-        blank=True, null=True, help_text="Optional additional details about the action."
-    )
+    timestamp = models.DateTimeField(auto_now_add=True, help_text="The time when the action was performed.")
+    details = models.JSONField(blank=True, null=True, help_text="Optional additional details about the action.")
 
     def __str__(self):
         """

@@ -32,9 +32,10 @@ def generate_choices(min_value: int, max_value: int, label_template: str) -> lis
 def send_email_with_template(to_email, subject, body, images):
     """Global function to send email with HTML template."""
     try:
-        from project_core.django import base as settings
         from django.core.mail import EmailMultiAlternatives
+
         from app.email_templates.utils import attach_email_icons
+        from project_core.django import base as settings
 
         from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "ghazichaftar@gmail.com")
         email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
@@ -75,7 +76,6 @@ def send_email(data):
         # Send the email
         send_email_with_template(to_email, subject, html_content, images)
     except Exception as e:
-        print(f"Task failed with error: {e}")
         from app.email_templates.tasks import send_error_email
 
         send_error_email(f"Task failed with error: {e}")
@@ -94,7 +94,6 @@ def send_reminder_email(announcement, email_template):
 
         architect = announcement.architect
         if not architect or not architect.user.email:
-            print(f"No architect or email found for announcement {announcement.id}")
             return
 
         # Prepare the email data
@@ -112,8 +111,8 @@ def send_reminder_email(announcement, email_template):
 
         # Send the email
         send_email(data)
-    except Exception as e:
-        print(f"Error sending email for announcement {announcement.id}: {e}")
+    except Exception:
+        pass
 
 
 def send_reminder_discussion_email(selection, email_template):
@@ -128,7 +127,6 @@ def send_reminder_discussion_email(selection, email_template):
 
         architect = selection.architect
         if not architect or not architect.user.email:
-            print(f"No architect or email found for selection {selection.id}")
             return
 
         # Prepare the email data
@@ -146,5 +144,5 @@ def send_reminder_discussion_email(selection, email_template):
 
         # Send the email
         send_email(data)
-    except Exception as e:
-        print(f"Error sending email for announcement {selection.id}: {e}")
+    except Exception:
+        pass

@@ -5,7 +5,9 @@ This module contains the CookiesPolicyViewSet class, which provides
 view-level logic for the CookiesPolicy model, including creation operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageLegalAndPolicyPermission import ManageLegalAndPolicyPermission
@@ -14,8 +16,7 @@ from app.cms.serializers.CookiesPolicySerializer import CookiesPolicySerializer
 from app.cms.services.CookiesPolicyService import CookiesPolicyService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
-from rest_framework.decorators import action
+
 
 class CookiesPolicyViewSet(viewsets.ModelViewSet):
     """
@@ -59,7 +60,6 @@ class CookiesPolicyViewSet(viewsets.ModelViewSet):
         success, data = CookiesPolicyService.create_cookies_policy(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
-    
     @action(detail=True, methods=["PUT"])
     def get_policy_by_admin(self, request, pk=None):
         """

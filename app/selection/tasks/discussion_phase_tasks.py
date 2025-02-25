@@ -14,15 +14,17 @@ Functions:
 
 """
 
-from background_task import background
+from collections import namedtuple
 
+from background_task import background
 
 from app.email_templates.utils import schedule_email_trigger
 from app.selection import DISCUSSION
 from app.selection.models.Selection import Selection
 from app.selection.models.SelectionSettings import SelectionSettings
-from app.selection.utils import send_reminder_discussion_email, send_reminder_email
-from collections import namedtuple
+from app.selection.utils import send_reminder_discussion_email
+from app.selection.utils import send_reminder_email
+
 
 EmailTriggerParams = namedtuple(
     "EmailTriggerParams",
@@ -108,7 +110,6 @@ def process_email_discussion_triggers():
     try:
         settings = SelectionSettings.objects.filter(name=DISCUSSION).first()
         if not settings:
-            print("No SelectionSettings found. Exiting...")
             return
 
         email_triggers = generate_email_triggers(settings)
@@ -124,5 +125,5 @@ def process_email_discussion_triggers():
                 extra_action=trigger.extra_action,
             )
 
-    except Exception as e:
-        print(f"Error in process_email_triggers: {e}")
+    except Exception:
+        pass

@@ -5,6 +5,7 @@ This module contains the PrivacyPolicyViewSet class, which provides
 view-level logic for the PrivacyPolicy model, including creation operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,7 +15,7 @@ from app.cms.serializers.PrivacyPolicySerializer import PrivacyPolicySerializer
 from app.cms.services.PrivacyPolicyService import PrivacyPolicyService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class PrivacyPolicyViewSet(viewsets.ModelViewSet):
     """
@@ -55,6 +56,5 @@ class PrivacyPolicyViewSet(viewsets.ModelViewSet):
         Returns:
             Response: The response object containing the created instance data.
         """
-        success,data = PrivacyPolicyService.create_privacy_policy(request)
+        success, data = PrivacyPolicyService.create_privacy_policy(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
-

@@ -11,10 +11,6 @@ Classes:
 from django.db import transaction
 
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 from app.cms.models.Blog import Blog
 from app.cms.models.BlogSection import BlogSection
@@ -70,9 +66,7 @@ class BlogService:
             tags = validated_data.get("tags", [])
             blog.tags.set(tags)
 
-            return True,BlogSerializer(blog).data
-
-        
+            return True, BlogSerializer(blog).data
 
     @classmethod
     def update_blog(cls, instance, data, partial=False):
@@ -90,16 +84,11 @@ class BlogService:
         serializer = BlogSerializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-
         with transaction.atomic():
             instance.title = serializer.validated_data.get("title", instance.title)
-            instance.cover_photo = serializer.validated_data.get(
-                "cover_photo", instance.cover_photo
-            )
+            instance.cover_photo = serializer.validated_data.get("cover_photo", instance.cover_photo)
             instance.sub_title = serializer.validated_data.get("sub_title", instance.sub_title)
-            instance.blog_thematic = serializer.validated_data.get(
-                "blog_thematic", instance.blog_thematic
-            )
+            instance.blog_thematic = serializer.validated_data.get("blog_thematic", instance.blog_thematic)
             instance.visible = serializer.validated_data.get("visible", instance.visible)
             instance.save()
 
@@ -108,14 +97,12 @@ class BlogService:
             updated_section_ids = []
 
             for section_data in sections_data:
-                section_id = section_data.get("id", None)
+                section_id = section_data.get("id")
 
                 if section_id:
                     # Update existing section
                     section = BlogSection.objects.get(id=section_id, blog=instance)
-                    section.section_type = section_data.get(
-                        "section_type", section.section_type
-                    )
+                    section.section_type = section_data.get("section_type", section.section_type)
                     section.content = section_data.get("content", section.content)
                     section.image = section_data.get("image", section.image)
                     section.save()
@@ -128,17 +115,13 @@ class BlogService:
 
             # Delete sections not in updated_section_ids
 
-            BlogSection.objects.filter(blog=instance).exclude(
-                id__in=updated_section_ids
-            ).delete()
+            BlogSection.objects.filter(blog=instance).exclude(id__in=updated_section_ids).delete()
 
             # Update tags
             tags = serializer.validated_data.get("tags", [])
             instance.tags.set(tags)
 
-            return True,BlogSerializer(instance).data
-
-        
+            return True, BlogSerializer(instance).data
 
     @classmethod
     def update_cover_photo(cls, pk, request):
@@ -160,9 +143,7 @@ class BlogService:
 
         blog.cover_photo = cover_photo
         blog.save()
-        return True,BlogSerializer(blog).data
-
-    
+        return True, BlogSerializer(blog).data
 
     @classmethod
     def change_visibility(cls, blog_id, request):
@@ -183,8 +164,8 @@ class BlogService:
         blog = Blog.objects.get(pk=blog_id)
         blog.visible = visibility
         blog.save()
-        return True,BlogSerializer(blog).data
-        
+        return True, BlogSerializer(blog).data
+
     @classmethod
     def upload_media(cls, request):
         """
@@ -205,20 +186,16 @@ class BlogService:
         # Handle image section type
         if section.section_type == "image":
             if not image:
-                raise serializers.ValidationError(
-                    detail="Image file is required for image section type."
-                )
+                raise serializers.ValidationError(detail="Image file is required for image section type.")
             section.image = image
             section.save()
             blog = section.blog
-            return True,BlogSerializer(blog).data
+            return True, BlogSerializer(blog).data
 
         # Handle slider section type
         elif section.section_type == "slider":
             if not slider_images:
-                raise serializers.ValidationError(
-                    "At least one slider image file is required for slider section type."
-                )
+                raise serializers.ValidationError("At least one slider image file is required for slider section type.")
 
             # Create multiple SliderImage instances for the slider section
             SliderImage.objects.filter(section=section).delete()  # Clear existing slider images
@@ -226,13 +203,10 @@ class BlogService:
                 SliderImage.objects.create(section=section, image=img)
 
             blog = section.blog
-            return True,BlogSerializer(blog).data
+            return True, BlogSerializer(blog).data
 
         else:
-            raise serializers.ValidationError(
-                detail="Invalid section type. Must be either image or slider."
-            )
-        
+            raise serializers.ValidationError(detail="Invalid section type. Must be either image or slider.")
 
     @classmethod
     def list_tags(cls):
@@ -241,4 +215,4 @@ class BlogService:
         """
         tags = BlogTag.objects.all()
         serializer = BlogTagSerializer(tags, many=True)
-        return True,serializer.data
+        return True, serializer.data

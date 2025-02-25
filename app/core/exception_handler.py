@@ -1,22 +1,52 @@
-from django.db import IntegrityError
-from rest_framework.exceptions import (
-    APIException,
-    ValidationError,
-    PermissionDenied,
-    NotAuthenticated,
-    NotFound,
-    ParseError,
-    Throttled,
-)
+"""_
+This module provides custom exception handling for a Django REST framework application.
+Classes:
+    CustomAPIException: A custom API exception class that allows setting a custom status code.
+Functions:
+    extract_integrity_error_details(error_message):
+    get_resource_name_from_exception(exception):
+        Extracts the resource name from a DoesNotExist exception or its message.
+    extract_validation_error_details(error):
+        Extracts details from a ValidationError object, handling both string and dict error structures.
+    handle_service_exceptions(func):
+        A decorator that wraps a function to handle various service exceptions and raise a CustomAPIException.
+"""
+
 import logging
-from rest_framework import status
 import re
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+
+from rest_framework import status
+from rest_framework.exceptions import APIException
+from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import Throttled
+from rest_framework.exceptions import ValidationError
+
 
 logger = logging.getLogger(__name__)
 
 
 class CustomAPIException(APIException):
+    """
+    Custom exception class for API errors.
+    Attributes:
+        status_code (int): HTTP status code for the exception. Defaults to 500.
+        default_detail (str): Default error message. Defaults to "A server error occurred."
+        default_code (str): Default error code. Defaults to "error".
+    Methods:
+        __init__(self, detail=None, code=None, status_code=None):
+            Initializes the CustomAPIException with optional detail, code, and status_code.
+            Args:
+                detail (str, optional): Custom error message. Defaults to None.
+                code (str, optional): Custom error code. Defaults to None.
+                status_code (int, optional): Custom HTTP status code. Defaults to None.
+    """
+
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = "A server error occurred."
     default_code = "error"
@@ -80,9 +110,7 @@ def extract_integrity_error_details(error_message):
     """
     Extracts and formats details from an IntegrityError message.
     """
-    match = re.search(
-        r"DETAIL:  Key \((\w+)\)=\(([^)]+)\) already exists\.", error_message
-    )
+    match = re.search(r"DETAIL:  Key \((\w+)\)=\(([^)]+)\) already exists\.", error_message)
     if match:
         field_name, field_value = match.groups()
         return f"Conflict with field '{field_name}' having value '{field_value}'"
@@ -128,9 +156,7 @@ def extract_validation_error_details(error):
                 # Combine messages for a field
                 for message in messages:
                     if isinstance(message, dict):
-                        error_messages.append(
-                            f"{field}: {message.get('string', str(message))}"
-                        )
+                        error_messages.append(f"{field}: {message.get('string', str(message))}")
                     else:
                         error_messages.append(f"{field}: {str(message)}")
             else:
@@ -142,6 +168,22 @@ def extract_validation_error_details(error):
 
 
 def handle_service_exceptions(func):
+    """
+    A decorator that handles exceptions for service functions and raises custom API exceptions.
+    Args:
+        func (callable): The service function to be wrapped by the decorator.
+    Returns:
+        callable: The wrapped function with exception handling.
+    Raises:
+        CustomAPIException: If an exception occurs, a custom API exception is raised with appropriate details.
+    Exception Handling:
+        - Catches exceptions defined in EXCEPTION_MAPPINGS and raises a CustomAPIException with a formatted message.
+        - Catches IntegrityError and extracts details using `extract_integrity_error_details`.
+        - Catches ValidationError and extracts details using `extract_validation_error_details`.
+        - Catches ObjectDoesNotExist and raises a CustomAPIException with a "not found" message.
+        - Catches any other exceptions and raises a CustomAPIException with a generic internal error message.
+    """
+
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -164,9 +206,7 @@ def handle_service_exceptions(func):
             else:
                 detail = str(ex)
 
-            formatted_message = error_info["message"].format(
-                error=detail
-            )  # Format the message with the error detail
+            formatted_message = error_info["message"].format(error=detail)  # Format the message with the error detail
             logger.error(f"{formatted_message} - Details: {str(ex)}", exc_info=True)
 
             # Raise custom API exception with status_code
@@ -179,9 +219,7 @@ def handle_service_exceptions(func):
             resource_name = get_resource_name_from_exception(ex)
             detail = f"{resource_name} not found."
             logger.error(f"{detail} - Details: {str(ex)}", exc_info=True)
-            raise CustomAPIException(
-                detail=detail, code="not_found", status_code=status.HTTP_404_NOT_FOUND
-            )
+            raise CustomAPIException(detail=detail, code="not_found", status_code=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             logger.error("Unhandled Exception: %s", str(ex), exc_info=True)
             raise CustomAPIException(

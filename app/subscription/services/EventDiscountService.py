@@ -8,18 +8,14 @@ Classes:
     EventDiscountService: Service class for EventDiscount operations.
 """
 
-from django.db import transaction
 from django.utils import timezone
-from rest_framework import serializers
+
 from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
 from app.subscription.models.EventDiscount import EventDiscount
 from app.subscription.serializers.EventDiscountSerializer import EventDiscountSerializer
-from app.users.models.Architect import Architect
 
 
 class EventDiscountService:
@@ -28,6 +24,7 @@ class EventDiscountService:
 
     Handles business logic and exception handling for EventDiscount creation and management.
     """
+
     pagination_class = CustomPagination
 
     @classmethod
@@ -51,7 +48,7 @@ class EventDiscountService:
         """
 
         queryset = EventDiscount.objects.all().order_by("start_date")
-        
+
         # Instantiate the paginator
         paginator = cls.pagination_class()
 
@@ -63,8 +60,7 @@ class EventDiscountService:
 
         serializer = EventDiscountSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
+
     @classmethod
     def get_active_event_discount(cls):
         """
@@ -77,6 +73,6 @@ class EventDiscountService:
             Response: A response containing serialized EventDiscount objects.
         """
         today = timezone.now().date()
-        queryset = EventDiscount.objects.filter(start_date__lte=today,end_date__gte=today)
+        queryset = EventDiscount.objects.filter(start_date__lte=today, end_date__gte=today)
         serializer = EventDiscountSerializer(queryset, many=True)
-        return True,serializer.data
+        return True, serializer.data

@@ -6,6 +6,7 @@ and additional actions
 related to GuideThematic instances via REST API endpoints.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -20,7 +21,7 @@ from app.cms.serializers.GuideThematicSerializer import GuideThematicSerializer
 from app.cms.services.GuideThematicService import GuideThematicService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class GuideThematicViewSet(viewsets.ModelViewSet):
     """
@@ -84,7 +85,7 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the created GuideThematic instance.
         """
-        success,data = GuideThematicService.create_guide_thematic(request)
+        success, data = GuideThematicService.create_guide_thematic(request)
         return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @handle_service_exceptions
@@ -103,9 +104,8 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         """
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        success,data = GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
+        success, data = GuideThematicService.update_guide_thematic(instance, request.data, partial=partial)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-
 
     @action(detail=True, methods=["PUT"])
     @handle_service_exceptions
@@ -120,9 +120,19 @@ class GuideThematicViewSet(viewsets.ModelViewSet):
         Returns:
             Response: Serialized data of the updated Blog instance.
         """
-        success,data = GuideThematicService.change_visibility(pk, request)
+        success, data = GuideThematicService.change_visibility(pk, request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
     @handle_service_exceptions
     def list(self, request, *args, **kwargs):
+        """
+        Retrieve a paginated list of thematic guides.
+        Args:
+            request (Request): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        Returns:
+            Response: A paginated list of thematic guides.
+        """
+
         return GuideThematicService.get_thematic_guides_paginated(request=request)

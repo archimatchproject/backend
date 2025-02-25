@@ -5,36 +5,26 @@ This module contains view classes for interacting with ArchimatchUser instances
 using Django REST Framework.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.users.controllers.NotDeletedPermission import NotDeletedPermission
 from app.users.controllers.NotSuspendedPermission import NotSuspendedPermission
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers.ArchimatchUserObtainPairSerializer import (
-    ArchimatchUserObtainPairSerializer,
-)
-from app.users.serializers.ArchimatchUserObtainPairSerializer import (
-    PhoneTokenObtainPairSerializer,
-)
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserCreatePWSerializer,
-)
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserResetPWSerializer,
-)
+from app.users.serializers.ArchimatchUserObtainPairSerializer import ArchimatchUserObtainPairSerializer
+from app.users.serializers.ArchimatchUserObtainPairSerializer import PhoneTokenObtainPairSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.ArchimatchUserSerializer import (
-    ArchimatchUserSimpleSerializer,
-)
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthPhoneSerializer
 from app.users.serializers.UserAuthSerializer import VerifyCodeSerializer
 from app.users.services.ArchimatchUserService import ArchimatchUserService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class ArchimatchUserObtainPairView(TokenObtainPairView):
@@ -112,12 +102,8 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of password creation.
         """
-        success, token, message = ArchimatchUserService.archimatch_user_create_password(
-            request
-        )
-        return build_response(
-            success=success, message=message, data=token, status=status.HTTP_200_OK
-        )
+        success, token, message = ArchimatchUserService.archimatch_user_create_password(request)
+        return build_response(success=success, message=message, data=token, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["POST"], url_path="reset-password")
     @handle_service_exceptions
@@ -132,9 +118,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: HTTP response object indicating success or failure of password reset.
         """
         success, message = ArchimatchUserService.archimatch_user_reset_password(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["PUT"], url_path="update-data")
     @handle_service_exceptions
@@ -148,12 +132,8 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object indicating success or failure of updating data.
         """
-        success, user_data, message = ArchimatchUserService.archimatch_user_update_data(
-            request
-        )
-        return build_response(
-            success=success, message=message, data=user_data, status=status.HTTP_200_OK
-        )
+        success, user_data, message = ArchimatchUserService.archimatch_user_update_data(request)
+        return build_response(success=success, message=message, data=user_data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["GET"], url_path="get-user-data")
     @handle_service_exceptions
@@ -167,7 +147,6 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
         Returns:
             Response: HTTP response object with the user data.
         """
-        print(request)
         success, data = ArchimatchUserService.archimatch_user_get_user_data(request)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
@@ -190,9 +169,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: Response indicating whether the verification code was sent successfully.
         """
         success, message = ArchimatchUserService.send_verification_code(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -214,9 +191,7 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the verification.
         """
         success, message = ArchimatchUserService.verify_verification_code(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)
 
     @action(
         detail=False,
@@ -237,6 +212,4 @@ class ArchimatchUserViewSet(viewsets.ModelViewSet):
             Response: Response indicating success or failure of the verification.
         """
         success, message = ArchimatchUserService.archimatch_user_is_found(request)
-        return build_response(
-            success=success, message=message, status=status.HTTP_200_OK
-        )
+        return build_response(success=success, message=message, status=status.HTTP_200_OK)

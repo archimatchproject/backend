@@ -26,9 +26,7 @@ class FAQQuestion(BaseModel):
 
     question = models.CharField(max_length=255)
     response = models.TextField()
-    faq_thematic = models.ForeignKey(
-        FAQThematic, on_delete=models.CASCADE, related_name="faq_thematic_questions"
-    )
+    faq_thematic = models.ForeignKey(FAQThematic, on_delete=models.CASCADE, related_name="faq_thematic_questions")
     guide_thematic = models.ForeignKey(
         GuideThematic,
         on_delete=models.DO_NOTHING,

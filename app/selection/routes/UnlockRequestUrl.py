@@ -7,7 +7,9 @@ refuse: POST /unlock-requests/<int:pk>/refuse/
 """
 
 from django.urls import path
+
 from app.selection.controllers.UnlockRequestViewSet import UnlockRequestViewSet
+
 
 urlpatterns = [
     path(

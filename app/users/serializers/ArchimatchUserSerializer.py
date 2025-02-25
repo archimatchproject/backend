@@ -8,10 +8,10 @@ Classes:
     ArchimatchUserSimpleSerializer: Simplified serializer for ArchimatchUser model.
 """
 
+from fcm_django.models import FCMDevice
 from rest_framework import serializers
 
 from app.users.models import ArchimatchUser
-from fcm_django.models import FCMDevice
 
 
 class ArchimatchUserSerializer(serializers.ModelSerializer):

@@ -19,19 +19,11 @@ from app.core.services.SMS.SMSVerificationService import SMSVerificationService
 from app.core.services.SMS.TwilioVerifyService import TwilioVerifyService
 from app.core.validation.validate_data import is_valid_phone_number
 from app.users.models.ArchimatchUser import ArchimatchUser
-from app.users.serializers.ArchimatchUserObtainPairSerializer import (
-    ArchimatchUserObtainPairSerializer,
-)
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserCreatePWSerializer,
-)
-from app.users.serializers.ArchimatchUserPWSerializer import (
-    ArchimatchUserResetPWSerializer,
-)
+from app.users.serializers.ArchimatchUserObtainPairSerializer import ArchimatchUserObtainPairSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserCreatePWSerializer
+from app.users.serializers.ArchimatchUserPWSerializer import ArchimatchUserResetPWSerializer
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
-from app.users.serializers.ArchimatchUserSerializer import (
-    ArchimatchUserSimpleSerializer,
-)
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 
 
 class ArchimatchUserService:
@@ -54,7 +46,6 @@ class ArchimatchUserService:
                 "password": password,
             }
         )
-        print(serializer)
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data
 
@@ -139,9 +130,7 @@ class ArchimatchUserService:
         user = request.user
         data = request.data
         if not data:
-            raise ValidationError(
-                detail="At least one field must be provided for update."
-            )
+            raise ValidationError(detail="At least one field must be provided for update.")
         serializer = ArchimatchUserSimpleSerializer(user, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -200,12 +189,10 @@ class ArchimatchUserService:
             and their email.
         """
         data = request.data
-        phone_number = data.get("phone_number", None)
-        verification_code = data.get("verification_code", None)
+        phone_number = data.get("phone_number")
+        verification_code = data.get("verification_code")
         if verification_code is None or phone_number is None:
-            raise serializers.ValidationError(
-                detail="verification code and phone number are required"
-            )
+            raise serializers.ValidationError(detail="verification code and phone number are required")
 
         # Commented out to save credit of trial
         # if not cls.sms_verification_service.check_verification_code(
@@ -243,18 +230,13 @@ class ArchimatchUserService:
         phone_number = data.get("phone_number", False)
         email = data.get("email", False)
         if not phone_number or not email:
-            raise serializers.ValidationError(
-                detail="phone number and email are required"
-            )
+            raise serializers.ValidationError(detail="phone number and email are required")
         if (
             ArchitectRequest.objects.filter(phone_number=phone_number).exists()
             or ArchimatchUser.objects.filter(phone_number=phone_number).exists()
         ):
             raise APIException(detail="phone number already exists")
-        if (
-            ArchitectRequest.objects.filter(email=email).exists()
-            or ArchimatchUser.objects.filter(email=email).exists()
-        ):
+        if ArchitectRequest.objects.filter(email=email).exists() or ArchimatchUser.objects.filter(email=email).exists():
             raise APIException(detail="email already exists")
 
         return True, "phone number and email address are valid"

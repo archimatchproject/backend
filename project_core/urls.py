@@ -67,6 +67,10 @@ urlpatterns = [
         include("app.selection.urls"),
     ),
     path(
+        f"{URL_PREFIX}recommendation/",
+        include("app.recommendation.urls"),
+    ),
+    path(
         f"{URL_PREFIX}swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
@@ -75,6 +79,10 @@ urlpatterns = [
         f"{URL_PREFIX}redoc/",
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
+    ),
+    path(
+        f"{URL_PREFIX}officeOffer/",
+        include("app.officeOffer.urls"),
     ),
 ] + static(
     settings.MEDIA_URL,

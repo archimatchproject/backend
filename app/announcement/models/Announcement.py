@@ -5,9 +5,9 @@ This module contains the Announcement class, which represents an announcement
 for a construction or renovation project in the application.
 """
 
-from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils import timezone
 
 from app.announcement import ANNOUNCEMENT_STATUS_CHOICES
 from app.announcement import BUDGETS
@@ -24,8 +24,9 @@ from app.core.models.Note import Note
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
-from app.users.models.Client import Client
+from app.recommendation.fixtures.architect_generation import COORDINATES
 from app.selection.models.Selection import Selection
+from app.users.models.Client import Client
 
 
 class Announcement(BaseModel):
@@ -95,23 +96,18 @@ class Announcement(BaseModel):
         null=True,
         blank=True,
     )
-    project_extensions = models.ManyToManyField(
-        ProjectExtension, related_name="project_extensions_announcements"
-    )
+    project_extensions = models.ManyToManyField(ProjectExtension, related_name="project_extensions_announcements")
     number_floors = models.PositiveIntegerField(default=0)
     notes = GenericRelation(Note)
-    status = models.CharField(
-        max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING
-    )
+    status = models.CharField(max_length=20, choices=ANNOUNCEMENT_STATUS_CHOICES, default=PENDING)
     admin_note = models.CharField(max_length=500, null=True, blank=True)
-    architect = models.ForeignKey(
-        "users.Architect", on_delete=models.SET_NULL, null=True, blank=True
-    )
+    architect = models.ForeignKey("users.Architect", on_delete=models.SET_NULL, null=True, blank=True)
 
     token_number = models.PositiveIntegerField(null=True, blank=True)
     suggested_at = models.DateTimeField(db_index=True, default=timezone.now)
     is_blocked = models.BooleanField(default=False)
     is_broadcasted = models.BooleanField(default=True)
+    city_coordinates = models.JSONField(default=dict, blank=True, null=True)  # Store longitude and latitude
 
     def __str__(self):
         """
@@ -124,6 +120,14 @@ class Announcement(BaseModel):
 
     @property
     def interested_architects(self):
+        """
+        Returns a queryset of architects who have shown interest in the announcement.
+        This method filters the selections related to the announcement to include only those
+        with a status of "interested" and retrieves the related architect objects.
+        Returns:
+            QuerySet: A queryset of selections with status "interested" and their related architects.
+        """
+
         return self.selections.filter(status="interested").select_related("architect")
 
     @property
@@ -138,6 +142,30 @@ class Announcement(BaseModel):
             return self.selections.get(status="accepted").architect
         except Selection.DoesNotExist:
             return None
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to automatically update city coordinates
+        based on the selected city.
+        """
+        # Convert coordinates list to a dictionary
+        city_coord_dict = dict(COORDINATES)
+
+        if "(" in self.city:
+            # Extract city name properly in case it's a tuple (to handle choice fields)
+            city_name = self.city.strip("()").replace("'", "").split(",")[0].strip()
+        else:
+            city_name = self.city
+
+        # Check if the city exists in COORDINATES dictionary
+        if city_name in city_coord_dict:
+            self.city_coordinates = {
+                "long": city_coord_dict[city_name][0],
+                "lat": city_coord_dict[city_name][1],
+            }
+
+        # Call the parent class save method
+        super().save(*args, **kwargs)
 
     class Meta:
         """

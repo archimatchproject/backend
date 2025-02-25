@@ -1,0 +1,3 @@
+from app.officeOffer.admin.OfferAdmin import OfferAdmin
+from app.officeOffer.admin.SoftwareSkillAdmin import SoftwareSkillAdmin
+from app.officeOffer.admin.TechnicalSkillAdmin import TechnicalSkillAdmin

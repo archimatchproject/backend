@@ -32,9 +32,7 @@ from app.users.models.Architect import Architect
 from app.users.serializers.ArchitectSerializer import ArchitectBaseDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectCompanyDetailsSerializer
 from app.users.serializers.ArchitectSerializer import ArchitectSerializer
-from app.users.serializers.ArchitectSerializer import (
-    ArchitectUpdatePreferencesSerializer,
-)
+from app.users.serializers.ArchitectSerializer import ArchitectUpdatePreferencesSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -138,7 +136,6 @@ class ArchitectService:
         user_id = request.user.id
         serializer = ArchitectBaseDetailsSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         architect = Architect.objects.get(user__id=user_id)
         user = architect.user
         validated_data = serializer.validated_data
@@ -158,9 +155,7 @@ class ArchitectService:
         architect.bio = validated_data.get("bio")
         architect.company_name = validated_data.get("company_name")
         architect.address = validated_data.get("address")
-        architect.presentation_video = serializer.validated_data.get(
-            "presentation_video", architect.presentation_video
-        )
+        architect.presentation_video = serializer.validated_data.get("presentation_video", architect.presentation_video)
         architect.save()
 
         return True, "Architect successfully updated"
@@ -398,8 +393,8 @@ class ArchitectService:
 
         data = request.data
         user_id = request.user.id
-        presentation_video = data.get("presentation_video", None)
-        bio = data.get("bio", None)
+        presentation_video = data.get("presentation_video")
+        bio = data.get("bio")
         if bio is None:
             raise serializers.ValidationError(detail="biois required")
 
@@ -427,7 +422,7 @@ class ArchitectService:
 
         data = request.data
         user_id = request.user.id
-        company_logo = data.get("company_logo", None)
+        company_logo = data.get("company_logo")
         if company_logo is None:
             raise serializers.ValidationError(detail="profile image is required")
 

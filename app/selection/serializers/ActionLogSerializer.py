@@ -4,6 +4,7 @@ the conversion of ActionLog instances to JSON format and vice versa.
 """
 
 from rest_framework import serializers
+
 from app.selection.models.ActionLog import ActionLog
 from app.users.serializers.AdminSerializer import AdminSerializer
 
@@ -14,17 +15,18 @@ class ActionLogSerializer(serializers.ModelSerializer):
     to JSON for API responses and validates input data for creating or
     updating ActionLog entries.
     """
+
     admin = AdminSerializer()
+
     class Meta:
         """
         Metadata options for the ActionLogSerializer.
         Defines the model to serialize and the fields to include.
         """
+
         model = ActionLog
-        fields = ['id', 'admin', 'action', 'timestamp', 'details']
-        read_only_fields = ['id', 'timestamp']
-
-
+        fields = ["id", "admin", "action", "timestamp", "details"]
+        read_only_fields = ["id", "timestamp"]
 
     def validate_action(self, value):
         """

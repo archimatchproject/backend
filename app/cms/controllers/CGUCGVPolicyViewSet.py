@@ -5,7 +5,9 @@ This module contains the CGUCGVPolicyViewSet class, which provides
 view-level logic for the CGU/CGV policy model, including creation operations.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from app.cms.controllers.ManageLegalAndPolicyPermission import ManageLegalAndPolicyPermission
@@ -14,8 +16,8 @@ from app.cms.serializers.CGUCGVPolicySerializer import CGUCGVPolicySerializer
 from app.cms.services.CGUCGVPolicyService import CGUCGVPolicyService
 from app.core.exception_handler import handle_service_exceptions
 from app.core.response_builder import build_response
-from rest_framework import status
-from rest_framework.decorators import action
+
+
 class CGUCGVPolicyViewSet(viewsets.ModelViewSet):
     """
     ViewSet for the CGUCGVPolicy model.

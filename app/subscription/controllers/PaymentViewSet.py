@@ -2,17 +2,18 @@
 ViewSet module for the Payment model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
 from app.subscription.controllers.ManagePaymentPermission import ManagePaymentPermission
 from app.subscription.models.Payment import Payment
 from app.subscription.serializers.PaymentSerializer import PaymentSerializer
 from app.subscription.services.PaymentService import PaymentService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
+
 
 class PaymentViewSet(viewsets.ModelViewSet):
     """
@@ -45,9 +46,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
         """
         Override the create method to use PaymentService for handling the creation of a Payment.
         """
-        success,data = PaymentService.create_architect_payment(request, request.data)
+        success, data = PaymentService.create_architect_payment(request, request.data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
-        return 
+        return
 
     @action(detail=False, methods=["GET"])
     @handle_service_exceptions
@@ -55,14 +56,40 @@ class PaymentViewSet(viewsets.ModelViewSet):
         """
         Return the payment methods from the choices.
         """
-        success,data = PaymentService.get_payment_methods()
+        success, data = PaymentService.get_payment_methods()
         return build_response(success=success, data=data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["POST"],url_name="supplier-payment-create",url_path="supplier-payment-create")
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_name="supplier-payment-create",
+        url_path="supplier-payment-create",
+    )
     @handle_service_exceptions
     def create_supplier_payment(self, request):
         """
         Return the payment methods from the choices.
         """
-        success,data = PaymentService.create_supplier_payment(request,request.data)
+        success, data = PaymentService.create_supplier_payment(request, request.data)
+        return build_response(success=success, data=data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_name="office-payment-create",
+        url_path="office-payment-create",
+    )
+    @handle_service_exceptions
+    def create_office_payment(self, request, pk=None):
+        """
+        Custom action to create a payment for a specific office.
+
+        Args:
+            request (Request): The HTTP request object containing payment data.
+            pk (int): The primary key of the office where the payment is associated.
+
+        Returns:
+            Response: The response object containing the created payment or an error message.
+        """
+        success, data = PaymentService.create_office_payment(request, request.data)
         return build_response(success=success, data=data, status=status.HTTP_200_OK)

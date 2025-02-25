@@ -27,9 +27,7 @@ class Collection(models.Model):
 
     title = models.CharField(max_length=255)
     category = models.ForeignKey(SupplierSpeciality, on_delete=models.CASCADE)
-    supplier = models.ForeignKey(
-        Supplier, on_delete=models.CASCADE, related_name="supplier_collections"
-    )
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name="supplier_collections")
     appearance = models.CharField(
         max_length=10,
         choices=APPEARANCES,
@@ -37,6 +35,7 @@ class Collection(models.Model):
     )
     display = models.BooleanField(default=False)
     visibility = models.BooleanField(default=False)
+
     def __str__(self):
         """
         String representation of the Collection instance.

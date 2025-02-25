@@ -10,6 +10,8 @@ Classes:
 
 from django.db import models
 
+from app.announcement import CITIES
+from app.announcement import COORDINATES
 from app.announcement.models.Need import Need
 from app.core.models import BaseModel
 from app.core.models.ArchitectSpeciality import ArchitectSpeciality
@@ -108,6 +110,36 @@ class Architect(BaseModel):
     work_surfaces = models.ManyToManyField(WorkSurface, blank=True)
     budgets = models.ManyToManyField(Budget, blank=True)
     preferred_locations = models.ManyToManyField(PreferredLocation, blank=True)
+    city = models.CharField(
+        max_length=50,
+        choices=CITIES,
+        default=CITIES[0],
+    )
+    city_coordinates = models.JSONField(default=dict, blank=True, null=True)  # Store longitude and latitude
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to automatically update city coordinates
+        based on the selected city.
+        """
+        # Convert coordinates list to a dictionary
+        city_coord_dict = dict(COORDINATES)
+
+        if "(" in self.city:
+            # Extract city name properly in case it's a tuple (to handle choice fields)
+            city_name = self.city.strip("()").replace("'", "").split(",")[0].strip()
+        else:
+            city_name = self.city
+
+        # Check if the city exists in COORDINATES dictionary
+        if city_name in city_coord_dict:
+            self.city_coordinates = {
+                "longitude": city_coord_dict[city_name][0],
+                "latitude": city_coord_dict[city_name][1],
+            }
+
+        # Call the parent class save method
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """

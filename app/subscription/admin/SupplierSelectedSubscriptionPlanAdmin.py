@@ -7,9 +7,6 @@ from django.contrib import admin
 from app.subscription.models.SupplierSelectedSubscriptionPlan import SupplierSelectedSubscriptionPlan
 
 
-
-
-
 class SupplierSelectedSubscriptionPlanAdmin(admin.ModelAdmin):
     """
     Admin interface for SelectedSubscriptionPlan.
@@ -25,7 +22,7 @@ class SupplierSelectedSubscriptionPlanAdmin(admin.ModelAdmin):
         "discount",
         "discount_percentage",
         "collection_number",
-        "product_number_per_collection"
+        "product_number_per_collection",
     )
     search_fields = ("plan_name",)
     list_filter = ("active", "free_plan")

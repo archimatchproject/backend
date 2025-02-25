@@ -2,9 +2,11 @@
 Module-level constants for dev configuration.
 """
 
+import os
+
 from project_core.django.base import *
 from project_core.env import env
-import os
+
 
 DEBUG = env("DEBUG")
 """

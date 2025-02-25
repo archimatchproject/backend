@@ -2,19 +2,17 @@
 ViewSet module for the ReviewReport model.
 """
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from app.moderation.controllers.ManageReportingPermission import (
-    ManageReportingPermission,
-)
+from app.core.exception_handler import handle_service_exceptions
+from app.core.response_builder import build_response
+from app.moderation.controllers.ManageReportingPermission import ManageReportingPermission
 from app.moderation.models.ReviewReport import ReviewReport
 from app.moderation.serializers.ReviewReportSerializer import ReviewReportSerializer
 from app.moderation.services.ReviewReportService import ReviewReportService
-from app.core.exception_handler import handle_service_exceptions
-from app.core.response_builder import build_response
-from rest_framework import status
 
 
 class ReviewReportViewSet(viewsets.ModelViewSet):
@@ -54,9 +52,7 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
         of a ReviewReport.
         """
         success, data = ReviewReportService.create_review_report(request)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(detail=False)
     @handle_service_exceptions
@@ -96,4 +92,12 @@ class ReviewReportViewSet(viewsets.ModelViewSet):
 
     @handle_service_exceptions
     def list(self, request):
+        """
+        Retrieve a list of all review reports.
+        Args:
+            request (Request): The request object containing query parameters and other metadata.
+        Returns:
+            Response: A response object containing the list of all review reports.
+        """
+
         return ReviewReportService.review_reports_get_all(request)

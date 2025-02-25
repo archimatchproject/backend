@@ -39,8 +39,9 @@ class ReviewReportService:
     Methods:
         create_review_report(request): Handles validation and creation of a new ReviewReport.
     """
+
     pagination_class = CustomPagination
-    
+
     @classmethod
     def create_review_report(cls, request):
         """
@@ -69,8 +70,8 @@ class ReviewReportService:
                 )
                 review_report.reasons.set(reasons)
                 review_report.save()
-                return True,ReviewReportSerializer(review_report).data
- 
+                return True, ReviewReportSerializer(review_report).data
+
         except IntegrityError as e:
             if "unique constraint" in str(e):
                 raise serializers.ValidationError(
@@ -95,7 +96,7 @@ class ReviewReportService:
         """
         decisions = Decision.objects.filter(report_type="Review")
         serialized_decisions = DecisionSerializer(decisions, many=True)
-        return True,serialized_decisions.data
+        return True, serialized_decisions.data
 
     @classmethod
     def get_reasons(cls):
@@ -108,7 +109,7 @@ class ReviewReportService:
         """
         reasons = Reason.objects.filter(report_type="Review")
         serialized_reasons = ReasonSerializer(reasons, many=True)
-        return True,serialized_reasons.data
+        return True, serialized_reasons.data
 
     @classmethod
     def change_architect_report_status(cls, request, pk):
@@ -130,8 +131,7 @@ class ReviewReportService:
 
         report.status = new_status
         report.save()
-        return True,ReviewReportSerializer(report).data
-        
+        return True, ReviewReportSerializer(report).data
 
     @classmethod
     def execute_decision(cls, request, pk):
@@ -164,9 +164,8 @@ class ReviewReportService:
 
         action.execute(report.reported_review, request.user.admin)
 
-        return True,ReviewReportSerializer(report).data
+        return True, ReviewReportSerializer(report).data
 
-    
     @classmethod
     def review_reports_get_all(cls, request):
         """

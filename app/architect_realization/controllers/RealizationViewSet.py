@@ -15,15 +15,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from app.architect_realization.models.Realization import Realization
-from app.architect_realization.serializers.RealizationSerializer import (
-    RealizationPOSTSerializer,
-)
-from app.architect_realization.serializers.RealizationSerializer import (
-    RealizationSerializer,
-)
+from app.architect_realization.serializers.RealizationSerializer import RealizationPOSTSerializer
+from app.architect_realization.serializers.RealizationSerializer import RealizationSerializer
 from app.architect_realization.services.RealizationService import RealizationService
-from app.core.pagination import CustomPagination
 from app.core.exception_handler import handle_service_exceptions
+from app.core.pagination import CustomPagination
 from app.core.response_builder import build_response
 
 
@@ -90,9 +86,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
 
         # If pagination is not applied correctly, return a 400 Bad Request response
         serializer = RealizationSerializer(queryset, many=True)
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=False,
@@ -106,9 +100,7 @@ class RealizationViewSet(viewsets.ModelViewSet):
         Creating new realization
         """
         success, data = RealizationService.realization_create(request)
-        return build_response(
-            success=success, data=data, status=status.HTTP_201_CREATED
-        )
+        return build_response(success=success, data=data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=False,

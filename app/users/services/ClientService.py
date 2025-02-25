@@ -14,6 +14,7 @@ from django.utils.translation import get_language_from_request
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from rest_framework.exceptions import NotFound
+
 from app.email_templates.signals import api_success_signal
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.models.Client import Client
@@ -47,7 +48,7 @@ class ClientService:
         """
 
         data = request.data
-        email_req = data.get("email", None)
+        email_req = data.get("email")
         if email_req is None:
             raise serializers.ValidationError(detail="Email is required")
         if not Client.objects.filter(user__email=email_req).exists():

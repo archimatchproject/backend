@@ -23,9 +23,7 @@ from app.users import PERMISSION_CODENAMES
 from app.users.models.Admin import Admin
 from app.users.models.ArchimatchUser import ArchimatchUser
 from app.users.serializers.AdminSerializer import AdminSerializer
-from app.users.serializers.ArchimatchUserSerializer import (
-    ArchimatchUserSimpleSerializer,
-)
+from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSimpleSerializer
 from app.users.serializers.UserAuthSerializer import UserAuthSerializer
 from app.users.utils import generate_password_reset_token
 from app.users.utils import validate_password_reset_token
@@ -118,15 +116,11 @@ class AdminService:
         # Update user data if provided
         if email is not None:
             if email != instance.user.email:  # Check if email is changing
-                if (
-                    ArchimatchUser.objects.filter(email=email)
-                    .exclude(id=instance.user.id)
-                    .exists()
-                ):
+                if ArchimatchUser.objects.filter(email=email).exclude(id=instance.user.id).exists():
                     raise serializers.ValidationError("Email already exists.")
                 instance.user.email = email
 
-        if phone_number is not None:
+        elif phone_number is not None:
             instance.user.phone_number = phone_number
 
         # Update any other user fields from user_data
@@ -159,8 +153,7 @@ class AdminService:
             Response: HTTP response containing all permissions and their colors.
         """
         permissions_with_colors = [
-            {"right": right, "color": data["color"]}
-            for right, data in PERMISSION_CODENAMES.items()
+            {"right": right, "color": data["color"]} for right, data in PERMISSION_CODENAMES.items()
         ]
         return True, permissions_with_colors
 
@@ -243,3 +236,19 @@ class AdminService:
 
         serializer = AdminSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @classmethod
+    def admin_get_profile(cls, request):
+        """
+        Retrieves admin information.
+        Args:
+            request (Request): Django request object containing user ID.
+        Returns:
+            Response: Response object containing admin data.
+        Raises:
+            APIException: If there are errors during the process.
+        """
+        user = request.user
+        admin = Admin.objects.get(user=user.id)
+        admin_serializer = AdminSerializer(admin)
+        return True, admin_serializer.data

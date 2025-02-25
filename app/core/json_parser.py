@@ -1,3 +1,15 @@
+"""
+This module provides utility functions for transforming string cases and
+handling QueryDict keys.
+Functions:
+    to_snake_case(name: str) -> str:
+        Convert a camelCase or PascalCase string to snake_case.
+    transform_querydict_keys(querydict: QueryDict) -> dict:
+        Transform the keys of a QueryDict to snake_case and handle values
+        appropriately. If the value is a list, the first item is taken;
+        otherwise, the value is kept as is.
+"""
+
 import re
 
 

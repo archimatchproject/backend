@@ -8,18 +8,18 @@ It includes functionality to attach images inline within the HTML content of the
 
 import os
 
+from datetime import timedelta
 from email.mime.image import MIMEImage
 from io import BytesIO
 
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse
 from django.template.loader import get_template
+from django.utils.timezone import now
 
 from xhtml2pdf import pisa
 
 from project_core.django import base as settings
-from datetime import timedelta
-from django.utils.timezone import now
 
 
 def send_email_with_template(to_email, subject, body, images):
@@ -49,10 +49,12 @@ def attach_email_icons(msg, images):
 
             msg.attach(img)
         except FileNotFoundError:
-            print(f"File {os.path.join(path, filename)} not found.")
+            # print(f"File {os.path.join(path, filename)} not found.")
             # Optionally, handle the error, e.g., log it, or attach a default image
-        except Exception as e:
-            print(f"An error occurred while attaching the file {filename}: {e}")
+            pass
+        except Exception:
+            # print(f"An error occurred while attaching the file {filename}: {e}")
+            pass
 
 
 def render_to_pdf(template_src, context_dict):
@@ -109,5 +111,5 @@ def schedule_email_trigger(
             action_callback(obj, email_template)
             if extra_action:
                 extra_action(obj)
-    except Exception as e:
-        print(f"Error in schedule_email_trigger: {e}")
+    except Exception:
+        pass

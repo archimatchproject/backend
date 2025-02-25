@@ -46,4 +46,9 @@ payment_urlpatterns = [
         PaymentViewSet.as_view({"post": "create_supplier_payment"}),
         name="payment-create",
     ),
+    path(
+        "payment/create/office",
+        PaymentViewSet.as_view({"post": "create_office_payment"}),
+        name="payment-create",
+    ),
 ]

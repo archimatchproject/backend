@@ -7,11 +7,12 @@ Classes:
     UnlockRequestService: A service class for managing UnlockRequest operations.
 """
 
+from rest_framework import status
 from rest_framework.response import Response
 
-from rest_framework import status
 from app.core.pagination import CustomPagination
-from app.selection import ACCEPTED, REFUSED
+from app.selection import ACCEPTED
+from app.selection import REFUSED
 from app.selection.models.UnlockRequest import UnlockRequest
 from app.selection.serializers.UnlockRequestSerializer import UnlockRequestSerializer
 
@@ -50,9 +51,7 @@ class UnlockRequestService:
         if page is not None:
             serializer = UnlockRequestSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
-        return Response(
-            {"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"message": "error retrieving data"}, status=status.HTTP_400_BAD_REQUEST)
 
     @classmethod
     def create_unlock_request(self, selection_id, message):

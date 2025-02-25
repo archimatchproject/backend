@@ -35,12 +35,8 @@ class Invoice(BaseModel):
     plan_name = models.CharField(max_length=255)
     plan_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.BooleanField(default=False)
-    discount_percentage = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True, blank=True
-    )
-    discount_message = models.CharField(
-        max_length=255, default="", null=True, blank=True
-    )
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    discount_message = models.CharField(max_length=255, default="", null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
 

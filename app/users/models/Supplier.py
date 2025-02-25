@@ -80,6 +80,7 @@ class Supplier(BaseModel):
         null=True,
         blank=True,
     )
+
     def __str__(self):
         """
         Returns the email address of the associated user.
