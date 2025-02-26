@@ -10,17 +10,20 @@ DefaultRouter.
 
 from django.urls import include
 from django.urls import path
-
 from rest_framework import routers
-
+from app.quote.routes.CategoryUrls import category_urlpatterns
 from app.quote.routes.QuoteArticleUrls import quoteArticle_urlpatterns
+
 from app.quote.routes.UnitUrls import unit_urlpatterns
 
 
 router = routers.DefaultRouter()
 
+
 urlpatterns = [
     path("", include(router.urls)),
     *unit_urlpatterns,
     *quoteArticle_urlpatterns,
+    *category_urlpatterns
 ]
+

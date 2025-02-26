@@ -60,7 +60,7 @@ class UnitViewSet(viewsets.ModelViewSet):
 
         return build_response(success=success, message=message, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=["post"])
+    @action(detail=False, methods=["delete"])
     @handle_service_exceptions
     def delete_unit(self, request, pk):
         """
