@@ -113,6 +113,7 @@ class OfferPUTSerializer(serializers.ModelSerializer):
             "work_location",
             "start_date",
             "salary_range",
+            "office",
             "project_category",
             "architectural_style",
             "office_description",
