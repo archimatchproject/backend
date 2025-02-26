@@ -50,6 +50,7 @@ LOCAL_APPS = [
     "app.selection",
     "app.officeOffer",
     "app.recommendation",
+    "app.quote",
 ]
 
 
