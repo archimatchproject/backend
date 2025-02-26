@@ -12,9 +12,9 @@ from app.messaging.controllers.ConversationViewSet import ConversationViewSet
 
 conversation_urlpatterns = [
     path(
-        "conversation/create/",
-        ConversationViewSet.as_view({"post": "create"}),
-        name="create",
+        "conversation/get-client-conversation/",
+        ConversationViewSet.as_view({"get": "get_client_conversation"}),
+        name="get-client-conversation",
     ),
     path(
         "conversation/admin-client-messages/",
@@ -40,5 +40,15 @@ conversation_urlpatterns = [
         "conversation/remove-self/",
         ConversationViewSet.as_view({"post": "remove_self_from_conversation"}),
         name="conversation-remove-self",
+    ),
+    path(
+        "conversation/conversation-messages/",
+        ConversationViewSet.as_view({"get": "get_conversation_messages"}),
+        name="conversation-messages",
+    ),
+    path(
+        "conversation/join-conversation/",
+        ConversationViewSet.as_view({"post": "join_conversation"}),
+        name="join-conversation",
     ),
 ]
