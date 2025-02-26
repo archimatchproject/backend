@@ -1,6 +1,7 @@
 from app.moderation.models.ArchitectReport import ArchitectReport
 from app.moderation.models.ClientReview import ClientReview
 from app.moderation.models.Decision import Decision
+from app.moderation.models.OfficeReportArchitect import OfficeReportArchitect
 from app.moderation.models.OfficeReview import OfficeReview
 from app.moderation.models.ProjectReport import ProjectReport
 from app.moderation.models.Reason import Reason
