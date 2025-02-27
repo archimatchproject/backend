@@ -10,14 +10,12 @@ Classes:
 
 from collections import defaultdict
 
-from django.db import IntegrityError
 from django.db import transaction
 from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
@@ -58,41 +56,25 @@ class ArchitectReportService:
         serializer = ArchitectReportSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-
         user = request.user
-        try:
-            client = Client.objects.get(user=user)
 
+        client = Client.objects.get(user=user)
+        reasons = validated_data.pop("report_reasons")
+        with transaction.atomic():
+            # Create ArchitectReport instance
             if ArchitectReport.objects.filter(
                 reporting_client=client,
-                reported_architect_id=validated_data.pop("reported_architect_id"),
+                reported_architect=validated_data.get("reported_architect_id"),
             ).exists():
-                raise APIException(detail="A report for this architect by this client already exists.")
-
-            reasons = validated_data.pop("report_reasons")
-            with transaction.atomic():
-                # Create ArchitectReport instance
-                architect_report = ArchitectReport.objects.create(
-                    reporting_client=client,
-                    reported_architect=validated_data.pop("reported_architect_id"),
-                    **validated_data,
-                )
-                architect_report.reasons.set(reasons)
-                architect_report.save()
-                return True, ArchitectReportSerializer(architect_report).data
-
-        except IntegrityError as e:
-            if "unique constraint" in str(e):
-                raise serializers.ValidationError(
-                    {"detail": "A report for this architect by this client already exists."}
-                )
-            raise APIException(detail=f"Error creating architect report: {str(e)}")
-        except Client.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not a client.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating architect report: {str(e)}")
+                raise APIException(detail="you have already reported this architect")
+            architect_report = ArchitectReport.objects.create(
+                reporting_client=client,
+                reported_architect=validated_data.pop("reported_architect_id"),
+                **validated_data,
+            )
+            architect_report.reasons.set(reasons)
+            architect_report.save()
+            return True, ArchitectReportSerializer(architect_report).data
 
     @classmethod
     def get_grouped_architect_reports(cls, request):

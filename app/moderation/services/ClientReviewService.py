@@ -56,13 +56,12 @@ class ClientReviewService:
         try:
             client = Client.objects.get(user=user)
             with transaction.atomic():
-                if ClientReview.objects.filter(client=client, architect=validated_data["architect_id"]).exists():
-                    raise APIException(detail="A review for this architect by this client already exists.")
                 client_review = ClientReview.objects.create(
                     client=client,
                     architect=validated_data.pop("architect_id"),
                     **{k: v for k, v in validated_data.items() if not isinstance(v, serializers.Field)},
                 )
+
                 return True, json.dumps(ClientReviewSerializer(client_review).data, cls=DjangoJSONEncoder)
 
         except IntegrityError as e:

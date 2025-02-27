@@ -8,14 +8,12 @@ Classes:
     ReviewReportService: Service class for ReviewReport operations.
 """
 
-from django.db import IntegrityError
 from django.db import transaction
 from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
@@ -58,37 +56,23 @@ class ReviewReportService:
         validated_data = serializer.validated_data
 
         user = request.user
-        try:
-            architect = Architect.objects.get(user=user)
-            reasons = validated_data.pop("report_reasons")
+        architect = Architect.objects.get(user=user)
+        reasons = validated_data.pop("report_reasons")
+        with transaction.atomic():
+            # Create ReviewReport instance
             if ReviewReport.objects.filter(
                 reporting_architect=architect,
-                reported_review=validated_data.pop("reported_review_id"),
+                reported_review=validated_data.get("reported_review_id"),
             ).exists():
-                raise APIException(detail="A report for this review by this architect already exists.")
-            with transaction.atomic():
-                # Create ReviewReport instance
-                review_report = ReviewReport.objects.create(
-                    reporting_architect=architect,
-                    reported_review=validated_data.pop("reported_review_id"),
-                    **validated_data,
-                )
-                review_report.reasons.set(reasons)
-                review_report.save()
-                return True, ReviewReportSerializer(review_report).data
-
-        except IntegrityError as e:
-            if "unique constraint" in str(e):
-                raise serializers.ValidationError(
-                    {"detail": "A report for this review by this architect already exists."}
-                )
-            raise APIException(detail=f"Error creating review report: {str(e)}")
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating review report: {str(e)}")
+                raise APIException("You have already reported this review")
+            review_report = ReviewReport.objects.create(
+                reporting_architect=architect,
+                reported_review=validated_data.pop("reported_review_id"),
+                **validated_data,
+            )
+            review_report.reasons.set(reasons)
+            review_report.save()
+            return True, ReviewReportSerializer(review_report).data
 
     @classmethod
     def get_decisions(cls):

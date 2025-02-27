@@ -8,14 +8,12 @@ Classes:
     ProjectReportService: Service class for ProjectReport operations.
 """
 
-from django.db import IntegrityError
 from django.db import transaction
 from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from app.core.pagination import CustomPagination
@@ -58,37 +56,23 @@ class ProjectReportService:
         validated_data = serializer.validated_data
 
         user = request.user
-        try:
-            architect = Architect.objects.get(user=user)
-            reasons = validated_data.pop("reasons")
+        architect = Architect.objects.get(user=user)
+        reasons = validated_data.pop("report_reasons")
+        with transaction.atomic():
+            # Create ProjectReport instance
             if ProjectReport.objects.filter(
                 reporting_architect=architect,
                 reported_project=validated_data.get("reported_project_id"),
             ).exists():
-                raise APIException(detail="A report for this project by this architect already exists.")
-
-            with transaction.atomic():
-                # Create ProjectReport instance
-                project_report = ProjectReport.objects.create(
-                    reporting_architect=architect,
-                    reported_project=validated_data.pop("reported_project_id"),
-                    **validated_data,
-                )
-                project_report.reasons.set(reasons)
-                project_report.save()
-                return True, ProjectReportSerializer(project_report).data
-        except IntegrityError as e:
-            if "unique constraint" in str(e):
-                raise serializers.ValidationError(
-                    {"detail": "A report for this project by this architect already exists."}
-                )
-            raise APIException(detail=f"Error creating project report: {str(e)}")
-        except Architect.DoesNotExist:
-            raise NotFound(detail="Authenticated user is not an architect.")
-        except serializers.ValidationError as e:
-            raise e
-        except Exception as e:
-            raise APIException(detail=f"Error creating project report: {str(e)}")
+                raise APIException("You have already reported this project.")
+            project_report = ProjectReport.objects.create(
+                reporting_architect=architect,
+                reported_project=validated_data.pop("reported_project_id"),
+                **validated_data,
+            )
+            project_report.reasons.set(reasons)
+            project_report.save()
+            return True, ProjectReportSerializer(project_report).data
 
     @classmethod
     def get_decisions(cls):
