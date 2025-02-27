@@ -27,16 +27,9 @@ jobs:
       - name: Install dependencies
         run: |
           source venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Cache virtual environment
-        uses: actions/cache@v2
-        with:
-          path: venv
-          key: venv-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            venv-
-    
   lint:
     runs-on: ubuntu-latest
     needs: install-dependencies  # Ensures this job runs after install-dependencies
@@ -48,18 +41,20 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Restore virtual environment cache
-        uses: actions/cache@v2
-        with:
-          path: venv
-          key: venv-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            venv-
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
 
-      - name: Activate virtual environment and run linters
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run linters (flake8, isort, black) in virtual environment
         run: |
           source venv/bin/activate  # Activate virtual environment
-          pip freeze
           # Ensure the environment is activated and tools are available
           which flake8
           which isort
@@ -69,3 +64,4 @@ jobs:
           flake8 .
           isort --check-only --diff
           black --check .
+
