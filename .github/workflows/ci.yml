@@ -91,6 +91,8 @@ jobs:
             /home/azureuser/archimatch/backend/Env/bin/python -m pip install -r requirements.txt
             /home/azureuser/archimatch/backend/Env/bin/python manage.py makemigrations 
             /home/azureuser/archimatch/backend/Env/bin/python manage.py loaddata  --format=yaml architect_specialities.yaml announcement_needs.yaml project_categories.yaml property_types.yaml work_types.yaml renovation_pieces.yaml architectural_styles.yaml project_extensions.yaml supplier_specialities.yaml preferred_locations.yaml work_surfaces.yaml budgets.yaml terrain_surfaces.yaml decisions.yaml time_slots.yaml selection_settings.yaml reasons.yaml software_skills.yaml technical_skills.yaml
+
+
             /home/azureuser/archimatch/backend/Env/bin/python manage.py migrate
 
             
