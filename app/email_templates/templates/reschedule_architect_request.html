@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Nous vous informons que la date de votre réunion avec l'équipe Archimatch
+      a été modifiée.
+    </p>
+    <p>
+      <strong>Nouvelle date de réunion :</strong> {{ date }} : {{ time_slot }}
+    </p>
+    <p>
+      Merci de bien vouloir en prendre note et de vous rendre disponible à cette
+      nouvelle date.
+    </p>
+    <p>
+      Pour toute question ou besoin d'assistance, n'hésitez pas à nous
+      contacter.
+    </p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

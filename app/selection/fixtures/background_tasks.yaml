@@ -1,0 +1,10 @@
+- model: background_task.task
+  fields:
+    task_name: "app.selection.tasks.test_task.simple_task"
+    task_params: "[[], {}]"
+    run_at: "2024-12-05T14:44:00Z" # Replace with your desired start time
+    repeat: 86400 # Task.DAILY = 24 * 60 * 60 seconds
+    queue: null
+    priority: 0
+    attempts: 0
+    verbose_name: "selection test task"

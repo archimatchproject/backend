@@ -4,8 +4,11 @@
 *.pyc
 __pycache__
 ./db.sqlite3
-media/
-
+media/*
+staticfiles/
+# Do not ignore the media/icons directory and its content
+!media/icons/
+ssl
 # Backup files #
 *.bak
 

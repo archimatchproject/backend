@@ -2,9 +2,20 @@
 Module-level constants for dev configuration.
 """
 
+import os
+
 from project_core.django.base import *
+from project_core.env import env
 
 
-DEBUG = True
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+DEBUG = env("DEBUG")
+"""
+Static files (CSS, JavaScript, Images) serving configuration.
+"""
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+"""
+Media files (uploads) configuration.
+"""
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"

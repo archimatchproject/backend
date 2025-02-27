@@ -6,14 +6,16 @@ and AnnouncementSerializer classes, which handle the serialization and deseriali
 of Announcement instances for API views.
 """
 
+from datetime import timedelta
+
+from django.utils.timezone import now
+
 from rest_framework import serializers
 
 from app.announcement.models import Announcement
 from app.announcement.models.Need import Need
 from app.announcement.models.ProjectExtension import ProjectExtension
-from app.announcement.serializers.AnnouncementPieceRenovateSerializer import (
-    AnnouncementPieceRenovateSerializer,
-)
+from app.announcement.serializers.AnnouncementPieceRenovateSerializer import AnnouncementPieceRenovateSerializer
 from app.announcement.serializers.ArchitectSpecialitySerializer import ArchitectSpecialitySerializer
 from app.announcement.serializers.ArchitecturalStyleSerializer import ArchitecturalStyleSerializer
 from app.announcement.serializers.NeedSerializer import NeedSerializer
@@ -27,6 +29,9 @@ from app.core.models.ArchitecturalStyle import ArchitecturalStyle
 from app.core.models.ProjectCategory import ProjectCategory
 from app.core.models.PropertyType import PropertyType
 from app.core.models.WorkType import WorkType
+from app.core.serializers.NoteSerializer import NoteSerializer
+from app.selection.models.SelectionSettings import SelectionSettings
+from app.users.models.Architect import Architect
 from app.users.serializers.ClientSerializer import ClientSerializer
 
 
@@ -39,13 +44,9 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
 
     """
 
-    client = ClientSerializer()
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    client = ClientSerializer(required=False)
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all(), required=False)
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
@@ -57,13 +58,14 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
         )
     )
     project_extensions = serializers.PrimaryKeyRelatedField(
-        queryset=ProjectExtension.objects.all(),
-        many=True,
+        queryset=ProjectExtension.objects.all(), many=True, required=False
     )
     project_images = serializers.ListField(
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
+    architect = serializers.PrimaryKeyRelatedField(queryset=Architect.objects.all(), required=False)
 
     class Meta:
         """
@@ -90,6 +92,8 @@ class AnnouncementPOSTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "architect",
         ]
 
 
@@ -102,12 +106,8 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
 
     """
 
-    architect_speciality = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitectSpeciality.objects.all()
-    )
-    architectural_style = serializers.PrimaryKeyRelatedField(
-        queryset=ArchitecturalStyle.objects.all()
-    )
+    architect_speciality = serializers.PrimaryKeyRelatedField(queryset=ArchitectSpeciality.objects.all())
+    architectural_style = serializers.PrimaryKeyRelatedField(queryset=ArchitecturalStyle.objects.all())
     needs = serializers.PrimaryKeyRelatedField(queryset=Need.objects.all(), many=True)
     project_category = serializers.PrimaryKeyRelatedField(queryset=ProjectCategory.objects.all())
     property_type = serializers.PrimaryKeyRelatedField(queryset=PropertyType.objects.all())
@@ -126,6 +126,7 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(required=False),
         required=False,
     )
+    number_floors = serializers.IntegerField(required=False)
 
     class Meta:
         """
@@ -151,15 +152,14 @@ class AnnouncementPUTSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "admin_note",
+            "number_floors",
         ]
 
 
 class AnnouncementOutputSerializer(serializers.ModelSerializer):
     """
     Serializer for retrieving Announcement instances.
-
-    This serializer handles the output representation of Announcement instances,
-    including related fields serialized with their respective serializers.
     """
 
     client = ClientSerializer()
@@ -172,12 +172,48 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
     pieces_renovate = AnnouncementPieceRenovateSerializer(many=True)
     project_extensions = ProjectExtensionSerializer(many=True)
     project_images = ProjectImageSerializer(many=True, required=False)
+    notes = NoteSerializer(many=True)
+    interested_architects_count = serializers.SerializerMethodField(required=False)
+    has_selected = serializers.SerializerMethodField(required=False)
+    days_remaining = serializers.SerializerMethodField()
+    admin_management_reached = serializers.SerializerMethodField()
 
     class Meta:
         """
-        Meta class for Announcement Serializer.
-
-        Defines display fields.
+        Meta class for AnnouncementSerializer.
+        Attributes:
+            model (type): The model associated with the serializer.
+            fields (list): List of fields to be included in the serialized output.
+                - id (int): Unique identifier for the announcement.
+                - client (str): Client associated with the announcement.
+                - architect_speciality (str): Speciality of the architect.
+                - needs (str): Needs specified in the announcement.
+                - project_category (str): Category of the project.
+                - property_type (str): Type of the property.
+                - work_type (str): Type of work to be done.
+                - pieces_renovate (str): Pieces to be renovated.
+                - address (str): Address of the project.
+                - city (str): City where the project is located.
+                - terrain_surface (float): Surface area of the terrain.
+                - work_surface (float): Surface area of the work.
+                - budget (float): Budget for the project.
+                - description (str): Description of the project.
+                - architectural_style (str): Architectural style of the project.
+                - project_extensions (str): Extensions of the project.
+                - project_images (list): List of images related to the project.
+                - number_floors (int): Number of floors in the project.
+                - notes (str): Additional notes.
+                - created_at (datetime): Creation timestamp of the announcement.
+                - status (str): Status of the announcement.
+                - admin_note (str): Notes from the admin.
+                - interested_architects_count (int, optional): Count of interested architects.
+                - has_selected (bool, optional): Indicates if an architect has been selected.
+                - token_number (str): Token number associated with the announcement.
+                - days_remaining (int): Number of days remaining for the project.
+                - architect (str): Architect associated with the project.
+                - admin_management_reached (bool): Indicates if admin management has been reached.
+                - is_blocked (bool): Indicates if the announcement is blocked.
+                - is_broadcasted (bool): Indicates if the announcement is broadcasted.
         """
 
         model = Announcement
@@ -199,7 +235,75 @@ class AnnouncementOutputSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "notes",
+            "created_at",
+            "status",
+            "admin_note",
+            "interested_architects_count",  # Optional
+            "has_selected",  # Optional
+            "token_number",
+            "days_remaining",
+            "architect",
+            "admin_management_reached",
+            "is_blocked",
+            "is_broadcasted",
         ]
+
+    def get_interested_architects_count(self, obj):
+        """
+        Return the count of interested architects.
+        """
+        return obj.selections.all().count()
+
+    def get_has_selected(self, obj):
+        """
+        Check if the architect has selected the announcement.
+        """
+        request = self.context.get("request")
+
+        if not request or not hasattr(request, "user"):
+            return False
+
+        user = request.user
+
+        try:
+            architect = Architect.objects.get(user=user)
+        except Architect.DoesNotExist:
+            return False
+
+        return obj.selections.filter(architect=architect).exists()
+
+    def get_days_remaining(self, obj):
+        """
+        Calculate the remaining days for the end of the phase.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return None
+
+            phase_days = settings.phase_days
+            end_of_phase_date = obj.suggested_at + timedelta(days=phase_days)
+            remaining_days = (end_of_phase_date - now()).days
+            return max(0, remaining_days)
+        except Exception:
+            return None
+
+    def get_admin_management_reached(self, obj):
+        """
+        Determine if the time from created_at to today has reached days_for_admin_management.
+        """
+        try:
+            settings = SelectionSettings.objects.first()
+            if not settings:
+                return False
+
+            admin_management_days = settings.days_for_admin_management
+            time_elapsed = (now() - obj.created_at).days
+            return time_elapsed >= admin_management_days
+        except Exception:
+            return False
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):
@@ -237,6 +341,9 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             "architectural_style",
             "project_extensions",
             "project_images",
+            "number_floors",
+            "admin_note",
+            "token_number",
         ]
 
     def to_representation(self, instance):

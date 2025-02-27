@@ -1,1 +1,3 @@
 from app.architect_request.admin.ArchitectRequestAdmin import ArchitectRequestAdmin
+from app.architect_request.admin.NoteAdmin import NoteAdmin
+from app.architect_request.admin.OfficeRequestAdmin import OfficeRequestAdmin

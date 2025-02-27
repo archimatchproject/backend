@@ -11,6 +11,7 @@ permissions to manage architect requests.
 from django.contrib.auth import get_user_model
 
 from rest_framework.permissions import BasePermission
+from rest_framework.serializers import ValidationError
 
 
 class ManageArchitectRequestPermission(BasePermission):
@@ -35,9 +36,10 @@ class ManageArchitectRequestPermission(BasePermission):
         User = get_user_model()
         try:
             admin = User.objects.get(pk=request.user.pk).admin
-
         except User.DoesNotExist:
             return False
+        except Exception:
+            raise ValidationError(detail="Authenticated user is not an Admin.")
 
         if admin.super_user:
             return True

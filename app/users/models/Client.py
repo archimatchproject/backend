@@ -23,6 +23,7 @@ class Client(BaseModel):
     """
 
     user = models.OneToOneField(ArchimatchUser, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         """

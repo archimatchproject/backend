@@ -1,34 +1,52 @@
+# default_language_version:
+#   python: python3.10
+
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
-
+  # - repo: https://github.com/pre-commit/pre-commit-hooks
+  #   rev: v5.0.0
+  #   hooks:
+  #     - id: trailing-whitespace
+  #     - id: end-of-file-fixer
+  #     - id: check-yaml
   - repo: https://github.com/psf/black
-    rev: 24.4.0
+    rev: stable
     hooks:
       - id: black
         language_version: python3.10
         args: ["--preview"]
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+    rev: 7.1.2
     hooks:
       - id: flake8
-        additional_dependencies: [flake8]
-        args: ["--max-line-length=100"]
+        additional_dependencies:
+          [
+            flake8,
+            flake8-bugbear,
+            flake8-comprehensions,
+            flake8-mutable,
+            flake8-print,
+            flake8-simplify,
+          ]
+        args: ["--max-line-length=120"]
 
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1
+    rev: 6.3.0
     hooks:
       - id: pydocstyle
         args:
           - --select=D100,D101,D102,D103,D105,D106
+#   # - repo: https://github.com/PyCQA/pylint
+#   #   rev: pylint-2.7.2
+#   #   hooks:
+#   #     - id: pylint
+#   #       name: pylint
+#   #       entry: pylint
+#   #       language: python
+#   #       types: [python]
+#   #       args: [--rcfile=.pylintrc]

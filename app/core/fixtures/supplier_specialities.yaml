@@ -1,0 +1,79 @@
+# supplier_specialities.yaml
+
+- model: core.SupplierSpeciality
+  pk: 1
+  fields:
+    label: "Matériaux de construction"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 2
+  fields:
+    label: "Salles de bains"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 3
+  fields:
+    label: "Cuisines"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 4
+  fields:
+    label: "Accessoires de jardinage"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 5
+  fields:
+    label: "Équipement sanitaire et plomberie"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 6
+  fields:
+    label: "Décoration"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 7
+  fields:
+    label: "Peinture"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 8
+  fields:
+    label: "Mobilier"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 9
+  fields:
+    label: "Aluminium"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 10
+  fields:
+    label: "Équipement de piscine"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 11
+  fields:
+    label: "Sécurité électronique"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 12
+  fields:
+    label: "Fenêtres et portes"
+    icon: "icons/SupplierSpecialityIcons/img.png"
+
+- model: core.SupplierSpeciality
+  pk: 13
+  fields:
+    label: "Luminaires et éclairage extérieur"
+    icon: "icons/SupplierSpecialityIcons/img.png"

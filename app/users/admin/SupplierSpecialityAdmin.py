@@ -12,7 +12,7 @@ and specifies basic configurations for managing SupplierSpeciality instances.
 
 from django.contrib import admin
 
-from app.users.models import SupplierSpeciality
+from app.core.models.SupplierSpeciality import SupplierSpeciality
 
 
 class SupplierSpecialityAdmin(admin.ModelAdmin):

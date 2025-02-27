@@ -5,6 +5,8 @@ This module contains the ProjectCategory class, which represents a category of p
 in the application, inheriting from the LabeledIcon base class.
 """
 
+from django.db import models
+
 from app.core.models import LabeledIcon
 
 
@@ -15,6 +17,8 @@ class ProjectCategory(LabeledIcon):
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
     """
+
+    icon = models.ImageField(upload_to="icons/ProjectCategoryIcons/")
 
     class Meta:
         """

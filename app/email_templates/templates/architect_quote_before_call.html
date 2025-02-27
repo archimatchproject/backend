@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      J'espère que vous allez bien. Nous vous contactons au sujet du projet pour
+      lequel vous avez récemment pris contact avec le client, [Nom et Prénom du
+      client].
+    </p>
+    <p>
+      Nous tenons à vous rappeler qu'il est crucial de soumettre le devis du
+      projet dans les 3 jours suivant la prise de contact avec le client. Si le
+      devis n'est pas envoyé dans ce délai, nous vous enverrons un email de
+      rappel.
+    </p>
+    <p>
+      Merci de votre attention et de votre coopération. Si vous avez des
+      questions ou besoin d'assistance, n'hésitez pas à nous contacter.
+    </p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

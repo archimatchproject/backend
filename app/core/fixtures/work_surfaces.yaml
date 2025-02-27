@@ -1,0 +1,24 @@
+- model: core.WorkSurface
+  pk: 1
+  fields:
+    name: "< 40m²"
+
+- model: core.WorkSurface
+  pk: 2
+  fields:
+    name: "40m² - 90m²"
+
+- model: core.WorkSurface
+  pk: 3
+  fields:
+    name: "90m² - 200m²"
+
+- model: core.WorkSurface
+  pk: 4
+  fields:
+    name: "200m² - 500m²"
+
+- model: core.WorkSurface
+  pk: 5
+  fields:
+    name: "> 500m²"

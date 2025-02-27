@@ -10,8 +10,8 @@ Classes:
 
 from rest_framework import serializers
 
-from app.users.models import ArchimatchUser
-from app.users.models import Client
+from app.users.models.ArchimatchUser import ArchimatchUser
+from app.users.models.Client import Client
 from app.users.serializers.ArchimatchUserSerializer import ArchimatchUserSerializer
 
 
@@ -38,7 +38,8 @@ class ClientSerializer(serializers.ModelSerializer):
         """
 
         model = Client
-        fields = ["id", "user"]
+        fields = ["id", "user", "is_verified"]
+        read_only_fields = ["is_verified"]
 
     def create(self, validated_data):
         """

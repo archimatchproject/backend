@@ -1,0 +1,17 @@
+- model: moderation.Reason
+  pk: 1
+  fields:
+    name: "Communication Inappropriée"
+    report_type: "Selection"
+
+- model: moderation.Reason
+  pk: 2
+  fields:
+    name: "Retard dans l'Envoi du Devis"
+    report_type: "Selection"
+
+- model: moderation.Reason
+  pk: 3
+  fields:
+    name: "Manque de Sérieux"
+    report_type: "Selection"

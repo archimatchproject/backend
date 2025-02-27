@@ -5,6 +5,8 @@ This module contains the ArchitecturalStyle class, which represents
 the specialty of an architect in the application.
 """
 
+from django.db import models
+
 from app.core.models.LabeledIcon import LabeledIcon
 
 
@@ -15,6 +17,8 @@ class ArchitecturalStyle(LabeledIcon):
     Inherits:
         LabeledIcon: Base class providing fields for label and icon.
     """
+
+    icon = models.ImageField(upload_to="icons/ArchitecturalStyleIcons/")
 
     class Meta:
         """

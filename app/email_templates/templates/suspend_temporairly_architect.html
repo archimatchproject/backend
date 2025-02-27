@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>
+      Suite à un signalement reçu concernant votre compte, nous avons analysé la
+      situation et décidé de suspendre temporairement votre compte jusqu'au
+      {{end_date}}.
+    </p>
+    <p>
+      Pendant cette période, vous ne pourrez pas accéder à nos services. Nous
+      vous encourageons à prendre connaissance de nos conditions d'utilisation
+      afin d'éviter toute récidive.
+    </p>
+    <p>
+      Si vous souhaitez contester cette décision ou obtenir plus d'informations,
+      n'hésitez pas à nous contacter.
+    </p>
+    <p>Cordialement,</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}

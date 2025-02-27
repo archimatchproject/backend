@@ -1,0 +1,47 @@
+# Work Types
+- model: core.WorkType
+  pk: 1
+  fields:
+    header: "Construction neuve"
+    description: "La création d'une structure entièrement nouvelle à partir de zéro"
+    icon: "icons/WorkTypeIcons/new_construction.svg"
+
+- model: core.WorkType
+  pk: 2
+  fields:
+    header: "Rénovation extérieure"
+    description: "Transformer et améliorer l'apparence et la fonctionnalité d'un bâtiment existant"
+    icon: "icons/WorkTypeIcons/exterior_renovation.svg"
+- model: core.WorkType
+  pk: 3
+  fields:
+    header: "Extension & aménagement"
+    description: "Agrandir et améliorer un espace existant."
+    icon: "icons/WorkTypeIcons/building_extension.svg"
+
+- model: core.WorkType
+  pk: 4
+  fields:
+    header: "Rénovation intérieure"
+    description: "Transformer et moderniser les espaces existants"
+    icon: "icons/WorkTypeIcons/interior_renovation.svg"
+
+- model: core.WorkType
+  pk: 5
+  fields:
+    header: "Surélévation"
+    description: "L'ajout de nouveaux niveaux ou étages à une construction existante"
+    icon: "icons/WorkTypeIcons/building_extension.svg"
+
+- model: core.WorkType
+  pk: 6
+  fields:
+    header: "Aménagement de combles"
+    description: "La réalisation de l'isolation thermique, etc."
+    icon: "icons/WorkTypeIcons/attic_conversion.svg"
+
+- model: core.WorkType
+  pk: 7
+  fields:
+    header: "Autre"
+    description: "Autres types de travaux et projets de construction"

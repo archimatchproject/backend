@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %} Architect_welcome {%endblock%}
+{%block header %}
+<div class="header">
+  <div class="align-items-center align-center">
+    <img src="cid:architect_logo.png" alt="" class="align-items-center logo" />
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="sub-container">
+  <img
+    src="cid:refuse_architect_request_header.png"
+    alt=""
+    class="header-img"
+  />
+  <div class="content align-center align-items-center">
+    <h1>Cher(e) {{ first_name }} {{ last_name }}</h1>
+    <p>Nous vous remercions pour votre intérêt à rejoindre Archimatch.</p>
+    <p>
+      Après avoir examiné votre profil, nous regrettons de vous informer que
+      nous ne pourrons pas poursuivre avec votre candidature pour le moment.
+    </p>
+    <p>Nous vous souhaitons tout le meilleur dans vos projets futurs.</p>
+    <h2>Team Archimatch</h2>
+  </div>
+</div>
+{% endblock %}
