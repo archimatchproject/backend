@@ -10,7 +10,7 @@ on:
 
 jobs:
   install-dependencies:
-    runs-on: ubuntu-latest # Using the latest Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.10 # Specify your Python version
+          python-version: 3.10
 
       - name: Install dependencies
         run: |
@@ -37,7 +37,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.10 # Specify your Python version
+          python-version: 3.10
 
       - name: Install dependencies
         run: |
