@@ -26,6 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           pip install -r requirements.txt
 
       - name: Cache virtual environment
@@ -35,7 +36,7 @@ jobs:
           key: venv-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             venv-
-
+    
   lint:
     runs-on: ubuntu-latest
     needs: install-dependencies  # Ensures this job runs after install-dependencies
@@ -55,7 +56,7 @@ jobs:
           restore-keys: |
             venv-
 
-      - name: Activate virtual environment and check tools
+      - name: Activate virtual environment and run linters
         run: |
           source venv/bin/activate
           # Ensure the environment is activated and tools are available
@@ -63,17 +64,8 @@ jobs:
           which isort
           which black
 
-      - name: Run flake8
-        run: |
-          source venv/bin/activate
+          # Run the linting tools
           flake8 .
-
-      - name: Run isort (check only)
-        run: |
-          source venv/bin/activate
           isort --check-only --diff
-
-      - name: Run black (check only)
-        run: |
-          source venv/bin/activate
           black --check .
+
