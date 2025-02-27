@@ -9,10 +9,10 @@ from django.db import models
 
 from app.core.models import BaseModel
 from app.moderation import STATUS_CHOICES
-from app.moderation.models import Decision
-from app.moderation.models import Reason
-from app.users.models import Architect
-from app.users.models import Office
+from app.moderation.models.Decision import Decision
+from app.moderation.models.Reason import Reason
+from app.users.models.Architect import Architect
+from app.users.models.Office import Office
 
 
 class OfficeReportArchitect(BaseModel):

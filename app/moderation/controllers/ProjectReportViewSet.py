@@ -97,9 +97,9 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
         """
         Retrieve a list of all project reports.
         Args:
-            request (HttpRequest): The HTTP request object.
+            request (HttpRequest): The HTTP request object containing request data.
         Returns:
-            Response: A response object containing the list of all project reports.
+            HttpResponse: A response object containing the list of all project reports.
         """
 
         return ProjectReportService.project_reports_get_all(request)
