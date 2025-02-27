@@ -56,9 +56,10 @@ jobs:
           restore-keys: |
             venv-
 
-      - name: Run linters (flake8, isort, black) in virtual environment
+      - name: Activate virtual environment and run linters
         run: |
           source venv/bin/activate  # Activate virtual environment
+          pip freeze
           # Ensure the environment is activated and tools are available
           which flake8
           which isort
