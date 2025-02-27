@@ -60,7 +60,7 @@ jobs:
           which isort
           which black
 
-          # Run the linting tools with the current directory as the target
-          flake8 .
-          isort --check-only --diff .
-          black --check .
+          # Run the linting tools for your project directory, excluding the venv folder
+          flake8 --exclude venv .
+          isort --check-only --diff --skip venv .
+          black --check --exclude venv .
