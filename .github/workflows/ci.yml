@@ -84,14 +84,15 @@ jobs:
             cd /home/azureuser/archimatch/backend/
             
             # Pull the latest changes from the repository
-            git pull
+            git pull origin dev
             
             # Activate the virtual environment
-            source Env/bin/activate
 
-            # Run migrations
-            python manage.py makemigrations
-            python manage.py migrate
+
+            /home/azureuser/archimatch/backend/Env/bin/python manage.py makemigrations 
+
+            /home/azureuser/archimatch/backend/Env/bin/python manage.py migrate
+
             
             # Restart services
             sudo systemctl restart uwsgi.service
