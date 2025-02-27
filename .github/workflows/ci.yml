@@ -60,8 +60,7 @@ jobs:
           which isort
           which black
 
-          # Run the linting tools
+          # Run the linting tools with the current directory as the target
           flake8 .
-          isort --check-only --diff
+          isort --check-only --diff .
           black --check .
-
